@@ -1,0 +1,86 @@
+/*
+ * ============LICENSE_START=======================================================
+ * dcaegen2-collectors-veshv
+ * ================================================================================
+ * Copyright (C) 2018 NOKIA Intellectual Property. All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+syntax = "proto3";
+package org.onap.ves;
+
+message VesEvent {
+
+  // VES CommonEventHeader adapted to GPB (Google Protocol Buffers)
+  // Source: https://git.opnfv.org/ves/tree/tests/docs/ves_data_model.json
+  //         2017-05-13 Align with VES 5.0 schema.
+  //         blob: ca948ff67e8a2de4e2a47cffc4d4d2893170ab76
+
+  message CommonEventHeader {
+    string version = 1; // required, "version of the event header"
+    enum Domain {
+      FAULT = 0;
+      HEARTBEAT = 1;
+      MEASUREMENTS_FOR_VF_SCALING = 2;
+      MOBILE_FLOW = 3;
+      SIP_SIGNALING = 4;
+      STATE_CHANGE = 5;
+      SYSLOG = 6;
+      THRESHOLD_CROSSING_ALERT = 7;
+      VOICE_QUALITY = 8;
+      OTHER = 9;
+      HVRANMEAS = 10;
+    }
+    Domain domain = 2; // required, "the eventing domain associated with the event" [map to string]
+
+    uint32 sequence = 3; // required, "ordering of events communicated by an event source instance or 0 if not needed"
+
+    enum Priority {
+      HIGH = 0;
+      MEDIUM = 1;
+      NORMAL = 2;
+      LOW = 3;
+    }
+    Priority priority = 4; // required, "processing priority"
+
+    string eventId = 5; // required, "event key that is unique to the event source"
+    string eventName = 6; // required, "unique event name"
+    string eventType = 7; // "for example - applicationVnf, guestOS, hostOS, platform"
+
+    uint64 lastEpochMicrosec = 8; // required, "the latest unix time aka epoch time associated with the event from any component--as microseconds elapsed since 1 Jan 1970 not including leap seconds"
+    uint64 startEpochMicrosec = 9; // required, "the earliest unix time aka epoch time associated with the event from any component--as microseconds elapsed since 1 Jan 1970 not including leap seconds"
+
+    string nfNamingCode = 10; // "4 character network function type, aligned with vnf naming standards"
+    string nfcNamingCode = 11; // "3 character network function component type, aligned with vfc naming standards"
+
+    string reportingEntityId = 12; // "UUID identifying the entity reporting the event, for example an OAM VM; must be populated by the ATT enrichment process"
+    bytes reportingEntityName = 13; // required, "name of the entity reporting the event, for example, an EMS name; may be the same as sourceName"
+    bytes sourceId = 14; // "UUID identifying the entity experiencing the event issue; must be populated by the ATT enrichment process"
+    string sourceName = 15; // required, "name of the entity experiencing the event issue"
+
+    reserved "InternalHeaderFields"; // "enrichment fields for internal VES Event Listener service use only, not supplied by event sources"
+    reserved 100;
+  }
+
+  CommonEventHeader commonEventHeader = 1;
+
+  oneof eventFields // required, payload, each high-volume domain has its specific GPB schema
+  {
+    bytes hvRanMeasFields = 2; // if domain==HVRANMEAS, GPB schema: HVRanMeasFields.proto
+  }
+}
+
+message VesEventList {
+  repeated VesEvent vesEvent = 1;
+}
