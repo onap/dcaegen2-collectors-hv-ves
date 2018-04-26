@@ -1,0 +1,16 @@
+image: archive.docker-registry.eecloud.nsn-net.net/imp/matryoshka:latest
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - mvn -e -T2 -Panalysis clean install
+  artifacts:
+    paths:
+    - hv-collector-coverage/target/site/jacoco-aggregate
+    - hv-collector-core/target/reports
+    - hv-collector-main/target/reports
+    - hv-collector-utils/target/reports
+    

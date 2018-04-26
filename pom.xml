@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ ============LICENSE_START=======================================================
+  ~ dcaegen2-collectors-veshv
+  ~ ================================================================================
+  ~ Copyright (C) 2018 NOKIA Intellectual Property. All rights reserved.
+  ~ ================================================================================
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~ ============LICENSE_END=========================================================
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <groupId>org.onap.dcaegen2.collectors.veshv</groupId>
+  <artifactId>ves-hv-collector</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>dcaegen2-collectors-veshv</name>
+  <description>VES HighVolume Collector</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>hv-collector-core</module>
+    <module>hv-collector-main</module>
+    <module>hv-collector-ct</module>
+    <module>protobuf</module>
+    <module>hv-collector-utils</module>
+    <module>hv-collector-coverage</module>
+    <module>hv-collector-analysis</module>
+  </modules>
+
+  <properties>
+    <kotlin.version>1.2.41</kotlin.version>
+    <protobuf.version>3.5.1</protobuf.version>
+    <protoc-jar-maven-plugin.version>3.5.1.1</protoc-jar-maven-plugin.version>
+    <protobuf-generated-files.directory>${project.build.directory}/generated-sources/proto/main/java/
+    </protobuf-generated-files.directory>
+    <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+    <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
+
+    <junit-platform.version>1.2.0-RC1</junit-platform.version>
+    <junit-jupiter.version>5.2.0-RC1</junit-jupiter.version>
+    <spek.version>1.1.5</spek.version>
+    <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+
+    <failIfMissingUnitTests>true</failIfMissingUnitTests>
+    <failIfMissingComponentTests>false</failIfMissingComponentTests>
+    <skipAnalysis>true</skipAnalysis>
+  </properties>
+
+
+  <build>
+    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <encoding>UTF-8</encoding>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>kotlin-maven-plugin</artifactId>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <version>${kotlin.version}</version>
+          <configuration>
+            <jvmTarget>1.8</jvmTarget>
+          </configuration>
+          <executions>
+            <execution>
+              <id>compile</id>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <configuration>
+                <sourceDirs>
+                  <source>${project.build.sourceDirectory}</source>
+                  <source>${project.build.directory}/generated-sources/annotations</source>
+                </sourceDirs>
+              </configuration>
+            </execution>
+            <execution>
+              <id>test-compile</id>
+              <goals>
+                <goal>test-compile</goal>
+              </goals>
+              <configuration>
+                <sourceDirs>
+                  <source>${project.build.testSourceDirectory}</source>
+                </sourceDirs>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>com.github.os72</groupId>
+          <artifactId>protoc-jar-maven-plugin</artifactId>
+          <version>${protoc-jar-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${build-helper-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>add-source</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>add-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${protobuf-generated-files.directory}</source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>8</source>
+            <target>8</target>
+            <encoding>UTF-8</encoding>
+            <showWarnings>true</showWarnings>
+            <showDeprecation>true</showDeprecation>
+            <failOnWarning>false</failOnWarning>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.ow2.asm</groupId>
+              <artifactId>asm</artifactId>
+              <version>6.1.1</version> <!-- Use newer version of ASM -->
+            </dependency>
+          </dependencies>
+        </plugin>
+        <!--
+         Due to a memory leak in Surefire 2.20 and issues running on Java 9, the junit-platform-surefire-provider
+         currently only works with Surefire 2.19.1.
+         For updates see https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven
+         -->
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <groupId>org.apache.maven.plugins</groupId>
+          <version>${maven-surefire-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>default-test</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <failIfNoTests>${failIfMissingUnitTests}</failIfNoTests>
+                <forkCount>1</forkCount>
+                <includes>
+                  <include>**/*Test.*</include>
+                </includes>
+                <!--<argLine>&#45;&#45;add-modules org.junit.jupiter.api,reactor.test,assertj.core</argLine>-->
+              </configuration>
+            </execution>
+            <execution>
+              <id>component-tests</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <failIfNoTests>${failIfMissingComponentTests}</failIfNoTests>
+                <forkCount>1</forkCount>
+                <includes>
+                  <include>**/*Specification.*</include>
+                </includes>
+              </configuration>
+            </execution>
+          </executions>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.commons</groupId>
+              <artifactId>commons-lang3</artifactId>
+              <version>3.7</version>
+            </dependency>
+            <dependency>
+              <groupId>org.junit.platform</groupId>
+              <artifactId>junit-platform-surefire-provider</artifactId>
+              <version>${junit-platform.version}</version>
+              <scope>runtime</scope>
+            </dependency>
+            <dependency>
+              <groupId>org.jetbrains.spek</groupId>
+              <artifactId>spek-junit-platform-engine</artifactId>
+              <version>${spek.version}</version>
+              <scope>runtime</scope>
+            </dependency>
+          </dependencies>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>analysis</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.1</version>
+            <executions>
+              <execution>
+                <id>default-prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>default-prepare-agent-integration</id>
+                <goals>
+                  <goal>prepare-agent-integration</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+              <execution>
+                <!-- This can be run separately with mvn antrun:run@detekt -->
+                <id>detekt</id>
+                <phase>verify</phase>
+                <configuration>
+                  <target name="detekt" unless="${skipAnalysis}">
+                    <java taskname="detekt" dir="${basedir}"
+                      fork="true"
+                      failonerror="true"
+                      classname="io.gitlab.arturbosch.detekt.cli.Main"
+                      classpathref="maven.plugin.classpath">
+                      <arg value="--input"/>
+                      <arg value="${basedir}/src/main/kotlin"/>
+                      <arg value="--config-resource"/>
+                      <arg value="onap-detekt-config.yml"/>
+                      <arg value="--filters"/>
+                      <arg value=".*/target/.*,.*/resources/.*"/>
+                      <arg value="--output"/>
+                      <arg value="${basedir}/target/reports"/>
+                      <arg value="--output-name"/>
+                      <arg value="detekt-report"/>
+                      <arg value="--baseline"/>
+                      <arg value="${basedir}/target/reports/baseline.xml"/>
+                    </java>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>io.gitlab.arturbosch.detekt</groupId>
+                <artifactId>detekt-cli</artifactId>
+                <version>1.0.0.RC7</version>
+              </dependency>
+              <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hv-collector-analysis</artifactId>
+                <version>${project.version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>arturbosch-code-analysis</id>
+      <name>arturbosch-code-analysis (for detekt)</name>
+      <url>https://dl.bintray.com/arturbosch/code-analysis/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>25.0-jre</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-stdlib-jdk8</artifactId>
+        <version>${kotlin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-reflect</artifactId>
+        <version>${kotlin.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.3.0-alpha4</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.8.0-beta1</version>
+      </dependency>
+      <dependency>
+        <groupId>io.projectreactor</groupId>
+        <artifactId>reactor-bom</artifactId>
+        <version>Bismuth-SR8</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>1.4</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.json</groupId>
+        <artifactId>javax.json-api</artifactId>
+        <version>1.1.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+        <version>1.1.2</version>
+      </dependency>
+
+      <!-- Test dependencies -->
+
+      <dependency>
+        <groupId>org.jetbrains.spek</groupId>
+        <artifactId>spek-api</artifactId>
+        <version>${spek.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.spek</groupId>
+        <artifactId>spek-junit-platform-engine</artifactId>
+        <version>${spek.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.9.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.nhaarman</groupId>
+        <artifactId>mockito-kotlin</artifactId>
+        <version>1.5.0</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>2.18.3</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-test</artifactId>
+        <version>${kotlin.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.projectreactor</groupId>
+        <artifactId>reactor-test</artifactId>
+        <version>3.1.7.RELEASE</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
+
+
