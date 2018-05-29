@@ -23,31 +23,60 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
+import java.nio.file.Paths
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
 object ArgBasedServerConfigurationTest : Spek({
-    val cut = ArgBasedServerConfiguration
+    lateinit var cut: ArgBasedServerConfiguration
     val configurationUrl = "http://test-address/test"
+    val pk = Paths.get("/", "etc", "ves", "pk.pem")
+    val cert = Paths.get("/", "etc", "ssl", "certs", "ca-bundle.crt")
+    val trustCert = Paths.get("/", "etc", "ves", "trusted.crt")
+
+    beforeEachTest {
+        cut = ArgBasedServerConfiguration()
+    }
 
     fun parse(vararg cmdLine: String) = cut.parse(cmdLine)
 
     given("all parameters are present in the long form") {
-        val result = parse("--listen-port", "6969", "--config-url", configurationUrl)
+        lateinit var result: ServerConfiguration
+
+        beforeEachTest {
+            result = parse("--listen-port", "6969",
+                    "--config-url", configurationUrl,
+                    "--private-key-file", pk.toFile().absolutePath,
+                    "--cert-file", cert.toFile().absolutePath,
+                    "--trust-cert-file", trustCert.toFile().absolutePath)
+        }
 
         it("should set proper port") {
             assertThat(result.port).isEqualTo(6969)
         }
 
+
         it("should set proper config url") {
             assertThat(result.configurationUrl).isEqualTo(configurationUrl)
         }
+
+        it("should set proper security configuration") {
+            assertThat(result.securityConfiguration).isEqualTo(
+                    SecurityConfiguration(pk, cert, trustCert)
+            )
+        }
     }
 
-    given("all parameters are present in the short form") {
-        val result = parse("-p", "666", "-c", configurationUrl)
+    given("some parameters are present in the short form") {
+        lateinit var result: ServerConfiguration
+
+        beforeEachTest {
+            result = parse("-p", "666", "-c", configurationUrl)
+        }
 
         it("should set proper port") {
             assertThat(result.port).isEqualTo(666)
@@ -59,7 +88,11 @@ object ArgBasedServerConfigurationTest : Spek({
     }
 
     given("all optional parameters are absent") {
-        val result = parse()
+        lateinit var result: ServerConfiguration
+
+        beforeEachTest {
+            result = parse()
+        }
 
         it("should set default port") {
             assertThat(result.port).isEqualTo(DefaultValues.PORT)

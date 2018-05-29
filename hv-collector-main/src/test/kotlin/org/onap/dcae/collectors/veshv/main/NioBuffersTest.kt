@@ -22,13 +22,14 @@ package org.onap.dcae.collectors.veshv.main
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.xdescribe
 import java.nio.ByteBuffer
 
-fun Int.toKibibytes(): Int = this * 1024
-fun Int.toMebibytes(): Int = this * 1024 * 1024
-
-
 object NioBuffersTest : Spek({
+
+    fun Int.toKibibytes(): Int = this * 1024
+    fun Int.toMebibytes(): Int = this * 1024 * 1024
+
     val BUFFER_SIZES = listOf(128.toKibibytes(), 512.toKibibytes(), 1.toMebibytes(), 2.toMebibytes())
     val NUMBER_OF_ITERATIONS = 100
 
@@ -53,7 +54,7 @@ object NioBuffersTest : Spek({
 
     for (singleBufferSize in BUFFER_SIZES) {
 
-        describe("$singleBufferSize bytes buffers") {
+        xdescribe("$singleBufferSize bytes buffers") {
             describe("direct buffers") {
 
                 val bb1 = ByteBuffer.allocateDirect(singleBufferSize)
