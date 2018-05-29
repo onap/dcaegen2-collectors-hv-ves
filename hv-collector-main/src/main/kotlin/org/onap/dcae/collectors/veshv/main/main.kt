@@ -35,7 +35,7 @@ private val logger = LoggerFactory.getLogger("main")
 
 fun main(args: Array<String>) {
     try {
-        val serverConfiguration = ArgBasedServerConfiguration.parse(args)
+        val serverConfiguration = ArgBasedServerConfiguration().parse(args)
 
         val collectorProvider = CollectorFactory(
                 resolveConfigurationProvider(serverConfiguration),

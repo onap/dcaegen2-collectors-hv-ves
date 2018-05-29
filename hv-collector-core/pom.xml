@@ -94,6 +94,12 @@
       <artifactId>reactor-kafka</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-tcnative-boringssl-static</artifactId>
+      <scope>runtime</scope>
+      <classifier>${os.detected.classifier}</classifier>
+    </dependency>
+    <dependency>
       <groupId>javax.json</groupId>
       <artifactId>javax.json-api</artifactId>
     </dependency>
