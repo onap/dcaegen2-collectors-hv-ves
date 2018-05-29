@@ -19,11 +19,26 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
+import org.onap.dcae.collectors.veshv.main.config.ArgBasedClientConfiguration
+import org.onap.dcae.collectors.veshv.main.impl.MessageFactory
+import org.onap.dcae.collectors.veshv.main.impl.VesHvClient
 import org.slf4j.LoggerFactory.getLogger
 
 
 private val logger = getLogger("Simulator :: main")
 
-fun main(args : Array<String>){
-    logger.info("Hello world")
+/**
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since June 2018
+ */
+fun main(args: Array<String>) = try {
+
+    val clientConfig = ArgBasedClientConfiguration.parse(args)
+    val messageFactory = MessageFactory()
+    val client = VesHvClient(clientConfig)
+    client.send(messageFactory.createMessageFlux(clientConfig.messagesAmount))
+} catch (e: Exception) {
+    logger.error(e.localizedMessage)
+    logger.debug("An error occurred when starting ves client", e)
 }
+
