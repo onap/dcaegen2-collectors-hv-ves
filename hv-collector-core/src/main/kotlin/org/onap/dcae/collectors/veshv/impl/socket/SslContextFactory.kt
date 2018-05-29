@@ -17,13 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
+package org.onap.dcae.collectors.veshv.impl.socket
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class ServerConfiguration(
-        val port: Int,
-        val configurationUrl: String,
-        val securityConfiguration: SecurityConfiguration)
+import io.netty.handler.ssl.ClientAuth
+import io.netty.handler.ssl.SslContext
+import io.netty.handler.ssl.SslContextBuilder
+import io.netty.handler.ssl.SslProvider
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+
+
+internal open class SslContextFactory {
+    fun createSslContext(secConfig: SecurityConfiguration): SslContext =
+            createSslContextWithConfiguredCerts(secConfig)
+                    .sslProvider(SslProvider.OPENSSL)
+                    .clientAuth(ClientAuth.REQUIRE)
+                    .build()
+
+    protected open fun createSslContextWithConfiguredCerts(secConfig: SecurityConfiguration): SslContextBuilder =
+            SslContextBuilder.forServer(secConfig.cert.toFile(), secConfig.privateKey.toFile())
+                    .trustManager(secConfig.trustedCert.toFile())
+
+}

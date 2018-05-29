@@ -19,11 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
+import java.nio.file.Path
+
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class ServerConfiguration(
-        val port: Int,
-        val configurationUrl: String,
-        val securityConfiguration: SecurityConfiguration)
+data class SecurityConfiguration(
+        val privateKey: Path,
+        val cert: Path,
+        val trustedCert: Path)

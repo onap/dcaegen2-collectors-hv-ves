@@ -22,12 +22,14 @@ package org.onap.dcae.collectors.veshv.factory
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
-import org.onap.dcae.collectors.veshv.impl.NettyTcpServer
+import org.onap.dcae.collectors.veshv.impl.socket.NettyTcpServer
+import org.onap.dcae.collectors.veshv.impl.socket.SslContextFactory
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
 object ServerFactory {
-    val createNettyTcpServer: (ServerConfiguration, CollectorProvider) -> Server = ::NettyTcpServer
+    fun createNettyTcpServer(serverConfiguration: ServerConfiguration, collectorProvider: CollectorProvider): Server =
+            NettyTcpServer(serverConfiguration, SslContextFactory(), collectorProvider)
 }

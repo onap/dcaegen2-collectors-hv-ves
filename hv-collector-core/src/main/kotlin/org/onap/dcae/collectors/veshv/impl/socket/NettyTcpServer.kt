@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl
+package org.onap.dcae.collectors.veshv.impl.socket
 
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
@@ -27,6 +27,7 @@ import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
 import reactor.ipc.netty.NettyInbound
 import reactor.ipc.netty.NettyOutbound
+import reactor.ipc.netty.options.ServerOptions
 import reactor.ipc.netty.tcp.TcpServer
 import java.util.function.BiFunction
 
@@ -34,18 +35,26 @@ import java.util.function.BiFunction
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class NettyTcpServer(val serverConfig: ServerConfiguration,
-                              val collectorProvider: CollectorProvider) : Server {
+internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
+                              private val sslContextFactory: SslContextFactory,
+                              private val collectorProvider: CollectorProvider) : Server {
 
     override fun start(): Mono<Void> {
         logger.info { "Listening on port ${serverConfig.port}" }
         return Mono.defer {
-            val nettyContext = TcpServer.create(serverConfig.port)
+            val nettyContext = TcpServer.builder()
+                    .options(this::configureServer)
+                    .build()
                     .start(BiFunction<NettyInbound, NettyOutbound, Publisher<Void>> { t, u ->
                         handleConnection(t, u)
                     })
             Mono.never<Void>().doFinally { _ -> nettyContext.shutdown() }
         }
+    }
+
+    private fun configureServer(opts: ServerOptions.Builder<*>) {
+        opts.port(serverConfig.port)
+        opts.sslContext(sslContextFactory.createSslContext(serverConfig.securityConfiguration))
     }
 
     private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> {
