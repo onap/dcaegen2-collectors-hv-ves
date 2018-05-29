@@ -45,6 +45,7 @@
     <module>hv-collector-utils</module>
     <module>hv-collector-coverage</module>
     <module>hv-collector-analysis</module>
+    <module>hv-collector-client-simulator</module>
   </modules>
 
   <properties>
