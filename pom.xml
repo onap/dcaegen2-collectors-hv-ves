@@ -65,6 +65,10 @@
     <failIfMissingUnitTests>true</failIfMissingUnitTests>
     <failIfMissingComponentTests>false</failIfMissingComponentTests>
     <skipAnalysis>true</skipAnalysis>
+
+    <skipDocker>true</skipDocker>
+    <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
+    <docker-image.namespace>onap</docker-image.namespace>
   </properties>
 
 
@@ -221,6 +225,42 @@
               <scope>runtime</scope>
             </dependency>
           </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.1</version>
+        </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.26.0</version>
+          <executions>
+            <execution>
+              <id>build-docker-image</id>
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>build</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <skip>${skipDocker}</skip>
+            <verbose>true</verbose>
+            <imagePullPolicy>IfNotPresent</imagePullPolicy>
+            <images>
+              <image>
+                <alias>${project.artifactId}</alias>
+                <name>${docker-image.namespace}/${docker-image.name}</name>
+                <build>
+                  <dockerFileDir>${project.basedir}</dockerFileDir>
+                  <tags>
+                    <tag>${project.version}</tag>
+                  </tags>
+                </build>
+              </image>
+            </images>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
