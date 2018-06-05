@@ -64,13 +64,14 @@
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>protobuf</artifactId>
+      <artifactId>hv-collector-utils</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>hv-collector-utils</artifactId>
+      <artifactId>hv-collector-domain</artifactId>
       <version>${project.parent.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>

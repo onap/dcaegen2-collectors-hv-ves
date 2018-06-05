@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.boundary
 
 import io.netty.buffer.ByteBuf
-import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 

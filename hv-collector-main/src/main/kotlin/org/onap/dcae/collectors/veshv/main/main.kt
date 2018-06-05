@@ -20,9 +20,9 @@
 package org.onap.dcae.collectors.veshv.main
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.domain.CollectorConfiguration
-import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
-import org.onap.dcae.collectors.veshv.domain.routing
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory

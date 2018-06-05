@@ -17,10 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
+package org.onap.dcae.collectors.veshv.model
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class CollectorConfiguration(val kafkaBootstrapServers: String, val routing: Routing)
+data class RoutedMessage(val topic: String, val partition: Int, val message: VesMessage)

@@ -1,7 +1,7 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.domain.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.ves.VesEventV5
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
@@ -46,7 +46,7 @@ internal class ConsulConfigurationProvider(private val url: String, private val 
 
         return CollectorConfiguration(
                 kafkaBootstrapServers = configuration.getString("kafkaBootstrapServers"),
-                routing = org.onap.dcae.collectors.veshv.domain.routing {
+                routing = org.onap.dcae.collectors.veshv.model.routing {
                     defineRoute {
                         fromDomain(VesEventV5.VesEvent.CommonEventHeader.Domain.forNumber(routing.getInt("fromDomain")))
                         toTopic(routing.getString("toTopic"))

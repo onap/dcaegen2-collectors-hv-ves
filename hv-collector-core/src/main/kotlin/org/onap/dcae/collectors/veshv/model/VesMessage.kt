@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
+package org.onap.dcae.collectors.veshv.model
 
 import io.netty.buffer.ByteBuf
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader

@@ -21,11 +21,9 @@ package org.onap.dcae.collectors.veshv.impl
 
 import com.google.protobuf.InvalidProtocolBufferException
 import io.netty.buffer.ByteBuf
-import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventV5.VesEvent
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
-import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>

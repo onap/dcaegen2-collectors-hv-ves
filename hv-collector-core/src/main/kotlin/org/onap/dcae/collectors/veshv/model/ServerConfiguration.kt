@@ -17,6 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
+package org.onap.dcae.collectors.veshv.model
 
-data class RoutedMessage(val topic: String, val partition: Int, val message: VesMessage)
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since May 2018
+ */
+data class ServerConfiguration(
+        val port: Int,
+        val configurationUrl: String,
+        val securityConfiguration: SecurityConfiguration)
