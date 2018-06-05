@@ -59,13 +59,7 @@ internal class VesHvCollector(
         return valid
     }
 
-    private fun findRoute(msg: VesMessage): Mono<RoutedMessage> {
-        val routedMessage = router.findDestination(msg)
-        return if (routedMessage == null)
-            Mono.empty()
-        else
-            Mono.just(routedMessage)
-    }
+    private fun findRoute(msg: VesMessage): Mono<RoutedMessage> = omitWhenNull(msg, router::findDestination)
 
     private fun releaseMemory(msg: VesMessage) {
         msg.rawMessage.release()
@@ -73,8 +67,7 @@ internal class VesHvCollector(
 
 
 
-    private fun <T>omitWhenNull(input: ByteBuf, mapper: (ByteBuf) -> T?): Mono<T> =
-            Mono.justOrEmpty(mapper(input))
+    private fun <T, V>omitWhenNull(input: T, mapper: (T) -> V?): Mono<V> = Mono.justOrEmpty(mapper(input))
 
     private fun <T>releaseWhenNull(input: ByteBuf, mapper: (ByteBuf) -> T?): Mono<T> {
         val result = mapper(input)
