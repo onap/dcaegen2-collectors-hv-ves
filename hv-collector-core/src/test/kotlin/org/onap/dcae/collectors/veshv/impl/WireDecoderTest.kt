@@ -57,7 +57,7 @@ internal object WireDecoderTest : Spek({
 
         given("input with too small payload size") {
             val input = WireFrame(
-                    payload = Unpooled.wrappedBuffer(byteArrayOf(1, 2 ,3)),
+                    payload = Unpooled.wrappedBuffer(byteArrayOf(1, 2, 3)),
                     mark = 0xFF,
                     majorVersion = 1,
                     minorVersion = 0,
@@ -70,7 +70,7 @@ internal object WireDecoderTest : Spek({
 
         given("input with too big payload size") {
             val input = WireFrame(
-                    payload = Unpooled.wrappedBuffer(byteArrayOf(1, 2 ,3)),
+                    payload = Unpooled.wrappedBuffer(byteArrayOf(1, 2, 3)),
                     mark = 0xFF,
                     majorVersion = 1,
                     minorVersion = 0,

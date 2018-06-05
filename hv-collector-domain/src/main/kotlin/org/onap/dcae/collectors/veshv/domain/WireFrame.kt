@@ -57,11 +57,11 @@ data class WireFrame(val payload: ByteBuf,
                      val majorVersion: Short,
                      val minorVersion: Short,
                      val payloadSize: Int) {
-    fun isValid(): Boolean {
-        return mark == FF_BYTE
-                && majorVersion == SUPPORTED_MAJOR_VERSION
-                && payload.readableBytes() == payloadSize
-    }
+
+    fun isValid(): Boolean =
+            mark == FF_BYTE
+                    && majorVersion == SUPPORTED_MAJOR_VERSION
+                    && payload.readableBytes() == payloadSize
 
     fun encode(allocator: ByteBufAllocator): ByteBuf {
         val bb = allocator.buffer(HEADER_SIZE + payload.readableBytes())

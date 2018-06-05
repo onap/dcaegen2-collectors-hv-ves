@@ -37,16 +37,16 @@
     <description>VES HighVolume Collector</description>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>hv-collector-core</module>
-        <module>hv-collector-main</module>
-        <module>hv-collector-ct</module>
-        <module>protobuf</module>
-        <module>hv-collector-utils</module>
-        <module>hv-collector-coverage</module>
-        <module>hv-collector-analysis</module>
-        <module>hv-collector-client-simulator</module>
-    </modules>
+  <modules>
+    <module>hv-collector-analysis</module>
+    <module>hv-collector-client-simulator</module>
+    <module>hv-collector-core</module>
+    <module>hv-collector-coverage</module>
+    <module>hv-collector-ct</module>
+    <module>hv-collector-domain</module>
+    <module>hv-collector-main</module>
+    <module>hv-collector-utils</module>
+  </modules>
 
     <properties>
         <kotlin.version>1.2.41</kotlin.version>

@@ -25,8 +25,8 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import java.nio.file.Paths
 
 /**

@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
-import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 
 internal class MessageValidator {

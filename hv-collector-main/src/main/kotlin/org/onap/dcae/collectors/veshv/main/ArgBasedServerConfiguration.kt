@@ -20,8 +20,8 @@
 package org.onap.dcae.collectors.veshv.main
 
 import org.apache.commons.cli.*
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.SecurityConfiguration
 import java.io.File
 import java.nio.file.Paths
 

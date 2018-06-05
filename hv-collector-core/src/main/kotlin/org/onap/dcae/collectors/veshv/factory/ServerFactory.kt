@@ -21,7 +21,7 @@ package org.onap.dcae.collectors.veshv.factory
 
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
-import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.impl.socket.NettyTcpServer
 import org.onap.dcae.collectors.veshv.impl.socket.SslContextFactory
 
