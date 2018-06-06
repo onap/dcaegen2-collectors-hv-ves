@@ -21,8 +21,10 @@ package org.onap.dcae.collectors.veshv.main
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.ServerConfiguration
 import java.nio.file.Paths
@@ -44,62 +46,80 @@ object ArgBasedServerConfigurationTest : Spek({
 
     fun parse(vararg cmdLine: String) = cut.parse(cmdLine)
 
-    given("all parameters are present in the long form") {
-        lateinit var result: ServerConfiguration
+    describe("parsing arguments") {
+        given("all parameters are present in the long form") {
+            lateinit var result: ServerConfiguration
 
-        beforeEachTest {
-            result = parse("--listen-port", "6969",
-                    "--config-url", configurationUrl,
-                    "--private-key-file", pk.toFile().absolutePath,
-                    "--cert-file", cert.toFile().absolutePath,
-                    "--trust-cert-file", trustCert.toFile().absolutePath)
+            beforeEachTest {
+                result = parse("--listen-port", "6969",
+                        "--config-url", configurationUrl,
+                        "--private-key-file", pk.toFile().absolutePath,
+                        "--cert-file", cert.toFile().absolutePath,
+                        "--trust-cert-file", trustCert.toFile().absolutePath)
+            }
+
+            it("should set proper port") {
+                assertThat(result.port).isEqualTo(6969)
+            }
+
+
+            it("should set proper config url") {
+                assertThat(result.configurationUrl).isEqualTo(configurationUrl)
+            }
+
+            it("should set proper security configuration") {
+                assertThat(result.securityConfiguration).isEqualTo(
+                        SecurityConfiguration(pk, cert, trustCert)
+                )
+            }
         }
 
-        it("should set proper port") {
-            assertThat(result.port).isEqualTo(6969)
+        given("some parameters are present in the short form") {
+            lateinit var result: ServerConfiguration
+
+            beforeEachTest {
+                result = parse("-p", "666", "-c", configurationUrl)
+            }
+
+            it("should set proper port") {
+                assertThat(result.port).isEqualTo(666)
+            }
+
+            it("should set proper config url") {
+                assertThat(result.configurationUrl).isEqualTo(configurationUrl)
+            }
         }
 
+        given("all optional parameters are absent") {
+            lateinit var result: ServerConfiguration
 
-        it("should set proper config url") {
-            assertThat(result.configurationUrl).isEqualTo(configurationUrl)
-        }
+            beforeEachTest {
+                result = parse()
+            }
 
-        it("should set proper security configuration") {
-            assertThat(result.securityConfiguration).isEqualTo(
-                    SecurityConfiguration(pk, cert, trustCert)
-            )
-        }
-    }
+            it("should set default port") {
+                assertThat(result.port).isEqualTo(DefaultValues.PORT)
+            }
 
-    given("some parameters are present in the short form") {
-        lateinit var result: ServerConfiguration
+            it("should set default config url") {
+                assertThat(result.configurationUrl).isEqualTo(DefaultValues.CONFIG_URL)
+            }
 
-        beforeEachTest {
-            result = parse("-p", "666", "-c", configurationUrl)
-        }
+            on("security config") {
+                val secConf = result.securityConfiguration
 
-        it("should set proper port") {
-            assertThat(result.port).isEqualTo(666)
-        }
+                it("should set default trust cert file") {
+                    assertThat(secConf.trustedCert.toString()).isEqualTo(DefaultValues.TRUST_CERT_FILE)
+                }
 
-        it("should set proper config url") {
-            assertThat(result.configurationUrl).isEqualTo(configurationUrl)
-        }
-    }
+                it("should set default server cert file") {
+                    assertThat(secConf.cert.toString()).isEqualTo(DefaultValues.CERT_FILE)
+                }
 
-    given("all optional parameters are absent") {
-        lateinit var result: ServerConfiguration
-
-        beforeEachTest {
-            result = parse()
-        }
-
-        it("should set default port") {
-            assertThat(result.port).isEqualTo(DefaultValues.PORT)
-        }
-
-        it("should set default config url") {
-            assertThat(result.configurationUrl).isEqualTo(DefaultValues.CONFIG_URL)
+                it("should set default private key file") {
+                    assertThat(secConf.privateKey.toString()).isEqualTo(DefaultValues.PRIVATE_KEY_FILE)
+                }
+            }
         }
     }
 })
