@@ -2,6 +2,8 @@ image: archive.docker-registry.eecloud.nsn-net.net/imp/matryoshka:latest
 
 stages:
   - build
+  - publish
+  - trigger-integration-tests
 
 build:
   stage: build
@@ -9,8 +11,16 @@ build:
     - mvn -e -T2 -Panalysis clean install
   artifacts:
     paths:
-    - hv-collector-coverage/target/site/jacoco-aggregate
-    - hv-collector-core/target/reports
-    - hv-collector-main/target/reports
-    - hv-collector-utils/target/reports
+      - hv-collector-coverage/target/site/jacoco-aggregate
+      - hv-collector-core/target/reports
+      - hv-collector-main/target/reports
+      - hv-collector-utils/target/reports
     
+publish:
+  stage: publish
+  only:
+    - master
+  script:
+    - docker login $DOCKER_REPO_ADDR -u $DOCKER_REPO_USER -p $DOCKER_REPO_PASS
+    - mvn -e -DskipTests -DskipAnalysis -Ddocker.registry="$DOCKER_REPO_ADDR" deploy
+    - "curl -X POST -F token=$INTEGRATION_TESTS_TRIGGER_TOKEN -F ref=master https://gitlabe1.ext.net.nokia.com/api/v4/projects/33403/trigger/pipeline"

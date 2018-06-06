@@ -94,6 +94,13 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <version>${kotlin.version}</version>
@@ -352,6 +359,13 @@
                                         <goal>build</goal>
                                     </goals>
                                 </execution>
+                                <execution>
+                                    <id>push-docker-image</id>
+                                    <phase>deploy</phase>
+                                    <goals>
+                                        <goal>push</goal>
+                                    </goals>
+                                </execution>
                             </executions>
                             <configuration>
                                 <verbose>true</verbose>
@@ -362,9 +376,6 @@
                                         <name>${docker-image.namespace}/${docker-image.name}</name>
                                         <build>
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
-                                            <tags>
-                                                <tag>${project.version}</tag>
-                                            </tags>
                                         </build>
                                     </image>
                                 </images>
