@@ -59,14 +59,15 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
 
     private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> {
         logger.debug("Got connection")
-        val pipe = collectorProvider().handleConnection(nettyInbound.receive())
 
-        val hello = nettyOutbound
+        val sendHello = nettyOutbound
                 .options { it.flushOnEach() }
                 .sendString(Mono.just("ONAP_VES_HV/0.1\n"))
                 .then()
 
-        return hello.then(pipe)
+        val handleIncomingMessages = collectorProvider().handleConnection(nettyInbound.receive())
+
+        return sendHello.then(handleIncomingMessages)
     }
 
     companion object {

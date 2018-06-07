@@ -28,6 +28,9 @@ import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import reactor.core.publisher.Flux
 import reactor.ipc.netty.http.client.HttpClient
@@ -41,6 +44,7 @@ import java.nio.ByteBuffer
  */
 object AdapterFactory {
     fun kafkaSink(): SinkProvider = KafkaSinkProvider()
+    fun loggingSink(): SinkProvider = LoggingSinkProvider()
 
     fun staticConfigurationProvider(config: CollectorConfiguration) =
             object : ConfigurationProvider {
@@ -58,8 +62,25 @@ object AdapterFactory {
         }
     }
 
+
+    private class LoggingSinkProvider : SinkProvider {
+        override fun invoke(config: CollectorConfiguration): Sink {
+            return object : Sink {
+                private val logger = Logger(LoggingSinkProvider::class)
+                override fun send(messages: Flux<RoutedMessage>): Flux<VesMessage> =
+                        messages
+                                .doOnNext { msg ->
+                                    logger.info { "Message routed to ${msg.topic}" }
+                                }
+                                .map { it.message }
+
+            }
+        }
+    }
+
     fun consulConfigurationProvider(url: String): ConfigurationProvider =
             ConsulConfigurationProvider(url, httpAdapter())
+
     fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
 }
 

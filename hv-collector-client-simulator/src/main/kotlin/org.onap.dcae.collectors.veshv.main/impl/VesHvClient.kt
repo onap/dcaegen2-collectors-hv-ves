@@ -19,9 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.main.impl
 
-import io.netty.buffer.ByteBufAllocator
+import io.netty.handler.ssl.ClientAuth
+import io.netty.handler.ssl.SslContext
+import io.netty.handler.ssl.SslContextBuilder
+import io.netty.handler.ssl.SslProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrame
 import org.onap.dcae.collectors.veshv.main.config.ClientConfiguration
+import org.onap.dcae.collectors.veshv.main.config.ClientSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
@@ -37,11 +41,16 @@ import java.util.function.BiFunction
  */
 class VesHvClient(configuration: ClientConfiguration) {
 
-    private val logger = Logger(VesHvClient::class)
-    private val client: TcpClient = TcpClient.create(configuration.vesHost, configuration.vesPort)
+    private val client: TcpClient = TcpClient.builder()
+            .options { opts ->
+                opts.host(configuration.vesHost)
+                        .port(configuration.vesPort)
+                        .sslContext(createSslContext(configuration.security))
+            }
+            .build()
 
     fun send(messages: Flux<WireFrame>) {
-        client.start(BiFunction { i, o -> handler(i, o, messages) })
+        client.startAndAwait(BiFunction { i, o -> handler(i, o, messages) })
     }
 
     // sending flux with multiple WireFrames not supported yet
@@ -54,8 +63,24 @@ class VesHvClient(configuration: ClientConfiguration) {
                 .asString(Charsets.UTF_8)
                 .subscribe { str -> logger.info("Server response: $str") }
 
+        val frames = messages
+                .doOnNext { logger.info { "About to send message with ${it.payloadSize} B of payload" } }
+                .map { it.encode(nettyOutbound.alloc()) }
+
         return nettyOutbound
                 .options { it.flushOnEach() }
-                .send(messages.map { it.encode(ByteBufAllocator.DEFAULT) })
+                .send(frames)
+    }
+
+    private fun createSslContext(config: ClientSecurityConfiguration): SslContext =
+            SslContextBuilder.forClient()
+                    .keyManager(config.cert.toFile(), config.privateKey.toFile())
+                    .trustManager(config.trustedCert.toFile())
+                    .sslProvider(SslProvider.OPENSSL)
+                    .clientAuth(ClientAuth.REQUIRE)
+                    .build()
+
+    companion object {
+        private val logger = Logger(VesHvClient::class)
     }
 }

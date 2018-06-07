@@ -24,6 +24,7 @@ import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -39,13 +40,23 @@ internal class VesHvCollector(
         private val sink: Sink) : Collector {
     override fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void> =
             dataStream
+                    .doOnNext(this::logIncomingMessage)
                     .flatMap(this::decodeWire)
+                    .doOnNext(this::logDecodedWireMessage)
                     .flatMap(this::decodeProtobuf)
                     .filter(this::validate)
                     .flatMap(this::findRoute)
                     .compose(sink::send)
                     .doOnNext(this::releaseMemory)
                     .then()
+
+    private fun logIncomingMessage(wire: ByteBuf) {
+        logger.debug { "Got message with total ${wire.readableBytes()} B"}
+    }
+
+    private fun logDecodedWireMessage(payload: ByteBuf) {
+        logger.debug { "Wire payload size: ${payload.readableBytes()} B"}
+    }
 
     private fun decodeWire(wire: ByteBuf) = omitWhenNull(wire, wireDecoder::decode)
 
@@ -65,8 +76,6 @@ internal class VesHvCollector(
         msg.rawMessage.release()
     }
 
-
-
     private fun <T, V>omitWhenNull(input: T, mapper: (T) -> V?): Mono<V> = Mono.justOrEmpty(mapper(input))
 
     private fun <T>releaseWhenNull(input: ByteBuf, mapper: (ByteBuf) -> T?): Mono<T> {
@@ -77,5 +86,9 @@ internal class VesHvCollector(
         } else {
             Mono.just(result)
         }
+    }
+
+    companion object {
+        val logger = Logger(VesHvCollector::class)
     }
 }

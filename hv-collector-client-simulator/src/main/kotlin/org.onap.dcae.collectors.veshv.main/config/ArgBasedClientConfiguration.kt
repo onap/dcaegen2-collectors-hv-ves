@@ -24,10 +24,15 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.HelpFormatter
+import java.io.File
+import java.nio.file.Paths
 
 
 internal object DefaultValues {
     const val MESSAGES_AMOUNT = 1
+    const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
+    const val CERT_FILE = "/etc/ves-hv/client.crt"
+    const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
 }
 
 /**
@@ -56,28 +61,66 @@ internal object ArgBasedClientConfiguration {
             .desc("Amount of messages to send")
             .build()
 
+    private val OPT_PK_FILE = Option.builder("k")
+            .longOpt("private-key-file")
+            .hasArg()
+            .desc("File with client private key in PEM format")
+            .build()
+
+    private val OPT_CERT_FILE = Option.builder("e")
+            .longOpt("cert-file")
+            .hasArg()
+            .desc("File with client certificate bundle")
+            .build()
+
+    private val OPT_TRUST_CERT_FILE = Option.builder("t")
+            .longOpt("trust-cert-file")
+            .hasArg()
+            .desc("File with trusted certificate bundle for trusting servers")
+            .build()
+
     private val options by lazy {
         val options = Options()
         options.addOption(OPT_VES_PORT)
         options.addOption(OPT_VES_HOST)
         options.addOption(OPT_MESSAGES_AMOUNT)
+        options.addOption(OPT_PK_FILE)
+        options.addOption(OPT_CERT_FILE)
+        options.addOption(OPT_TRUST_CERT_FILE)
         options
     }
 
     fun parse(args: Array<out String>): ClientConfiguration {
+
+
         val parser = DefaultParser()
 
         try {
-            parser.parse(options, args).run {
-                return ClientConfiguration(
-                        stringValue(OPT_VES_HOST),
-                        intValue(OPT_VES_PORT),
-                        intValueOrDefault(OPT_MESSAGES_AMOUNT, DefaultValues.MESSAGES_AMOUNT))
-            }
+            val cmdLine = parser.parse(options, args)
+            val host = cmdLine.stringValue(OPT_VES_HOST)
+            val port = cmdLine.intValue(OPT_VES_PORT)
+            val msgsAmount = cmdLine.intValueOrDefault(OPT_MESSAGES_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
+            return ClientConfiguration(
+                    host,
+                    port,
+                    parseSecurityConfig(cmdLine),
+                    msgsAmount)
         } catch (ex: Exception) {
             throw WrongArgumentException(ex)
         }
     }
+
+    private fun parseSecurityConfig(cmdLine: CommandLine): ClientSecurityConfiguration {
+        val pkFile = cmdLine.stringValue(OPT_PK_FILE, DefaultValues.PRIVATE_KEY_FILE)
+        val certFile = cmdLine.stringValue(OPT_CERT_FILE, DefaultValues.CERT_FILE)
+        val trustCertFile = cmdLine.stringValue(OPT_TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
+        return ClientSecurityConfiguration(
+                privateKey = stringPathToPath(pkFile),
+                cert = stringPathToPath(certFile),
+                trustedCert = stringPathToPath(trustCertFile))
+    }
+
+    private fun stringPathToPath(path: String) = Paths.get(File(path).toURI())
 
     private fun CommandLine.intValueOrDefault(option: Option, default: Int) =
             getOptionValue(option.opt)?.toInt() ?: default
@@ -88,12 +131,11 @@ internal object ArgBasedClientConfiguration {
     private fun CommandLine.stringValue(option: Option) =
             getOptionValue(option.opt)
 
+    private fun CommandLine.stringValue(option: Option, default: String) =
+            getOptionValue(option.opt) ?: default
+
 
     class WrongArgumentException(parent: Exception) : Exception(parent.message, parent) {
-        fun printMessage() {
-            println(message)
-        }
-
         fun printHelp(programName: String) {
             val formatter = HelpFormatter()
             formatter.printHelp(programName, options)

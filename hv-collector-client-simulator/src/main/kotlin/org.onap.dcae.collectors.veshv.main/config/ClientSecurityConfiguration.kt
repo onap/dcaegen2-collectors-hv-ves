@@ -17,31 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.main.config
 
-import org.onap.dcae.collectors.veshv.main.config.ArgBasedClientConfiguration
-import org.onap.dcae.collectors.veshv.main.impl.MessageFactory
-import org.onap.dcae.collectors.veshv.main.impl.VesHvClient
-import org.slf4j.LoggerFactory.getLogger
-
-
-private val logger = getLogger("Simulator :: main")
+import java.nio.file.Path
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-fun main(args: Array<String>) {
-    try {
-        val clientConfig = ArgBasedClientConfiguration.parse(args)
-        val messageFactory = MessageFactory()
-        val client = VesHvClient(clientConfig)
-        client.send(messageFactory.createMessageFlux(clientConfig.messagesAmount))
-    } catch (e: ArgBasedClientConfiguration.WrongArgumentException) {
-        e.printHelp("java org.onap.dcae.collectors.veshv.main.MainKt")
-    } catch (e: Exception) {
-        logger.error(e.localizedMessage)
-        logger.debug("An error occurred when starting ves client", e)
-    }
-}
-
+data class ClientSecurityConfiguration(
+        val privateKey: Path,
+        val cert: Path,
+        val trustedCert: Path)

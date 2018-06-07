@@ -86,7 +86,9 @@ data class WireFrame(val payload: ByteBuf,
             return WireFrame(payload, mark, majorVersion, minorVersion, payloadSize)
         }
 
-        private const val HEADER_SIZE = 3 + java.lang.Integer.BYTES
+        private const val HEADER_SIZE =
+                3 * java.lang.Byte.BYTES +
+                1 * java.lang.Integer.BYTES
         private const val FF_BYTE: Short = 0xFF
         private const val SUPPORTED_MAJOR_VERSION: Short = 1
     }
