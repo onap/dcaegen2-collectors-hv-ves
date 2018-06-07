@@ -20,47 +20,43 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import io.netty.buffer.ByteBuf
+import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.impl.wire.WireDecoder
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
 internal class VesHvCollector(
-        private val wireDecoder: WireDecoder,
+        private val wireDecoderSupplier: (ByteBufAllocator) -> WireDecoder,
         private val protobufDecoder: VesDecoder,
         private val validator: MessageValidator,
         private val router: Router,
         private val sink: Sink) : Collector {
-    override fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void> =
-            dataStream
-                    .doOnNext(this::logIncomingMessage)
-                    .flatMap(this::decodeWire)
-                    .doOnNext(this::logDecodedWireMessage)
-                    .flatMap(this::decodeProtobuf)
-                    .filter(this::validate)
-                    .flatMap(this::findRoute)
-                    .compose(sink::send)
-                    .doOnNext(this::releaseMemory)
-                    .then()
 
-    private fun logIncomingMessage(wire: ByteBuf) {
-        logger.debug { "Got message with total ${wire.readableBytes()} B"}
-    }
-
-    private fun logDecodedWireMessage(payload: ByteBuf) {
-        logger.debug { "Wire payload size: ${payload.readableBytes()} B"}
-    }
-
-    private fun decodeWire(wire: ByteBuf) = omitWhenNull(wire, wireDecoder::decode)
-
-    private fun decodeProtobuf(protobuf: ByteBuf) = releaseWhenNull(protobuf, protobufDecoder::decode)
+    override fun handleConnection(alloc: ByteBufAllocator, dataStream: Flux<ByteBuf>): Mono<Void> =
+            wireDecoderSupplier(alloc).let { wireDecoder ->
+                dataStream
+                        .concatMap(wireDecoder::decode)
+                        .filter(WireFrame::isValid)
+                        .map(WireFrame::payload)
+                        .map(protobufDecoder::decode)
+                        .filter(this::validate)
+                        .flatMap(this::findRoute)
+                        .compose(sink::send)
+                        .doOnNext(this::releaseMemory)
+                        .doOnTerminate { releaseBuffersMemory(wireDecoder) }
+                        .then()
+            }
 
     private fun validate(msg: VesMessage): Boolean {
         val valid = validator.isValid(msg)
@@ -73,20 +69,15 @@ internal class VesHvCollector(
     private fun findRoute(msg: VesMessage): Mono<RoutedMessage> = omitWhenNull(msg, router::findDestination)
 
     private fun releaseMemory(msg: VesMessage) {
+        logger.trace { "Releasing memory from ${msg.rawMessage}" }
         msg.rawMessage.release()
     }
 
-    private fun <T, V>omitWhenNull(input: T, mapper: (T) -> V?): Mono<V> = Mono.justOrEmpty(mapper(input))
-
-    private fun <T>releaseWhenNull(input: ByteBuf, mapper: (ByteBuf) -> T?): Mono<T> {
-        val result = mapper(input)
-        return if (result == null) {
-            input.release()
-            Mono.empty()
-        } else {
-            Mono.just(result)
-        }
+    private fun releaseBuffersMemory(wireDecoder: WireDecoder) {
+        wireDecoder.release()
     }
+
+    private fun <T, V> omitWhenNull(input: T, mapper: (T) -> V?): Mono<V> = Mono.justOrEmpty(mapper(input))
 
     companion object {
         val logger = Logger(VesHvCollector::class)

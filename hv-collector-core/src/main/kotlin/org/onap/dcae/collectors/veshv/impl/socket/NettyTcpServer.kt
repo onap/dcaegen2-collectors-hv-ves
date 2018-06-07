@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.socket
 
+import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
@@ -59,17 +60,18 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
 
     private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> {
         logger.debug("Got connection")
+        nettyOutbound.alloc()
 
         val sendHello = nettyOutbound
                 .options { it.flushOnEach() }
                 .sendString(Mono.just("ONAP_VES_HV/0.1\n"))
                 .then()
 
-        val handleIncomingMessages = collectorProvider().handleConnection(nettyInbound.receive())
+        val handleIncomingMessages = collectorProvider()
+                .handleConnection(nettyInbound.context().channel().alloc(), nettyInbound.receive().retain())
 
         return sendHello.then(handleIncomingMessages)
     }
-
     companion object {
         private val logger = Logger(NettyTcpServer::class)
     }

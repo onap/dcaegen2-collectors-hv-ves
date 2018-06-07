@@ -26,6 +26,17 @@ class Logger(val logger: org.slf4j.Logger) {
     constructor(clazz: KClass<out Any>) : this(LoggerFactory.getLogger(clazz.java))
 
     //
+    // TRACE
+    //
+
+    fun trace(messageProvider: () -> String) {
+        if (logger.isTraceEnabled) {
+            logger.trace(messageProvider())
+        }
+    }
+
+
+    //
     // DEBUG
     //
 

@@ -20,8 +20,10 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import com.google.protobuf.ByteString
+import com.google.protobuf.InvalidProtocolBufferException
 import io.netty.buffer.Unpooled.wrappedBuffer
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -60,8 +62,9 @@ internal object VesDecoderTest : Spek({
         on("invalid ves hv message bytes") {
             val rawMessageBytes = wrappedBuffer("ala ma kota".toByteArray(Charset.defaultCharset()))
 
-            it("should return empty result") {
-                assertThat(cut.decode(rawMessageBytes)).isNull()
+            it("should throw error") {
+                assertThatExceptionOfType(InvalidProtocolBufferException::class.java)
+                        .isThrownBy { cut.decode(rawMessageBytes) }
             }
         }
     }

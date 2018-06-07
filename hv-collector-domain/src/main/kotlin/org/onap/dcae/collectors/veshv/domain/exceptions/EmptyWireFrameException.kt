@@ -17,36 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl
-
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import reactor.test.test
+package org.onap.dcae.collectors.veshv.domain.exceptions
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-object MessageFactoryTest : Spek({
-    describe("message factory") {
-        val factory = MessageFactory()
-
-        given("no parameters") {
-            it("should return infinite flux") {
-                val limit = 1000L
-                factory.createMessageFlux().take(limit).test()
-                        .expectNextCount(limit)
-                        .verifyComplete()
-            }
-        }
-        given("messages amount") {
-            it("should return message flux of specified size") {
-                factory.createMessageFlux(5).test()
-                        .expectNextCount(5)
-                        .verifyComplete()
-            }
-        }
-    }
-})
+class EmptyWireFrameException : MissingWireFrameBytesException("wire frame was empty (readable bytes == 0)")

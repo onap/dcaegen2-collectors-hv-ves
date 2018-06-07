@@ -39,7 +39,8 @@ internal class MessageValidator {
 
     fun isValid(message: VesMessage): Boolean {
         val header = message.header
-        return allMandatoryFieldsArePresent(header) && header.domain == CommonEventHeader.Domain.HVRANMEAS
+        val ret = allMandatoryFieldsArePresent(header) && header.domain == CommonEventHeader.Domain.HVRANMEAS
+        return ret
     }
 
     private fun allMandatoryFieldsArePresent(header: CommonEventHeader) =

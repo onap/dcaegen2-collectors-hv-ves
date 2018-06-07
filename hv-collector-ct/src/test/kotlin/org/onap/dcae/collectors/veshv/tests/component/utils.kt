@@ -54,6 +54,10 @@ fun invalidVesMessage() = alocator.buffer().run {
 
 }
 
+fun garbageFrame() = alocator.buffer().run {
+    writeBytes("the meaning of life is &@)(*_!".toByteArray())
+}
+
 fun invalidWireFrame() = alocator.buffer().run {
     writeByte(0xFF)
     writeByte(1)
@@ -65,6 +69,7 @@ fun vesEvent(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toStr
                 .setCommonEventHeader(
                         CommonEventHeader.getDefaultInstance().toBuilder()
                                 .setVersion("1.0")
+                                .setEventName("xyz")
                                 .setEventId(id)
                                 .setDomain(domain)
                                 .setEventName("Sample event name")
@@ -76,6 +81,3 @@ fun vesEvent(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toStr
                                 .setSequence(1))
                 .setHvRanMeasFields(ByteString.EMPTY)
                 .build()
-
-
-

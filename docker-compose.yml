@@ -25,7 +25,7 @@ services:
     depends_on:
       - kafka
     volumes:
-      - /etc/ves-hv/:/etc/ves-hv/
+      - ./ssl/:/etc/ves-hv/
   xnf-simulator:
     build:
       context: hv-collector-client-simulator
@@ -33,4 +33,4 @@ services:
     depends_on:
       - hv-collector
     volumes:
-      - /etc/ves-hv/:/etc/ves-hv/
+      - ./ssl/:/etc/ves-hv/

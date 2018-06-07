@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
+import io.netty.buffer.Unpooled
 import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
@@ -29,6 +30,7 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientSecurityConfig
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.ipc.netty.NettyInbound
 import reactor.ipc.netty.NettyOutbound
 import reactor.ipc.netty.tcp.TcpClient
@@ -53,7 +55,6 @@ class VesHvClient(configuration: ClientConfiguration) {
         client.startAndAwait(BiFunction { i, o -> handler(i, o, messages) })
     }
 
-    // sending flux with multiple WireFrames not supported yet
     private fun handler(nettyInbound: NettyInbound,
                         nettyOutbound: NettyOutbound,
                         messages: Flux<WireFrame>): Publisher<Void> {
@@ -64,8 +65,8 @@ class VesHvClient(configuration: ClientConfiguration) {
                 .subscribe { str -> logger.info("Server response: $str") }
 
         val frames = messages
-                .doOnNext { logger.info { "About to send message with ${it.payloadSize} B of payload" } }
                 .map { it.encode(nettyOutbound.alloc()) }
+                .concatWith(Mono.just(Unpooled.EMPTY_BUFFER))
 
         return nettyOutbound
                 .options { it.flushOnEach() }

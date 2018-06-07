@@ -27,4 +27,4 @@ data class ClientConfiguration(
         val vesHost: String,
         val vesPort: Int,
         val security: ClientSecurityConfiguration,
-        val messagesAmount: Int)
+        val messagesAmount: Long)

@@ -19,28 +19,30 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters
 
-import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.serialization.ByteBufferSerializer
+import org.apache.kafka.common.serialization.StringSerializer
+import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import reactor.core.publisher.Flux
-import reactor.ipc.netty.http.client.HttpClient
+import org.onap.ves.VesEventV5
+import reactor.kafka.sender.KafkaSender
+import reactor.kafka.sender.SenderOptions
+import java.nio.ByteBuffer
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since June 2018
  */
-object AdapterFactory {
-    fun kafkaSink(): SinkProvider = KafkaSinkProvider()
-    fun loggingSink(): SinkProvider = LoggingSinkProvider()
+internal class KafkaSinkProvider : SinkProvider {
+    override fun invoke(config: CollectorConfiguration): Sink {
+        return KafkaSink(KafkaSender.create(constructSenderOptions(config)))
+    }
 
-    fun staticConfigurationProvider(config: CollectorConfiguration) =
-            object : ConfigurationProvider {
-                override fun invoke() = Flux.just(config)
-            }
+    private fun constructSenderOptions(config: CollectorConfiguration) =
+            SenderOptions.create<VesEventV5.VesEvent.CommonEventHeader, ByteBuffer>()
+                    .producerProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.kafkaBootstrapServers)
+                    .producerProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
+                    .producerProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteBufferSerializer::class.java)
 
-    fun consulConfigurationProvider(url: String): ConfigurationProvider =
-            ConsulConfigurationProvider(url, httpAdapter())
-
-    fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
 }
-

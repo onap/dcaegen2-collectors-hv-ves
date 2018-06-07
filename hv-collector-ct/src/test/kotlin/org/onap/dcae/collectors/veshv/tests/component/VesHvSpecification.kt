@@ -19,9 +19,12 @@
  */
 package org.onap.dcae.collectors.veshv.tests.component
 
+import com.google.protobuf.InvalidProtocolBufferException
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
+import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
+import org.onap.dcae.collectors.veshv.domain.exceptions.WireFrameDecodingException
 import org.onap.dcae.collectors.veshv.tests.fakes.HVRANMEAS_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
@@ -40,29 +43,76 @@ object VesHvSpecification : Spek({
                     .describedAs("should send all events")
                     .hasSize(2)
         }
+    }
 
-        system("should release memory for each incoming message") { sut ->
+    describe("Memory management") {
+
+        system("should release memory for each handled and dropped message") { sut ->
             sut.configurationProvider.updateConfiguration(basicConfiguration)
-            val msgWithInvalidDomain = vesMessage(Domain.OTHER)
-            val msgWithInvalidPayload = invalidVesMessage()
-            val msgWithInvalidFrame = invalidWireFrame()
             val validMessage = vesMessage(Domain.HVRANMEAS)
-            val refCntBeforeSending = msgWithInvalidDomain.refCnt()
+            val msgWithInvalidDomain = vesMessage(Domain.OTHER)
+            val msgWithInvalidFrame = invalidWireFrame()
+            val expectedRefCnt = 0
 
-            sut.handleConnection(msgWithInvalidDomain, msgWithInvalidPayload, msgWithInvalidFrame, validMessage)
+            val (handledEvents, exception) = sut.handleConnectionReturningError(
+                    validMessage, msgWithInvalidDomain, msgWithInvalidFrame)
 
-            assertThat(msgWithInvalidDomain.refCnt())
-                    .describedAs("message with invalid domain should be released")
-                    .isEqualTo(refCntBeforeSending)
-            assertThat(msgWithInvalidPayload.refCnt())
-                    .describedAs("message with invalid payload should be released")
-                    .isEqualTo(refCntBeforeSending)
-            assertThat(msgWithInvalidFrame.refCnt())
-                    .describedAs("message with invalid frame should be released")
-                    .isEqualTo(refCntBeforeSending)
+            assertThat(handledEvents).hasSize(1)
+            assertThat(exception).isNull()
+
             assertThat(validMessage.refCnt())
                     .describedAs("handled message should be released")
-                    .isEqualTo(refCntBeforeSending)
+                    .isEqualTo(expectedRefCnt)
+            assertThat(msgWithInvalidDomain.refCnt())
+                    .describedAs("message with invalid domain should be released")
+                    .isEqualTo(expectedRefCnt)
+            assertThat(msgWithInvalidFrame.refCnt())
+                    .describedAs("message with invalid frame should be released")
+                    .isEqualTo(expectedRefCnt)
+
+        }
+
+        system("should release memory for each message with invalid payload") { sut ->
+            sut.configurationProvider.updateConfiguration(basicConfiguration)
+            val validMessage = vesMessage(Domain.HVRANMEAS)
+            val msgWithInvalidPayload = invalidVesMessage()
+            val expectedRefCnt = 0
+
+            val (handledEvents, exception) = sut.handleConnectionReturningError(
+                    validMessage, msgWithInvalidPayload)
+
+            assertThat(handledEvents).hasSize(1)
+            assertThat(exception?.cause).isInstanceOf(InvalidProtocolBufferException::class.java)
+
+            assertThat(validMessage.refCnt())
+                    .describedAs("handled message should be released")
+                    .isEqualTo(expectedRefCnt)
+            assertThat(msgWithInvalidPayload.refCnt())
+                    .describedAs("message with invalid payload should be released")
+                    .isEqualTo(expectedRefCnt)
+
+        }
+
+        system("should release memory for each message with garbage frame") { sut ->
+            sut.configurationProvider.updateConfiguration(basicConfiguration)
+            val validMessage = vesMessage(Domain.HVRANMEAS)
+            val msgWithGarbageFrame = garbageFrame()
+            val expectedRefCnt = 0
+
+            val (handledEvents, exception) = sut.handleConnectionReturningError(
+                    validMessage, msgWithGarbageFrame)
+
+            assertThat(handledEvents).hasSize(1)
+            assertThat(exception?.cause)
+                    .isInstanceOf(InvalidWireFrameMarkerException::class.java)
+
+            assertThat(validMessage.refCnt())
+                    .describedAs("handled message should be released")
+                    .isEqualTo(expectedRefCnt)
+            assertThat(msgWithGarbageFrame.refCnt())
+                    .describedAs("message with garbage frame should be released")
+                    .isEqualTo(expectedRefCnt)
+
         }
     }
 

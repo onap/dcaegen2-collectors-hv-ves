@@ -38,8 +38,13 @@ class MessageFactory {
         const val DEFAULT_LAST_EPOCH: Long = 120034455
     }
 
-    fun createMessageFlux(amount: Int = 1): Flux<WireFrame> =
-            Mono.just(createMessage()).repeat(amount.toLong())
+    fun createMessageFlux(amount: Long = -1): Flux<WireFrame> =
+            Mono.fromCallable(this::createMessage).let {
+                if (amount < 0)
+                    it.repeat()
+                else
+                    it.repeat(amount)
+            }
 
 
     private fun createMessage(): WireFrame {
@@ -57,14 +62,7 @@ class MessageFactory {
                 .build()
 
         val payload = vesMessageBytes(commonHeader)
-        return WireFrame(
-                payload = payload,
-                mark = 0xFF,
-                majorVersion = 1,
-                minorVersion = 2,
-                payloadSize = payload.readableBytes())
-
-
+        return WireFrame(payload)
     }
 
     private fun vesMessageBytes(commonHeader: VesEventV5.VesEvent.CommonEventHeader): ByteBuf {

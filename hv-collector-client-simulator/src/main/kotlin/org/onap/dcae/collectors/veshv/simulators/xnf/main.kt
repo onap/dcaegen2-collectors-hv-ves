@@ -36,12 +36,14 @@ fun main(args: Array<String>) {
         val clientConfig = ArgBasedClientConfiguration.parse(args)
         val messageFactory = MessageFactory()
         val client = VesHvClient(clientConfig)
-        client.send(messageFactory.createMessageFlux(clientConfig.messagesAmount))
+            client.send(messageFactory.createMessageFlux(clientConfig.messagesAmount))
     } catch (e: ArgBasedClientConfiguration.WrongArgumentException) {
         e.printHelp("java org.onap.dcae.collectors.veshv.main.MainKt")
+        System.exit(1)
     } catch (e: Exception) {
         logger.error(e.localizedMessage)
         logger.debug("An error occurred when starting ves client", e)
+        System.exit(2)
     }
 }
 

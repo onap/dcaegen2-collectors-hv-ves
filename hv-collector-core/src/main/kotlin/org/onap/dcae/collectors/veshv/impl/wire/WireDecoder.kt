@@ -17,21 +17,40 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl
+package org.onap.dcae.collectors.veshv.impl.wire
 
 import io.netty.buffer.ByteBuf
-import org.onap.dcae.collectors.veshv.model.VesMessage
+import io.netty.buffer.ByteBufAllocator
+import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.impl.VesHvCollector
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.ves.VesEventV5.VesEvent
+import reactor.core.publisher.Flux
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class VesDecoder {
+internal class WireDecoder(alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
+    private val streamBuffer = alloc.compositeBuffer()
 
-    fun decode(bb: ByteBuf): VesMessage {
-        val decodedHeader = VesEvent.parseFrom(bb.nioBuffer()).commonEventHeader
-        return VesMessage(decodedHeader, bb)
+    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = StreamBufferEmitter.createFlux(streamBuffer, byteBuf)
+            .doOnSubscribe { logIncomingMessage(byteBuf) }
+            .doOnNext(this::logDecodedWireMessage)
+
+    fun release() {
+        streamBuffer.release()
+    }
+
+
+    private fun logIncomingMessage(wire: ByteBuf) {
+        logger.trace { "Got message with total size of ${wire.readableBytes()} B" }
+    }
+
+    private fun logDecodedWireMessage(wire: WireFrame) {
+        logger.trace { "Wire payload size: ${wire.payloadSize} B." }
+    }
+
+    companion object {
+        val logger = Logger(VesHvCollector::class)
     }
 }

@@ -28,7 +28,7 @@ import org.onap.dcae.collectors.veshv.impl.MessageValidator
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
-import org.onap.dcae.collectors.veshv.impl.WireDecoder
+import org.onap.dcae.collectors.veshv.impl.wire.WireDecoder
 import reactor.core.publisher.Flux
 import java.util.concurrent.atomic.AtomicReference
 
@@ -48,7 +48,7 @@ class CollectorFactory(val configuration: ConfigurationProvider, val sinkProvide
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
         return VesHvCollector(
-                WireDecoder(),
+                { WireDecoder(it) },
                 VesDecoder(),
                 MessageValidator(),
                 Router(config.routing),

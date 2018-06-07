@@ -28,7 +28,7 @@ import java.io.File
 import java.nio.file.Paths
 
 internal object DefaultValues {
-    const val MESSAGES_AMOUNT = 1
+    const val MESSAGES_AMOUNT = -1L
     const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
     const val CERT_FILE = "/etc/ves-hv/client.crt"
     const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
@@ -98,7 +98,7 @@ internal object ArgBasedClientConfiguration {
             val cmdLine = parser.parse(options, args)
             val host = cmdLine.stringValue(OPT_VES_HOST)
             val port = cmdLine.intValue(OPT_VES_PORT)
-            val msgsAmount = cmdLine.intValueOrDefault(OPT_MESSAGES_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
+            val msgsAmount = cmdLine.longValueOrDefault(OPT_MESSAGES_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
             return ClientConfiguration(
                     host,
                     port,
@@ -121,8 +121,9 @@ internal object ArgBasedClientConfiguration {
 
     private fun stringPathToPath(path: String) = Paths.get(File(path).toURI())
 
-    private fun CommandLine.intValueOrDefault(option: Option, default: Int) =
-            getOptionValue(option.opt)?.toInt() ?: default
+
+    private fun CommandLine.longValueOrDefault(option: Option, default: Long) =
+            getOptionValue(option.opt)?.toLong() ?: default
 
     private fun CommandLine.intValue(option: Option) =
             getOptionValue(option.opt).toInt()

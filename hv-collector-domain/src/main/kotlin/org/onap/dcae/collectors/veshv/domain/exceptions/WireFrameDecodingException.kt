@@ -17,28 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl
-
-import io.netty.buffer.ByteBuf
-import org.onap.dcae.collectors.veshv.domain.WireFrame
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
+package org.onap.dcae.collectors.veshv.domain.exceptions
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since June 2018
  */
-internal class WireDecoder {
-    fun decode(byteBuf: ByteBuf): ByteBuf? =
-            try {
-                WireFrame.decode(byteBuf)
-                        .takeIf { it.isValid() }
-                        .let { it?.payload }
-            } catch (ex: IndexOutOfBoundsException) {
-                logger.debug { "Wire protocol frame could not be decoded - input is too small" }
-                null
-            }
-
-    companion object {
-        private val logger = Logger(WireDecoder::class)
-    }
-}
+open class WireFrameDecodingException(msg: String) : Exception(msg)

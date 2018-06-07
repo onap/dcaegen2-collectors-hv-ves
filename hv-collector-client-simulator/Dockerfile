@@ -6,7 +6,7 @@ LABEL license.url="http://www.apache.org/licenses/LICENSE-2.0"
 LABEL maintainer="Nokia Wroclaw ONAP Team"
 
 WORKDIR /opt/ves-hv-client-simulator
-ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.main.MainKt"]
+ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.simulators.xnf.MainKt"]
 CMD ["--ves-host", "hv-collector", "--ves-port", "6061"]
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./
