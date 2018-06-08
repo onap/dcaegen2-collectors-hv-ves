@@ -24,7 +24,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
-import org.onap.dcae.collectors.veshv.domain.exceptions.WireFrameDecodingException
 import org.onap.dcae.collectors.veshv.tests.fakes.HVRANMEAS_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
@@ -125,7 +124,7 @@ object VesHvSpecification : Spek({
 
             val msg = messages[0]
             assertThat(msg.topic).describedAs("routed message topic").isEqualTo(HVRANMEAS_TOPIC)
-            assertThat(msg.partition).describedAs("routed message partition").isEqualTo(1)
+            assertThat(msg.partition).describedAs("routed message partition").isEqualTo(0)
         }
 
         system("should drop message if route was not found") { sut ->

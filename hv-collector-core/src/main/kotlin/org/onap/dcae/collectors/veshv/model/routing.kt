@@ -73,7 +73,7 @@ class RouteBuilder {
         this.targetTopic = targetTopic
     }
 
-    fun withFixedPartitioning(num: Int = 1) {
+    fun withFixedPartitioning(num: Int = 0) {
         partitioning = { _ -> num }
     }
 

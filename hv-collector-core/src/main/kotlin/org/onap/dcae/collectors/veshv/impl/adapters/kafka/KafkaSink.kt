@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
+package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
@@ -28,13 +28,12 @@ import reactor.core.publisher.Flux
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord
 import reactor.kafka.sender.SenderResult
-import java.nio.ByteBuffer
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, ByteBuffer>) : Sink {
+internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, VesMessage>) : Sink {
 
     override fun send(messages: Flux<RoutedMessage>): Flux<VesMessage> {
         val records = messages.map(this::vesToKafkaRecord)
@@ -44,13 +43,13 @@ internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, Byte
                 .map { it.correlationMetadata() }
     }
 
-    private fun vesToKafkaRecord(msg: RoutedMessage): SenderRecord<CommonEventHeader, ByteBuffer, VesMessage> {
+    private fun vesToKafkaRecord(msg: RoutedMessage): SenderRecord<CommonEventHeader, VesMessage, VesMessage> {
         return SenderRecord.create(
                 msg.topic,
                 msg.partition,
                 System.currentTimeMillis(),
                 msg.message.header,
-                msg.message.rawMessage.nioBuffer(),
+                msg.message,
                 msg.message)
     }
 

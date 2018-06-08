@@ -21,13 +21,14 @@ package org.onap.dcae.collectors.veshv.impl
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.InvalidProtocolBufferException
-import io.netty.buffer.Unpooled.wrappedBuffer
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.domain.ByteData
+import org.onap.dcae.collectors.veshv.domain.toByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
@@ -45,7 +46,7 @@ internal object VesDecoderTest : Spek({
                     .setCommonEventHeader(commonHeader)
                     .setHvRanMeasFields(ByteString.copyFromUtf8("highvolume measurements"))
                     .build()
-            val rawMessageBytes = wrappedBuffer(msg.toByteArray())
+            val rawMessageBytes = msg.toByteData()
 
 
             it("should decode only header and pass it on along with raw message") {
@@ -60,7 +61,7 @@ internal object VesDecoderTest : Spek({
         }
 
         on("invalid ves hv message bytes") {
-            val rawMessageBytes = wrappedBuffer("ala ma kota".toByteArray(Charset.defaultCharset()))
+            val rawMessageBytes = ByteData("ala ma kota".toByteArray(Charset.defaultCharset()))
 
             it("should throw error") {
                 assertThatExceptionOfType(InvalidProtocolBufferException::class.java)

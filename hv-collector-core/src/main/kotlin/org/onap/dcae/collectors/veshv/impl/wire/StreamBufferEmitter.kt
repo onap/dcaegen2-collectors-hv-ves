@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.impl.wire
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.CompositeByteBuf
 import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.FluxSink
@@ -33,6 +34,7 @@ import java.util.function.Consumer
  * @since May 2018
  */
 internal class StreamBufferEmitter(
+        private val decoder: WireFrameDecoder,
         private val streamBuffer: CompositeByteBuf,
         private val newFrame: ByteBuf)
     : Consumer<FluxSink<WireFrame>> {
@@ -58,15 +60,15 @@ internal class StreamBufferEmitter(
                     streamBuffer.discardReadComponents()
                 }
                 sink.onRequest { requestedFrameCount ->
-                    WireFrameSink(streamBuffer, sink, requestedFrameCount).handleSubscriber()
+                    WireFrameSink(decoder, streamBuffer, sink, requestedFrameCount).handleSubscriber()
                 }
             }
         }
     }
 
     companion object {
-        fun createFlux(streamBuffer: CompositeByteBuf, newFrame: ByteBuf): Flux<WireFrame> =
-                Flux.create(StreamBufferEmitter(streamBuffer, newFrame))
+        fun createFlux(decoder: WireFrameDecoder, streamBuffer: CompositeByteBuf, newFrame: ByteBuf): Flux<WireFrame> =
+                Flux.create(StreamBufferEmitter(decoder, streamBuffer, newFrame))
 
         private const val INCREASE_WRITER_INDEX = true
         private val logger = Logger(StreamBufferEmitter::class)

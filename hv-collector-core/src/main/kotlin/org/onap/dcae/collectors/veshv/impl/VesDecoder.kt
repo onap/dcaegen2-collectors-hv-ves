@@ -19,9 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
-import io.netty.buffer.ByteBuf
+import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventV5.VesEvent
 
 /**
@@ -30,8 +29,8 @@ import org.onap.ves.VesEventV5.VesEvent
  */
 internal class VesDecoder {
 
-    fun decode(bb: ByteBuf): VesMessage {
-        val decodedHeader = VesEvent.parseFrom(bb.nioBuffer()).commonEventHeader
-        return VesMessage(decodedHeader, bb)
+    fun decode(bytes: ByteData): VesMessage {
+        val decodedHeader = VesEvent.parseFrom(bytes.unsafeAsArray()).commonEventHeader
+        return VesMessage(decodedHeader, bytes)
     }
 }

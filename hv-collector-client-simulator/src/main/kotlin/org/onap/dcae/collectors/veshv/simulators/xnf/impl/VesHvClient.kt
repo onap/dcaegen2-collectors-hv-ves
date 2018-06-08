@@ -25,6 +25,7 @@ import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.SslProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -64,8 +65,10 @@ class VesHvClient(configuration: ClientConfiguration) {
                 .asString(Charsets.UTF_8)
                 .subscribe { str -> logger.info("Server response: $str") }
 
+        val encoder = WireFrameEncoder(nettyOutbound.alloc())
+
         val frames = messages
-                .map { it.encode(nettyOutbound.alloc()) }
+                .map(encoder::encode)
                 .concatWith(Mono.just(Unpooled.EMPTY_BUFFER))
 
         return nettyOutbound

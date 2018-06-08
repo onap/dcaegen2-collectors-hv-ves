@@ -20,13 +20,13 @@
 package org.onap.dcae.collectors.veshv.main
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.main.ArgBasedServerConfiguration.WrongArgumentException
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
@@ -39,7 +39,7 @@ fun main(args: Array<String>) {
 
         val collectorProvider = CollectorFactory(
                 resolveConfigurationProvider(serverConfiguration),
-                AdapterFactory.loggingSink()
+                AdapterFactory.kafkaSink()
         ).createVesHvCollectorProvider()
         ServerFactory.createNettyTcpServer(serverConfiguration, collectorProvider).start().block()
     } catch (ex: WrongArgumentException) {
@@ -55,7 +55,7 @@ private fun resolveConfigurationProvider(serverConfiguration: ServerConfiguratio
     if (serverConfiguration.configurationUrl.isEmpty()) {
         logger.info("Configuration url not specified - using default config")
         val sampleConfig = CollectorConfiguration(
-                kafkaBootstrapServers = "dmaap.cluster.local:9969",
+                kafkaBootstrapServers = "kafka:9092",
                 routing = routing {
                     defineRoute {
                         fromDomain(Domain.HVRANMEAS)

@@ -20,8 +20,6 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import com.google.protobuf.ByteString
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.Unpooled
 import org.onap.dcae.collectors.veshv.domain.WireFrame
 import org.onap.ves.VesEventV5
 import reactor.core.publisher.Flux
@@ -65,12 +63,12 @@ class MessageFactory {
         return WireFrame(payload)
     }
 
-    private fun vesMessageBytes(commonHeader: VesEventV5.VesEvent.CommonEventHeader): ByteBuf {
+    private fun vesMessageBytes(commonHeader: VesEventV5.VesEvent.CommonEventHeader): ByteArray {
         val msg = VesEventV5.VesEvent.newBuilder()
                 .setCommonEventHeader(commonHeader)
                 .setHvRanMeasFields(ByteString.copyFromUtf8("high volume data"))
                 .build()
 
-        return Unpooled.wrappedBuffer(msg.toByteArray())
+        return msg.toByteArray()
     }
 }

@@ -20,27 +20,29 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import com.google.protobuf.ByteString
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.Unpooled
-import io.netty.buffer.Unpooled.wrappedBuffer
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.domain.ByteData
+import org.onap.dcae.collectors.veshv.domain.toByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent
-import org.assertj.core.api.Assertions.assertThat
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.*
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Priority
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.getDefaultInstance
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.newBuilder
 
 internal object MessageValidatorTest : Spek({
 
-    fun vesMessageBytes(commonHeader: CommonEventHeader): ByteBuf {
+    fun vesMessageBytes(commonHeader: CommonEventHeader): ByteData {
         val msg = VesEvent.newBuilder()
                 .setCommonEventHeader(commonHeader)
                 .setHvRanMeasFields(ByteString.copyFromUtf8("high volume data"))
                 .build()
-        return wrappedBuffer(msg.toByteArray())
+        return msg.toByteData()
     }
 
     given("Message validator") {
@@ -79,7 +81,7 @@ internal object MessageValidatorTest : Spek({
         }
 
         on("ves hv message bytes") {
-            val vesMessage = VesMessage(getDefaultInstance(), Unpooled.EMPTY_BUFFER)
+            val vesMessage = VesMessage(getDefaultInstance(), ByteData.EMPTY)
             it("should not accept message with default header") {
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
             }
@@ -97,7 +99,7 @@ internal object MessageValidatorTest : Spek({
                     .setCommonEventHeader(commonHeader)
                     .setHvRanMeasFields(ByteString.copyFromUtf8("high volume data !!!"))
                     .build()
-            val rawMessageBytes = wrappedBuffer(msg.toByteArray())
+            val rawMessageBytes = msg.toByteData()
 
             it("should not accept not fully initialized message header ") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)

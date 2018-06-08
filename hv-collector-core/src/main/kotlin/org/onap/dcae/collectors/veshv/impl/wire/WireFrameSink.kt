@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.impl.wire
 
 import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.domain.exceptions.MissingWireFrameBytesException
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.FluxSink
@@ -30,6 +31,7 @@ import reactor.core.publisher.FluxSink
  * @since May 2018
  */
 internal class WireFrameSink(
+        private val decoder: WireFrameDecoder,
         private val streamBuffer: ByteBuf,
         private val sink: FluxSink<WireFrame>,
         private val requestedFrameCount: Long) {
@@ -80,7 +82,7 @@ internal class WireFrameSink(
 
     private fun decodeFirstFrameFromBuffer(): WireFrame? =
             try {
-                WireFrame.decodeFirst(streamBuffer)
+                decoder.decodeFirst(streamBuffer)
             } catch (ex: MissingWireFrameBytesException) {
                 logger.debug { "${ex.message} - waiting for more data" }
                 null

@@ -23,12 +23,13 @@ import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.impl.MessageValidator
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
-import org.onap.dcae.collectors.veshv.impl.wire.WireDecoder
+import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import reactor.core.publisher.Flux
 import java.util.concurrent.atomic.AtomicReference
 
@@ -36,7 +37,8 @@ import java.util.concurrent.atomic.AtomicReference
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class CollectorFactory(val configuration: ConfigurationProvider, val sinkProvider: SinkProvider) {
+class CollectorFactory(val configuration: ConfigurationProvider,
+                       private val sinkProvider: SinkProvider) {
     fun createVesHvCollectorProvider(): CollectorProvider {
         val collector: AtomicReference<Collector> = AtomicReference()
         createVesHvCollector().subscribe(collector::set)
@@ -48,7 +50,7 @@ class CollectorFactory(val configuration: ConfigurationProvider, val sinkProvide
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
         return VesHvCollector(
-                { WireDecoder(it) },
+                { alloc -> WireChunkDecoder(WireFrameDecoder(), alloc) },
                 VesDecoder(),
                 MessageValidator(),
                 Router(config.routing),

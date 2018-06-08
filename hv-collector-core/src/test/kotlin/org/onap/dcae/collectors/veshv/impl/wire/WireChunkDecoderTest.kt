@@ -28,6 +28,8 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
+import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
 import reactor.test.test
 
@@ -35,13 +37,17 @@ import reactor.test.test
  * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
  * @since May 2018
  */
-internal object WireDecoderTest : Spek({
+internal object WireChunkDecoderTest : Spek({
     val alloc = UnpooledByteBufAllocator.DEFAULT
     val samplePayload = "konstantynopolitanczykowianeczka".toByteArray()
     val anotherPayload = "ala ma kota a kot ma ale".toByteArray()
 
-    fun WireDecoder.decode(frame: WireFrame) = decode(frame.encode(alloc))
+    val encoder = WireFrameEncoder(alloc)
+    
+    fun WireChunkDecoder.decode(frame: WireFrame) = decode(encoder.encode(frame))
 
+    fun createInstance() = WireChunkDecoder(WireFrameDecoder(), alloc)
+    
     fun verifyMemoryReleased(vararg byteBuffers: ByteBuf) {
         for (bb in byteBuffers) {
             assertThat(bb.refCnt())
@@ -63,7 +69,7 @@ internal object WireDecoderTest : Spek({
             val input = Unpooled.EMPTY_BUFFER
 
             it("should yield empty result") {
-                WireDecoder().decode(input).test().verifyComplete()
+                createInstance().decode(input).test().verifyComplete()
             }
         }
 
@@ -71,7 +77,7 @@ internal object WireDecoderTest : Spek({
             val input = Unpooled.wrappedBuffer(byteArrayOf(0x00)).readerIndex(1)
 
             it("should yield empty result") {
-                WireDecoder().decode(input).test().verifyComplete()
+                createInstance().decode(input).test().verifyComplete()
             }
 
             it("should release memory") {
@@ -83,7 +89,7 @@ internal object WireDecoderTest : Spek({
             val input = Unpooled.wrappedBuffer(samplePayload)
 
             it("should yield error") {
-                WireDecoder().decode(input).test()
+                createInstance().decode(input).test()
                         .verifyError(InvalidWireFrameMarkerException::class.java)
             }
 
@@ -93,10 +99,10 @@ internal object WireDecoderTest : Spek({
         }
 
         given("valid input") {
-            val input = WireFrame(Unpooled.wrappedBuffer(samplePayload))
+            val input = WireFrame(samplePayload)
 
             it("should yield decoded input frame") {
-                WireDecoder().decode(input).test()
+                createInstance().decode(input).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
             }
@@ -104,11 +110,11 @@ internal object WireDecoderTest : Spek({
 
         given("valid input with part of next frame") {
             val input = Unpooled.buffer()
-                    .writeBytes(WireFrame(Unpooled.wrappedBuffer(samplePayload)).encode(alloc))
-                    .writeBytes(WireFrame(Unpooled.wrappedBuffer(samplePayload)).encode(alloc).slice(0, 3))
+                    .writeBytes(encoder.encode(WireFrame(samplePayload)))
+                    .writeBytes(encoder.encode(WireFrame(samplePayload)).slice(0, 3))
 
             it("should yield decoded input frame") {
-                WireDecoder().decode(input).test()
+                createInstance().decode(input).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
             }
@@ -120,11 +126,11 @@ internal object WireDecoderTest : Spek({
 
         given("valid input with garbage after it") {
             val input = Unpooled.buffer()
-                    .writeBytes(WireFrame(Unpooled.wrappedBuffer(samplePayload)).encode(alloc))
+                    .writeBytes(encoder.encode(WireFrame(samplePayload)))
                     .writeBytes(Unpooled.wrappedBuffer(samplePayload))
 
             it("should yield decoded input frame and error") {
-                WireDecoder().decode(input).test()
+                createInstance().decode(input).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyError(InvalidWireFrameMarkerException::class.java)
             }
@@ -135,11 +141,11 @@ internal object WireDecoderTest : Spek({
         }
 
         given("two inputs containing two separate messages") {
-            val input1 = WireFrame(Unpooled.wrappedBuffer(samplePayload)).encode(alloc)
-            val input2 = WireFrame(Unpooled.wrappedBuffer(anotherPayload)).encode(alloc)
+            val input1 = encoder.encode(WireFrame(samplePayload))
+            val input2 = encoder.encode(WireFrame(anotherPayload))
 
             it("should yield decoded input frames") {
-                val cut = WireDecoder()
+                val cut = createInstance()
                 cut.decode(input1).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
@@ -154,16 +160,12 @@ internal object WireDecoderTest : Spek({
         }
 
         given("1st input containing 1st frame and 2nd input containing garbage") {
-            val input1 = WireFrame(Unpooled.wrappedBuffer(samplePayload)).encode(alloc)
+            val input1 = encoder.encode(WireFrame(samplePayload))
             val input2 = Unpooled.wrappedBuffer(anotherPayload)
 
             it("should yield decoded input frames") {
-                val cut = WireDecoder()
+                val cut = createInstance()
                 cut.decode(input1)
-                        .doOnNext {
-                            // releasing retained payload
-                            it.payload.release()
-                        }
                         .test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
@@ -182,8 +184,8 @@ internal object WireDecoderTest : Spek({
 
 
         given("1st input containing 1st frame + part of 2nd frame and 2nd input containing rest of 2nd frame") {
-            val frame1 = WireFrame(Unpooled.wrappedBuffer(samplePayload)).encode(alloc)
-            val frame2 = WireFrame(Unpooled.wrappedBuffer(anotherPayload)).encode(alloc)
+            val frame1 = encoder.encode(WireFrame(samplePayload))
+            val frame2 = encoder.encode(WireFrame(anotherPayload))
 
             val input1 = Unpooled.buffer()
                     .writeBytes(frame1)
@@ -191,7 +193,7 @@ internal object WireDecoderTest : Spek({
             val input2 = Unpooled.buffer().writeBytes(frame2)
 
             it("should yield decoded input frames") {
-                val cut = WireDecoder()
+                val cut = createInstance()
                 cut.decode(input1).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
@@ -206,8 +208,8 @@ internal object WireDecoderTest : Spek({
         }
 
         given("1st input containing part of 1st frame and 2nd input containing rest of 1st + 2nd frame") {
-            val frame1 = WireFrame(Unpooled.wrappedBuffer(samplePayload)).encode(alloc)
-            val frame2 = WireFrame(Unpooled.wrappedBuffer(anotherPayload)).encode(alloc)
+            val frame1 = encoder.encode(WireFrame(samplePayload))
+            val frame2 = encoder.encode(WireFrame(anotherPayload))
 
             val input1 = Unpooled.buffer()
                     .writeBytes(frame1, 5)
@@ -216,7 +218,7 @@ internal object WireDecoderTest : Spek({
                     .writeBytes(frame2)
 
             it("should yield decoded input frames") {
-                val cut = WireDecoder()
+                val cut = createInstance()
                 cut.decode(input1).test()
                         .verifyComplete()
                 cut.decode(input2).test()

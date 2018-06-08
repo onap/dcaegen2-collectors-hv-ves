@@ -7,7 +7,7 @@ LABEL maintainer="Nokia Wroclaw ONAP Team"
 
 WORKDIR /opt/ves-hv-client-simulator
 ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.simulators.xnf.MainKt"]
-CMD ["--ves-host", "hv-collector", "--ves-port", "6061"]
+CMD ["--ves-host", "veshvcollector", "--ves-port", "6061"]
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./
 COPY target/hv-collector-client-simulator-*.jar ./

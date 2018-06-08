@@ -19,12 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.ByteBufAllocator
-import org.onap.dcae.collectors.veshv.domain.exceptions.EmptyWireFrameException
-import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
-import org.onap.dcae.collectors.veshv.domain.exceptions.MissingWireFrameBytesException
-
 /**
  * Wire frame structure is presented bellow. All fields are in network byte order (big-endian).
  *
@@ -55,82 +49,25 @@ import org.onap.dcae.collectors.veshv.domain.exceptions.MissingWireFrameBytesExc
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class WireFrame(val payload: ByteBuf,
+data class WireFrame(val payload: ByteData,
                      val majorVersion: Short,
                      val minorVersion: Short,
                      val payloadSize: Int) {
 
-    constructor(payload: ByteBuf) : this(payload, 1, 0, payload.readableBytes())
+    constructor(payload: ByteArray) : this(ByteData(payload), 1, 0, payload.size)
 
     fun isValid(): Boolean =
             majorVersion == SUPPORTED_MAJOR_VERSION
-                    && payload.readableBytes() == payloadSize
-
-    fun encode(allocator: ByteBufAllocator): ByteBuf {
-        val bb = allocator.buffer(HEADER_SIZE + payload.readableBytes())
-
-        bb.writeByte(MARKER_BYTE.toInt())
-        bb.writeByte(majorVersion.toInt())
-        bb.writeByte(minorVersion.toInt())
-        bb.writeInt(payloadSize)
-        bb.writeBytes(payload)
-
-        return bb
-    }
+                    && payload.size() == payloadSize
 
     companion object {
-        fun decodeFirst(byteBuf: ByteBuf): WireFrame {
-            verifyNotEmpty(byteBuf)
-            byteBuf.markReaderIndex()
-
-            verifyMarker(byteBuf)
-            verifyMinimumSize(byteBuf)
-
-            val majorVersion = byteBuf.readUnsignedByte()
-            val minorVersion = byteBuf.readUnsignedByte()
-            val payloadSize = verifyPayloadSize(byteBuf)
-
-            val payload = byteBuf.retainedSlice(byteBuf.readerIndex(), payloadSize)
-            byteBuf.readerIndex(byteBuf.readerIndex() + payloadSize)
-
-            return WireFrame(payload, majorVersion, minorVersion, payloadSize)
-        }
-
-        private fun verifyPayloadSize(byteBuf: ByteBuf): Int =
-                byteBuf.readInt().let { payloadSize ->
-                    if (byteBuf.readableBytes() < payloadSize) {
-                        byteBuf.resetReaderIndex()
-                        throw MissingWireFrameBytesException("readable bytes < payload size")
-                    } else {
-                        payloadSize
-                    }
-                }
-
-        private fun verifyMinimumSize(byteBuf: ByteBuf) {
-            if (byteBuf.readableBytes() < HEADER_SIZE) {
-                byteBuf.resetReaderIndex()
-                throw MissingWireFrameBytesException("readable bytes < header size")
-            }
-        }
-
-        private fun verifyMarker(byteBuf: ByteBuf) {
-            val mark = byteBuf.readUnsignedByte()
-            if (mark != MARKER_BYTE) {
-                byteBuf.resetReaderIndex()
-                throw InvalidWireFrameMarkerException(mark)
-            }
-        }
-
-        private fun verifyNotEmpty(byteBuf: ByteBuf) {
-            if (byteBuf.readableBytes() < 1) {
-                throw EmptyWireFrameException()
-            }
-        }
+        const val SUPPORTED_MAJOR_VERSION: Short = 1
 
         const val HEADER_SIZE =
                 3 * java.lang.Byte.BYTES +
                         1 * java.lang.Integer.BYTES
         const val MARKER_BYTE: Short = 0xFF
-        const val SUPPORTED_MAJOR_VERSION: Short = 1
+
     }
+
 }

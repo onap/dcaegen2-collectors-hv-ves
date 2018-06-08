@@ -35,24 +35,24 @@ import java.nio.charset.Charset
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-object WireFrameTest : Spek({
+object WireFrameCodecsTest : Spek({
     val payloadAsString = "coffeebabe"
+    val encoder = WireFrameEncoder(UnpooledByteBufAllocator.DEFAULT)
+    val decoder = WireFrameDecoder()
 
     fun createSampleFrame() =
-            WireFrame(Unpooled.wrappedBuffer(payloadAsString.toByteArray(Charset.defaultCharset())))
+            WireFrame(payloadAsString.toByteArray(Charset.defaultCharset()))
 
     fun encodeSampleFrame() =
             createSampleFrame().let {
-                Unpooled.buffer()
-                        .writeBytes(it.encode(UnpooledByteBufAllocator.DEFAULT))
-
+                encoder.encode(it)
             }
 
     describe("Wire Frame invariants") {
 
         given("input with unsupported major version") {
             val input = WireFrame(
-                    payload = Unpooled.EMPTY_BUFFER,
+                    payload = ByteData.EMPTY,
                     majorVersion = 100,
                     minorVersion = 2,
                     payloadSize = 0)
@@ -64,7 +64,7 @@ object WireFrameTest : Spek({
 
         given("input with too small payload size") {
             val input = WireFrame(
-                    payload = Unpooled.wrappedBuffer(byteArrayOf(1, 2, 3)),
+                    payload = ByteData(byteArrayOf(1, 2, 3)),
                     majorVersion = 1,
                     minorVersion = 0,
                     payloadSize = 1)
@@ -76,7 +76,7 @@ object WireFrameTest : Spek({
 
         given("input with too big payload size") {
             val input = WireFrame(
-                    payload = Unpooled.wrappedBuffer(byteArrayOf(1, 2, 3)),
+                    payload = ByteData(byteArrayOf(1, 2, 3)),
                     majorVersion = 1,
                     minorVersion = 0,
                     payloadSize = 8)
@@ -89,7 +89,7 @@ object WireFrameTest : Spek({
         given("valid input") {
             val payload = byteArrayOf(6, 9, 8, 6)
             val input = WireFrame(
-                    payload = Unpooled.wrappedBuffer(payload),
+                    payload = ByteData(payload),
                     majorVersion = 1,
                     minorVersion = 0,
                     payloadSize = payload.size)
@@ -107,7 +107,7 @@ object WireFrameTest : Spek({
         describe("encode-decode methods' compatibility") {
             val frame = createSampleFrame()
             val encoded = encodeSampleFrame()
-            val decoded = WireFrame.decodeFirst(encoded)
+            val decoded = decoder.decodeFirst(encoded)
 
             it("should decode major version") {
                 assertThat(decoded.majorVersion).isEqualTo(frame.majorVersion)
@@ -122,13 +122,8 @@ object WireFrameTest : Spek({
             }
 
             it("should decode payload") {
-                assertThat(decoded.payload.toString(Charset.defaultCharset()))
+                assertThat(decoded.payload.asString())
                         .isEqualTo(payloadAsString)
-            }
-
-            it("should retain decoded payload") {
-                encoded.release()
-                assertThat(decoded.payload.refCnt()).isEqualTo(1)
             }
         }
 
@@ -139,7 +134,7 @@ object WireFrameTest : Spek({
                 val buff = Unpooled.buffer()
                         .writeBytes(encodeSampleFrame())
                         .writeByte(0xAA)
-                val decoded = WireFrame.decodeFirst(buff)
+                val decoded = decoder.decodeFirst(buff)
 
                 assertThat(decoded.isValid()).describedAs("should be valid").isTrue()
                 assertThat(buff.readableBytes()).isEqualTo(1)
@@ -150,7 +145,7 @@ object WireFrameTest : Spek({
                         .writeByte(0xFF)
 
                 assertThatExceptionOfType(MissingWireFrameBytesException::class.java)
-                        .isThrownBy { WireFrame.decodeFirst(buff) }
+                        .isThrownBy { decoder.decodeFirst(buff) }
             }
 
             it("should throw exception when first byte is not 0xFF but length looks ok") {
@@ -159,7 +154,7 @@ object WireFrameTest : Spek({
                         .writeBytes("some garbage".toByteArray())
 
                 assertThatExceptionOfType(InvalidWireFrameMarkerException::class.java)
-                        .isThrownBy { WireFrame.decodeFirst(buff) }
+                        .isThrownBy { decoder.decodeFirst(buff) }
             }
 
             it("should throw exception when first byte is not 0xFF and length is to short") {
@@ -167,7 +162,7 @@ object WireFrameTest : Spek({
                         .writeByte(0xAA)
 
                 assertThatExceptionOfType(InvalidWireFrameMarkerException::class.java)
-                        .isThrownBy { WireFrame.decodeFirst(buff) }
+                        .isThrownBy { decoder.decodeFirst(buff) }
             }
 
             it("should throw exception when payload doesn't fit") {
@@ -176,7 +171,7 @@ object WireFrameTest : Spek({
                 buff.writerIndex(buff.writerIndex() - 2)
 
                 assertThatExceptionOfType(MissingWireFrameBytesException::class.java)
-                        .isThrownBy { WireFrame.decodeFirst(buff) }
+                        .isThrownBy { decoder.decodeFirst(buff) }
             }
 
         }

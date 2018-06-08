@@ -17,40 +17,42 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.wire
+package org.onap.dcae.collectors.veshv.domain
 
+import com.google.protobuf.MessageLite
 import io.netty.buffer.ByteBuf
-import io.netty.buffer.ByteBufAllocator
-import org.onap.dcae.collectors.veshv.domain.WireFrame
-import org.onap.dcae.collectors.veshv.impl.VesHvCollector
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import reactor.core.publisher.Flux
+import java.nio.charset.Charset
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since June 2018
  */
-internal class WireDecoder(alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
-    private val streamBuffer = alloc.compositeBuffer()
+class ByteData(private val data: ByteArray) {
 
-    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = StreamBufferEmitter.createFlux(streamBuffer, byteBuf)
-            .doOnSubscribe { logIncomingMessage(byteBuf) }
-            .doOnNext(this::logDecodedWireMessage)
+    fun size() = data.size
 
-    fun release() {
-        streamBuffer.release()
+    /**
+     * This will expose mutable state of the data.
+     *
+     * @return wrapped data buffer (NOT a copy)
+     */
+    fun unsafeAsArray() = data
+
+    fun writeTo(byteBuf: ByteBuf) {
+        byteBuf.writeBytes(data)
     }
 
-
-    private fun logIncomingMessage(wire: ByteBuf) {
-        logger.trace { "Got message with total size of ${wire.readableBytes()} B" }
-    }
-
-    private fun logDecodedWireMessage(wire: WireFrame) {
-        logger.trace { "Wire payload size: ${wire.payloadSize} B." }
-    }
+    fun asString(charset: Charset = Charset.defaultCharset()) = String(data, charset)
 
     companion object {
-        val logger = Logger(VesHvCollector::class)
+        val EMPTY = ByteData(byteArrayOf())
+
+        fun readFrom(byteBuf: ByteBuf, length: Int): ByteData {
+            val dataArray = ByteArray(length)
+            byteBuf.readBytes(dataArray)
+            return ByteData(dataArray)
+        }
     }
 }
+
+fun MessageLite.toByteData(): ByteData = ByteData(toByteArray())

@@ -17,18 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
+package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.ByteBufferSerializer
-import org.apache.kafka.common.serialization.StringSerializer
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import org.onap.ves.VesEventV5
+import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderOptions
-import java.nio.ByteBuffer
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -40,9 +38,8 @@ internal class KafkaSinkProvider : SinkProvider {
     }
 
     private fun constructSenderOptions(config: CollectorConfiguration) =
-            SenderOptions.create<VesEventV5.VesEvent.CommonEventHeader, ByteBuffer>()
+            SenderOptions.create<CommonEventHeader, VesMessage>()
                     .producerProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.kafkaBootstrapServers)
-                    .producerProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
-                    .producerProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteBufferSerializer::class.java)
-
+                    .producerProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
+                    .producerProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
 }

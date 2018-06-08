@@ -1,11 +1,30 @@
+/*
+ * ============LICENSE_START=======================================================
+ * dcaegen2-collectors-veshv
+ * ================================================================================
+ * Copyright (C) 2018 NOKIA
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 package org.onap.dcae.collectors.veshv.impl
 
-import io.netty.buffer.Unpooled
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
@@ -34,7 +53,7 @@ object RouterTest : Spek({
         val cut = Router(config)
 
         on("message with existing route (rtpm)") {
-            val message = VesMessage(vesCommonHeaderWithDomain(Domain.HVRANMEAS), Unpooled.EMPTY_BUFFER)
+            val message = VesMessage(vesCommonHeaderWithDomain(Domain.HVRANMEAS), ByteData.EMPTY)
             val result = cut.findDestination(message)
 
             it("should have route available") {
@@ -55,7 +74,7 @@ object RouterTest : Spek({
         }
 
         on("message with existing route (trace)") {
-            val message = VesMessage(vesCommonHeaderWithDomain(Domain.SYSLOG), Unpooled.EMPTY_BUFFER)
+            val message = VesMessage(vesCommonHeaderWithDomain(Domain.SYSLOG), ByteData.EMPTY)
             val result = cut.findDestination(message)
 
             it("should have route available") {
@@ -63,7 +82,7 @@ object RouterTest : Spek({
             }
 
             it("should be routed to proper partition") {
-                assertThat(result?.partition).isEqualTo(1)
+                assertThat(result?.partition).isEqualTo(0)
             }
 
             it("should be routed to proper topic") {
@@ -76,7 +95,7 @@ object RouterTest : Spek({
         }
 
         on("message with unknown route") {
-            val message = VesMessage(vesCommonHeaderWithDomain(Domain.HEARTBEAT), Unpooled.EMPTY_BUFFER)
+            val message = VesMessage(vesCommonHeaderWithDomain(Domain.HEARTBEAT), ByteData.EMPTY)
             val result = cut.findDestination(message)
 
             it("should not have route available") {

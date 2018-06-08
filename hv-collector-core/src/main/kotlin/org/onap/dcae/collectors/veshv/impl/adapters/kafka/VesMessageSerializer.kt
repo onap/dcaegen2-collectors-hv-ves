@@ -17,13 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
-import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.apache.kafka.common.serialization.Serializer
+import org.onap.dcae.collectors.veshv.model.VesMessage
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since June 2018
  */
-data class VesMessage(val header: CommonEventHeader, val rawMessage: ByteData)
+class VesMessageSerializer : Serializer<VesMessage> {
+    override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {
+    }
+
+    override fun serialize(topic: String?, msg: VesMessage?): ByteArray? = msg?.rawMessage?.unsafeAsArray()
+
+    override fun close() {
+    }
+}
