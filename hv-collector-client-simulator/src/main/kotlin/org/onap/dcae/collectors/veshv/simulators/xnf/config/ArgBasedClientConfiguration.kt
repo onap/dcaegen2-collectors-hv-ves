@@ -17,16 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config
+package org.onap.dcae.collectors.veshv.simulators.xnf.config
 
+import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.HelpFormatter
 import java.io.File
 import java.nio.file.Paths
-
 
 internal object DefaultValues {
     const val MESSAGES_AMOUNT = 1

@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.impl
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.SslProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrame
-import org.onap.dcae.collectors.veshv.main.config.ClientConfiguration
-import org.onap.dcae.collectors.veshv.main.config.ClientSecurityConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux

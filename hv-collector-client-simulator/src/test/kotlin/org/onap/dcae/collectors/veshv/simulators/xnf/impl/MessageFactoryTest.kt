@@ -17,14 +17,35 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl
+
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.given
+import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.MessageFactory
+import kotlin.test.assertEquals
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-data class ClientConfiguration(
-        val vesHost: String,
-        val vesPort: Int,
-        val security: ClientSecurityConfiguration,
-        val messagesAmount: Int)
+object MessageFactoryTest : Spek({
+    describe("message factory") {
+        val factory = MessageFactory()
+
+        given("no parameters") {
+            it("should return flux with one message") {
+                val result = factory.createMessageFlux()
+
+                assertEquals(1, result.count().block())
+            }
+        }
+        given("messages amount") {
+            it("should return message flux of specified size") {
+                val result = factory.createMessageFlux(5)
+                assertEquals(5, result.count().block())
+            }
+        }
+    }
+})
