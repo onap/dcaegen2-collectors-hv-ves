@@ -1,7 +1,7 @@
 FILE=sample
 CA_PASSWD=onap
 SUBJ=/C=PL/ST=DL/L=Wroclaw/O=Nokia/OU=MANO
-CA=onap
+CA=trust
 
 sign: $(FILE).crt
 

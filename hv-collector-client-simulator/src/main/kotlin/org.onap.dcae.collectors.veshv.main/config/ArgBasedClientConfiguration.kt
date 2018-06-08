@@ -37,14 +37,14 @@ internal object DefaultValues {
 internal object ArgBasedClientConfiguration {
 
     private val OPT_VES_PORT = Option.builder("p")
-            .longOpt("port")
+            .longOpt("ves-port")
             .required()
             .hasArg()
             .desc("VesHvCollector port")
             .build()
 
     private val OPT_VES_HOST = Option.builder("h")
-            .longOpt("host")
+            .longOpt("ves-host")
             .required()
             .hasArg()
             .desc("VesHvCollector host")
