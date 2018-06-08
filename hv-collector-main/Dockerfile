@@ -8,7 +8,6 @@ LABEL maintainer="Nokia Wroclaw ONAP Team"
 EXPOSE 6061
 
 WORKDIR /opt/ves-hv-collector
-VOLUME /etc/ves-hv/
 ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.main.MainKt"]
 CMD ["--listen-port", "6061"]
 COPY target/libs/external/* ./

@@ -21,10 +21,16 @@ services:
       context: hv-collector-main
       dockerfile: Dockerfile
     ports:
-      - "8081:8081/tcp"
+      - "6061:6061/tcp"
     depends_on:
       - kafka
+    volumes:
+      - /etc/ves-hv/:/etc/ves-hv/
   xnf-simulator:
     build:
       context: hv-collector-client-simulator
       dockerfile: Dockerfile
+    depends_on:
+      - hv-collector
+    volumes:
+      - /etc/ves-hv/:/etc/ves-hv/
