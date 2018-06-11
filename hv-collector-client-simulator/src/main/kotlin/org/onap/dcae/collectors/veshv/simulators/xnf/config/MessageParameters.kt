@@ -17,37 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf
+package org.onap.dcae.collectors.veshv.simulators.xnf.config
 
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.HttpServer
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.VesHvClient
-import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
-import org.slf4j.LoggerFactory.getLogger
-
-
-private val logger = getLogger("Simulator :: main")
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-fun main(args: Array<String>) {
-    try {
-        val clientConfig = ArgBasedClientConfiguration().parse(args)
-        val vesClient = VesHvClient(clientConfig)
-
-        HttpServer(vesClient)
-                .start()
-                .block()
-
-    } catch (e: WrongArgumentException) {
-        e.printHelp("java org.onap.dcae.collectors.veshv.main.MainKt")
-        System.exit(1)
-    } catch (e: Exception) {
-        logger.error(e.localizedMessage)
-        logger.debug("An error occurred when starting ves client", e)
-        System.exit(2)
-    }
-}
-
+data class MessageParameters(val commonEventHeader: CommonEventHeader, val amount: Long = -1)

@@ -35,7 +35,6 @@ import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-
 internal object DefaultValues {
     const val MESSAGES_AMOUNT = -1L
     const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"

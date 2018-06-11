@@ -44,8 +44,8 @@ class Logger(val logger: org.slf4j.Logger) {
         logger.debug(message)
     }
 
-    fun debug(message: String, ex: Exception) {
-        logger.debug(message, ex)
+    fun debug(message: String, t: Throwable) {
+        logger.debug(message, t)
     }
 
     fun debug(messageProvider: () -> String) {
@@ -54,11 +54,12 @@ class Logger(val logger: org.slf4j.Logger) {
         }
     }
 
-    fun debug(ex: Exception, messageProvider: () -> String) {
+    fun debug(t: Throwable, messageProvider: () -> String) {
         if (logger.isDebugEnabled) {
-            logger.debug(messageProvider(), ex)
+            logger.debug(messageProvider(), t)
         }
     }
+
 
     //
     // INFO
@@ -67,9 +68,6 @@ class Logger(val logger: org.slf4j.Logger) {
         logger.info(message)
     }
 
-    fun info(message: String, ex: Exception) {
-        logger.info(message, ex)
-    }
 
     fun info(messageProvider: () -> String) {
         if (logger.isInfoEnabled) {
@@ -77,9 +75,14 @@ class Logger(val logger: org.slf4j.Logger) {
         }
     }
 
-    fun info(ex: Exception, messageProvider: () -> String) {
+    fun info(message: String, t: Throwable) {
+        logger.info(message, t)
+    }
+
+
+    fun info(t: Throwable, messageProvider: () -> String) {
         if (logger.isInfoEnabled) {
-            logger.info(messageProvider(), ex)
+            logger.info(messageProvider(), t)
         }
     }
 
@@ -92,8 +95,8 @@ class Logger(val logger: org.slf4j.Logger) {
         logger.warn(message)
     }
 
-    fun warn(message: String, ex: Exception) {
-        logger.warn(message, ex)
+    fun warn(message: String, t: Throwable) {
+        logger.warn(message, t)
     }
 
     fun warn(messageProvider: () -> String) {
@@ -102,9 +105,9 @@ class Logger(val logger: org.slf4j.Logger) {
         }
     }
 
-    fun warn(ex: Exception, messageProvider: () -> String) {
+    fun warn(t: Throwable, messageProvider: () -> String) {
         if (logger.isWarnEnabled) {
-            logger.warn(messageProvider(), ex)
+            logger.warn(messageProvider(), t)
         }
     }
 
@@ -117,8 +120,9 @@ class Logger(val logger: org.slf4j.Logger) {
         logger.error(message)
     }
 
-    fun error(message: String, ex: Exception) {
-        logger.error(message, ex)
+
+    fun error(message: String, t: Throwable) {
+        logger.error(message, t)
     }
 
     fun error(messageProvider: () -> String) {
@@ -127,9 +131,9 @@ class Logger(val logger: org.slf4j.Logger) {
         }
     }
 
-    fun error(ex: Exception, messageProvider: () -> String) {
+    fun error(t: Throwable, messageProvider: () -> String) {
         if (logger.isErrorEnabled) {
-            logger.error(messageProvider(), ex)
+            logger.error(messageProvider(), t)
         }
     }
 }
