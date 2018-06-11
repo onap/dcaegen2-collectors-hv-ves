@@ -19,11 +19,19 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
+import com.google.protobuf.ByteString
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
+import org.onap.ves.VesEventV5
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Priority.MEDIUM
 import reactor.test.test
+
+const val SAMPLE_START_EPOCH: Long = 120034455
+const val SAMPLE_LAST_EPOCH: Long = 120034455
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -31,22 +39,45 @@ import reactor.test.test
  */
 object MessageFactoryTest : Spek({
     describe("message factory") {
-        val factory = MessageFactory()
 
-        given("no parameters") {
+        val factory = MessageFactory
+
+        given("only common header") {
             it("should return infinite flux") {
                 val limit = 1000L
-                factory.createMessageFlux().take(limit).test()
+                factory.createMessageFlux(getSampleMessageParameters()).take(limit).test()
                         .expectNextCount(limit)
                         .verifyComplete()
             }
         }
-        given("messages amount") {
+        given("common header and messages amount") {
             it("should return message flux of specified size") {
-                factory.createMessageFlux(5).test()
+                factory.createMessageFlux((getSampleMessageParameters(5))).test()
                         .expectNextCount(5)
                         .verifyComplete()
             }
         }
     }
 })
+
+fun getSampleMessageParameters(amount: Long = -1): MessageParameters{
+    val commonHeader = VesEventV5.VesEvent.CommonEventHeader.newBuilder()
+            .setVersion("sample-version")
+            .setDomain(HVRANMEAS)
+            .setSequence(1)
+            .setPriority(MEDIUM)
+            .setEventId("sample-event-id")
+            .setEventName("sample-event-name")
+            .setEventType("sample-event-type")
+            .setStartEpochMicrosec(SAMPLE_START_EPOCH)
+            .setLastEpochMicrosec(SAMPLE_LAST_EPOCH)
+            .setNfNamingCode("sample-nf-naming-code")
+            .setNfcNamingCode("sample-nfc-naming-code")
+            .setReportingEntityId("sample-reporting-entity-id")
+            .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
+            .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
+            .setSourceName("sample-source-name")
+            .build()
+
+    return MessageParameters(commonHeader, amount)
+}
