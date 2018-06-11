@@ -43,6 +43,7 @@
     <module>hv-collector-core</module>
     <module>hv-collector-coverage</module>
     <module>hv-collector-ct</module>
+    <module>hv-collector-dcae-app-simulator</module>
     <module>hv-collector-domain</module>
     <module>hv-collector-main</module>
     <module>hv-collector-utils</module>
