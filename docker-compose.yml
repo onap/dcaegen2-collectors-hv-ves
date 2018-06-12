@@ -35,3 +35,11 @@ services:
       - veshvcollector
     volumes:
       - ./ssl/:/etc/ves-hv/
+  dcae-app-simulator:
+    build:
+      context: hv-collector-dcae-app-simulator
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080/tcp"
+    depends_on:
+      - kafka
