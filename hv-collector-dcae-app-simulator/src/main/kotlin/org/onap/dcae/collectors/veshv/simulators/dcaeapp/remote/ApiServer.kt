@@ -17,22 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp
+package org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote
 
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.KafkaSource
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote.ApiServer
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.slf4j.LoggerFactory
+import ratpack.handling.Chain
+import ratpack.server.RatpackServer
+import ratpack.server.ServerConfig
+import reactor.core.publisher.Mono
 
-private val logger = Logger(LoggerFactory.getLogger("DCAE simulator :: main"))
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since May 2018
+ */
+class ApiServer(private val messageSource: KafkaSource) {
+    fun start(port: Int): Mono<RatpackServer> = Mono.fromCallable {
+        RatpackServer.of { server ->
+            server.serverConfig(ServerConfig.embedded().port(port))
+                    .handlers(this::setupHandlers)
+        }
+    }.doOnNext(RatpackServer::start)
 
-fun main(args: Array<String>) {
-    logger.info("Starting DCAE APP simulator")
-    val port = 8080
-    val messageSource = KafkaSource.create("kafka:9092", setOf("ves_hvRanMeas"))
-    val apiServer = ApiServer(messageSource)
-
-    messageSource.start()
-            .then(apiServer.start(port))
-            .block()
+    private fun setupHandlers(chain: Chain) {
+        chain.get("messages/count") { ctx ->
+            ctx.response.send(messageSource.consumedMessages().toString())
+        }
+    }
 }
