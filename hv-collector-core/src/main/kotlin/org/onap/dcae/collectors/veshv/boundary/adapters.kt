@@ -25,7 +25,13 @@ import org.onap.dcae.collectors.veshv.model.VesMessage
 import reactor.core.publisher.Flux
 
 interface Sink {
-    fun send(messages: Flux<RoutedMessage>): Flux<VesMessage>
+    fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage>
+}
+
+interface Metrics {
+    fun notifyBytesReceived(size: Int)
+    fun notifyMessageReceived(size: Int)
+    fun notifyMessageSent(topic: String)
 }
 
 @FunctionalInterface

@@ -35,7 +35,7 @@ import reactor.kafka.sender.SenderResult
  */
 internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, VesMessage>) : Sink {
 
-    override fun send(messages: Flux<RoutedMessage>): Flux<VesMessage> {
+    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
         val records = messages.map(this::vesToKafkaRecord)
         return sender.send(records)
                 .doOnNext(::logException)
@@ -43,14 +43,14 @@ internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, VesM
                 .map { it.correlationMetadata() }
     }
 
-    private fun vesToKafkaRecord(msg: RoutedMessage): SenderRecord<CommonEventHeader, VesMessage, VesMessage> {
+    private fun vesToKafkaRecord(msg: RoutedMessage): SenderRecord<CommonEventHeader, VesMessage, RoutedMessage> {
         return SenderRecord.create(
                 msg.topic,
                 msg.partition,
                 System.currentTimeMillis(),
                 msg.message.header,
                 msg.message,
-                msg.message)
+                msg)
     }
 
     private fun logException(senderResult: SenderResult<out Any>) {

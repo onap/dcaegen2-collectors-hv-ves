@@ -73,7 +73,6 @@
       <version>${project.parent.version}</version>
       <scope>compile</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-reflect</artifactId>

@@ -19,24 +19,20 @@
  */
 package org.onap.dcae.collectors.veshv.tests.fakes
 
-import org.onap.dcae.collectors.veshv.boundary.Sink
-import org.onap.dcae.collectors.veshv.model.RoutedMessage
-import org.onap.dcae.collectors.veshv.model.VesMessage
-import reactor.core.publisher.Flux
-import java.util.*
-import java.util.concurrent.ConcurrentLinkedDeque
+import org.onap.dcae.collectors.veshv.boundary.Metrics
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since June 2018
  */
-class FakeSink : Sink {
-    private val sent: Deque<RoutedMessage> = ConcurrentLinkedDeque()
-
-    val sentMessages: List<RoutedMessage>
-        get() = sent.toList()
-
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
-        return messages.doOnNext(sent::addLast)
+class FakeMetrics: Metrics {
+    override fun notifyBytesReceived(size: Int) {
     }
+
+    override fun notifyMessageReceived(size: Int) {
+    }
+
+    override fun notifyMessageSent(topic: String) {
+    }
+
 }

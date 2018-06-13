@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.factory
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.impl.MessageValidator
@@ -38,7 +39,9 @@ import java.util.concurrent.atomic.AtomicReference
  * @since May 2018
  */
 class CollectorFactory(val configuration: ConfigurationProvider,
-                       private val sinkProvider: SinkProvider) {
+                       private val sinkProvider: SinkProvider,
+                       private val metrics: Metrics) {
+
     fun createVesHvCollectorProvider(): CollectorProvider {
         val collector: AtomicReference<Collector> = AtomicReference()
         createVesHvCollector().subscribe(collector::set)
@@ -50,11 +53,12 @@ class CollectorFactory(val configuration: ConfigurationProvider,
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
         return VesHvCollector(
-                { alloc -> WireChunkDecoder(WireFrameDecoder(), alloc) },
-                VesDecoder(),
-                MessageValidator(),
-                Router(config.routing),
-                sinkProvider(config))
+                wireChunkDecoderSupplier = { alloc -> WireChunkDecoder(WireFrameDecoder(), alloc) },
+                protobufDecoder = VesDecoder(),
+                validator = MessageValidator(),
+                router = Router(config.routing),
+                sink = sinkProvider(config),
+                metrics = metrics)
     }
 
 }

@@ -39,7 +39,8 @@ fun main(args: Array<String>) {
 
         val collectorProvider = CollectorFactory(
                 resolveConfigurationProvider(serverConfiguration),
-                AdapterFactory.kafkaSink()
+                AdapterFactory.kafkaSink(),
+                MicrometerMetrics()
         ).createVesHvCollectorProvider()
         ServerFactory.createNettyTcpServer(serverConfiguration, collectorProvider).start().block()
     } catch (ex: WrongArgumentException) {

@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.impl
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
+import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.domain.WireFrame
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
@@ -40,18 +41,22 @@ internal class VesHvCollector(
         private val protobufDecoder: VesDecoder,
         private val validator: MessageValidator,
         private val router: Router,
-        private val sink: Sink) : Collector {
+        private val sink: Sink,
+        private val metrics: Metrics) : Collector {
 
     override fun handleConnection(alloc: ByteBufAllocator, dataStream: Flux<ByteBuf>): Mono<Void> =
             wireChunkDecoderSupplier(alloc).let { wireDecoder ->
                 dataStream
+                        .doOnNext { metrics.notifyBytesReceived(it.readableBytes()) }
                         .concatMap(wireDecoder::decode)
+                        .doOnNext { metrics.notifyMessageReceived(it.payloadSize) }
                         .filter(WireFrame::isValid)
                         .map(WireFrame::payload)
                         .map(protobufDecoder::decode)
                         .filter(validator::isValid)
                         .flatMap(this::findRoute)
                         .compose(sink::send)
+                        .doOnNext { metrics.notifyMessageSent(it.topic) }
                         .doOnTerminate { releaseBuffersMemory(wireDecoder) }
                         .then()
             }

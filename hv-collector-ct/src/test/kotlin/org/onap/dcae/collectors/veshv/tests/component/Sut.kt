@@ -26,6 +26,7 @@ import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
+import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeSink
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.Exceptions
@@ -40,7 +41,8 @@ internal class Sut {
     val configurationProvider = FakeConfigurationProvider()
     val sink = FakeSink()
     val alloc = UnpooledByteBufAllocator.DEFAULT
-    private val collectorFactory = CollectorFactory(configurationProvider, SinkProvider.just(sink))
+    val metrics = FakeMetrics()
+    private val collectorFactory = CollectorFactory(configurationProvider, SinkProvider.just(sink), metrics)
     val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
