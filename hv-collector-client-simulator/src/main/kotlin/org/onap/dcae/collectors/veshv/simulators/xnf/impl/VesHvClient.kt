@@ -25,9 +25,9 @@ import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.SslProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
@@ -76,7 +76,7 @@ class VesHvClient(configuration: ClientConfiguration) {
                 .send(frames)
     }
 
-    private fun createSslContext(config: ClientSecurityConfiguration): SslContext =
+    private fun createSslContext(config: SecurityConfiguration): SslContext =
             SslContextBuilder.forClient()
                     .keyManager(config.cert.toFile(), config.privateKey.toFile())
                     .trustManager(config.trustedCert.toFile())

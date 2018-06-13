@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.impl.socket
 
-import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration

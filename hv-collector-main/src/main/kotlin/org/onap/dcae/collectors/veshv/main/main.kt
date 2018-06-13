@@ -20,13 +20,13 @@
 package org.onap.dcae.collectors.veshv.main
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.factory.CollectorFactory
-import org.onap.dcae.collectors.veshv.factory.ServerFactory
-import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
-import org.onap.dcae.collectors.veshv.main.ArgBasedServerConfiguration.WrongArgumentException
+import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.model.routing
+import org.onap.dcae.collectors.veshv.factory.CollectorFactory
+import org.onap.dcae.collectors.veshv.factory.ServerFactory
+import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess

@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018

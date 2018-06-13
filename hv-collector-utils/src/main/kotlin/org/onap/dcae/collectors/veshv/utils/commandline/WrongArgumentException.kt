@@ -17,15 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.utils.commandline
 
-import java.nio.file.Path
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class SecurityConfiguration(
-        val privateKey: Path,
-        val cert: Path,
-        val trustedCert: Path)
+
+class WrongArgumentException(parent: Exception, private val options: Options) : Exception(parent.message, parent) {
+    fun printMessage() {
+        println(message)
+    }
+
+    fun printHelp(programName: String) {
+        val formatter = HelpFormatter()
+        formatter.printHelp(programName, options)
+    }
+}

@@ -19,13 +19,22 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.config
 
-import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Option
-import org.apache.commons.cli.Options
-import java.io.File
-import java.nio.file.Paths
+import org.apache.commons.cli.CommandLine
+import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_HOST
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MESSAGES_TO_SEND_AMOUNT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.PRIVATE_KEY_FILE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CERT_FILE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_CERT_FILE
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+
+
+/**
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since June 2018
+ */
 
 internal object DefaultValues {
     const val MESSAGES_AMOUNT = -1L
@@ -34,111 +43,35 @@ internal object DefaultValues {
     const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
 }
 
-/**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since June 2018
- */
-internal object ArgBasedClientConfiguration {
+internal class ArgBasedClientConfiguration : ArgBasedConfiguration<ClientConfiguration>(DefaultParser()) {
+    override val cmdLineOptionsList = listOf(
+            VES_HV_PORT,
+            VES_HV_HOST,
+            MESSAGES_TO_SEND_AMOUNT,
+            PRIVATE_KEY_FILE,
+            CERT_FILE,
+            TRUST_CERT_FILE
+    )
 
-    private val OPT_VES_PORT = Option.builder("p")
-            .longOpt("ves-port")
-            .required()
-            .hasArg()
-            .desc("VesHvCollector port")
-            .build()
-
-    private val OPT_VES_HOST = Option.builder("h")
-            .longOpt("ves-host")
-            .required()
-            .hasArg()
-            .desc("VesHvCollector host")
-            .build()
-
-    private val OPT_MESSAGES_AMOUNT = Option.builder("m")
-            .longOpt("messages")
-            .hasArg()
-            .desc("Amount of messages to send")
-            .build()
-
-    private val OPT_PK_FILE = Option.builder("k")
-            .longOpt("private-key-file")
-            .hasArg()
-            .desc("File with client private key in PEM format")
-            .build()
-
-    private val OPT_CERT_FILE = Option.builder("e")
-            .longOpt("cert-file")
-            .hasArg()
-            .desc("File with client certificate bundle")
-            .build()
-
-    private val OPT_TRUST_CERT_FILE = Option.builder("t")
-            .longOpt("trust-cert-file")
-            .hasArg()
-            .desc("File with trusted certificate bundle for trusting servers")
-            .build()
-
-    private val options by lazy {
-        val options = Options()
-        options.addOption(OPT_VES_PORT)
-        options.addOption(OPT_VES_HOST)
-        options.addOption(OPT_MESSAGES_AMOUNT)
-        options.addOption(OPT_PK_FILE)
-        options.addOption(OPT_CERT_FILE)
-        options.addOption(OPT_TRUST_CERT_FILE)
-        options
+    override fun getConfiguration(cmdLine: CommandLine): ClientConfiguration {
+        val host = cmdLine.stringValue(VES_HV_HOST)
+        val port = cmdLine.intValue(VES_HV_PORT)
+        val messagesAmount = cmdLine.longValue(MESSAGES_TO_SEND_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
+        return ClientConfiguration(
+                host,
+                port,
+                parseSecurityConfig(cmdLine),
+                messagesAmount)
     }
 
-    fun parse(args: Array<out String>): ClientConfiguration {
-
-
-        val parser = DefaultParser()
-
-        try {
-            val cmdLine = parser.parse(options, args)
-            val host = cmdLine.stringValue(OPT_VES_HOST)
-            val port = cmdLine.intValue(OPT_VES_PORT)
-            val msgsAmount = cmdLine.longValueOrDefault(OPT_MESSAGES_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
-            return ClientConfiguration(
-                    host,
-                    port,
-                    parseSecurityConfig(cmdLine),
-                    msgsAmount)
-        } catch (ex: Exception) {
-            throw WrongArgumentException(ex)
-        }
-    }
-
-    private fun parseSecurityConfig(cmdLine: CommandLine): ClientSecurityConfiguration {
-        val pkFile = cmdLine.stringValue(OPT_PK_FILE, DefaultValues.PRIVATE_KEY_FILE)
-        val certFile = cmdLine.stringValue(OPT_CERT_FILE, DefaultValues.CERT_FILE)
-        val trustCertFile = cmdLine.stringValue(OPT_TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
-        return ClientSecurityConfiguration(
+    private fun parseSecurityConfig(cmdLine: CommandLine): SecurityConfiguration {
+        val pkFile = cmdLine.stringValue(PRIVATE_KEY_FILE, DefaultValues.PRIVATE_KEY_FILE)
+        val certFile = cmdLine.stringValue(CERT_FILE, DefaultValues.CERT_FILE)
+        val trustCertFile = cmdLine.stringValue(TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
+        return SecurityConfiguration(
                 privateKey = stringPathToPath(pkFile),
                 cert = stringPathToPath(certFile),
                 trustedCert = stringPathToPath(trustCertFile))
     }
 
-    private fun stringPathToPath(path: String) = Paths.get(File(path).toURI())
-
-
-    private fun CommandLine.longValueOrDefault(option: Option, default: Long) =
-            getOptionValue(option.opt)?.toLong() ?: default
-
-    private fun CommandLine.intValue(option: Option) =
-            getOptionValue(option.opt).toInt()
-
-    private fun CommandLine.stringValue(option: Option) =
-            getOptionValue(option.opt)
-
-    private fun CommandLine.stringValue(option: Option, default: String) =
-            getOptionValue(option.opt) ?: default
-
-
-    class WrongArgumentException(parent: Exception) : Exception(parent.message, parent) {
-        fun printHelp(programName: String) {
-            val formatter = HelpFormatter()
-            formatter.printHelp(programName, options)
-        }
-    }
 }

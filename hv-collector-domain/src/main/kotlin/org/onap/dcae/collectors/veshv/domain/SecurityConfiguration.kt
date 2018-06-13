@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.config
+package org.onap.dcae.collectors.veshv.domain
 
 import java.nio.file.Path
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
+ * @since May 2018
  */
-data class ClientSecurityConfiguration(
+data class SecurityConfiguration(
         val privateKey: Path,
         val cert: Path,
         val trustedCert: Path)

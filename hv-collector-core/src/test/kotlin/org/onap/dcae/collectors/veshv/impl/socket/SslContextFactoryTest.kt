@@ -27,7 +27,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.model.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import java.nio.file.Paths
 
 /**

@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.config
 
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
@@ -26,5 +28,5 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.config
 data class ClientConfiguration(
         val vesHost: String,
         val vesPort: Int,
-        val security: ClientSecurityConfiguration,
+        val security: SecurityConfiguration,
         val messagesAmount: Long)

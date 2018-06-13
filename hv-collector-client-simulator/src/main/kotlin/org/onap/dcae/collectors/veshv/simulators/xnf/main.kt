@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.simulators.xnf
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.MessageFactory
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.VesHvClient
+import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
 import org.slf4j.LoggerFactory.getLogger
 
 
@@ -33,11 +34,11 @@ private val logger = getLogger("Simulator :: main")
  */
 fun main(args: Array<String>) {
     try {
-        val clientConfig = ArgBasedClientConfiguration.parse(args)
+        val clientConfig = ArgBasedClientConfiguration().parse(args)
         val messageFactory = MessageFactory()
         val client = VesHvClient(clientConfig)
             client.send(messageFactory.createMessageFlux(clientConfig.messagesAmount))
-    } catch (e: ArgBasedClientConfiguration.WrongArgumentException) {
+    } catch (e: WrongArgumentException) {
         e.printHelp("java org.onap.dcae.collectors.veshv.main.MainKt")
         System.exit(1)
     } catch (e: Exception) {

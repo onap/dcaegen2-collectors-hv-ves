@@ -19,11 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import org.apache.commons.cli.*
+import org.apache.commons.cli.DefaultParser
+import org.apache.commons.cli.CommandLine
+import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_CONFIG_URL
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.PRIVATE_KEY_FILE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CERT_FILE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_CERT_FILE
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.model.SecurityConfiguration
-import java.io.File
-import java.nio.file.Paths
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 
 internal object DefaultValues {
     const val PORT = 6061
@@ -33,93 +38,31 @@ internal object DefaultValues {
     const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
 }
 
-internal class ArgBasedServerConfiguration {
+internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
+    override val cmdLineOptionsList = listOf(
+            LISTEN_PORT,
+            CONSUL_CONFIG_URL,
+            PRIVATE_KEY_FILE,
+            CERT_FILE,
+            TRUST_CERT_FILE
+    )
 
-    fun parse(args: Array<out String>): ServerConfiguration {
-        val parser = DefaultParser()
-
-        try {
-            val cmdLine = parser.parse(options, args)
-            val port = cmdLine.intValue(OPT_PORT, DefaultValues.PORT)
-            val configUrl = cmdLine.stringValue(OPT_CONFIG_URL, DefaultValues.CONFIG_URL)
-            val secConf = createSecurityConfiguration(cmdLine)
-            return ServerConfiguration(port, configUrl, secConf)
-        } catch (ex: Exception) {
-            throw WrongArgumentException(ex)
-        }
+    override fun getConfiguration(cmdLine: CommandLine): ServerConfiguration {
+        val port = cmdLine.intValue(LISTEN_PORT, DefaultValues.PORT)
+        val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL, DefaultValues.CONFIG_URL)
+        val security = createSecurityConfiguration(cmdLine)
+        return ServerConfiguration(port, configUrl, security)
     }
 
     private fun createSecurityConfiguration(cmdLine: CommandLine): SecurityConfiguration {
-
-        val pkFile = cmdLine.stringValue(OPT_PK_FILE, DefaultValues.PRIVATE_KEY_FILE)
-        val certFile = cmdLine.stringValue(OPT_CERT_FILE, DefaultValues.CERT_FILE)
-        val trustCertFile = cmdLine.stringValue(OPT_TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
+        val pkFile = cmdLine.stringValue(PRIVATE_KEY_FILE, DefaultValues.PRIVATE_KEY_FILE)
+        val certFile = cmdLine.stringValue(CERT_FILE, DefaultValues.CERT_FILE)
+        val trustCertFile = cmdLine.stringValue(TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
 
         return SecurityConfiguration(
                 privateKey = stringPathToPath(pkFile),
                 cert = stringPathToPath(certFile),
                 trustedCert = stringPathToPath(trustCertFile)
         )
-    }
-
-    private fun CommandLine.intValue(option: Option, default: Int) =
-            getOptionValue(option.opt)?.toInt() ?: default
-
-    private fun CommandLine.stringValue(option: Option, default: String) =
-            getOptionValue(option.opt) ?: default
-
-    private fun stringPathToPath(path: String) = Paths.get(File(path).toURI())
-
-    class WrongArgumentException(parent: Exception) : Exception(parent.message, parent) {
-        fun printMessage() {
-            println(message)
-        }
-
-        fun printHelp(programName: String) {
-            val formatter = HelpFormatter()
-            formatter.printHelp(programName, options)
-        }
-    }
-
-    companion object {
-        private val OPT_PORT = Option.builder("p")
-                .longOpt("listen-port")
-                .hasArg()
-                .desc("Listen port")
-                .build()
-
-        private val OPT_CONFIG_URL = Option.builder("c")
-                .longOpt("config-url")
-                .hasArg()
-                .desc("URL of ves configuration on consul")
-                .build()
-
-        private val OPT_PK_FILE = Option.builder("k")
-                .longOpt("private-key-file")
-                .hasArg()
-                .desc("File with private key in PEM format")
-                .build()
-
-        private val OPT_CERT_FILE = Option.builder("e")
-                .longOpt("cert-file")
-                .hasArg()
-                .desc("File with server certificate bundle")
-                .build()
-
-        private val OPT_TRUST_CERT_FILE = Option.builder("t")
-                .longOpt("trust-cert-file")
-                .hasArg()
-                .desc("File with trusted certificate bundle for authenticating clients")
-                .build()
-
-        private val options by lazy {
-            val options = Options()
-            options.addOption(OPT_PORT)
-            options.addOption(OPT_CONFIG_URL)
-            options.addOption(OPT_PK_FILE)
-            options.addOption(OPT_CERT_FILE)
-            options.addOption(OPT_TRUST_CERT_FILE)
-            options
-        }
     }
 }

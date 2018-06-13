@@ -23,7 +23,7 @@ import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.SslProvider
-import org.onap.dcae.collectors.veshv.model.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 
 
 internal open class SslContextFactory {

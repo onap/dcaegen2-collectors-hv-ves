@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.main.config
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -26,86 +26,83 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.DefaultValues
 import java.nio.file.Paths
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-object ArgBasedServerConfigurationTest : Spek({
-    lateinit var cut: ArgBasedServerConfiguration
-    val configurationUrl = "http://test-address/test"
+
+object ArgBasedClientConfigurationTest : Spek({
+    lateinit var cut: ArgBasedClientConfiguration
+    val messagesAmount = 3L
+    val vesHost = "localhosting"
     val pk = Paths.get("/", "etc", "ves", "pk.pem")
     val cert = Paths.get("/", "etc", "ssl", "certs", "ca-bundle.crt")
     val trustCert = Paths.get("/", "etc", "ves", "trusted.crt")
 
     beforeEachTest {
-        cut = ArgBasedServerConfiguration()
+        cut = ArgBasedClientConfiguration()
     }
 
     fun parse(vararg cmdLine: String) = cut.parse(cmdLine)
 
     describe("parsing arguments") {
+        lateinit var result: ClientConfiguration
+
         given("all parameters are present in the long form") {
-            lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse("--listen-port", "6969",
-                        "--config-url", configurationUrl,
+                result = parse("--ves-port", "6969",
+                        "--ves-host", vesHost,
+                        "--messages", messagesAmount.toString(),
                         "--private-key-file", pk.toFile().absolutePath,
                         "--cert-file", cert.toFile().absolutePath,
                         "--trust-cert-file", trustCert.toFile().absolutePath)
             }
 
             it("should set proper port") {
-                assertThat(result.port).isEqualTo(6969)
+                assertThat(result.vesPort).isEqualTo(6969)
             }
 
+
             it("should set proper config url") {
-                assertThat(result.configurationUrl).isEqualTo(configurationUrl)
+                assertThat(result.messagesAmount).isEqualTo(messagesAmount)
             }
 
             it("should set proper security configuration") {
-                assertThat(result.securityConfiguration).isEqualTo(
+                assertThat(result.security).isEqualTo(
                         SecurityConfiguration(pk, cert, trustCert)
                 )
             }
         }
 
         given("some parameters are present in the short form") {
-            lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse("-p", "666", "-c", configurationUrl)
+                result = parse("-h", "ves-hv", "--ves-port", "666", "-m", messagesAmount.toString())
             }
 
             it("should set proper port") {
-                assertThat(result.port).isEqualTo(666)
+                assertThat(result.vesPort).isEqualTo(666)
             }
 
-            it("should set proper config url") {
-                assertThat(result.configurationUrl).isEqualTo(configurationUrl)
+            it("should set proper messages amount") {
+                assertThat(result.messagesAmount).isEqualTo(messagesAmount)
             }
         }
 
         given("all optional parameters are absent") {
-            lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse()
+                result = parse("-h", "ves-hv", "-p", "666")
             }
 
-            it("should set default port") {
-                assertThat(result.port).isEqualTo(DefaultValues.PORT)
-            }
-
-            it("should set default config url") {
-                assertThat(result.configurationUrl).isEqualTo(DefaultValues.CONFIG_URL)
+            it("should set default messages amount") {
+                assertThat(result.messagesAmount).isEqualTo(DefaultValues.MESSAGES_AMOUNT)
             }
 
             on("security config") {
-                val securityConfiguration = result.securityConfiguration
+                val securityConfiguration = result.security
 
                 it("should set default trust cert file") {
                     assertThat(securityConfiguration.trustedCert.toString()).isEqualTo(DefaultValues.TRUST_CERT_FILE)
