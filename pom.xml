@@ -37,17 +37,17 @@
     <description>VES HighVolume Collector</description>
     <packaging>pom</packaging>
 
-  <modules>
-    <module>hv-collector-analysis</module>
-    <module>hv-collector-client-simulator</module>
-    <module>hv-collector-core</module>
-    <module>hv-collector-coverage</module>
-    <module>hv-collector-ct</module>
-    <module>hv-collector-dcae-app-simulator</module>
-    <module>hv-collector-domain</module>
-    <module>hv-collector-main</module>
-    <module>hv-collector-utils</module>
-  </modules>
+    <modules>
+        <module>hv-collector-analysis</module>
+        <module>hv-collector-client-simulator</module>
+        <module>hv-collector-core</module>
+        <module>hv-collector-coverage</module>
+        <module>hv-collector-ct</module>
+        <module>hv-collector-dcae-app-simulator</module>
+        <module>hv-collector-domain</module>
+        <module>hv-collector-main</module>
+        <module>hv-collector-utils</module>
+    </modules>
 
     <properties>
         <kotlin.version>1.2.41</kotlin.version>
@@ -330,6 +330,36 @@
                             </dependency>
                         </dependencies>
                     </plugin>
+
+                    <plugin>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.onap.oparent</groupId>
+                                <artifactId>checkstyle</artifactId>
+                                <version>1.1.1</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>onap-license</id>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <phase>process-sources</phase>
+                                <configuration>
+                                    <configLocation>onap-checkstyle/check-license.xml</configLocation>
+                                    <includeResources>false</includeResources>
+                                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                                    <includeTestResources>false</includeTestResources>
+                                    <includes>**\/*.kt</includes>
+                                    <consoleOutput>true</consoleOutput>
+                                    <!--<failOnViolation>false</failOnViolation>-->
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -407,6 +437,19 @@
 
     <pluginRepositories>
         <pluginRepository>
+            <id>40_openecomp-release</id>
+            <name>40_openecomp-release</name>
+            <url>https://nexus.onap.org/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+
+        <pluginRepository>
             <id>arturbosch-code-analysis</id>
             <name>arturbosch-code-analysis (for detekt)</name>
             <url>https://dl.bintray.com/arturbosch/code-analysis/</url>
@@ -421,6 +464,21 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>40_openecomp-release</id>
+            <name>40_openecomp-release</name>
+            <url>https://nexus.onap.org/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
