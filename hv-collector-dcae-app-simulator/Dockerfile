@@ -9,7 +9,7 @@ EXPOSE 8080
 
 WORKDIR /opt/ves-hv-dcae-app-simulator
 ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.simulators.dcaeapp.MainKt"]
-CMD ["--kafka-bootstrap-servers", "TODO", "--kafka-topics", "TODO", "--api-port", "TODO"]
+CMD ["--kafka-bootstrap-servers", "kafka:9092", "--kafka-topics", "ves_hvRanMeas", "--listen-port", "8080"]
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./
 COPY target/hv-collector-dcae-app-simulator-*.jar ./

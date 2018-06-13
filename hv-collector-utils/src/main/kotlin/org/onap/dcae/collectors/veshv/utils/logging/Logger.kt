@@ -107,4 +107,29 @@ class Logger(val logger: org.slf4j.Logger) {
             logger.warn(messageProvider(), ex)
         }
     }
+
+
+    //
+    // ERROR
+    //
+
+    fun error(message: String) {
+        logger.error(message)
+    }
+
+    fun error(message: String, ex: Exception) {
+        logger.error(message, ex)
+    }
+
+    fun error(messageProvider: () -> String) {
+        if (logger.isErrorEnabled) {
+            logger.error(messageProvider())
+        }
+    }
+
+    fun error(ex: Exception, messageProvider: () -> String) {
+        if (logger.isErrorEnabled) {
+            logger.error(messageProvider(), ex)
+        }
+    }
 }

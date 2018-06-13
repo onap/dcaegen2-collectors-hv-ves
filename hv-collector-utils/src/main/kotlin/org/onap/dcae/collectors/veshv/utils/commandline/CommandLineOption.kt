@@ -55,6 +55,20 @@ enum class CommandLineOption(val option: Option) {
             .desc("Amount of messages to send")
             .build()
     ),
+    KAFKA_SERVERS(Option.builder("s")
+            .longOpt("kafka-bootstrap-servers")
+            .required()
+            .hasArg()
+            .desc("Comma-separated Kafka bootstrap servers in <host>:<port> format")
+            .build()
+    ),
+    KAFKA_TOPICS(Option.builder("f")
+            .longOpt("kafka-topics")
+            .required()
+            .hasArg()
+            .desc("Comma-separated Kafka topics")
+            .build()
+    ),
     PRIVATE_KEY_FILE(Option.builder("k")
             .longOpt("private-key-file")
             .hasArg()

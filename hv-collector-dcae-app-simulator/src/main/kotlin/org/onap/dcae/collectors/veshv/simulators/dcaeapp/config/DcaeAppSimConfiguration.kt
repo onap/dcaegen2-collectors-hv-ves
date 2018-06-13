@@ -17,18 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp
+package org.onap.dcae.collectors.veshv.simulators.dcaeapp.config
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import kotlin.test.assertEquals
-
-object DummyTest : Spek({
-    on("sum of 2 and 3") {
-        val sum = 2 + 3
-        it("outcome should be equals 5") {
-            assertEquals(5, sum)
-        }
-    }
-})
+data class DcaeAppSimConfiguration(
+        val apiPort: Int,
+        val kafkaBootstrapServers: String,
+        val kafkaTopics: Set<String>
+)
