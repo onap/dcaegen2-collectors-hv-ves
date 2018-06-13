@@ -40,10 +40,9 @@ internal class LoggingSinkProvider : SinkProvider {
             private val totalMessages = AtomicLong()
             private val totalBytes = AtomicLong()
 
-            override fun send(messages: Flux<RoutedMessage>): Flux<VesMessage> =
+            override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> =
                     messages
                             .doOnNext(this::logMessage)
-                            .map { it.message }
 
             private fun logMessage(msg: RoutedMessage) {
                 val msgs = totalMessages.addAndGet(1)
