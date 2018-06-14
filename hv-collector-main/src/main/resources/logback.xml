@@ -26,7 +26,10 @@
       </rollingPolicy>
     </appender>
 
-  <logger name="org.onap.dcae.collectors.veshv" level="INFO"/>
+  <logger name="org.onap.dcae.collectors.veshv" level="DEBUG"/>
+  <logger name="org.onap.dcae.collectors.veshv.impl.wire" level="TRACE"/>
+  <logger name="org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSink" level="TRACE"/>
+  <logger name="org.onap.dcae.collectors.veshv.impl.adapters.LoggingSinkProvider" level="TRACE"/>
   <!--<logger name="reactor.ipc.netty" level="DEBUG"/>-->
 
   <root level="INFO">

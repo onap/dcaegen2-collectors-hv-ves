@@ -24,12 +24,14 @@ import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.DefaultValues.API_PORT
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_SERVERS
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_TOPICS
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
 
 internal object DefaultValues {
     const val API_PORT = 8080
+    const val KAFKA_SERVERS = "kafka:9092"
+    const val KAFKA_TOPICS = "ves_hvRanMeas"
 }
 
 class ArgBasedDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
@@ -41,8 +43,8 @@ class ArgBasedDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfigur
 
     override fun getConfiguration(cmdLine: CommandLine): DcaeAppSimConfiguration {
         val port = cmdLine.intValue(LISTEN_PORT, API_PORT)
-        val kafkaBootstrapServers = cmdLine.stringValue(KAFKA_SERVERS)
-        val kafkaTopics = cmdLine.stringValue(KAFKA_TOPICS).split(",").toSet()
+        val kafkaBootstrapServers = cmdLine.stringValue(KAFKA_SERVERS, DefaultValues.KAFKA_SERVERS)
+        val kafkaTopics = cmdLine.stringValue(KAFKA_TOPICS, DefaultValues.KAFKA_TOPICS).split(",").toSet()
         return DcaeAppSimConfiguration(
                 port,
                 kafkaBootstrapServers,

@@ -93,6 +93,10 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.arrow-kt</groupId>
+            <artifactId>arrow-effects</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.ratpack</groupId>
             <artifactId>ratpack-core</artifactId>
         </dependency>

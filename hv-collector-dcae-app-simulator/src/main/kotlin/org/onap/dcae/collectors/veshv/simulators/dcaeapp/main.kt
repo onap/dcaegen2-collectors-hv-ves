@@ -19,32 +19,30 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
+import arrow.core.Failure
+import arrow.core.Success
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.ArgBasedDcaeAppSimConfiguration
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.KafkaSource
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote.ApiServer
-import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
+import org.onap.dcae.collectors.veshv.utils.commandline.handleErrorsInMain
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.slf4j.LoggerFactory
 
 private val logger = Logger(LoggerFactory.getLogger("DCAE simulator :: main"))
 
 fun main(args: Array<String>) {
+    logger.info("Starting DCAE APP simulator")
 
-    try {
-        logger.info("Starting DCAE APP simulator")
-        val simulatorConfig = ArgBasedDcaeAppSimConfiguration().parse(args)
-
-        KafkaSource.create(simulatorConfig.kafkaBootstrapServers, simulatorConfig.kafkaTopics)
-                .start()
-                .map(::ApiServer)
-                .flatMap { it.start(simulatorConfig.apiPort) }
-                .block()
-    } catch (e: WrongArgumentException) {
-        e.printHelp("java org.onap.dcae.collectors.veshv.simulators.dcaeapp.MainKt")
-        System.exit(1)
-    } catch (e: Exception) {
-        logger.error(e.localizedMessage)
-        logger.debug("An error occurred when starting ves dcea app simulator", e)
-        System.exit(2)
+    val config = ArgBasedDcaeAppSimConfiguration().parse(args)
+    when (config) {
+        is Success -> startApp(config.value).unsafeRunSync()
+        is Failure -> config.handleErrorsInMain("", logger)
     }
 }
+
+private fun startApp(config: DcaeAppSimConfiguration) =
+        KafkaSource.create(config.kafkaBootstrapServers, config.kafkaTopics)
+                .start()
+                .map(::ApiServer)
+                .flatMap { it.start(config.apiPort) }

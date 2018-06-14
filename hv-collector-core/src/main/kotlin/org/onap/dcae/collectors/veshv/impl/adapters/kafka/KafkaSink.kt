@@ -20,27 +20,38 @@
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.impl.adapters.LoggingSinkProvider
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import reactor.core.publisher.Flux
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord
 import reactor.kafka.sender.SenderResult
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
 internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, VesMessage>) : Sink {
+    private val sentMessages = AtomicLong(0)
 
     override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
         val records = messages.map(this::vesToKafkaRecord)
-        return sender.send(records)
+        val result = sender.send(records)
                 .doOnNext(::logException)
                 .filter(::isSuccessful)
                 .map { it.correlationMetadata() }
+
+        return if (logger.traceEnabled) {
+            result.doOnNext(::logSentMessage)
+        } else {
+            result
+        }
     }
 
     private fun vesToKafkaRecord(msg: RoutedMessage): SenderRecord<CommonEventHeader, VesMessage, RoutedMessage> {
@@ -59,7 +70,14 @@ internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, VesM
         }
     }
 
-    private fun isSuccessful(senderResult: SenderResult<out Any>)  = senderResult.exception() == null
+    private fun logSentMessage(sentMsg: RoutedMessage) {
+        logger.trace {
+            val msgNum = sentMessages.incrementAndGet()
+            "Message #$msgNum has been sent to ${sentMsg.topic}:${sentMsg.partition}"
+        }
+    }
+
+    private fun isSuccessful(senderResult: SenderResult<out Any>) = senderResult.exception() == null
 
     companion object {
         val logger = Logger(KafkaSink::class)

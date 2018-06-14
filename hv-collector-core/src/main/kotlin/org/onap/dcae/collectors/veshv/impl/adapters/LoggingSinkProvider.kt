@@ -23,7 +23,6 @@ import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
-import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import java.util.concurrent.atomic.AtomicLong
@@ -36,7 +35,6 @@ internal class LoggingSinkProvider : SinkProvider {
 
     override fun invoke(config: CollectorConfiguration): Sink {
         return object : Sink {
-            private val logger = Logger(LoggingSinkProvider::class)
             private val totalMessages = AtomicLong()
             private val totalBytes = AtomicLong()
 
@@ -59,5 +57,6 @@ internal class LoggingSinkProvider : SinkProvider {
 
     companion object {
         const val INFO_LOGGING_FREQ = 100_000
+        private val logger = Logger(LoggingSinkProvider::class)
     }
 }

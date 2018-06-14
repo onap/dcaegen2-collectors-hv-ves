@@ -19,24 +19,32 @@
  */
 package org.onap.dcae.collectors.veshv.utils.commandline
 
-import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Options
+import arrow.core.Failure
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import kotlin.system.exitProcess
 
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since June 2018
+ */
 
-class WrongArgumentException(
-        message: String,
-        private val options: Options,
-        parent: Throwable? = null
-) : Exception(message, parent) {
+fun handleErrorsInMain(ex: Throwable, programName: String, logger: Logger) {
+    when (ex) {
+        is WrongArgumentException -> {
+            ex.printMessage()
+            ex.printHelp(programName)
+            exitProcess(1)
+        }
 
-    constructor(par: Throwable, options: Options) : this(par.message ?: "", options, par)
-
-    fun printMessage() {
-        println(message)
+        else -> {
+            logger.error(ex.localizedMessage)
+            logger.debug("An error occurred when starting VES HV Collector", ex)
+            System.exit(2)
+        }
     }
+}
 
-    fun printHelp(programName: String) {
-        val formatter = HelpFormatter()
-        formatter.printHelp(programName, options)
-    }
+
+fun <A> Failure<A>.handleErrorsInMain(programName: String, logger: Logger) {
+    handleErrorsInMain(this.exception, programName, logger)
 }

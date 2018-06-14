@@ -56,7 +56,7 @@ internal class StreamBufferEmitter(
             else -> {
                 streamBuffer.addComponent(INCREASE_WRITER_INDEX, newFrame)
                 sink.onDispose {
-                    logger.debug("Disposing read components")
+                    logger.trace { "Disposing read components" }
                     streamBuffer.discardReadComponents()
                 }
                 sink.onRequest { requestedFrameCount ->

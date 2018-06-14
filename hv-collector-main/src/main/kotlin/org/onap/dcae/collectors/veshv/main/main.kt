@@ -19,37 +19,49 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
+import arrow.core.flatMap
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
-import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.model.routing
+import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.routing
+import org.onap.dcae.collectors.veshv.utils.commandline.handleErrorsInMain
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import org.slf4j.LoggerFactory
-import kotlin.system.exitProcess
 
-private val logger = LoggerFactory.getLogger("main")
+private val logger = Logger("org.onap.dcae.collectors.veshv.main")
+private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
 
 fun main(args: Array<String>) {
-    try {
-        val serverConfiguration = ArgBasedServerConfiguration().parse(args)
-
-        val collectorProvider = CollectorFactory(
-                resolveConfigurationProvider(serverConfiguration),
-                AdapterFactory.kafkaSink(),
-                MicrometerMetrics()
-        ).createVesHvCollectorProvider()
-        ServerFactory.createNettyTcpServer(serverConfiguration, collectorProvider).start().block()
-    } catch (ex: WrongArgumentException) {
-        ex.printMessage()
-        ex.printHelp("java org.onap.dcae.collectors.veshv.main.MainKt")
-        exitProcess(1)
-    }
+    ArgBasedServerConfiguration().parse(args)
+            .toEither()
+            .map(::createServer)
+            .map(Server::start)
+            .flatMap { it.attempt().unsafeRunSync() }
+            .fold(
+                    { ex ->
+                        handleErrorsInMain(ex, PROGRAM_NAME, logger)
+                    },
+                    { handle ->
+                        logger.info("Server started. Listening on ${handle.host}:${handle.port}")
+                        handle.await().unsafeRunSync()
+                    }
+            )
 }
 
+private fun createServer(config: ServerConfiguration): Server {
+    val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
+    val collectorProvider = CollectorFactory(
+            resolveConfigurationProvider(config),
+            sink,
+            MicrometerMetrics()
+    ).createVesHvCollectorProvider()
+
+    return ServerFactory.createNettyTcpServer(config, collectorProvider)
+}
 
 private fun resolveConfigurationProvider(serverConfiguration: ServerConfiguration): ConfigurationProvider {
 

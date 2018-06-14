@@ -1,9 +1,11 @@
 version: "2"
 services:
+
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+
   kafka:
     image: wurstmeister/kafka
     ports:
@@ -17,29 +19,37 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - zookeeper
-  veshvcollector:
-    build:
-      context: hv-collector-main
-      dockerfile: Dockerfile
+
+  ves-hv-collector:
+    image: onap/ves-hv-collector
+#    build:
+#      context: hv-collector-main
+#      dockerfile: Dockerfile
     ports:
       - "6061:6061/tcp"
     depends_on:
       - kafka
     volumes:
       - ./ssl/:/etc/ves-hv/
-  xnfsimulator:
-    build:
-      context: hv-collector-client-simulator
-      dockerfile: Dockerfile
+
+  xnf-simulator:
+    image: onap/ves-hv-collector-client-simulator
+#    build:
+#      context: hv-collector-client-simulator
+#      dockerfile: Dockerfile
+    ports:
+      - "8000:5000/tcp"
     depends_on:
-      - veshvcollector
+      - ves-hv-collector
     volumes:
       - ./ssl/:/etc/ves-hv/
+
   dcae-app-simulator:
-    build:
-      context: hv-collector-dcae-app-simulator
-      dockerfile: Dockerfile
+    image: onap/ves-hv-collector-dcae-simulator
+#    build:
+#      context: hv-collector-dcae-app-simulator
+#      dockerfile: Dockerfile
     ports:
-      - "8080:8080/tcp"
+      - "8100:5000/tcp"
     depends_on:
       - kafka

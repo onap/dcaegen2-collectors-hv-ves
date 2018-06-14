@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import arrow.core.Option
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
@@ -67,7 +68,10 @@ internal class VesHvCollector(
         wireChunkDecoder.release()
     }
 
-    private fun <T, V> omitWhenNull(input: T, mapper: (T) -> V?): Mono<V> = Mono.justOrEmpty(mapper(input))
+    private fun <T, V> omitWhenNull(input: T, mapper: (T) -> Option<V>): Mono<V> =
+            mapper(input).fold(
+                    { Mono.empty() },
+                    { Mono.just(it) })
 
     companion object {
         val logger = Logger(VesHvCollector::class)

@@ -19,13 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.config
 
+import arrow.core.Failure
+import arrow.core.Success
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
-import kotlin.test.assertFailsWith
 
 
 internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
@@ -38,7 +39,21 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
         cut = ArgBasedDcaeAppSimConfiguration()
     }
 
-    fun parse(vararg cmdLine: String) = cut.parse(cmdLine)
+    fun parseExpectingSuccess(vararg cmdLine: String): DcaeAppSimConfiguration {
+        val result = cut.parse(cmdLine)
+        return when (result) {
+            is Success -> result.value
+            is Failure -> throw AssertionError("Parsing result should be present")
+        }
+    }
+
+    fun parseExpectingFailure(vararg cmdLine: String): Throwable {
+        val result = cut.parse(cmdLine)
+        return when (result) {
+            is Success -> throw AssertionError("parsing should have failed")
+            is Failure -> result.exception
+        }
+    }
 
     describe("parsing arguments") {
         lateinit var result: DcaeAppSimConfiguration
@@ -46,7 +61,7 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
         given("all parameters are present in the long form") {
 
             beforeEachTest {
-                result = parse("--listen-port", "6969",
+                result = parseExpectingSuccess("--listen-port", "6969",
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "--kafka-topics", kafkaTopics
                 )
@@ -71,7 +86,9 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
         given("some parameters are present in the short form") {
 
             beforeEachTest {
-                result = parse("-p", "666", "--kafka-bootstrap-servers", kafkaBootstrapServers, "-f", kafkaTopics)
+                result = parseExpectingSuccess("-p", "666",
+                        "--kafka-bootstrap-servers", kafkaBootstrapServers,
+                        "-f", kafkaTopics)
             }
 
             it("should set proper port") {
@@ -92,7 +109,7 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
         given("all optional parameters are absent") {
 
             beforeEachTest {
-                result = parse("-s", kafkaBootstrapServers, "-f", kafkaTopics)
+                result = parseExpectingSuccess("-s", kafkaBootstrapServers, "-f", kafkaTopics)
             }
 
             it("should set default port") {
@@ -100,21 +117,20 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
             }
         }
 
-
         describe("required parameter is absent") {
             given("kafka topics are missing") {
                 it("should throw exception") {
-                    assertFailsWith<WrongArgumentException> { parse("-s", kafkaBootstrapServers) }
+                    assertThat(parseExpectingFailure("-s", kafkaBootstrapServers))
+                            .isInstanceOf(WrongArgumentException::class.java)
                 }
             }
 
             given("kafka bootstrap servers are missing") {
                 it("should throw exception") {
-                    assertFailsWith<WrongArgumentException> { parse("-f", kafkaTopics) }
+                    assertThat(parseExpectingFailure("-f", kafkaTopics))
+                            .isInstanceOf(WrongArgumentException::class.java)
                 }
             }
         }
     }
-
-
 })
