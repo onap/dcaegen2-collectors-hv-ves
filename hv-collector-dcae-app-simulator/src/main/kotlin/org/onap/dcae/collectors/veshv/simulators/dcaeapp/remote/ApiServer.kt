@@ -19,13 +19,17 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote
 
+import arrow.core.Try
+import arrow.core.getOrElse
+import arrow.effects.IO
+import com.google.protobuf.MessageOrBuilder
 import com.google.protobuf.util.JsonFormat
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerStateProvider
+import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields
 import org.onap.ves.VesEventV5.VesEvent
 import ratpack.handling.Chain
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
-import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -34,40 +38,70 @@ import reactor.core.publisher.Mono
 class ApiServer(private val consumerState: ConsumerStateProvider) {
     private val jsonPrinter = JsonFormat.printer()
 
-    fun start(port: Int): Mono<RatpackServer> = Mono.fromCallable {
-        RatpackServer.of { server ->
+    fun start(port: Int): IO<RatpackServer> = IO {
+        RatpackServer.start { server ->
             server.serverConfig(ServerConfig.embedded().port(port))
                     .handlers(this::setupHandlers)
         }
-    }.doOnNext(RatpackServer::start)
+    }
 
     private fun setupHandlers(chain: Chain) {
         chain
                 .get("messages/count") { ctx ->
                     ctx.response.contentType(CONTENT_TEXT)
-                    consumerState.currentState()
-                            .map { it.msgCount.toString() }
-                            .subscribe(ctx.response::send)
+                    val state = consumerState.currentState()
+                    ctx.response.send(state.msgCount.toString())
                 }
 
                 .get("messages/last/key") { ctx ->
                     ctx.response.contentType(CONTENT_JSON)
-                    consumerState.currentState()
-                            .map { it.lastKey }
-                            .map { VesEvent.CommonEventHeader.parseFrom(it) }
-                            .map { jsonPrinter.print(it) }
-                            .subscribe(ctx.response::send)
+                    val state = consumerState.currentState()
+                    val resp = state.lastKey
+                            .map { Try { VesEvent.CommonEventHeader.parseFrom(it) } }
+                            .map(this::protobufToJson)
+                            .getOrElse { "null" }
+                    ctx.response.send(resp)
                 }
 
                 .get("messages/last/value") { ctx ->
                     ctx.response.contentType(CONTENT_JSON)
-                    consumerState.currentState()
-                            .map { it.lastValue }
-                            .map { VesEvent.parseFrom(it) }
-                            .map { jsonPrinter.print(it) }
-                            .subscribe(ctx.response::send)
+                    val state = consumerState.currentState()
+                    val resp = state.lastValue
+                            .map { Try { VesEvent.parseFrom(it) } }
+                            .map(this::protobufToJson)
+                            .getOrElse { "null" }
+                    ctx.response.send(resp)
+                }
+
+                .get("messages/last/hvRanMeasFields") { ctx ->
+                    ctx.response.contentType(CONTENT_JSON)
+                    val state = consumerState.currentState()
+                    val resp = state.lastValue
+                            .flatMap { Try { VesEvent.parseFrom(it) }.toOption() }
+                            .filter { it.commonEventHeader.domain == VesEvent.CommonEventHeader.Domain.HVRANMEAS }
+                            .map { Try { HVRanMeasFields.parseFrom(it.hvRanMeasFields) } }
+                            .map(this::protobufToJson)
+                            .getOrElse { "null" }
+                    ctx.response.send(resp)
+                }
+
+                .delete("messages") { ctx ->
+                    ctx.response.contentType(CONTENT_TEXT)
+                    consumerState.reset()
+                            .unsafeRunAsync {
+                                it.fold(
+                                        { ctx.response.send("NOK") },
+                                        { ctx.response.send("OK") }
+                                )
+                            }
                 }
     }
+
+    private fun protobufToJson(parseResult: Try<MessageOrBuilder>): String =
+            parseResult.fold(
+                    { ex -> "\"Failed to parse protobuf: ${ex.message}\"" },
+                    { jsonPrinter.print(it) })
+
 
     companion object {
         private const val CONTENT_TEXT = "text/plain"

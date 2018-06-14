@@ -19,12 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
+import arrow.core.Option
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 
 data class Routing(val routes: List<Route>) {
 
-    fun routeFor(commonHeader: CommonEventHeader): Route? = routes.find { it.applies(commonHeader) }
+    fun routeFor(commonHeader: CommonEventHeader): Option<Route> =
+            Option.fromNullable(routes.find { it.applies(commonHeader) })
 }
 
 data class Route(val domain: Domain, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int) {

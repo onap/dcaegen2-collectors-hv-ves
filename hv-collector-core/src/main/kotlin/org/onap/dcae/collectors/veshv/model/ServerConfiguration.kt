@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.model
 
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -28,4 +29,6 @@ import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 data class ServerConfiguration(
         val port: Int,
         val configurationUrl: String,
-        val securityConfiguration: SecurityConfiguration)
+        val securityConfiguration: SecurityConfiguration,
+        val idleTimeout: Duration,
+        val dummyMode: Boolean = false)

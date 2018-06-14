@@ -84,7 +84,7 @@ internal class WireFrameSink(
             try {
                 decoder.decodeFirst(streamBuffer)
             } catch (ex: MissingWireFrameBytesException) {
-                logger.debug { "${ex.message} - waiting for more data" }
+                logger.trace { "${ex.message} - waiting for more data" }
                 null
             }
 

@@ -24,10 +24,14 @@ import kotlin.reflect.KClass
 
 class Logger(val logger: org.slf4j.Logger) {
     constructor(clazz: KClass<out Any>) : this(LoggerFactory.getLogger(clazz.java))
+    constructor(name: String) : this(LoggerFactory.getLogger(name))
 
     //
     // TRACE
     //
+
+    val traceEnabled: Boolean
+        get() = logger.isTraceEnabled
 
     fun trace(messageProvider: () -> String) {
         if (logger.isTraceEnabled) {

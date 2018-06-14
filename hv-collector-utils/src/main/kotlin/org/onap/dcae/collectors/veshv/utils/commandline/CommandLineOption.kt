@@ -87,4 +87,16 @@ enum class CommandLineOption(val option: Option) {
             .desc("File with trusted certificate bundle for trusting connections")
             .build()
     ),
+    IDLE_TIMEOUT_SEC(Option.builder("i")
+            .longOpt("idle-timeout-sec")
+            .hasArg()
+            .desc("""Idle timeout for remote hosts. After given time without any data exchange the
+                |connection might be closed.""".trimMargin())
+            .build()
+    ),
+    DUMMY_MODE(Option.builder("d")
+            .longOpt("dummy")
+            .desc("If present will start in dummy mode (dummy external services)")
+            .build()
+    ),
 }

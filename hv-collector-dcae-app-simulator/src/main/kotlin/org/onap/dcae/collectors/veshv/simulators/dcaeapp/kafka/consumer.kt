@@ -19,7 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka
 
-import reactor.core.publisher.Mono
+import arrow.core.Option
+import arrow.effects.IO
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.kafka.receiver.ReceiverRecord
 
 /**
@@ -27,10 +29,11 @@ import reactor.kafka.receiver.ReceiverRecord
  * @since June 2018
  */
 
-class ConsumerState(val msgCount: Long, val lastKey: ByteArray?, val lastValue: ByteArray?)
+class ConsumerState(val msgCount: Long, val lastKey: Option<ByteArray>, val lastValue: Option<ByteArray>)
 
 interface ConsumerStateProvider {
-    fun currentState(): Mono<ConsumerState>
+    fun currentState(): ConsumerState
+    fun reset(): IO<Unit>
 }
 
 class Consumer : ConsumerStateProvider {
@@ -38,18 +41,28 @@ class Consumer : ConsumerStateProvider {
     private var lastKey: ByteArray? = null
     private var lastValue: ByteArray? = null
 
-    override fun currentState(): Mono<ConsumerState> = Mono.create { sink ->
-        val state = synchronized(this) {
-            ConsumerState(msgCount, lastKey, lastValue)
+    override fun currentState() =
+            ConsumerState(msgCount, Option.fromNullable(lastKey), Option.fromNullable(lastValue))
+
+    override fun reset() = IO {
+        synchronized(this) {
+            msgCount = 0
+            lastKey = null
+            lastValue = null
         }
-        sink.success(state)
     }
 
     fun update(record: ReceiverRecord<ByteArray, ByteArray>) {
+        logger.trace { "Updating stats for message from ${record.topic()}:${record.partition()}" }
+
         synchronized(this) {
             msgCount++
             lastKey = record.key()
             lastValue = record.value()
         }
+    }
+
+    companion object {
+        private val logger = Logger(Consumer::class)
     }
 }

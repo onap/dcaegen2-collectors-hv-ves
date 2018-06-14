@@ -19,16 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.config
 
-import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.DefaultParser
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_PORT
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_HOST
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CERT_FILE
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MESSAGES_TO_SEND_AMOUNT
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.PRIVATE_KEY_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CERT_FILE
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_CERT_FILE
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_HOST
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_PORT
 
 
 /**
@@ -40,6 +40,8 @@ internal object DefaultValues {
     const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
     const val CERT_FILE = "/etc/ves-hv/client.crt"
     const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
+    const val VES_HV_PORT = 6061
+    const val VES_HV_HOST = "veshvcollector"
 }
 
 internal class ArgBasedClientConfiguration : ArgBasedConfiguration<ClientConfiguration>(DefaultParser()) {
@@ -53,8 +55,8 @@ internal class ArgBasedClientConfiguration : ArgBasedConfiguration<ClientConfigu
     )
 
     override fun getConfiguration(cmdLine: CommandLine): ClientConfiguration {
-        val host = cmdLine.stringValue(VES_HV_HOST)
-        val port = cmdLine.intValue(VES_HV_PORT)
+        val host = cmdLine.stringValue(VES_HV_HOST, DefaultValues.VES_HV_HOST)
+        val port = cmdLine.intValue(VES_HV_PORT, DefaultValues.VES_HV_PORT)
         val messagesAmount = cmdLine.longValue(MESSAGES_TO_SEND_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
         return ClientConfiguration(
                 host,

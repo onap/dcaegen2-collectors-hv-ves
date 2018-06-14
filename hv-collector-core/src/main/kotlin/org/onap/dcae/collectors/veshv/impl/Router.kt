@@ -19,10 +19,12 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import arrow.core.Option
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.Routing
 import org.onap.dcae.collectors.veshv.model.VesMessage
 
 class Router(private val routing: Routing) {
-    fun findDestination(message: VesMessage): RoutedMessage? = routing.routeFor(message.header)?.invoke(message)
+    fun findDestination(message: VesMessage): Option<RoutedMessage> =
+            routing.routeFor(message.header).map { it(message) }
 }

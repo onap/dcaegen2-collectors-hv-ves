@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
@@ -32,9 +33,10 @@ interface Collector {
 typealias CollectorProvider = () -> Collector
 
 interface Server {
-    fun start(): Mono<Void>
+    fun start(): IO<ServerHandle>
 }
 
-interface ServerFactory {
-    fun createServer(serverConfig: ServerConfiguration, collector: CollectorProvider): Server
+abstract class ServerHandle(val host: String, val port: Int) {
+    abstract fun shutdown(): IO<Unit>
+    abstract fun await(): IO<Unit>
 }

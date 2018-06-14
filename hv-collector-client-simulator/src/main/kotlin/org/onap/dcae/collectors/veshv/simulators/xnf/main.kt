@@ -19,35 +19,41 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
+import arrow.core.Failure
+import arrow.core.Success
+import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.HttpServer
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.MessageFactory
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.VesHvClient
-import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
-import org.slf4j.LoggerFactory.getLogger
+import org.onap.dcae.collectors.veshv.utils.commandline.handleErrorsInMain
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 
-private val logger = getLogger("Simulator :: main")
+private val logger = Logger("Simulator :: main")
+private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
 fun main(args: Array<String>) {
-    try {
-        val clientConfig = ArgBasedClientConfiguration().parse(args)
-        val vesClient = VesHvClient(clientConfig)
+    val httpServer = ArgBasedClientConfiguration().parse(args)
+            .map(::VesHvClient)
+            .map(::HttpServer)
 
-        HttpServer(vesClient)
-                .start()
-                .block()
-
-    } catch (e: WrongArgumentException) {
-        e.printHelp("java org.onap.dcae.collectors.veshv.main.MainKt")
-        System.exit(1)
-    } catch (e: Exception) {
-        logger.error(e.localizedMessage)
-        logger.debug("An error occurred when starting ves client", e)
-        System.exit(2)
+    when (httpServer) {
+        is Success -> httpServer.value.start().unsafeRunAsync {
+            it.fold(
+                    { ex ->
+                        logger.error("Failed to start a server", ex)
+                    },
+                    { srv ->
+                        logger.info("Started Simulator API server (listening on ${srv.bindHost}:${srv.bindPort})")
+                    }
+            )
+        }
+        is Failure -> httpServer.handleErrorsInMain(PROGRAM_NAME, logger)
     }
 }
-
