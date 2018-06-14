@@ -47,7 +47,7 @@ class HttpServer(private val vesClient: VesHvClient) {
             ctx.request.body
                     .map { Json.createReader(it.inputStream).readObject() }
                     .map { extractMessageParameters(it) }
-                    .map { MessageFactory.createMessageFlux(it) }
+                    .map { MessageFactory.INSTANCE.createMessageFlux(it) }
                     .onError { handleException(it, ctx) }
                     .then {
                         vesClient.send(it)
@@ -75,7 +75,7 @@ class HttpServer(private val vesClient: VesHvClient) {
 
     private fun extractMessageParameters(request: JsonObject): MessageParameters =
             try {
-                val commonEventHeader = MessageFactory
+                val commonEventHeader = MessageFactory.INSTANCE
                         .parseCommonHeader(request.getJsonObject("commonEventHeader"))
                 val messagesAmount = request.getJsonNumber("messagesAmount").longValue()
                 MessageParameters(commonEventHeader, messagesAmount)

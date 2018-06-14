@@ -32,8 +32,7 @@ import javax.json.JsonObject
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-object MessageFactory {
-
+class MessageFactory(private val payloadGenerator: PayloadGenerator) {
 
     fun createMessageFlux(messageParameters: MessageParameters): Flux<WireFrame> =
             Mono.fromCallable { createMessage(messageParameters.commonEventHeader) }.let {
@@ -69,9 +68,13 @@ object MessageFactory {
     private fun vesMessageBytes(commonHeader: CommonEventHeader): ByteArray {
         val msg = VesEvent.newBuilder()
                 .setCommonEventHeader(commonHeader)
-                .setHvRanMeasFields(ByteString.copyFromUtf8("high volume data"))
+                .setHvRanMeasFields(PayloadGenerator().generatePayload().toByteString())
                 .build()
 
         return msg.toByteArray()
+    }
+
+    companion object {
+        val INSTANCE = MessageFactory(PayloadGenerator())
     }
 }

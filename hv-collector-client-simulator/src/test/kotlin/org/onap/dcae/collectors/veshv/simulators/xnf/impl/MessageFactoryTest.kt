@@ -40,7 +40,7 @@ const val SAMPLE_LAST_EPOCH: Long = 120034455
 object MessageFactoryTest : Spek({
     describe("message factory") {
 
-        val factory = MessageFactory
+        val factory = MessageFactory.INSTANCE
 
         given("only common header") {
             it("should return infinite flux") {
