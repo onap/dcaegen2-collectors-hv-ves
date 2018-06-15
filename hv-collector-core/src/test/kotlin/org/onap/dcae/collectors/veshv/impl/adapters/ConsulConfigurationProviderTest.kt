@@ -20,12 +20,16 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Mono
+import reactor.ipc.netty.http.client.HttpClient
+import reactor.test.StepVerifier
+import java.time.Duration
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -35,20 +39,63 @@ import kotlin.test.assertEquals
  */
 internal object ConsulConfigurationProviderTest : Spek({
 
+    val updateInterval = Duration.ofMillis(1)
+    val httpAdapterMock: HttpAdapter = mock()
+
     given("valid resource url") {
-        val testUrl = "http://valid-url/"
-        val httpAdapterMock: HttpAdapter = mock()
-        val consulConfigProvider = ConsulConfigurationProvider(testUrl, httpAdapterMock)
 
-        whenever(httpAdapterMock.getResponse(testUrl)).thenReturn(Mono.just(constructConsulResponse()))
+        val validUrl = "http://valid-url/"
+        val consulConfigProvider = ConsulConfigurationProvider(validUrl, updateInterval, httpAdapterMock)
+
+        whenever(httpAdapterMock.get(validUrl)).thenReturn(Mono.just(constructConsulResponse()))
+
+        it("should use default configuration at the beginning, " +
+                "then apply received configuration") {
+
+            StepVerifier.create(consulConfigProvider().take(2))
+                    .consumeNextWith {
+
+                        assertEquals("kafka:9092", it.kafkaBootstrapServers)
+
+                        val route1 = it.routing.routes[0]
+                        assertEquals(Domain.HVRANMEAS, route1.domain)
+                        assertEquals("ves_hvRanMeas", route1.targetTopic)
+                    }
+                    .consumeNextWith {
+
+                        assertEquals("kafka:9093", it.kafkaBootstrapServers)
+
+                        val route1 = it.routing.routes[0]
+                        assertEquals(Domain.HEARTBEAT, route1.domain)
+                        assertEquals("test-topic-1", route1.targetTopic)
+
+                        val route2 = it.routing.routes[1]
+                        assertEquals(Domain.MEASUREMENTS_FOR_VF_SCALING, route2.domain)
+                        assertEquals("test-topic-2", route2.targetTopic)
+
+                    }.verifyComplete()
+        }
+    }
+    given("invalid resource url") {
+
+        val invalidUrl = "http://invalid-url/"
+        val consulConfigProvider = ConsulConfigurationProvider(invalidUrl, updateInterval, httpAdapterMock)
+
+        whenever(httpAdapterMock.get(invalidUrl)).thenReturn(Mono.error(RuntimeException("Test exception")))
+
+        it("should use default configuration at the beginning, then should interrupt the flux") {
+
+            StepVerifier.create(consulConfigProvider())
+                    .consumeNextWith {
 
 
-        it("should create valid collector configuration") {
-            val response = consulConfigProvider().blockFirst()
-            assertEquals("val1", response.kafkaBootstrapServers)
-            val route = response.routing.routes[0]
-            assertEquals(Domain.MEASUREMENTS_FOR_VF_SCALING, route.domain)
-            assertEquals("val3", route.targetTopic)
+                        assertEquals("kafka:9092", it.kafkaBootstrapServers)
+
+                        val route1 = it.routing.routes[0]
+                        assertEquals(Domain.HVRANMEAS, route1.domain)
+                        assertEquals("ves_hvRanMeas", route1.targetTopic)
+                    }
+                    .verifyErrorMessage("Test exception")
         }
     }
 })
@@ -56,11 +103,17 @@ internal object ConsulConfigurationProviderTest : Spek({
 fun constructConsulResponse(): String {
 
     val config = """{
-        "kafkaBootstrapServers": "val1",
-        "routing": {
-            "fromDomain": 2,
-            "toTopic": "val3"
-        }
+	"kafkaBootstrapServers": "kafka:9093",
+	"routing": [
+		    {
+		    	"fromDomain": 1,
+		    	"toTopic": "test-topic-1"
+		    },
+		    {
+		    	"fromDomain": 2,
+		    	"toTopic": "test-topic-2"
+	    	}
+    ]
     }"""
 
     val encodedValue = String(Base64.getEncoder().encode(config.toByteArray()))

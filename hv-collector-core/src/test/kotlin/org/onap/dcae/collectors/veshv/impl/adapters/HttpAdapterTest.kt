@@ -30,6 +30,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.ipc.netty.http.client.HttpClient
 import reactor.ipc.netty.http.client.HttpClientResponse
+import reactor.test.StepVerifier
 import java.nio.charset.Charset
 import kotlin.test.assertEquals
 
@@ -43,13 +44,15 @@ internal object HttpAdapterTest : Spek({
 
         val httpClientMock: HttpClient = mock()
         val httpAdapter = HttpAdapter(httpClientMock)
-        val testUrl = "http://valid-url/"
+        val validUrl = "http://valid-url/"
         val responseContent = """{"key1": "value1", "key2": "value2"}"""
         val httpResponse = createHttpResponseMock(responseContent)
-        whenever(httpClientMock.get(testUrl)).thenReturn(Mono.just(httpResponse))
+        whenever(httpClientMock.get(validUrl)).thenReturn(Mono.just(httpResponse))
 
         it("should return response string") {
-            assertEquals(responseContent, httpAdapter.getResponse(testUrl).block())
+            StepVerifier
+                    .create(httpAdapter.get(validUrl))
+                    .expectNext(responseContent)
         }
     }
 
@@ -57,12 +60,14 @@ internal object HttpAdapterTest : Spek({
 
         val httpClientMock: HttpClient = mock()
         val httpAdapter = HttpAdapter(httpClientMock)
-        val testUrl = "http://invalid-url/"
-        whenever(httpClientMock.get(testUrl)).thenReturn(Mono.error(Exception("Test exception")))
+        val invalidUrl = "http://invalid-url/"
+        val exceptionMessage = "Test exception"
+        whenever(httpClientMock.get(invalidUrl)).thenReturn(Mono.error(Exception(exceptionMessage)))
 
-
-        it("should return null response") {
-            assertEquals(null, httpAdapter.getResponse(testUrl).block())
+        it("should interrupt the flux") {
+            StepVerifier
+                    .create(httpAdapter.get(invalidUrl))
+                    .verifyErrorMessage(exceptionMessage)
         }
     }
 })

@@ -30,6 +30,7 @@ import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import java.nio.file.Paths
+import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -38,6 +39,8 @@ import java.nio.file.Paths
 object ArgBasedServerConfigurationTest : Spek({
     lateinit var cut: ArgBasedServerConfiguration
     val configurationUrl = "http://test-address/test"
+    val listenPort = "6969"
+    val updateInterval = "10"
     val pk = Paths.get("/", "etc", "ves", "pk.pem")
     val cert = Paths.get("/", "etc", "ssl", "certs", "ca-bundle.crt")
     val trustCert = Paths.get("/", "etc", "ves", "trusted.crt")
@@ -59,8 +62,9 @@ object ArgBasedServerConfigurationTest : Spek({
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse("--listen-port", "6969",
+                result = parse("--listen-port", listenPort,
                         "--config-url", configurationUrl,
+                        "--update-interval", updateInterval,
                         "--private-key-file", pk.toFile().absolutePath,
                         "--cert-file", cert.toFile().absolutePath,
                         "--trust-cert-file", trustCert.toFile().absolutePath)
@@ -68,6 +72,10 @@ object ArgBasedServerConfigurationTest : Spek({
 
             it("should set proper port") {
                 assertThat(result.port).isEqualTo(6969)
+            }
+
+            it("should set update interval") {
+                assertThat(result.configurationUpdateInterval).isEqualTo(Duration.ofSeconds(10))
             }
 
             it("should set proper config url") {
@@ -110,6 +118,10 @@ object ArgBasedServerConfigurationTest : Spek({
 
             it("should set default config url") {
                 assertThat(result.configurationUrl).isEqualTo(DefaultValues.CONFIG_URL)
+            }
+
+            it("should set default update interval") {
+                assertThat(result.configurationUpdateInterval).isEqualTo(Duration.ofSeconds(DefaultValues.UPDATE_INTERVAL))
             }
 
             on("security config") {

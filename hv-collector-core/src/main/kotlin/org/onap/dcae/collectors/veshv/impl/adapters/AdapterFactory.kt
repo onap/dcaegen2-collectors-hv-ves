@@ -22,9 +22,8 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
-import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import reactor.core.publisher.Flux
 import reactor.ipc.netty.http.client.HttpClient
+import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -34,13 +33,8 @@ object AdapterFactory {
     fun kafkaSink(): SinkProvider = KafkaSinkProvider()
     fun loggingSink(): SinkProvider = LoggingSinkProvider()
 
-    fun staticConfigurationProvider(config: CollectorConfiguration) =
-            object : ConfigurationProvider {
-                override fun invoke() = Flux.just(config)
-            }
-
-    fun consulConfigurationProvider(url: String): ConfigurationProvider =
-            ConsulConfigurationProvider(url, httpAdapter())
+    fun consulConfigurationProvider(url: String, updateInterval: Duration): ConfigurationProvider =
+            ConsulConfigurationProvider(url, updateInterval, httpAdapter())
 
     fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
 }

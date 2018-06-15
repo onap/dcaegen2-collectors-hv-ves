@@ -49,7 +49,9 @@ class CollectorFactory(val configuration: ConfigurationProvider,
     }
 
     private fun createVesHvCollector(): Flux<Collector> =
-            configuration().map(this::createVesHvCollector)
+            configuration()
+                    .doOnError { System.exit(ERROR_CODE) }
+                    .map(this::createVesHvCollector)
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
         return VesHvCollector(
@@ -61,5 +63,8 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                 metrics = metrics)
     }
 
+    companion object {
+        const val ERROR_CODE = 3
+    }
 }
 

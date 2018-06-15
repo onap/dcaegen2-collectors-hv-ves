@@ -20,17 +20,13 @@
 package org.onap.dcae.collectors.veshv.main
 
 import arrow.core.flatMap
-import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
-import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.utils.commandline.handleErrorsInMain
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 
 private val logger = Logger("org.onap.dcae.collectors.veshv.main")
 private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
@@ -55,7 +51,8 @@ fun main(args: Array<String>) {
 private fun createServer(config: ServerConfiguration): Server {
     val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
     val collectorProvider = CollectorFactory(
-            resolveConfigurationProvider(config),
+            AdapterFactory.consulConfigurationProvider(
+                    config.configurationUrl, config.configurationUpdateInterval),
             sink,
             MicrometerMetrics()
     ).createVesHvCollectorProvider()
@@ -63,23 +60,3 @@ private fun createServer(config: ServerConfiguration): Server {
     return ServerFactory.createNettyTcpServer(config, collectorProvider)
 }
 
-private fun resolveConfigurationProvider(serverConfiguration: ServerConfiguration): ConfigurationProvider {
-
-    if (serverConfiguration.configurationUrl.isEmpty()) {
-        logger.info("Configuration url not specified - using default config")
-        val sampleConfig = CollectorConfiguration(
-                kafkaBootstrapServers = "kafka:9092",
-                routing = routing {
-                    defineRoute {
-                        fromDomain(Domain.HVRANMEAS)
-                        toTopic("ves_hvRanMeas")
-                        withFixedPartitioning()
-                    }
-                }.build()
-        )
-        return AdapterFactory.staticConfigurationProvider(sampleConfig)
-    }
-
-    logger.info("Using configuration url: ${serverConfiguration.configurationUrl}")
-    return AdapterFactory.consulConfigurationProvider(serverConfiguration.configurationUrl)
-}

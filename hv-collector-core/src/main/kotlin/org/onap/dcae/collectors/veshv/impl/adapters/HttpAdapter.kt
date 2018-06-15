@@ -34,15 +34,12 @@ open class HttpAdapter(private val httpClient: HttpClient) {
 
     private val logger = LoggerFactory.getLogger(HttpAdapter::class.java)
 
-    open fun getResponse(url: String): Mono<String> =
+    open fun get(url: String): Mono<String> =
             httpClient.get(url)
-                    .onErrorResume { e -> unableToGetResource(e, url) }
-                    .flatMap { res -> res.receiveContent().toMono() }
-                    .map { content -> content.content().toString(Charset.defaultCharset()) }
-
-
-    private fun unableToGetResource(e: Throwable, url: String): Mono<HttpClientResponse> {
-        logger.info("Failed to get resource on path: $url\n${e.localizedMessage}")
-        return Mono.empty()
-    }
+                    .doOnError {
+                        logger.error("Failed to get resource on path: $url (${it.localizedMessage})")
+                        logger.debug("Nested exception:", it)
+                    }
+                    .flatMap { it.receiveContent().toMono() }
+                    .map { it.content().toString(Charset.defaultCharset()) }
 }

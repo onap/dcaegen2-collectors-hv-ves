@@ -31,10 +31,12 @@ import reactor.core.publisher.Flux
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class WireChunkDecoder(private val decoder: WireFrameDecoder, alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
+internal class WireChunkDecoder(private val decoder: WireFrameDecoder,
+                                alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
     private val streamBuffer = alloc.compositeBuffer()
 
-    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = StreamBufferEmitter.createFlux(decoder, streamBuffer, byteBuf)
+    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = StreamBufferEmitter
+            .createFlux(decoder, streamBuffer, byteBuf)
             .doOnSubscribe { logIncomingMessage(byteBuf) }
             .doOnNext(this::logDecodedWireMessage)
 
