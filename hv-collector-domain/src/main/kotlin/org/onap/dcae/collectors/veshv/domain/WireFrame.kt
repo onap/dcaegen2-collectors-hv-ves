@@ -28,7 +28,7 @@ package org.onap.dcae.collectors.veshv.domain
  *     ├─────┼──┬──┬──┬──┬──┬──┬──┬──┼──┬──┬──┬──┬──┬──┬──┬──┼──┬──┬──┬──┬──┬──┬──┬──┤
  *     │ bit │ 0│  │  │  │  │  │  │  │ 8│  │  │  │  │  │  │  │16│  │  │  │  │  │  │  │ ...
  *     ├─────┼──┴──┴──┴──┴──┴──┴──┴──┼──┴──┴──┴──┴──┴──┴──┴──┼──┴──┴──┴──┴──┴──┴──┴──┤
- *     │field│          0xFF         │     major version     │     minor version     │
+ *     │field│          0xFF         │        version        │ payload content type  │
  *     └─────┴───────────────────────┴───────────────────────┴───────────────────────┘
  *     ┌─────┬───────────────────────┬───────────────────────┬───────────────────────┬───────────────────────┐
  *     │octet│           3           │           4           │           5           │           6           │
@@ -50,24 +50,27 @@ package org.onap.dcae.collectors.veshv.domain
  * @since May 2018
  */
 data class WireFrame(val payload: ByteData,
-                     val majorVersion: Short,
-                     val minorVersion: Short,
+                     val version: Short,
+                     val payloadTypeRaw: Short,
                      val payloadSize: Int) {
 
-    constructor(payload: ByteArray) : this(ByteData(payload), 1, 0, payload.size)
+    constructor(payload: ByteArray) : this(
+            ByteData(payload),
+            SUPPORTED_VERSION,
+            PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+            payload.size)
 
     fun isValid(): Boolean =
-            majorVersion == SUPPORTED_MAJOR_VERSION
+            version == SUPPORTED_VERSION
+                    && PayloadContentType.isValidHexValue(payloadTypeRaw)
                     && payload.size() == payloadSize
 
     companion object {
-        const val SUPPORTED_MAJOR_VERSION: Short = 1
+        const val SUPPORTED_VERSION: Short = 1
 
         const val HEADER_SIZE =
                 3 * java.lang.Byte.BYTES +
                         1 * java.lang.Integer.BYTES
         const val MARKER_BYTE: Short = 0xFF
-
     }
-
 }

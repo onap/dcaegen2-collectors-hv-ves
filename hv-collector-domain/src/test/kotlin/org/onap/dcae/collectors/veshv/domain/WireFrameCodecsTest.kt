@@ -50,11 +50,23 @@ object WireFrameCodecsTest : Spek({
 
     describe("Wire Frame invariants") {
 
-        given("input with unsupported major version") {
+        given("input with unsupported version") {
             val input = WireFrame(
                     payload = ByteData.EMPTY,
-                    majorVersion = 100,
-                    minorVersion = 2,
+                    version = 100,
+                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                    payloadSize = 0)
+
+            it("should fail validation") {
+                assertThat(input.isValid()).isFalse()
+            }
+        }
+
+        given("input with unsupported payload type") {
+            val input = WireFrame(
+                    payload = ByteData.EMPTY,
+                    version = 1,
+                    payloadTypeRaw = 0x69,
                     payloadSize = 0)
 
             it("should fail validation") {
@@ -65,8 +77,8 @@ object WireFrameCodecsTest : Spek({
         given("input with too small payload size") {
             val input = WireFrame(
                     payload = ByteData(byteArrayOf(1, 2, 3)),
-                    majorVersion = 1,
-                    minorVersion = 0,
+                    version = 1,
+                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = 1)
 
             it("should fail validation") {
@@ -77,8 +89,8 @@ object WireFrameCodecsTest : Spek({
         given("input with too big payload size") {
             val input = WireFrame(
                     payload = ByteData(byteArrayOf(1, 2, 3)),
-                    majorVersion = 1,
-                    minorVersion = 0,
+                    version = 1,
+                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = 8)
 
             it("should fail validation") {
@@ -90,8 +102,8 @@ object WireFrameCodecsTest : Spek({
             val payload = byteArrayOf(6, 9, 8, 6)
             val input = WireFrame(
                     payload = ByteData(payload),
-                    majorVersion = 1,
-                    minorVersion = 0,
+                    version = 1,
+                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = payload.size)
 
             it("should pass validation") {
@@ -109,12 +121,12 @@ object WireFrameCodecsTest : Spek({
             val encoded = encodeSampleFrame()
             val decoded = decoder.decodeFirst(encoded)
 
-            it("should decode major version") {
-                assertThat(decoded.majorVersion).isEqualTo(frame.majorVersion)
+            it("should decode version") {
+                assertThat(decoded.version).isEqualTo(frame.version)
             }
 
-            it("should decode minor version") {
-                assertThat(decoded.minorVersion).isEqualTo(frame.minorVersion)
+            it("should decode payload type") {
+                assertThat(decoded.payloadTypeRaw).isEqualTo(frame.payloadTypeRaw)
             }
 
             it("should decode payload size") {

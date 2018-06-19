@@ -20,22 +20,19 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import com.google.protobuf.ByteString
-import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
-import io.netty.buffer.Unpooled
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import java.nio.charset.Charset
-import java.util.*
+import java.util.UUID
 
-val alocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT
+val allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT
 
-fun vesMessage(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()) = alocator.buffer().run {
+fun vesMessage(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()) = allocator.buffer().run {
     writeByte(0xFF) // always 0xFF
-    writeByte(1)   // major version
-    writeByte(0)   // minor version
+    writeByte(0x01)   // version
+    writeByte(0x01)   // content type = GPB
 
     val gpb = vesEvent(domain, id).toByteString().asReadOnlyByteBuffer()
     writeInt(gpb.limit())  // ves event size in bytes
@@ -43,10 +40,10 @@ fun vesMessage(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toS
 }
 
 
-fun invalidVesMessage() = alocator.buffer().run {
+fun invalidVesMessage() = allocator.buffer().run {
     writeByte(0xFF) // always 0xFF
-    writeByte(1)   // major version
-    writeByte(0)   // minor version
+    writeByte(0x01)   // version
+    writeByte(0x01)   // content type = GPB
 
     val invalidGpb = "some random data".toByteArray(Charsets.UTF_8)
     writeInt(invalidGpb.size)  // ves event size in bytes
@@ -54,14 +51,14 @@ fun invalidVesMessage() = alocator.buffer().run {
 
 }
 
-fun garbageFrame() = alocator.buffer().run {
+fun garbageFrame() = allocator.buffer().run {
     writeBytes("the meaning of life is &@)(*_!".toByteArray())
 }
 
-fun invalidWireFrame() = alocator.buffer().run {
+fun invalidWireFrame() = allocator.buffer().run {
     writeByte(0xFF)
-    writeByte(1)
-    writeByte(0)
+    writeByte(0x01)   // version
+    writeByte(0x01)   // content type = GPB
 }
 
 fun vesEvent(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()) =

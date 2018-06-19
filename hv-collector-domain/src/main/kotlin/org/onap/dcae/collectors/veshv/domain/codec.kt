@@ -35,8 +35,8 @@ class WireFrameEncoder(val allocator: ByteBufAllocator) {
         val bb = allocator.buffer(WireFrame.HEADER_SIZE + frame.payload.size())
 
         bb.writeByte(WireFrame.MARKER_BYTE.toInt())
-        bb.writeByte(frame.majorVersion.toInt())
-        bb.writeByte(frame.minorVersion.toInt())
+        bb.writeByte(frame.version.toInt())
+        bb.writeByte(frame.payloadTypeRaw.toInt())
         bb.writeInt(frame.payloadSize)
         frame.payload.writeTo(bb)
 
@@ -57,12 +57,12 @@ class WireFrameDecoder {
         verifyMarker(byteBuf)
         verifyMinimumSize(byteBuf)
 
-        val majorVersion = byteBuf.readUnsignedByte()
-        val minorVersion = byteBuf.readUnsignedByte()
+        val version = byteBuf.readUnsignedByte()
+        val payloadTypeRaw = byteBuf.readUnsignedByte()
         val payloadSize = verifyPayloadSize(byteBuf)
         val payload = ByteData.readFrom(byteBuf, payloadSize)
 
-        return WireFrame(payload, majorVersion, minorVersion, payloadSize)
+        return WireFrame(payload, version, payloadTypeRaw, payloadSize)
     }
 
     private fun verifyPayloadSize(byteBuf: ByteBuf): Int =
