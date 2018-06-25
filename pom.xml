@@ -70,10 +70,13 @@
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
         <skipAnalysis>true</skipAnalysis>
 
-        <!-- Docker -->
         <skipDocker>true</skipDocker> <!-- TODO: unskip docker -->
-        <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
+        <!-- Docker -->
+        <onap.nexus.dockerregistry.daily>nexus3.onap.org:10003</onap.nexus.dockerregistry.daily>
+        <onap.nexus.dockerregistry.release>nexus3.onap.org:10002</onap.nexus.dockerregistry.release>
+        <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
+        <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
     </properties>
 
 
@@ -400,7 +403,7 @@
                                 <images>
                                     <image>
                                         <alias>${project.artifactId}</alias>
-                                        <name>${docker-image.namespace}/${docker-image.name}</name>
+                                        <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}</name>
                                         <build>
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
                                         </build>
