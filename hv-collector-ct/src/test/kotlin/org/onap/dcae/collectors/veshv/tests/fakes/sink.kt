@@ -21,16 +21,16 @@ package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
-import org.onap.dcae.collectors.veshv.model.VesMessage
 import reactor.core.publisher.Flux
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class FakeSink : Sink {
+class StoringSink : Sink {
     private val sent: Deque<RoutedMessage> = ConcurrentLinkedDeque()
 
     val sentMessages: List<RoutedMessage>
@@ -38,5 +38,22 @@ class FakeSink : Sink {
 
     override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
         return messages.doOnNext(sent::addLast)
+    }
+}
+
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since May 2018
+ */
+class CountingSink : Sink {
+    private val atomicCount = AtomicLong(0)
+
+    val count: Long
+        get() = atomicCount.get()
+
+    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
+        return messages.doOnNext {
+            atomicCount.incrementAndGet()
+        }
     }
 }

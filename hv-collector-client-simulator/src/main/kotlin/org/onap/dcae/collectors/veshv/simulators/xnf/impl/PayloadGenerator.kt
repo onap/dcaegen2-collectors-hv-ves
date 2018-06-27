@@ -22,9 +22,9 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload.PMObject
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload.PMObject.HVRanMeas
-import java.util.Random
+import java.util.*
 
-class PayloadGenerator {
+internal class PayloadGenerator {
 
     private val randomGenerator = Random()
 

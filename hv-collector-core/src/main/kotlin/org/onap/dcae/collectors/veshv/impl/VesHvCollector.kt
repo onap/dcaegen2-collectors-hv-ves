@@ -59,21 +59,28 @@ internal class VesHvCollector(
                         .compose(sink::send)
                         .doOnNext { metrics.notifyMessageSent(it.topic) }
                         .doOnTerminate { releaseBuffersMemory(wireDecoder) }
+                        .onErrorResume(this::handleErrors)
                         .then()
             }
 
     private fun findRoute(msg: VesMessage): Mono<RoutedMessage> = omitWhenNull(msg, router::findDestination)
-
-    private fun releaseBuffersMemory(wireChunkDecoder: WireChunkDecoder) {
-        wireChunkDecoder.release()
-    }
 
     private fun <T, V> omitWhenNull(input: T, mapper: (T) -> Option<V>): Mono<V> =
             mapper(input).fold(
                     { Mono.empty() },
                     { Mono.just(it) })
 
+    private fun handleErrors(ex: Throwable): Flux<RoutedMessage> {
+        logger.warn("Error while handling message stream: ${ex::class.qualifiedName} (${ex.message})")
+        logger.debug("Detailed stack trace", ex)
+        return Flux.empty()
+    }
+
+    private fun releaseBuffersMemory(wireChunkDecoder: WireChunkDecoder) {
+        wireChunkDecoder.release()
+    }
+
     companion object {
-        val logger = Logger(VesHvCollector::class)
+        private val logger = Logger(VesHvCollector::class)
     }
 }

@@ -23,8 +23,10 @@ import com.google.protobuf.InvalidProtocolBufferException
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
 import org.onap.dcae.collectors.veshv.tests.fakes.HVRANMEAS_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 
@@ -34,9 +36,11 @@ import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
  */
 object VesHvSpecification : Spek({
     describe("VES High Volume Collector") {
-        system("should handle multiple HV RAN events") { sut ->
+        it("should handle multiple HV RAN events") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
             sut.configurationProvider.updateConfiguration(basicConfiguration)
-            val messages = sut.handleConnection(vesMessage(Domain.HVRANMEAS), vesMessage(Domain.HVRANMEAS))
+            val messages = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS), vesMessage(Domain.HVRANMEAS))
 
             assertThat(messages)
                     .describedAs("should send all events")
@@ -46,18 +50,18 @@ object VesHvSpecification : Spek({
 
     describe("Memory management") {
 
-        system("should release memory for each handled and dropped message") { sut ->
+        it("should release memory for each handled and dropped message") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
             sut.configurationProvider.updateConfiguration(basicConfiguration)
             val validMessage = vesMessage(Domain.HVRANMEAS)
             val msgWithInvalidDomain = vesMessage(Domain.OTHER)
             val msgWithInvalidFrame = invalidWireFrame()
             val expectedRefCnt = 0
 
-            val (handledEvents, exception) = sut.handleConnectionReturningError(
-                    validMessage, msgWithInvalidDomain, msgWithInvalidFrame)
+            val handledEvents = sut.handleConnection(sink, validMessage, msgWithInvalidDomain, msgWithInvalidFrame)
 
             assertThat(handledEvents).hasSize(1)
-            assertThat(exception).isNull()
 
             assertThat(validMessage.refCnt())
                     .describedAs("handled message should be released")
@@ -71,17 +75,17 @@ object VesHvSpecification : Spek({
 
         }
 
-        system("should release memory for each message with invalid payload") { sut ->
+        it("should release memory for each message with invalid payload") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
             sut.configurationProvider.updateConfiguration(basicConfiguration)
             val validMessage = vesMessage(Domain.HVRANMEAS)
             val msgWithInvalidPayload = invalidVesMessage()
             val expectedRefCnt = 0
 
-            val (handledEvents, exception) = sut.handleConnectionReturningError(
-                    validMessage, msgWithInvalidPayload)
+            val handledEvents = sut.handleConnection(sink, validMessage, msgWithInvalidPayload)
 
             assertThat(handledEvents).hasSize(1)
-            assertThat(exception?.cause).isInstanceOf(InvalidProtocolBufferException::class.java)
 
             assertThat(validMessage.refCnt())
                     .describedAs("handled message should be released")
@@ -92,18 +96,17 @@ object VesHvSpecification : Spek({
 
         }
 
-        system("should release memory for each message with garbage frame") { sut ->
+        it("should release memory for each message with garbage frame") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
             sut.configurationProvider.updateConfiguration(basicConfiguration)
             val validMessage = vesMessage(Domain.HVRANMEAS)
             val msgWithGarbageFrame = garbageFrame()
             val expectedRefCnt = 0
 
-            val (handledEvents, exception) = sut.handleConnectionReturningError(
-                    validMessage, msgWithGarbageFrame)
+            val handledEvents = sut.handleConnection(sink, validMessage, msgWithGarbageFrame)
 
             assertThat(handledEvents).hasSize(1)
-            assertThat(exception?.cause)
-                    .isInstanceOf(InvalidWireFrameMarkerException::class.java)
 
             assertThat(validMessage.refCnt())
                     .describedAs("handled message should be released")
@@ -116,10 +119,12 @@ object VesHvSpecification : Spek({
     }
 
     describe("message routing") {
-        system("should direct message to a topic by means of routing configuration") { sut ->
+        it("should direct message to a topic by means of routing configuration") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
             sut.configurationProvider.updateConfiguration(basicConfiguration)
 
-            val messages = sut.handleConnection(vesMessage(Domain.HVRANMEAS))
+            val messages = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS))
             assertThat(messages).describedAs("number of routed messages").hasSize(1)
 
             val msg = messages[0]
@@ -127,9 +132,11 @@ object VesHvSpecification : Spek({
             assertThat(msg.partition).describedAs("routed message partition").isEqualTo(0)
         }
 
-        system("should drop message if route was not found") { sut ->
+        it("should drop message if route was not found") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
             sut.configurationProvider.updateConfiguration(basicConfiguration)
-            val messages = sut.handleConnection(
+            val messages = sut.handleConnection(sink,
                     vesMessage(Domain.OTHER, "first"),
                     vesMessage(Domain.HVRANMEAS, "second"),
                     vesMessage(Domain.HEARTBEAT, "third"))

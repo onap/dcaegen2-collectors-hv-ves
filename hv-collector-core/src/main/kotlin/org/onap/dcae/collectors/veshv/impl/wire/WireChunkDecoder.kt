@@ -31,9 +31,40 @@ import reactor.core.publisher.Flux
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class WireChunkDecoder(private val decoder: WireFrameDecoder,
-                                alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
+internal class WireChunkDecoder(
+        private val decoder: WireFrameDecoder,
+        alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
     private val streamBuffer = alloc.compositeBuffer()
+    
+//  TODO: use this implementation and cleanup the rest
+//    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = Flux.defer<WireFrame> {
+//        if (byteBuf.readableBytes() == 0) {
+//            byteBuf.release()
+//            Flux.empty()
+//        } else {
+//            streamBuffer.addComponent(true, byteBuf)
+//            Flux.generate { next ->
+//                try {
+//                    val frame = decodeFirstFrameFromBuffer()
+//                    if (frame == null)
+//                        next.complete()
+//                    else
+//                        next.next(frame)
+//                } catch (ex: Exception) {
+//                    next.error(ex)
+//                }
+//            }
+//        }
+//    }.doOnTerminate { streamBuffer.discardReadComponents() }
+//
+//
+//    private fun decodeFirstFrameFromBuffer(): WireFrame? =
+//            try {
+//                decoder.decodeFirst(streamBuffer)
+//            } catch (ex: MissingWireFrameBytesException) {
+//                logger.trace { "${ex.message} - waiting for more data" }
+//                null
+//            }
 
     fun decode(byteBuf: ByteBuf): Flux<WireFrame> = StreamBufferEmitter
             .createFlux(decoder, streamBuffer, byteBuf)

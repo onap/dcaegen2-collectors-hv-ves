@@ -37,7 +37,7 @@ import javax.json.JsonObject
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-class HttpServer(private val vesClient: VesHvClient) {
+internal class HttpServer(private val vesClient: VesHvClient) {
 
     fun start(port: Int = DEFAULT_PORT): IO<RatpackServer> = IO {
         RatpackServer.start { server ->
@@ -69,7 +69,7 @@ class HttpServer(private val vesClient: VesHvClient) {
         return ctx.request.body
                 .map { Json.createReader(it.inputStream).readObject() }
                 .map { extractMessageParameters(it) }
-                .map { MessageFactory.INSTANCE.createMessageFlux(it) }
+                .map { MessageGeneratorImpl.INSTANCE.createMessageFlux(it) }
     }
 
     private fun sendAcceptedResponse(ctx: Context) {
@@ -95,7 +95,7 @@ class HttpServer(private val vesClient: VesHvClient) {
 
     private fun extractMessageParameters(request: JsonObject): MessageParameters =
             try {
-                val commonEventHeader = MessageFactory.INSTANCE
+                val commonEventHeader = MessageGeneratorImpl.INSTANCE
                         .parseCommonHeader(request.getJsonObject("commonEventHeader"))
                 val messagesAmount = request.getJsonNumber("messagesAmount").longValue()
                 MessageParameters(commonEventHeader, messagesAmount)

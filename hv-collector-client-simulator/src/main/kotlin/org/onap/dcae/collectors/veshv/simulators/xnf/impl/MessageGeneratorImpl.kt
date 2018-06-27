@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import com.google.protobuf.ByteString
 import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.simulators.xnf.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
@@ -32,9 +33,9 @@ import javax.json.JsonObject
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-class MessageFactory(private val payloadGenerator: PayloadGenerator) {
+internal class MessageGeneratorImpl(private val payloadGenerator: PayloadGenerator) : MessageGenerator {
 
-    fun createMessageFlux(messageParameters: MessageParameters): Flux<WireFrame> =
+    override fun createMessageFlux(messageParameters: MessageParameters): Flux<WireFrame> =
             Mono.fromCallable { createMessage(messageParameters.commonEventHeader) }.let {
                 if (messageParameters.amount < 0)
                     it.repeat()
@@ -65,16 +66,14 @@ class MessageFactory(private val payloadGenerator: PayloadGenerator) {
             WireFrame(vesMessageBytes(commonHeader))
 
 
-    private fun vesMessageBytes(commonHeader: CommonEventHeader): ByteArray {
-        val msg = VesEvent.newBuilder()
-                .setCommonEventHeader(commonHeader)
-                .setHvRanMeasFields(PayloadGenerator().generatePayload().toByteString())
-                .build()
-
-        return msg.toByteArray()
-    }
+    private fun vesMessageBytes(commonHeader: CommonEventHeader): ByteArray =
+            VesEvent.newBuilder()
+                    .setCommonEventHeader(commonHeader)
+                    .setHvRanMeasFields(payloadGenerator.generatePayload().toByteString())
+                    .build()
+                    .toByteArray()
 
     companion object {
-        val INSTANCE = MessageFactory(PayloadGenerator())
+        val INSTANCE = MessageGeneratorImpl(PayloadGenerator())
     }
 }

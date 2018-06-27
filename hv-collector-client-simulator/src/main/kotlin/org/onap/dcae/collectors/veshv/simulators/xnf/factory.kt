@@ -17,15 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.tests.component
+package org.onap.dcae.collectors.veshv.simulators.xnf
 
-import org.jetbrains.spek.api.dsl.Pending
-import org.jetbrains.spek.api.dsl.TestContainer
+import org.onap.dcae.collectors.veshv.simulators.xnf.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.MessageGeneratorImpl
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.PayloadGenerator
 
-internal fun TestContainer.system(description: String, body: (Sut) -> Unit) {
-    test("system $description", body = { body(Sut()) })
-}
-
-internal fun TestContainer.xsystem(description: String, reason: String? = null, body: (Sut) -> Unit = {}) {
-    test("system $description", Pending.Yes(reason), body = { body(Sut()) })
-}
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since June 2018
+ */
+fun createMessageGenerator(): MessageGenerator = MessageGeneratorImpl(PayloadGenerator())

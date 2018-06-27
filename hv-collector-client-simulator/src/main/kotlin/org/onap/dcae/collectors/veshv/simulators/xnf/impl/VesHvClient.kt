@@ -31,7 +31,6 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
-import reactor.core.publisher.EmitterProcessor
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.ReplayProcessor
@@ -43,7 +42,7 @@ import reactor.ipc.netty.tcp.TcpClient
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-class VesHvClient(private val configuration: ClientConfiguration) {
+internal class VesHvClient(private val configuration: ClientConfiguration) {
 
     private val client: TcpClient = TcpClient.builder()
             .options { opts ->

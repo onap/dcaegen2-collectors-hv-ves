@@ -21,11 +21,8 @@ package org.onap.dcae.collectors.veshv.simulators.xnf
 
 import arrow.core.Failure
 import arrow.core.Success
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.HttpServer
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.MessageFactory
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.VesHvClient
 import org.onap.dcae.collectors.veshv.utils.commandline.handleErrorsInMain
 import org.onap.dcae.collectors.veshv.utils.logging.Logger

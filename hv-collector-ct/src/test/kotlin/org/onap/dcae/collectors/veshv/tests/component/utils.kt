@@ -25,7 +25,7 @@ import io.netty.buffer.PooledByteBufAllocator
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import java.util.UUID
+import java.util.*
 
 val allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT
 
@@ -61,7 +61,7 @@ fun invalidWireFrame() = allocator.buffer().run {
     writeByte(0x01)   // content type = GPB
 }
 
-fun vesEvent(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()) =
+fun vesEvent(domain: Domain = Domain.HVRANMEAS, id: String = UUID.randomUUID().toString()) =
         VesEvent.newBuilder()
                 .setCommonEventHeader(
                         CommonEventHeader.getDefaultInstance().toBuilder()

@@ -17,16 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.config
+package org.onap.dcae.collectors.veshv.simulators.xnf.api
 
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
+import reactor.core.publisher.Flux
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-internal data class ClientConfiguration(
-        val vesHost: String,
-        val vesPort: Int,
-        val security: SecurityConfiguration,
-        val messagesAmount: Long)
+interface MessageGenerator {
+    fun createMessageFlux(messageParameters: MessageParameters): Flux<WireFrame>
+}
