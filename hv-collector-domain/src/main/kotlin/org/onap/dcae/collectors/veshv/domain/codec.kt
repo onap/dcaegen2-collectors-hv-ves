@@ -52,9 +52,9 @@ class WireFrameDecoder {
 
     fun decodeFirst(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrame> =
             when {
-                isEmpty(byteBuf)          -> Left(EmptyWireFrame)
+                isEmpty(byteBuf) -> Left(EmptyWireFrame)
                 headerDoesNotFit(byteBuf) -> Left(MissingWireFrameHeaderBytes)
-                else                      -> parseFrame(byteBuf)
+                else -> parseFrame(byteBuf)
             }
 
     private fun headerDoesNotFit(byteBuf: ByteBuf) = byteBuf.readableBytes() < WireFrame.HEADER_SIZE
@@ -74,6 +74,11 @@ class WireFrameDecoder {
         val payloadTypeRaw = byteBuf.readUnsignedByte()
 
         val payloadSize = byteBuf.readInt()
+
+        if (payloadSize > MAX_PAYLOAD_SIZE) {
+            return Left(PayloadSizeExceeded)
+        }
+
         if (byteBuf.readableBytes() < payloadSize) {
             byteBuf.resetReaderIndex()
             return Left(MissingWireFramePayloadBytes)
@@ -82,5 +87,9 @@ class WireFrameDecoder {
         val payload = ByteData.readFrom(byteBuf, payloadSize)
 
         return Right(WireFrame(payload, version, payloadTypeRaw, payloadSize))
+    }
+
+    companion object {
+        const val MAX_PAYLOAD_SIZE = 1024 * 1024
     }
 }

@@ -30,7 +30,9 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder.Companion.MAX_PAYLOAD_SIZE
 import java.nio.charset.Charset
+import kotlin.test.assertTrue
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -153,7 +155,7 @@ object WireFrameCodecsTest : Spek({
                 assertThat(buff.readableBytes()).isEqualTo(1)
             }
 
-            it("should throw exception when not even header fits") {
+            it("should return error when not even header fits") {
                 val buff = Unpooled.buffer()
                         .writeByte(0xFF)
 
@@ -161,7 +163,7 @@ object WireFrameCodecsTest : Spek({
 
             }
 
-            it("should throw exception when first byte is not 0xFF but length looks ok") {
+            it("should return error when first byte is not 0xFF but length looks ok") {
                 val buff = Unpooled.buffer()
                         .writeByte(0xAA)
                         .writeBytes("some garbage".toByteArray())
@@ -169,14 +171,14 @@ object WireFrameCodecsTest : Spek({
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(InvalidWireFrameMarker::class.java) }
             }
 
-            it("should throw exception when first byte is not 0xFF and length is to short") {
+            it("should return error when first byte is not 0xFF and length is to short") {
                 val buff = Unpooled.buffer()
                         .writeByte(0xAA)
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFrameHeaderBytes::class.java) }
             }
 
-            it("should throw exception when payload doesn't fit") {
+            it("should return error when payload doesn't fit") {
                 val buff = Unpooled.buffer()
                         .writeBytes(encodeSampleFrame())
                 buff.writerIndex(buff.writerIndex() - 2)
@@ -185,8 +187,50 @@ object WireFrameCodecsTest : Spek({
             }
 
         }
-    }
 
+        describe("payload size limit"){
+
+            it("should decode successfully when payload size is equal 1 MiB") {
+
+                val payload = ByteArray(MAX_PAYLOAD_SIZE)
+                val input = WireFrame(
+                        payload = ByteData(payload),
+                        version = 1,
+                        payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                        payloadSize = payload.size)
+
+
+                assertTrue(decoder.decodeFirst(encoder.encode(input)).isRight())
+            }
+
+            it("should return error when payload exceeds 1 MiB") {
+
+                val payload = ByteArray(MAX_PAYLOAD_SIZE + 1)
+                val input = WireFrame(
+                        payload = ByteData(payload),
+                        version = 1,
+                        payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                        payloadSize = payload.size)
+
+
+                decoder.decodeFirst(encoder.encode(input))
+                        .assertFailedWithError { it.isInstanceOf(PayloadSizeExceeded::class.java) }
+            }
+
+            it("should validate only first message") {
+
+                val payload = ByteArray(MAX_PAYLOAD_SIZE)
+                val input = WireFrame(
+                        payload = ByteData(payload),
+                        version = 1,
+                        payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                        payloadSize = payload.size)
+
+
+                assertTrue(decoder.decodeFirst(encoder.encode(input).writeByte(0xFF)).isRight())
+            }
+        }
+    }
 })
 
 private fun <A, B> Either<A, B>.assertFailedWithError(assertj: (ObjectAssert<A>) -> Unit) {
