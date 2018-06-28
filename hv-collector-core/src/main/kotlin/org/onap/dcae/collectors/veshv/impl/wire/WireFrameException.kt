@@ -17,10 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain.exceptions
+package org.onap.dcae.collectors.veshv.impl.wire
+
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecodingError
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class EmptyWireFrameException : MissingWireFrameBytesException("wire frame was empty (readable bytes == 0)")
+class WireFrameException(error: WireFrameDecodingError)
+    : Exception("${error::class.simpleName}: ${error.message}")

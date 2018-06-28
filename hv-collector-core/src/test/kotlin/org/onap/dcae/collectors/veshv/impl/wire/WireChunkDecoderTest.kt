@@ -30,7 +30,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.WireFrame
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
-import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
 import reactor.test.test
 
 /**
@@ -43,11 +42,11 @@ internal object WireChunkDecoderTest : Spek({
     val anotherPayload = "ala ma kota a kot ma ale".toByteArray()
 
     val encoder = WireFrameEncoder(alloc)
-    
+
     fun WireChunkDecoder.decode(frame: WireFrame) = decode(encoder.encode(frame))
 
     fun createInstance() = WireChunkDecoder(WireFrameDecoder(), alloc)
-    
+
     fun verifyMemoryReleased(vararg byteBuffers: ByteBuf) {
         for (bb in byteBuffers) {
             assertThat(bb.refCnt())
@@ -90,7 +89,7 @@ internal object WireChunkDecoderTest : Spek({
 
             it("should yield error") {
                 createInstance().decode(input).test()
-                        .verifyError(InvalidWireFrameMarkerException::class.java)
+                        .verifyError(WireFrameException::class.java)
             }
 
             it("should leave memory unreleased") {
@@ -132,7 +131,7 @@ internal object WireChunkDecoderTest : Spek({
             it("should yield decoded input frame and error") {
                 createInstance().decode(input).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
-                        .verifyError(InvalidWireFrameMarkerException::class.java)
+                        .verifyError(WireFrameException::class.java)
             }
 
             it("should leave memory unreleased") {
@@ -170,7 +169,7 @@ internal object WireChunkDecoderTest : Spek({
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
                 cut.decode(input2).test()
-                        .verifyError(InvalidWireFrameMarkerException::class.java)
+                        .verifyError(WireFrameException::class.java)
             }
 
             it("should release memory for 1st input") {

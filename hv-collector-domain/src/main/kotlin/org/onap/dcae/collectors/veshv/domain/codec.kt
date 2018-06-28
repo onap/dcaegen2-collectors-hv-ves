@@ -19,11 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
+import arrow.core.Either
+import arrow.core.Left
+import arrow.core.Right
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
-import org.onap.dcae.collectors.veshv.domain.exceptions.EmptyWireFrameException
-import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
-import org.onap.dcae.collectors.veshv.domain.exceptions.MissingWireFrameBytesException
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -50,49 +50,37 @@ class WireFrameEncoder(val allocator: ByteBufAllocator) {
  */
 class WireFrameDecoder {
 
-    fun decodeFirst(byteBuf: ByteBuf): WireFrame {
-        verifyNotEmpty(byteBuf)
-        byteBuf.markReaderIndex()
-
-        verifyMarker(byteBuf)
-        verifyMinimumSize(byteBuf)
-
-        val version = byteBuf.readUnsignedByte()
-        val payloadTypeRaw = byteBuf.readUnsignedByte()
-        val payloadSize = verifyPayloadSize(byteBuf)
-        val payload = ByteData.readFrom(byteBuf, payloadSize)
-
-        return WireFrame(payload, version, payloadTypeRaw, payloadSize)
-    }
-
-    private fun verifyPayloadSize(byteBuf: ByteBuf): Int =
-            byteBuf.readInt().let { payloadSize ->
-                if (byteBuf.readableBytes() < payloadSize) {
-                    byteBuf.resetReaderIndex()
-                    throw MissingWireFrameBytesException("readable bytes < payload size")
-                } else {
-                    payloadSize
-                }
+    fun decodeFirst(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrame> =
+            when {
+                isEmpty(byteBuf)          -> Left(EmptyWireFrame)
+                headerDoesNotFit(byteBuf) -> Left(MissingWireFrameHeaderBytes)
+                else                      -> parseFrame(byteBuf)
             }
 
-    private fun verifyMinimumSize(byteBuf: ByteBuf) {
-        if (byteBuf.readableBytes() < WireFrame.HEADER_SIZE) {
-            byteBuf.resetReaderIndex()
-            throw MissingWireFrameBytesException("readable bytes < header size")
-        }
-    }
+    private fun headerDoesNotFit(byteBuf: ByteBuf) = byteBuf.readableBytes() < WireFrame.HEADER_SIZE
 
-    private fun verifyMarker(byteBuf: ByteBuf) {
+    private fun isEmpty(byteBuf: ByteBuf) = byteBuf.readableBytes() < 1
+
+    private fun parseFrame(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrame> {
+        byteBuf.markReaderIndex()
+
         val mark = byteBuf.readUnsignedByte()
         if (mark != WireFrame.MARKER_BYTE) {
             byteBuf.resetReaderIndex()
-            throw InvalidWireFrameMarkerException(mark)
+            return Left(InvalidWireFrameMarker(mark))
         }
-    }
 
-    private fun verifyNotEmpty(byteBuf: ByteBuf) {
-        if (byteBuf.readableBytes() < 1) {
-            throw EmptyWireFrameException()
+        val version = byteBuf.readUnsignedByte()
+        val payloadTypeRaw = byteBuf.readUnsignedByte()
+
+        val payloadSize = byteBuf.readInt()
+        if (byteBuf.readableBytes() < payloadSize) {
+            byteBuf.resetReaderIndex()
+            return Left(MissingWireFramePayloadBytes)
         }
+
+        val payload = ByteData.readFrom(byteBuf, payloadSize)
+
+        return Right(WireFrame(payload, version, payloadTypeRaw, payloadSize))
     }
 }

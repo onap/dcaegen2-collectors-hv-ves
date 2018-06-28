@@ -19,16 +19,17 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
+import arrow.core.Either
+import arrow.core.identity
 import io.netty.buffer.Unpooled
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.assertj.core.api.Assertions.fail
+import org.assertj.core.api.ObjectAssert
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
-import org.onap.dcae.collectors.veshv.domain.exceptions.MissingWireFrameBytesException
 import java.nio.charset.Charset
 
 /**
@@ -119,7 +120,7 @@ object WireFrameCodecsTest : Spek({
         describe("encode-decode methods' compatibility") {
             val frame = createSampleFrame()
             val encoded = encodeSampleFrame()
-            val decoded = decoder.decodeFirst(encoded)
+            val decoded = decoder.decodeFirst(encoded).getOrFail()
 
             it("should decode version") {
                 assertThat(decoded.version).isEqualTo(frame.version)
@@ -146,7 +147,7 @@ object WireFrameCodecsTest : Spek({
                 val buff = Unpooled.buffer()
                         .writeBytes(encodeSampleFrame())
                         .writeByte(0xAA)
-                val decoded = decoder.decodeFirst(buff)
+                val decoded = decoder.decodeFirst(buff).getOrFail()
 
                 assertThat(decoded.isValid()).describedAs("should be valid").isTrue()
                 assertThat(buff.readableBytes()).isEqualTo(1)
@@ -156,8 +157,8 @@ object WireFrameCodecsTest : Spek({
                 val buff = Unpooled.buffer()
                         .writeByte(0xFF)
 
-                assertThatExceptionOfType(MissingWireFrameBytesException::class.java)
-                        .isThrownBy { decoder.decodeFirst(buff) }
+                decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFrameHeaderBytes::class.java) }
+
             }
 
             it("should throw exception when first byte is not 0xFF but length looks ok") {
@@ -165,16 +166,14 @@ object WireFrameCodecsTest : Spek({
                         .writeByte(0xAA)
                         .writeBytes("some garbage".toByteArray())
 
-                assertThatExceptionOfType(InvalidWireFrameMarkerException::class.java)
-                        .isThrownBy { decoder.decodeFirst(buff) }
+                decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(InvalidWireFrameMarker::class.java) }
             }
 
             it("should throw exception when first byte is not 0xFF and length is to short") {
                 val buff = Unpooled.buffer()
                         .writeByte(0xAA)
 
-                assertThatExceptionOfType(InvalidWireFrameMarkerException::class.java)
-                        .isThrownBy { decoder.decodeFirst(buff) }
+                decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFrameHeaderBytes::class.java) }
             }
 
             it("should throw exception when payload doesn't fit") {
@@ -182,11 +181,17 @@ object WireFrameCodecsTest : Spek({
                         .writeBytes(encodeSampleFrame())
                 buff.writerIndex(buff.writerIndex() - 2)
 
-                assertThatExceptionOfType(MissingWireFrameBytesException::class.java)
-                        .isThrownBy { decoder.decodeFirst(buff) }
+                decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFramePayloadBytes::class.java) }
             }
 
         }
     }
 
 })
+
+private fun <A, B> Either<A, B>.assertFailedWithError(assertj: (ObjectAssert<A>) -> Unit) {
+    fold({ assertj(assertThat(it)) }, { fail("Error expected") })
+}
+
+private fun Either<WireFrameDecodingError, WireFrame>.getOrFail(): WireFrame =
+        fold({ fail(it.message) }, ::identity) as WireFrame

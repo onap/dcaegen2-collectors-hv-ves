@@ -19,12 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.tests.component
 
-import com.google.protobuf.InvalidProtocolBufferException
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.domain.exceptions.InvalidWireFrameMarkerException
 import org.onap.dcae.collectors.veshv.tests.fakes.HVRANMEAS_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
@@ -35,6 +33,8 @@ import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
  * @since May 2018
  */
 object VesHvSpecification : Spek({
+    debugRx(false)
+
     describe("VES High Volume Collector") {
         it("should handle multiple HV RAN events") {
             val sink = StoringSink()

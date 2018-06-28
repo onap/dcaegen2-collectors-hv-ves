@@ -19,14 +19,17 @@
  */
 package org.onap.dcae.collectors.veshv.impl.wire
 
+import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
+import org.onap.dcae.collectors.veshv.domain.InvalidWireFrame
+import org.onap.dcae.collectors.veshv.domain.MissingWireFrameBytes
 import org.onap.dcae.collectors.veshv.domain.WireFrame
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
-import org.onap.dcae.collectors.veshv.domain.exceptions.MissingWireFrameBytesException
-import org.onap.dcae.collectors.veshv.impl.VesHvCollector
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecodingError
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
+import reactor.core.publisher.SynchronousSink
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -53,28 +56,29 @@ internal class WireChunkDecoder(
     }
 
     private fun generateFrames(): Flux<WireFrame> = Flux.generate { next ->
-        try {
-            val frame = decodeFirstFrameFromBuffer()
-            if (frame == null) {
+        decoder.decodeFirst(streamBuffer)
+                .fold(onError(next), onSuccess(next))
+                .unsafeRunSync()
+    }
+
+    private fun onError(next: SynchronousSink<WireFrame>): (WireFrameDecodingError) -> IO<Unit> = { err ->
+        when (err) {
+            is InvalidWireFrame -> IO {
+                next.error(WireFrameException(err))
+            }
+            is MissingWireFrameBytes -> IO {
                 logEndOfData()
                 next.complete()
-            } else {
-                logDecodedWireMessage(frame)
-                next.next(frame)
             }
-        } catch (ex: Exception) {
-            next.error(ex)
         }
     }
 
-
-    private fun decodeFirstFrameFromBuffer(): WireFrame? =
-            try {
-                decoder.decodeFirst(streamBuffer)
-            } catch (ex: MissingWireFrameBytesException) {
-                logger.trace { "${ex.message} - waiting for more data" }
-                null
-            }
+    private fun onSuccess(next: SynchronousSink<WireFrame>): (WireFrame) -> IO<Unit> = { frame ->
+        IO {
+            logDecodedWireMessage(frame)
+            next.next(frame)
+        }
+    }
 
 
     private fun logIncomingMessage(wire: ByteBuf) {
@@ -90,6 +94,6 @@ internal class WireChunkDecoder(
     }
 
     companion object {
-        val logger = Logger(VesHvCollector::class)
+        val logger = Logger(WireChunkDecoder::class)
     }
 }

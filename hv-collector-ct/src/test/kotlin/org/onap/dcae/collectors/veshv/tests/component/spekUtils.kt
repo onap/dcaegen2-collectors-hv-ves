@@ -17,10 +17,22 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain.exceptions
+package org.onap.dcae.collectors.veshv.tests.component
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
- */
-open class WireFrameDecodingException(msg: String) : Exception(msg)
+import org.jetbrains.spek.api.dsl.SpecBody
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import reactor.core.publisher.Hooks
+
+fun SpecBody.debugRx(debug: Boolean = true) {
+    if (debug) {
+        beforeGroup {
+            Hooks.onOperatorDebug()
+        }
+
+        afterGroup {
+            Hooks.resetOnOperatorDebug()
+        }
+    }
+}
+
+val logger = Logger("org.onap.dcae.collectors.veshv.tests.component")

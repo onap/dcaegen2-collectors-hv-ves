@@ -41,12 +41,13 @@ import java.time.Duration
 import java.util.*
 import kotlin.system.measureTimeMillis
 
-
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
 object PerformanceSpecification : Spek({
+    debugRx(false)
+
     describe("VES High Volume Collector performance") {
         it("should handle multiple clients in reasonable time") {
             val sink = CountingSink()
@@ -69,8 +70,8 @@ object PerformanceSpecification : Spek({
 
             val durationSec = durationMs / 1000.0
             val throughput = sink.count / durationSec
-            println("Processed $runs connections each containing $numMessages msgs.")
-            println("Forwarded ${sink.count / ONE_MILION} Mmsgs in $durationSec seconds, that is $throughput msgs/s")
+            logger.info("Processed $runs connections each containing $numMessages msgs.")
+            logger.info("Forwarded ${sink.count / ONE_MILION} Mmsgs in $durationSec seconds, that is $throughput msgs/s")
             assertThat(sink.count)
                     .describedAs("should send all events")
                     .isEqualTo(runs * numMessages)
@@ -94,7 +95,7 @@ object PerformanceSpecification : Spek({
                     .timeout(timeout)
                     .block()
 
-            println("Forwarded ${sink.count} msgs")
+            logger.info("Forwarded ${sink.count} msgs")
             assertThat(sink.count)
                     .describedAs("should send up to number of events")
                     .isLessThan(numMessages)

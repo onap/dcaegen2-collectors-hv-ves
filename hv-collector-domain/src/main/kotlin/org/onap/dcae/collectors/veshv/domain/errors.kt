@@ -17,10 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain.exceptions
+package org.onap.dcae.collectors.veshv.domain
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-open class MissingWireFrameBytesException(msg: String) : WireFrameDecodingException(msg)
+
+sealed class WireFrameDecodingError(val message: String)
+
+
+// Invalid frame errors
+
+sealed class InvalidWireFrame(msg: String) : WireFrameDecodingError(msg)
+
+class InvalidWireFrameMarker(actualMarker: Short)
+    : InvalidWireFrame(
+        "Invalid start of frame. Expected 0x%02X, but was 0x%02X".format(WireFrame.MARKER_BYTE, actualMarker))
+
+
+// Missing bytes errors
+
+sealed class MissingWireFrameBytes(msg: String) : WireFrameDecodingError(msg)
+
+object MissingWireFrameHeaderBytes : MissingWireFrameBytes("readable bytes < header size")
+object MissingWireFramePayloadBytes : MissingWireFrameBytes("readable bytes < payload size")
+object EmptyWireFrame : MissingWireFrameBytes("empty wire frame")
