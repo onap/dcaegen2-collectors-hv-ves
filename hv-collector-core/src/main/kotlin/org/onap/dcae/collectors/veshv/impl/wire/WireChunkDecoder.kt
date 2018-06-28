@@ -23,6 +23,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.domain.WireFrame
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
+import org.onap.dcae.collectors.veshv.domain.exceptions.MissingWireFrameBytesException
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
@@ -35,45 +36,46 @@ internal class WireChunkDecoder(
         private val decoder: WireFrameDecoder,
         alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
     private val streamBuffer = alloc.compositeBuffer()
-    
-//  TODO: use this implementation and cleanup the rest
-//    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = Flux.defer<WireFrame> {
-//        if (byteBuf.readableBytes() == 0) {
-//            byteBuf.release()
-//            Flux.empty()
-//        } else {
-//            streamBuffer.addComponent(true, byteBuf)
-//            Flux.generate { next ->
-//                try {
-//                    val frame = decodeFirstFrameFromBuffer()
-//                    if (frame == null)
-//                        next.complete()
-//                    else
-//                        next.next(frame)
-//                } catch (ex: Exception) {
-//                    next.error(ex)
-//                }
-//            }
-//        }
-//    }.doOnTerminate { streamBuffer.discardReadComponents() }
-//
-//
-//    private fun decodeFirstFrameFromBuffer(): WireFrame? =
-//            try {
-//                decoder.decodeFirst(streamBuffer)
-//            } catch (ex: MissingWireFrameBytesException) {
-//                logger.trace { "${ex.message} - waiting for more data" }
-//                null
-//            }
-
-    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = StreamBufferEmitter
-            .createFlux(decoder, streamBuffer, byteBuf)
-            .doOnSubscribe { logIncomingMessage(byteBuf) }
-            .doOnNext(this::logDecodedWireMessage)
 
     fun release() {
         streamBuffer.release()
     }
+
+    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = Flux.defer {
+        logIncomingMessage(byteBuf)
+        if (byteBuf.readableBytes() == 0) {
+            byteBuf.release()
+            Flux.empty()
+        } else {
+            streamBuffer.addComponent(true, byteBuf)
+            generateFrames().doOnTerminate { streamBuffer.discardReadComponents() }
+        }
+    }
+
+    private fun generateFrames(): Flux<WireFrame> = Flux.generate { next ->
+        try {
+            val frame = decodeFirstFrameFromBuffer()
+            if (frame == null) {
+                logEndOfData()
+                next.complete()
+            } else {
+                logDecodedWireMessage(frame)
+                next.next(frame)
+            }
+        } catch (ex: Exception) {
+            next.error(ex)
+        }
+    }
+
+
+    private fun decodeFirstFrameFromBuffer(): WireFrame? =
+            try {
+                decoder.decodeFirst(streamBuffer)
+            } catch (ex: MissingWireFrameBytesException) {
+                logger.trace { "${ex.message} - waiting for more data" }
+                null
+            }
+
 
     private fun logIncomingMessage(wire: ByteBuf) {
         logger.trace { "Got message with total size of ${wire.readableBytes()} B" }
@@ -81,6 +83,10 @@ internal class WireChunkDecoder(
 
     private fun logDecodedWireMessage(wire: WireFrame) {
         logger.trace { "Wire payload size: ${wire.payloadSize} B." }
+    }
+
+    private fun logEndOfData() {
+        logger.trace { "End of data in current TCP buffer" }
     }
 
     companion object {
