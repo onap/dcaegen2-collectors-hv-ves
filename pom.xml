@@ -278,6 +278,12 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <excludes>
+                                <!-- Exclute Protobuf-generated classes -->
+                                <exclude>org/onap/ves/*</exclude>
+                            </excludes>
+                        </configuration>
                     </plugin>
 
                     <plugin>
