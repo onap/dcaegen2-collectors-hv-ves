@@ -15,7 +15,10 @@ build:
       - hv-collector-core/target/reports
       - hv-collector-main/target/reports
       - hv-collector-utils/target/reports
-    
+      - hv-collector-dcae-app-simulator/target/reports
+      - hv-collector-client-simulator/target/reports
+
+
 publish:
   stage: publish
   only:
@@ -24,3 +27,22 @@ publish:
     - docker login $DOCKER_REPO_ADDR -u $DOCKER_REPO_USER -p $DOCKER_REPO_PASS
     - mvn -e -DskipTests -DskipAnalysis -Ddocker-image.registry="$DOCKER_REPO_ADDR" deploy
     - "curl -X POST -F token=$INTEGRATION_TESTS_TRIGGER_TOKEN -F ref=master https://gitlabe1.ext.net.nokia.com/api/v4/projects/33403/trigger/pipeline"
+
+pages:
+  stage: publish
+  only:
+    - master
+  dependencies:
+    - build
+  artifacts:
+    paths:
+      - public
+  script:
+    - mkdir -p public/analysis
+    - mv hv-collector-coverage/target/site/jacoco-aggregate public/coverage
+    - mv hv-collector-core/target/reports public/analysis/core
+    - mv hv-collector-main/target/reports public/analysis/main
+    - mv hv-collector-utils/target/reports public/analysis/utils
+    - mv hv-collector-dcae-app-simulator/target/reports public/analysis/dcae-app-simulator
+    - mv hv-collector-client-simulator/target/reports public/analysis/client-simulator
+

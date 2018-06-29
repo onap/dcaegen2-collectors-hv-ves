@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+        integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+  <title>VES High Volume collector</title>
+</head>
+<body>
+<div class="container">
+
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4">VES High Volume collector</h1>
+      <p class="lead">ONAP collector for high volume data, eg. real-time PM</p>
+    </div>
+    <div class="container">
+    <span class="badge badge-light">Build
+      <a href="https://gitlabe1.ext.net.nokia.com/onap-wro/ves-hv-collector/pipelines/charts">
+        <img alt="pipeline status"
+             src="https://gitlabe1.ext.net.nokia.com/onap-wro/ves-hv-collector/badges/master/pipeline.svg"/>
+      </a>
+    </span>
+      <span class="badge badge-light">Integration tests
+      <a href="https://gitlabe1.ext.net.nokia.com/onap-wro/ves-hv-integration/pipelines/charts">
+        <img alt="pipeline status"
+             src="https://gitlabe1.ext.net.nokia.com/onap-wro/ves-hv-integration/badges/master/pipeline.svg"/>
+      </a>
+    </span>
+
+    </div>
+  </div>
+
+
+
+  <ul>
+    <li>Repositories
+      <ul>
+        <li><a href="https://gitlabe1.ext.net.nokia.com/onap-wro/ves-hv-collector">Implementation</a></li>
+        <li><a href="https://gitlabe1.ext.net.nokia.com/onap-wro/ves-hv-integration">Integration tests</a> based on ONAP CSIT framework</li>
+      </ul>
+    </li>
+    </li>
+    <li><a href="https://onap-wro.gitlabe1-pages.ext.net.nokia.com/ves-hv-integration/report.html">Last IT results</a></li>
+    <li>Static code analysis:
+      <ul>
+        <li><a href="./analysis/core/detekt-report.html">Core</a></li>
+        <li><a href="./analysis/main/detekt-report.html">Main</a></li>
+        <li><a href="./analysis/utils/detekt-report.html">Utils</a></li>
+        <li><a href="./analysis/dcae-simulator/detekt-report.html">DCAE APP simulator</a></li>
+        <li><a href="./analysis/client-simulator/detekt-report.html">xNF simulator</a></li>
+      </ul>
+    </li>
+    <li><a href="./coverage">Coverage</a> (please note that Jacoco support for Kotlin is currently very problematic so the values are invalid)
+  </ul>
+</div>
+
+</body>
+</html>
