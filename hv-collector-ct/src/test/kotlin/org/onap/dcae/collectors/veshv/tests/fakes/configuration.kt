@@ -29,6 +29,7 @@ import reactor.core.publisher.UnicastProcessor
 
 const val HVRANMEAS_TOPIC = "ves_hvRanMeas"
 const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "ves_hvMeasForVfScaling"
+const val ALTERNATE_HVRANMEAS_TOPIC = "ves_alternateHvRanMeas"
 
 val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
         kafkaBootstrapServers = "localhost:9969",
@@ -62,6 +63,24 @@ val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfigu
         }.build()
 )
 
+
+val configurationWithDifferentRouting: CollectorConfiguration = CollectorConfiguration(
+        kafkaBootstrapServers = "localhost:9969",
+        routing = routing {
+            defineRoute {
+                fromDomain(Domain.HVRANMEAS)
+                toTopic(ALTERNATE_HVRANMEAS_TOPIC)
+                withFixedPartitioning()
+            }
+        }.build()
+)
+
+
+val configurationWithoutRouting: CollectorConfiguration = CollectorConfiguration(
+        kafkaBootstrapServers = "localhost:9969",
+        routing = routing {
+        }.build()
+)
 
 class FakeConfigurationProvider : ConfigurationProvider {
     private val configStream: FluxProcessor<CollectorConfiguration, CollectorConfiguration> = UnicastProcessor.create()
