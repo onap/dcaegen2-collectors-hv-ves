@@ -19,6 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
+
+sealed class WireFrameMessage
+
 /**
  * Wire frame structure is presented bellow. All fields are in network byte order (big-endian).
  *
@@ -49,10 +52,11 @@ package org.onap.dcae.collectors.veshv.domain
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class WireFrame(val payload: ByteData,
-                     val version: Short,
-                     val payloadTypeRaw: Short,
-                     val payloadSize: Int) {
+data class PayloadWireFrameMessage(val payload: ByteData,
+                                   val version: Short,
+                                   val payloadTypeRaw: Short,
+                                   val payloadSize: Int
+) : WireFrameMessage() {
 
     constructor(payload: ByteArray) : this(
             ByteData(payload),
@@ -66,11 +70,38 @@ data class WireFrame(val payload: ByteData,
                     && payload.size() == payloadSize
 
     companion object {
+        const val MARKER_BYTE: Short = 0xFF
+
         const val SUPPORTED_VERSION: Short = 1
 
         const val HEADER_SIZE =
                 3 * java.lang.Byte.BYTES +
                         1 * java.lang.Integer.BYTES
-        const val MARKER_BYTE: Short = 0xFF
+
+        const val MAX_PAYLOAD_SIZE = 1024 * 1024
     }
 }
+
+
+/**
+ * This message type should be used by client to indicate that he has finished sending data to collector.
+ *
+ * Wire frame structure is presented bellow. All fields are in network byte order (big-endian).
+ *
+ * ```
+ *     ┌─────┬───────────────────────┐
+ *     │octet│           0           │
+ *     ├─────┼──┬──┬──┬──┬──┬──┬──┬──┤
+ *     │ bit │ 0│  │  │  │  │  │  │  │
+ *     ├─────┼──┴──┴──┴──┴──┴──┴──┴──┤
+ *     │field│          0xAA         │
+ *     └─────┴───────────────────────┘
+ * ```
+ *
+ * @since July 2018
+ */
+
+object EndOfTransmissionMessage : WireFrameMessage() {
+    const val MARKER_BYTE: Short = 0xAA
+}
+

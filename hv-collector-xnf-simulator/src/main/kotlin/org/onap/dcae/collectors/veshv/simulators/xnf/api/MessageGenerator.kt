@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.api
 
-import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
 import reactor.core.publisher.Flux
 
@@ -28,5 +28,5 @@ import reactor.core.publisher.Flux
  * @since June 2018
  */
 interface MessageGenerator {
-    fun createMessageFlux(messageParameters: MessageParameters): Flux<WireFrame>
+    fun createMessageFlux(messageParameters: MessageParameters): Flux<PayloadWireFrameMessage>
 }

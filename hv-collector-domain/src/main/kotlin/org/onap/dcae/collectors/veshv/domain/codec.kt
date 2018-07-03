@@ -24,6 +24,7 @@ import arrow.core.Left
 import arrow.core.Right
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -31,10 +32,10 @@ import io.netty.buffer.ByteBufAllocator
  */
 class WireFrameEncoder(val allocator: ByteBufAllocator) {
 
-    fun encode(frame: WireFrame): ByteBuf {
-        val bb = allocator.buffer(WireFrame.HEADER_SIZE + frame.payload.size())
+    fun encode(frame: PayloadWireFrameMessage): ByteBuf {
+        val bb = allocator.buffer(PayloadWireFrameMessage.HEADER_SIZE + frame.payload.size())
 
-        bb.writeByte(WireFrame.MARKER_BYTE.toInt())
+        bb.writeByte(PayloadWireFrameMessage.MARKER_BYTE.toInt())
         bb.writeByte(frame.version.toInt())
         bb.writeByte(frame.payloadTypeRaw.toInt())
         bb.writeInt(frame.payloadSize)
@@ -50,32 +51,54 @@ class WireFrameEncoder(val allocator: ByteBufAllocator) {
  */
 class WireFrameDecoder {
 
-    fun decodeFirst(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrame> =
+    fun decodeFirst(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrameMessage> =
             when {
                 isEmpty(byteBuf) -> Left(EmptyWireFrame)
+                isSingleByte(byteBuf) -> lookForEOTFrame(byteBuf)
                 headerDoesNotFit(byteBuf) -> Left(MissingWireFrameHeaderBytes)
-                else -> parseFrame(byteBuf)
+                else -> parseWireFrame(byteBuf)
             }
-
-    private fun headerDoesNotFit(byteBuf: ByteBuf) = byteBuf.readableBytes() < WireFrame.HEADER_SIZE
 
     private fun isEmpty(byteBuf: ByteBuf) = byteBuf.readableBytes() < 1
 
-    private fun parseFrame(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrame> {
+    private fun isSingleByte(byteBuf: ByteBuf) = byteBuf.readableBytes() == 1
+
+    private fun headerDoesNotFit(byteBuf: ByteBuf) = byteBuf.readableBytes() < PayloadWireFrameMessage.HEADER_SIZE
+
+    private fun lookForEOTFrame(byteBuf: ByteBuf): Either<WireFrameDecodingError, EndOfTransmissionMessage> {
+        byteBuf.markReaderIndex()
+        val byte = byteBuf.readUnsignedByte()
+
+        return if (byte == EndOfTransmissionMessage.MARKER_BYTE) {
+            Right(EndOfTransmissionMessage)
+        } else {
+            byteBuf.resetReaderIndex()
+            Left(MissingWireFrameHeaderBytes)
+        }
+    }
+
+    private fun parseWireFrame(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrameMessage> {
         byteBuf.markReaderIndex()
 
         val mark = byteBuf.readUnsignedByte()
-        if (mark != WireFrame.MARKER_BYTE) {
-            byteBuf.resetReaderIndex()
-            return Left(InvalidWireFrameMarker(mark))
+        return when (mark) {
+            EndOfTransmissionMessage.MARKER_BYTE -> Right(EndOfTransmissionMessage)
+            PayloadWireFrameMessage.MARKER_BYTE -> parsePayloadFrame(byteBuf)
+            else -> {
+                byteBuf.resetReaderIndex()
+                Left(InvalidWireFrameMarker(mark))
+            }
         }
+    }
 
+    private fun parsePayloadFrame(byteBuf: ByteBuf): Either<WireFrameDecodingError, PayloadWireFrameMessage> {
         val version = byteBuf.readUnsignedByte()
         val payloadTypeRaw = byteBuf.readUnsignedByte()
 
         val payloadSize = byteBuf.readInt()
 
         if (payloadSize > MAX_PAYLOAD_SIZE) {
+            byteBuf.resetReaderIndex()
             return Left(PayloadSizeExceeded)
         }
 
@@ -86,10 +109,7 @@ class WireFrameDecoder {
 
         val payload = ByteData.readFrom(byteBuf, payloadSize)
 
-        return Right(WireFrame(payload, version, payloadTypeRaw, payloadSize))
-    }
+        return Right(PayloadWireFrameMessage(payload, version, payloadTypeRaw, payloadSize))
 
-    companion object {
-        const val MAX_PAYLOAD_SIZE = 1024 * 1024
     }
 }

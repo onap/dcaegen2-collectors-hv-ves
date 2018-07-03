@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import com.google.protobuf.ByteString
-import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.simulators.xnf.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
 import org.onap.ves.VesEventV5.VesEvent
@@ -35,7 +35,7 @@ import javax.json.JsonObject
  */
 internal class MessageGeneratorImpl(private val payloadGenerator: PayloadGenerator) : MessageGenerator {
 
-    override fun createMessageFlux(messageParameters: MessageParameters): Flux<WireFrame> =
+    override fun createMessageFlux(messageParameters: MessageParameters): Flux<PayloadWireFrameMessage> =
             Mono.fromCallable { createMessage(messageParameters.commonEventHeader) }.let {
                 if (messageParameters.amount < 0)
                     it.repeat()
@@ -62,8 +62,8 @@ internal class MessageGeneratorImpl(private val payloadGenerator: PayloadGenerat
             .build()
 
 
-    private fun createMessage(commonHeader: CommonEventHeader): WireFrame =
-            WireFrame(vesMessageBytes(commonHeader))
+    private fun createMessage(commonHeader: CommonEventHeader): PayloadWireFrameMessage =
+            PayloadWireFrameMessage(vesMessageBytes(commonHeader))
 
 
     private fun vesMessageBytes(commonHeader: CommonEventHeader): ByteArray =

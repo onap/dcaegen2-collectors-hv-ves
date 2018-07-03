@@ -75,7 +75,6 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
         onReadIdle(timeout.toMillis()) {
             logger.info { "Idle timeout of ${timeout.seconds} s reached. Disconnecting..." }
             context().channel().close().addListener {
-
                 if (it.isSuccess)
                     logger.debug { "Client disconnected because of idle timeout" }
                 else

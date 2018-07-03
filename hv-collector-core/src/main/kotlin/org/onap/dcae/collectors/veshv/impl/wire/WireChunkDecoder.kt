@@ -22,11 +22,7 @@ package org.onap.dcae.collectors.veshv.impl.wire
 import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
-import org.onap.dcae.collectors.veshv.domain.InvalidWireFrame
-import org.onap.dcae.collectors.veshv.domain.MissingWireFrameBytes
-import org.onap.dcae.collectors.veshv.domain.WireFrame
-import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
-import org.onap.dcae.collectors.veshv.domain.WireFrameDecodingError
+import org.onap.dcae.collectors.veshv.domain.*
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.SynchronousSink
@@ -44,7 +40,7 @@ internal class WireChunkDecoder(
         streamBuffer.release()
     }
 
-    fun decode(byteBuf: ByteBuf): Flux<WireFrame> = Flux.defer {
+    fun decode(byteBuf: ByteBuf): Flux<WireFrameMessage> = Flux.defer {
         logIncomingMessage(byteBuf)
         if (byteBuf.readableBytes() == 0) {
             byteBuf.release()
@@ -55,13 +51,13 @@ internal class WireChunkDecoder(
         }
     }
 
-    private fun generateFrames(): Flux<WireFrame> = Flux.generate { next ->
+    private fun generateFrames(): Flux<WireFrameMessage> = Flux.generate { next ->
         decoder.decodeFirst(streamBuffer)
                 .fold(onError(next), onSuccess(next))
                 .unsafeRunSync()
     }
 
-    private fun onError(next: SynchronousSink<WireFrame>): (WireFrameDecodingError) -> IO<Unit> = { err ->
+    private fun onError(next: SynchronousSink<WireFrameMessage>): (WireFrameDecodingError) -> IO<Unit> = { err ->
         when (err) {
             is InvalidWireFrame -> IO {
                 next.error(WireFrameException(err))
@@ -73,20 +69,29 @@ internal class WireChunkDecoder(
         }
     }
 
-    private fun onSuccess(next: SynchronousSink<WireFrame>): (WireFrame) -> IO<Unit> = { frame ->
-        IO {
-            logDecodedWireMessage(frame)
-            next.next(frame)
+    private fun onSuccess(next: SynchronousSink<WireFrameMessage>): (WireFrameMessage) -> IO<Unit> = { frame ->
+        when (frame) {
+            is PayloadWireFrameMessage -> IO {
+                logDecodedWireMessage(frame)
+                next.next(frame)
+            }
+            is EndOfTransmissionMessage -> IO {
+                logEndOfTransmissionWireMessage()
+                next.next(frame)
+            }
         }
     }
-
 
     private fun logIncomingMessage(wire: ByteBuf) {
         logger.trace { "Got message with total size of ${wire.readableBytes()} B" }
     }
 
-    private fun logDecodedWireMessage(wire: WireFrame) {
-        logger.trace { "Wire payload size: ${wire.payloadSize} B." }
+    private fun logDecodedWireMessage(wire: PayloadWireFrameMessage) {
+        logger.trace { "Wire payload size: ${wire.payloadSize} B" }
+    }
+
+    private fun logEndOfTransmissionWireMessage() {
+        logger.trace { "Received end-of-transmission message" }
     }
 
     private fun logEndOfData() {

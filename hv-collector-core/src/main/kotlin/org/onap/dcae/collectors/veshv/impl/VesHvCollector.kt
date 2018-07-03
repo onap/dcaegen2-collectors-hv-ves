@@ -25,13 +25,18 @@ import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Sink
-import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.EndOfTransmissionMessage
+import org.onap.dcae.collectors.veshv.domain.UnknownWireFrameTypeException
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.publisher.SynchronousSink
+import java.util.function.BiConsumer
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -50,9 +55,10 @@ internal class VesHvCollector(
                 dataStream
                         .doOnNext { metrics.notifyBytesReceived(it.readableBytes()) }
                         .concatMap(wireDecoder::decode)
+                        .handle(completeStreamOnEOT)
                         .doOnNext { metrics.notifyMessageReceived(it.payloadSize) }
-                        .filter(WireFrame::isValid)
-                        .map(WireFrame::payload)
+                        .filter(PayloadWireFrameMessage::isValid)
+                        .map(PayloadWireFrameMessage::payload)
                         .map(protobufDecoder::decode)
                         .filter(validator::isValid)
                         .flatMap(this::findRoute)
@@ -76,11 +82,22 @@ internal class VesHvCollector(
         return Flux.empty()
     }
 
-    private fun releaseBuffersMemory(wireChunkDecoder: WireChunkDecoder) {
-        wireChunkDecoder.release()
-    }
+    private fun releaseBuffersMemory(wireChunkDecoder: WireChunkDecoder) = wireChunkDecoder.release()
 
     companion object {
         private val logger = Logger(VesHvCollector::class)
+
+        private val completeStreamOnEOT by lazy {
+            BiConsumer<WireFrameMessage, SynchronousSink<PayloadWireFrameMessage>> { frame, sink ->
+                when (frame) {
+                    is EndOfTransmissionMessage -> {
+                        logger.info("Completing stream because of receiving EOT message")
+                        sink.complete()
+                    }
+                    is PayloadWireFrameMessage -> sink.next(frame)
+                    else -> sink.error(UnknownWireFrameTypeException(frame))
+                }
+            }
+        }
     }
 }

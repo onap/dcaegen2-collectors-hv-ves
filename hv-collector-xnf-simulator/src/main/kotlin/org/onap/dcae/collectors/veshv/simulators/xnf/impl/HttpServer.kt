@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import ratpack.exec.Promise
@@ -65,7 +65,7 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
                 }
     }
 
-    private fun createMessageFlux(ctx: Context): Promise<Flux<WireFrame>> {
+    private fun createMessageFlux(ctx: Context): Promise<Flux<PayloadWireFrameMessage>> {
         return ctx.request.body
                 .map { Json.createReader(it.inputStream).readObject() }
                 .map { extractMessageParameters(it) }

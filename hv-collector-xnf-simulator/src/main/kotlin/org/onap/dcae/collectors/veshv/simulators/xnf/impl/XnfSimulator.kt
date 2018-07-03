@@ -20,13 +20,13 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.effects.IO
-import io.netty.buffer.Unpooled
 import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.SslProvider
+import org.onap.dcae.collectors.veshv.domain.EndOfTransmissionMessage
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.domain.WireFrame
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -52,11 +52,11 @@ internal class XnfSimulator(private val configuration: SimulatorConfiguration) {
             }
             .build()
 
-    fun sendIo(messages: Flux<WireFrame>) = IO<Unit> {
+    fun sendIo(messages: Flux<PayloadWireFrameMessage>) = IO<Unit> {
         sendRx(messages).block()
     }
 
-    fun sendRx(messages: Flux<WireFrame>): Mono<Void> {
+    fun sendRx(messages: Flux<PayloadWireFrameMessage>): Mono<Void> {
         val complete = ReplayProcessor.create<Void>(1)
         client
                 .newHandler { _, output -> handler(complete, messages, output) }
@@ -71,34 +71,21 @@ internal class XnfSimulator(private val configuration: SimulatorConfiguration) {
         return complete.then()
     }
 
-    private fun handler(complete: ReplayProcessor<Void>, messages: Flux<WireFrame>, nettyOutbound: NettyOutbound):
+    private fun handler(complete: ReplayProcessor<Void>,
+                        messages: Flux<PayloadWireFrameMessage>,
+                        nettyOutbound: NettyOutbound):
             Publisher<Void> {
-        val encoder = WireFrameEncoder(nettyOutbound.alloc())
-        val context = nettyOutbound.context()
-
-        context.onClose {
-            logger.info { "Connection to ${context.address()} has been closed" }
-        }
-
-        // TODO: Close channel after all messages have been sent
-        // The code bellow doesn't work because it closes the channel earlier and not all are consumed...
-//        complete.subscribe {
-//            context.channel().disconnect().addListener {
-//                if (it.isSuccess)
-//                    logger.info { "Connection closed" }
-//                else
-//                    logger.warn("Failed to close the connection", it.cause())
-//            }
-//        }
-
+        val allocator = nettyOutbound.alloc()
+        val encoder = WireFrameEncoder(allocator)
         val frames = messages
                 .map(encoder::encode)
                 .window(MAX_BATCH_SIZE)
 
         return nettyOutbound
+                .logConnectionClosed()
                 .options { it.flushOnBoundary() }
                 .sendGroups(frames)
-                .send(Mono.just(Unpooled.EMPTY_BUFFER))
+                .send(Mono.just(allocator.buffer().writeByte(eotMessageByte.toInt())))
                 .then {
                     logger.info("Messages have been sent")
                     complete.onComplete()
@@ -114,8 +101,16 @@ internal class XnfSimulator(private val configuration: SimulatorConfiguration) {
                     .clientAuth(ClientAuth.REQUIRE)
                     .build()
 
+    private fun NettyOutbound.logConnectionClosed(): NettyOutbound {
+        context().onClose {
+            logger.info { "Connection to ${context().address()} has been closed" }
+        }
+        return this
+    }
+
     companion object {
         private const val MAX_BATCH_SIZE = 128
+        private const val eotMessageByte = EndOfTransmissionMessage.MARKER_BYTE
         private val logger = Logger(XnfSimulator::class)
     }
 }

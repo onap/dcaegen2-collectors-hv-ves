@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder.Companion.MAX_PAYLOAD_SIZE
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -33,9 +33,10 @@ sealed class WireFrameDecodingError(val message: String)
 
 sealed class InvalidWireFrame(msg: String) : WireFrameDecodingError(msg)
 
-class InvalidWireFrameMarker(actualMarker: Short)
-    : InvalidWireFrame(
-        "Invalid start of frame. Expected 0x%02X, but was 0x%02X".format(WireFrame.MARKER_BYTE, actualMarker))
+class InvalidWireFrameMarker(actualMarker: Short) : InvalidWireFrame(
+        "Invalid start of frame. Expected 0x%02X, but was 0x%02X"
+                .format(PayloadWireFrameMessage.MARKER_BYTE, actualMarker)
+)
 
 object PayloadSizeExceeded : InvalidWireFrame("payload size exceeds the limit ($MAX_PAYLOAD_SIZE bytes)")
 
@@ -46,3 +47,9 @@ sealed class MissingWireFrameBytes(msg: String) : WireFrameDecodingError(msg)
 object MissingWireFrameHeaderBytes : MissingWireFrameBytes("readable bytes < header size")
 object MissingWireFramePayloadBytes : MissingWireFrameBytes("readable bytes < payload size")
 object EmptyWireFrame : MissingWireFrameBytes("empty wire frame")
+
+
+// Other
+
+class UnknownWireFrameTypeException(frame: WireFrameMessage)
+    : Throwable("Unexpected wire frame message type: ${frame.javaClass}")
