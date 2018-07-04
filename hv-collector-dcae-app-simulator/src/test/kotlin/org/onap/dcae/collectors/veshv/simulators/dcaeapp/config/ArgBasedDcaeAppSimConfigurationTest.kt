@@ -21,12 +21,13 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.config
 
 import arrow.core.Failure
 import arrow.core.Success
+import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentException
+import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 
 
 internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
@@ -39,21 +40,17 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
         cut = ArgBasedDcaeAppSimConfiguration()
     }
 
-    fun parseExpectingSuccess(vararg cmdLine: String): DcaeAppSimConfiguration {
-        val result = cut.parse(cmdLine)
-        return when (result) {
-            is Success -> result.value
-            is Failure -> throw AssertionError("Parsing result should be present")
-        }
-    }
+    fun parseExpectingSuccess(vararg cmdLine: String): DcaeAppSimConfiguration =
+            cut.parse(cmdLine).fold(
+                    { throw AssertionError("Parsing result should be present") },
+                    ::identity
+            )
 
-    fun parseExpectingFailure(vararg cmdLine: String): Throwable {
-        val result = cut.parse(cmdLine)
-        return when (result) {
-            is Success -> throw AssertionError("parsing should have failed")
-            is Failure -> result.exception
-        }
-    }
+    fun parseExpectingFailure(vararg cmdLine: String) =
+            cut.parse(cmdLine).fold(
+                    ::identity,
+                    { throw AssertionError("parsing should have failed") }
+            )
 
     describe("parsing arguments") {
         lateinit var result: DcaeAppSimConfiguration
@@ -121,14 +118,14 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
             given("kafka topics are missing") {
                 it("should throw exception") {
                     assertThat(parseExpectingFailure("-s", kafkaBootstrapServers))
-                            .isInstanceOf(WrongArgumentException::class.java)
+                            .isInstanceOf(WrongArgumentError::class.java)
                 }
             }
 
             given("kafka bootstrap servers are missing") {
                 it("should throw exception") {
                     assertThat(parseExpectingFailure("-f", kafkaTopics))
-                            .isInstanceOf(WrongArgumentException::class.java)
+                            .isInstanceOf(WrongArgumentError::class.java)
                 }
             }
         }

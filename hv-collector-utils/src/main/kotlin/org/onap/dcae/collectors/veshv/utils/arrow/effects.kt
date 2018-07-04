@@ -17,20 +17,33 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.commandline
+package org.onap.dcae.collectors.veshv.utils.arrow
 
+import arrow.core.Either
 import arrow.effects.IO
-import arrow.syntax.function.curried
-import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
+import kotlin.system.exitProcess
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
 
-fun handleWrongArgumentError(programName: String, err: WrongArgumentError): IO<Unit> = IO {
-    err.printMessage()
-    err.printHelp(programName)
-}.flatMap { ExitFailure(2).io() }
+sealed class ExitCode {
+    abstract val code: Int
 
-val handleWrongArgumentErrorCurried = ::handleWrongArgumentError.curried()
+    fun io() = IO {
+        exitProcess(code)
+    }
+}
+
+object ExitSuccess : ExitCode() {
+    override val code = 0
+}
+
+data class ExitFailure(override val code: Int) : ExitCode()
+
+fun Either<IO<Unit>, IO<Unit>>.unsafeRunEitherSync(onError: (Throwable) -> ExitCode, onSuccess: () -> Unit) =
+        flatten().attempt().unsafeRunSync().fold({ onError(it).io().unsafeRunSync() }, { onSuccess() })
+
+
+fun IO<Any>.void() = map { Unit }

@@ -19,18 +19,23 @@
  */
 package org.onap.dcae.collectors.veshv.utils.commandline
 
-import arrow.effects.IO
-import arrow.syntax.function.curried
-import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
- */
 
-fun handleWrongArgumentError(programName: String, err: WrongArgumentError): IO<Unit> = IO {
-    err.printMessage()
-    err.printHelp(programName)
-}.flatMap { ExitFailure(2).io() }
+data class WrongArgumentError(
+        val message: String,
+        private val options: Options,
+        val cause: Throwable? = null) {
 
-val handleWrongArgumentErrorCurried = ::handleWrongArgumentError.curried()
+    constructor(par: Throwable, options: Options) : this(par.message ?: "", options, par)
+
+    fun printMessage() {
+        println(message)
+    }
+
+    fun printHelp(programName: String) {
+        val formatter = HelpFormatter()
+        formatter.printHelp(programName, options)
+    }
+}

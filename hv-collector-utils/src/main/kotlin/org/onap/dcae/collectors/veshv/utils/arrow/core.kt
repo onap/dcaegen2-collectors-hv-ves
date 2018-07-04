@@ -17,26 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.commandline
+package org.onap.dcae.collectors.veshv.utils.arrow
 
-import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Options
+import arrow.core.Either
+import arrow.core.identity
+
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since July 2018
+ */
 
 
-class WrongArgumentException(
-        message: String,
-        private val options: Options,
-        parent: Throwable? = null
-) : Exception(message, parent) {
-
-    constructor(par: Throwable, options: Options) : this(par.message ?: "", options, par)
-
-    fun printMessage() {
-        println(message)
-    }
-
-    fun printHelp(programName: String) {
-        val formatter = HelpFormatter()
-        formatter.printHelp(programName, options)
-    }
-}
+fun <A> Either<A, A>.flatten() = fold(::identity, ::identity)

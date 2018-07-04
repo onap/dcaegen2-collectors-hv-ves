@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.utils.commandline
 
+import arrow.core.Either
 import arrow.core.Option
 import arrow.core.Try
 import arrow.core.getOrElse
@@ -30,16 +31,18 @@ import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
-abstract class ArgBasedConfiguration<T>(val parser: CommandLineParser) {
+abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
     abstract val cmdLineOptionsList: List<CommandLineOption>
 
-    fun parse(args: Array<out String>): Try<T> {
+    fun parse(args: Array<out String>): Either<WrongArgumentError, T> {
         val commandLineOptions = cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
-        return Try {
+        val parseResult = Try {
             parser.parse(commandLineOptions, args)
-        }.recoverWith { ex ->
-            Try.raise<CommandLine>(WrongArgumentException(ex, commandLineOptions))
-        }.map (this::getConfiguration)
+        }
+        return parseResult
+                .toEither()
+                .mapLeft { ex -> WrongArgumentError(ex, commandLineOptions) }
+                .map(this::getConfiguration)
     }
 
     protected abstract fun getConfiguration(cmdLine: CommandLine): T

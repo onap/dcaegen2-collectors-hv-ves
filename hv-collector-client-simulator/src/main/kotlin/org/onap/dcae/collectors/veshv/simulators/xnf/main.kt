@@ -19,38 +19,36 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
-import arrow.core.Failure
-import arrow.core.Success
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.HttpServer
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.VesHvClient
-import org.onap.dcae.collectors.veshv.utils.commandline.handleErrorsInMain
+import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
+import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
+import org.onap.dcae.collectors.veshv.utils.arrow.void
+import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.slf4j.LoggerFactory
 
-
-private val logger = Logger("Simulator :: main")
-private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
+private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.xnf"
+private val logger = Logger(PACKAGE_NAME)
+const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-fun main(args: Array<String>) {
-    val httpServer = ArgBasedClientConfiguration().parse(args)
+fun main(args: Array<String>) =
+    ArgBasedClientConfiguration().parse(args)
+            .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
             .map(::VesHvClient)
             .map(::HttpServer)
-
-    when (httpServer) {
-        is Success -> httpServer.value.start().unsafeRunAsync {
-            it.fold(
+            .map { it.start().void() }
+            .unsafeRunEitherSync(
                     { ex ->
                         logger.error("Failed to start a server", ex)
+                        ExitFailure(1)
                     },
-                    { srv ->
-                        logger.info("Started Simulator API server (listening on ${srv.bindHost}:${srv.bindPort})")
+                    {
+                        logger.info("Started xNF Simulator API server")
                     }
             )
-        }
-        is Failure -> httpServer.handleErrorsInMain(PROGRAM_NAME, logger)
-    }
-}

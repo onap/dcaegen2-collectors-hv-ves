@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.main
 
 import arrow.core.Failure
 import arrow.core.Success
+import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -49,13 +50,11 @@ object ArgBasedServerConfigurationTest : Spek({
         cut = ArgBasedServerConfiguration()
     }
 
-    fun parse(vararg cmdLine: String): ServerConfiguration {
-        val result = cut.parse(cmdLine)
-        return when (result) {
-            is Success -> result.value
-            is Failure -> throw AssertionError("Parsing result should be present")
-        }
-    }
+    fun parse(vararg cmdLine: String): ServerConfiguration =
+            cut.parse(cmdLine).fold(
+                    {throw AssertionError("Parsing result should be present")},
+                    ::identity
+            )
 
     describe("parsing arguments") {
         given("all parameters are present in the long form") {

@@ -19,34 +19,38 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import arrow.core.flatMap
 import org.onap.dcae.collectors.veshv.boundary.Server
+import org.onap.dcae.collectors.veshv.boundary.ServerHandle
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.handleErrorsInMain
+import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
+import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
+import org.onap.dcae.collectors.veshv.utils.arrow.void
+import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 private val logger = Logger("org.onap.dcae.collectors.veshv.main")
 private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
 
-fun main(args: Array<String>) {
-    ArgBasedServerConfiguration().parse(args)
-            .toEither()
-            .map(::createServer)
-            .map(Server::start)
-            .flatMap { it.attempt().unsafeRunSync() }
-            .fold(
-                    { ex ->
-                        handleErrorsInMain(ex, PROGRAM_NAME, logger)
-                    },
-                    { handle ->
-                        logger.info("Server started. Listening on ${handle.host}:${handle.port}")
-                        handle.await().unsafeRunSync()
-                    }
-            )
-}
+fun main(args: Array<String>) =
+        ArgBasedServerConfiguration().parse(args)
+                .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
+                .map(::createServer)
+                .map {
+                    it.start()
+                            .map(::logServerStarted)
+                            .flatMap(ServerHandle::await)
+                }
+                .unsafeRunEitherSync(
+                        { ex ->
+                            logger.error("Failed to start a server", ex)
+                            ExitFailure(1)
+                        },
+                        { logger.info("Gentle shutdown") }
+                )
+
 
 private fun createServer(config: ServerConfiguration): Server {
     val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
@@ -60,3 +64,7 @@ private fun createServer(config: ServerConfiguration): Server {
     return ServerFactory.createNettyTcpServer(config, collectorProvider)
 }
 
+private fun logServerStarted(handle: ServerHandle): ServerHandle {
+    logger.info("HighVolume VES Collector is up and listening on ${handle.host}:${handle.port}")
+    return handle
+}
