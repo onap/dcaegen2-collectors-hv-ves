@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.domain
 
 import arrow.core.Either
+import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
@@ -149,6 +150,7 @@ object WireFrameCodecsTest : Spek({
                 val buff = Unpooled.buffer()
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(EmptyWireFrame::class.java) }
+                assertBufferIntact(buff)
             }
 
             it("should return end-of-transmission message when given end-of-transmission marker byte") {
@@ -163,6 +165,7 @@ object WireFrameCodecsTest : Spek({
                         .writeByte(0xEE)
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFrameHeaderBytes::class.java) }
+                assertBufferIntact(buff)
             }
 
             it("should return error when payload message header does not fit") {
@@ -171,6 +174,7 @@ object WireFrameCodecsTest : Spek({
                         .writeBytes("MOMOM".toByteArray())
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFrameHeaderBytes::class.java) }
+                assertBufferIntact(buff)
             }
 
             it("should return error when length looks ok but first byte is not 0xFF or 0xAA") {
@@ -179,6 +183,7 @@ object WireFrameCodecsTest : Spek({
                         .writeBytes("some garbage".toByteArray())
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(InvalidWireFrameMarker::class.java) }
+                assertBufferIntact(buff)
             }
 
             it("should return end-of-transmission message when length looks ok and first byte is 0xAA") {
@@ -195,6 +200,7 @@ object WireFrameCodecsTest : Spek({
                 buff.writerIndex(buff.writerIndex() - 2)
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFramePayloadBytes::class.java) }
+                assertBufferIntact(buff)
             }
 
             it("should decode payload message leaving rest unread") {
@@ -231,10 +237,11 @@ object WireFrameCodecsTest : Spek({
                         version = 1,
                         payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                         payloadSize = payload.size)
+                val buff = encoder.encode(input)
 
-
-                decoder.decodeFirst(encoder.encode(input))
+                decoder.decodeFirst(buff)
                         .assertFailedWithError { it.isInstanceOf(PayloadSizeExceeded::class.java) }
+                assertBufferIntact(buff)
             }
 
             it("should validate only first message") {
@@ -252,6 +259,11 @@ object WireFrameCodecsTest : Spek({
         }
     }
 })
+
+private fun assertBufferIntact(buff: ByteBuf) {
+    assertThat(buff.refCnt()).describedAs("buffer should not be released").isEqualTo(1)
+    assertThat(buff.readerIndex()).describedAs("buffer reader index should be intact").isEqualTo(0)
+}
 
 private fun <A, B> Either<A, B>.assertFailedWithError(assertj: (ObjectAssert<A>) -> Unit) {
     fold({ assertj(assertThat(it)) }, { fail("Error expected") })
