@@ -28,6 +28,7 @@ import reactor.core.publisher.UnicastProcessor
 
 
 const val HVRANMEAS_TOPIC = "ves_hvRanMeas"
+const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "ves_hvMeasForVfScaling"
 
 val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
         kafkaBootstrapServers = "localhost:9969",
@@ -35,6 +36,27 @@ val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
             defineRoute {
                 fromDomain(Domain.HVRANMEAS)
                 toTopic(HVRANMEAS_TOPIC)
+                withFixedPartitioning()
+            }
+        }.build()
+)
+
+val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfiguration(
+        kafkaBootstrapServers = "localhost:9969",
+        routing = routing {
+            defineRoute {
+                fromDomain(Domain.HVRANMEAS)
+                toTopic(HVRANMEAS_TOPIC)
+                withFixedPartitioning()
+            }
+            defineRoute {
+                fromDomain(Domain.HEARTBEAT)
+                toTopic(HVRANMEAS_TOPIC)
+                withFixedPartitioning()
+            }
+            defineRoute {
+                fromDomain(Domain.MEASUREMENTS_FOR_VF_SCALING)
+                toTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
                 withFixedPartitioning()
             }
         }.build()

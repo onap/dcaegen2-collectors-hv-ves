@@ -27,20 +27,18 @@ internal class MessageValidator {
     val requiredFieldDescriptors = listOf(
             "version",
             "eventName",
-            "domain",
+            // "domain", TODO to be restored back when GPB schema will include default value
             "eventId",
             "sourceName",
             "reportingEntityName",
-            "priority",
+            // "priority", TODO to be restored back when GPB schema will include default value
             "startEpochMicrosec",
             "lastEpochMicrosec",
             "sequence")
     .map { fieldName -> CommonEventHeader.getDescriptor().findFieldByName(fieldName)}
 
     fun isValid(message: VesMessage): Boolean {
-        val header = message.header
-        val ret = allMandatoryFieldsArePresent(header) && header.domain == CommonEventHeader.Domain.HVRANMEAS
-        return ret
+        return allMandatoryFieldsArePresent(message.header)
     }
 
     private fun allMandatoryFieldsArePresent(header: CommonEventHeader) =
