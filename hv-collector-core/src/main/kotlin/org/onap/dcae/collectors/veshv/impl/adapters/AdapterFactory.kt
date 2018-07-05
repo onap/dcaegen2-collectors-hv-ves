@@ -33,8 +33,8 @@ object AdapterFactory {
     fun kafkaSink(): SinkProvider = KafkaSinkProvider()
     fun loggingSink(): SinkProvider = LoggingSinkProvider()
 
-    fun consulConfigurationProvider(url: String, updateInterval: Duration): ConfigurationProvider =
-            ConsulConfigurationProvider(url, updateInterval, httpAdapter())
+    fun consulConfigurationProvider(url: String, firstRequestDelay: Duration): ConfigurationProvider =
+            ConsulConfigurationProvider(url, httpAdapter(), firstRequestDelay)
 
     fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
 }

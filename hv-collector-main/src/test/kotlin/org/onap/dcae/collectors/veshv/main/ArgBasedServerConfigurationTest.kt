@@ -40,8 +40,8 @@ import java.time.Duration
 object ArgBasedServerConfigurationTest : Spek({
     lateinit var cut: ArgBasedServerConfiguration
     val configurationUrl = "http://test-address/test"
+    val firstRequestDelay = "10"
     val listenPort = "6969"
-    val updateInterval = "10"
     val pk = Paths.get("/", "etc", "ves", "pk.pem")
     val cert = Paths.get("/", "etc", "ssl", "certs", "ca-bundle.crt")
     val trustCert = Paths.get("/", "etc", "ves", "trusted.crt")
@@ -63,7 +63,7 @@ object ArgBasedServerConfigurationTest : Spek({
             beforeEachTest {
                 result = parse("--listen-port", listenPort,
                         "--config-url", configurationUrl,
-                        "--update-interval", updateInterval,
+                        "--first-request-delay", firstRequestDelay,
                         "--private-key-file", pk.toFile().absolutePath,
                         "--cert-file", cert.toFile().absolutePath,
                         "--trust-cert-file", trustCert.toFile().absolutePath)
@@ -73,8 +73,8 @@ object ArgBasedServerConfigurationTest : Spek({
                 assertThat(result.port).isEqualTo(6969)
             }
 
-            it("should set update interval") {
-                assertThat(result.configurationUpdateInterval).isEqualTo(Duration.ofSeconds(10))
+            it("should set proper first consul request delay") {
+                assertThat(result.firstRequestDelay).isEqualTo(Duration.ofSeconds(10))
             }
 
             it("should set proper config url") {
@@ -86,17 +86,23 @@ object ArgBasedServerConfigurationTest : Spek({
                         SecurityConfiguration(pk, cert, trustCert)
                 )
             }
+
+
         }
 
         given("some parameters are present in the short form") {
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse("-p", "666", "-c", configurationUrl)
+                result = parse("-p", "666", "-c", configurationUrl, "-d", firstRequestDelay)
             }
 
             it("should set proper port") {
                 assertThat(result.port).isEqualTo(666)
+            }
+
+            it("should set proper first consul request delay") {
+                assertThat(result.firstRequestDelay).isEqualTo(Duration.ofSeconds(10))
             }
 
             it("should set proper config url") {
@@ -119,8 +125,9 @@ object ArgBasedServerConfigurationTest : Spek({
                 assertThat(result.configurationUrl).isEqualTo(DefaultValues.CONFIG_URL)
             }
 
-            it("should set default update interval") {
-                assertThat(result.configurationUpdateInterval).isEqualTo(Duration.ofSeconds(DefaultValues.UPDATE_INTERVAL))
+            it("should set default first consul request delay") {
+                assertThat(result.firstRequestDelay)
+                        .isEqualTo(Duration.ofSeconds(DefaultValues.CONSUL_FIRST_REQUEST_DELAY))
             }
 
             on("security config") {

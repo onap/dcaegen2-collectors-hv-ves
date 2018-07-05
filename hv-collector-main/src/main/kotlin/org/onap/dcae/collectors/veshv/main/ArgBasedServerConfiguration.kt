@@ -24,21 +24,12 @@ import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.UPDATE_INTERVAL
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_CONFIG_URL
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.PRIVATE_KEY_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CERT_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_CERT_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.IDLE_TIMEOUT_SEC
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.DUMMY_MODE
-
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
 import java.time.Duration
 
 internal object DefaultValues {
     const val PORT = 6061
-    const val UPDATE_INTERVAL = 300L
+    const val CONSUL_FIRST_REQUEST_DELAY = 10L
     const val CONFIG_URL = ""
     const val PRIVATE_KEY_FILE = "/etc/ves-hv/server.key"
     const val CERT_FILE = "/etc/ves-hv/server.crt"
@@ -49,8 +40,8 @@ internal object DefaultValues {
 internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList = listOf(
             LISTEN_PORT,
-            UPDATE_INTERVAL,
             CONSUL_CONFIG_URL,
+            CONSUL_FIRST_REQUEST_DELAY,
             PRIVATE_KEY_FILE,
             CERT_FILE,
             TRUST_CERT_FILE,
@@ -61,14 +52,14 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
     override fun getConfiguration(cmdLine: CommandLine): ServerConfiguration {
         val port = cmdLine.intValue(LISTEN_PORT, DefaultValues.PORT)
         val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL, DefaultValues.CONFIG_URL)
-        val updateInterval = cmdLine.longValue(UPDATE_INTERVAL, DefaultValues.UPDATE_INTERVAL)
+        val firstRequestDelay = cmdLine.longValue(CONSUL_FIRST_REQUEST_DELAY, DefaultValues.CONSUL_FIRST_REQUEST_DELAY)
         val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
         val dummyMode = cmdLine.hasOption(DUMMY_MODE)
         val security = createSecurityConfiguration(cmdLine)
         return ServerConfiguration(
                 port = port,
                 configurationUrl = configUrl,
-                configurationUpdateInterval = Duration.ofSeconds(updateInterval),
+                firstRequestDelay = Duration.ofSeconds(firstRequestDelay),
                 securityConfiguration = security,
                 idleTimeout = Duration.ofSeconds(idleTimeoutSec),
                 dummyMode = dummyMode)

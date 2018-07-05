@@ -19,12 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters
 
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.mockito.Mockito
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Mono
 import reactor.ipc.netty.http.client.HttpClient
@@ -39,15 +41,16 @@ import kotlin.test.assertEquals
  */
 internal object ConsulConfigurationProviderTest : Spek({
 
-    val updateInterval = Duration.ofMillis(1)
     val httpAdapterMock: HttpAdapter = mock()
+    val firstRequestDelay = Duration.ofMillis(1)
 
     given("valid resource url") {
 
         val validUrl = "http://valid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(validUrl, updateInterval, httpAdapterMock)
+        val consulConfigProvider = ConsulConfigurationProvider(validUrl, httpAdapterMock, firstRequestDelay)
 
-        whenever(httpAdapterMock.get(validUrl)).thenReturn(Mono.just(constructConsulResponse()))
+        whenever(httpAdapterMock.get(eq(validUrl), Mockito.anyMap()))
+                .thenReturn(Mono.just(constructConsulResponse()))
 
         it("should use default configuration at the beginning, " +
                 "then apply received configuration") {
@@ -79,9 +82,10 @@ internal object ConsulConfigurationProviderTest : Spek({
     given("invalid resource url") {
 
         val invalidUrl = "http://invalid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(invalidUrl, updateInterval, httpAdapterMock)
+        val consulConfigProvider = ConsulConfigurationProvider(invalidUrl, httpAdapterMock, firstRequestDelay)
 
-        whenever(httpAdapterMock.get(invalidUrl)).thenReturn(Mono.error(RuntimeException("Test exception")))
+        whenever(httpAdapterMock.get(eq(invalidUrl), Mockito.anyMap()))
+                .thenReturn(Mono.error(RuntimeException("Test exception")))
 
         it("should use default configuration at the beginning, then should interrupt the flux") {
 

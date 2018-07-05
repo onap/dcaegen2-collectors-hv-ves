@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
 import reactor.ipc.netty.http.client.HttpClient
-import reactor.ipc.netty.http.client.HttpClientResponse
 import java.nio.charset.Charset
 
 /**
@@ -34,12 +33,31 @@ open class HttpAdapter(private val httpClient: HttpClient) {
 
     private val logger = LoggerFactory.getLogger(HttpAdapter::class.java)
 
-    open fun get(url: String): Mono<String> =
-            httpClient.get(url)
-                    .doOnError {
-                        logger.error("Failed to get resource on path: $url (${it.localizedMessage})")
-                        logger.debug("Nested exception:", it)
-                    }
-                    .flatMap { it.receiveContent().toMono() }
-                    .map { it.content().toString(Charset.defaultCharset()) }
+    open fun get(url: String, queryParams: Map<String, Any> = emptyMap()): Mono<String> = httpClient
+            .get(url + createQueryString(queryParams))
+            .doOnError {
+                logger.error("Failed to get resource on path: $url (${it.localizedMessage})")
+                logger.debug("Nested exception:", it)
+            }
+            .flatMap { it.receiveContent().toMono() }
+            .map { it.content().toString(Charset.defaultCharset()) }
+
+
+    private fun createQueryString(params: Map<String, Any>): String {
+        if (params.isEmpty())
+            return ""
+
+        val builder = StringBuilder("?")
+        params.forEach { (key, value) ->
+            builder
+                    .append(key)
+                    .append("=")
+                    .append(value)
+                    .append("&")
+
+        }
+
+        return  builder.removeSuffix("&").toString()
+    }
+
 }

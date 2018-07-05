@@ -26,9 +26,14 @@ import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.forNumber
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.ipc.netty.http.client.HttpClientException
+import reactor.retry.Retry
+import reactor.retry.retryExponentialBackoff
 import java.io.StringReader
 import java.time.Duration
-import java.util.Base64
+import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 import javax.json.Json
 import javax.json.JsonObject
@@ -39,18 +44,17 @@ import javax.json.JsonObject
  * @since May 2018
  */
 internal class ConsulConfigurationProvider(private val url: String,
-                                           private val updateInterval: Duration,
-                                           private val http: HttpAdapter
+                                           private val http: HttpAdapter,
+                                           private val firstRequestDelay: Duration
 ) : ConfigurationProvider {
 
-
-    private val logger = LoggerFactory.getLogger(ConsulConfigurationProvider::class.java)
-    private var lastConfigurationHash: AtomicReference<Int> = AtomicReference()
+    private val lastModifyIndex: AtomicReference<Int> = AtomicReference(0)
+    private val lastConfigurationHash: AtomicReference<Int> = AtomicReference(0)
 
     override fun invoke(): Flux<CollectorConfiguration> =
             Flux.concat(createDefaultConfigurationFlux(), createConsulFlux())
 
-    private fun createDefaultConfigurationFlux(): Flux<CollectorConfiguration> = Flux.just(
+    private fun createDefaultConfigurationFlux(): Mono<CollectorConfiguration> = Mono.just(
             CollectorConfiguration(
                     kafkaBootstrapServers = "kafka:9092",
                     routing = routing {
@@ -60,22 +64,45 @@ internal class ConsulConfigurationProvider(private val url: String,
                             withFixedPartitioning()
                         }
                     }.build())
-    ).doOnNext { logger.info("Applied default configuration") }
+    ).doOnNext { logger.info("Applied default configuration") }.delayElement(firstRequestDelay)
 
-    private fun createConsulFlux(): Flux<CollectorConfiguration> = Flux.interval(updateInterval)
-            .flatMap { http.get(url) }
-            .doOnError { logger.error("Encountered an error when trying to acquire configuration from consul. " +
-                    "Shutting down..") }
-            .filter { it.hashCode() != lastConfigurationHash.get() }
-            .doOnNext { lastConfigurationHash.set(it.hashCode()) }
-            .map { getConfigurationJson(it) }
-            .map { createCollectorConfiguration(it) }
+    private fun createConsulFlux(): Flux<CollectorConfiguration> =
+            http.get(url, mapOf(Pair("index", lastModifyIndex.get())))
+                    .doOnError {
+                        logger.error("Encountered an error " +
+                                "when trying to acquire configuration from consul. Shutting down..")
+                    }
+                    .map(::parseJsonResponse)
+                    .doOnNext(::updateModifyIndex)
+                    .map(::extractEncodedConfiguration)
+                    .flatMap(::filterDifferentValues)
+                    .map(::decodeConfiguration)
+                    .map(::createCollectorConfiguration)
+                    .repeat()
 
+    private fun parseJsonResponse(responseString: String): JsonObject =
+            Json.createReader(StringReader(responseString)).readArray().first().asJsonObject()
 
-    private fun getConfigurationJson(str: String): JsonObject {
-        val response = Json.createReader(StringReader(str)).readArray().getJsonObject(0)
-        val decodedValue = String(
-                Base64.getDecoder().decode(response.getString("Value")))
+    private fun updateModifyIndex(response: JsonObject) =
+            lastModifyIndex.set(response.getInt("ModifyIndex"))
+
+    private fun extractEncodedConfiguration(response: JsonObject): String =
+            response.getString("Value")
+
+    private fun filterDifferentValues(base64Value: String): Mono<String> {
+        val newHash = hashOf(base64Value)
+        return if (newHash == lastConfigurationHash.get()) {
+            Mono.empty()
+        } else {
+            lastConfigurationHash.set(newHash)
+            Mono.just(base64Value)
+        }
+    }
+
+    private fun hashOf(str: String) = str.hashCode()
+
+    private fun decodeConfiguration(encodedConfiguration: String): JsonObject {
+        val decodedValue = String(Base64.getDecoder().decode(encodedConfiguration))
         logger.info("Obtained new configuration from consul:\n$decodedValue")
         return Json.createReader(StringReader(decodedValue)).readObject()
     }
@@ -96,6 +123,10 @@ internal class ConsulConfigurationProvider(private val url: String,
                     }
                 }.build()
         )
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(ConsulConfigurationProvider::class.java)
     }
 }
 

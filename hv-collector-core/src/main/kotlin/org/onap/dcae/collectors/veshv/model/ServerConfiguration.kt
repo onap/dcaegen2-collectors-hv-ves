@@ -29,7 +29,7 @@ import java.time.Duration
 data class ServerConfiguration(
         val port: Int,
         val configurationUrl: String,
-        val configurationUpdateInterval: Duration,
+        val firstRequestDelay: Duration,
         val securityConfiguration: SecurityConfiguration,
         val idleTimeout: Duration,
         val dummyMode: Boolean = false)

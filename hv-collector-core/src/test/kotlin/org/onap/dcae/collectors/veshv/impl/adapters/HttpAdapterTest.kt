@@ -20,10 +20,12 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.netty.buffer.Unpooled
 import io.netty.handler.codec.http.HttpContent
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import reactor.core.publisher.Flux
@@ -32,44 +34,65 @@ import reactor.ipc.netty.http.client.HttpClient
 import reactor.ipc.netty.http.client.HttpClientResponse
 import reactor.test.StepVerifier
 import java.nio.charset.Charset
-import kotlin.test.assertEquals
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
 internal object HttpAdapterTest : Spek({
-
-    given("valid resource url") {
-
-        val httpClientMock: HttpClient = mock()
-        val httpAdapter = HttpAdapter(httpClientMock)
-        val validUrl = "http://valid-url/"
-        val responseContent = """{"key1": "value1", "key2": "value2"}"""
-        val httpResponse = createHttpResponseMock(responseContent)
-        whenever(httpClientMock.get(validUrl)).thenReturn(Mono.just(httpResponse))
-
-        it("should return response string") {
-            StepVerifier
-                    .create(httpAdapter.get(validUrl))
-                    .expectNext(responseContent)
-        }
-    }
-
-    given("invalid resource url") {
+    describe("HttpAdapter") {
 
         val httpClientMock: HttpClient = mock()
         val httpAdapter = HttpAdapter(httpClientMock)
-        val invalidUrl = "http://invalid-url/"
-        val exceptionMessage = "Test exception"
-        whenever(httpClientMock.get(invalidUrl)).thenReturn(Mono.error(Exception(exceptionMessage)))
 
-        it("should interrupt the flux") {
-            StepVerifier
-                    .create(httpAdapter.get(invalidUrl))
-                    .verifyErrorMessage(exceptionMessage)
+        given("url without query params") {
+            val initialUrl = "http://test-url"
+            whenever(httpClientMock.get(initialUrl)).thenReturn(Mono.empty())
+
+            it("should not append query string") {
+                httpAdapter.get(initialUrl)
+                verify(httpClientMock).get(initialUrl)
+            }
+        }
+
+        given("url with query params") {
+            val queryParams = mapOf(Pair("key", "value"))
+            val initialUrl = "http://test-url"
+            val expectedUrl = "http://test-url?key=value"
+            whenever(httpClientMock.get(expectedUrl)).thenReturn(Mono.empty())
+
+            it("should parse them to query string and append to url") {
+                httpAdapter.get(initialUrl, queryParams)
+                verify(httpClientMock).get(expectedUrl)
+            }
+        }
+
+        given("valid resource url") {
+            val validUrl = "http://valid-url/"
+            val responseContent = """{"key1": "value1", "key2": "value2"}"""
+            val httpResponse = createHttpResponseMock(responseContent)
+            whenever(httpClientMock.get(validUrl)).thenReturn(Mono.just(httpResponse))
+
+            it("should return response string") {
+                StepVerifier
+                        .create(httpAdapter.get(validUrl))
+                        .expectNext(responseContent)
+            }
+        }
+
+        given("invalid resource url") {
+            val invalidUrl = "http://invalid-url/"
+            val exceptionMessage = "Test exception"
+            whenever(httpClientMock.get(invalidUrl)).thenReturn(Mono.error(Exception(exceptionMessage)))
+
+            it("should interrupt the flux") {
+                StepVerifier
+                        .create(httpAdapter.get(invalidUrl))
+                        .verifyErrorMessage(exceptionMessage)
+            }
         }
     }
+
 })
 
 fun createHttpResponseMock(content: String): HttpClientResponse {

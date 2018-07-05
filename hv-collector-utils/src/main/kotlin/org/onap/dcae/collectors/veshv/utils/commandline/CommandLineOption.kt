@@ -35,10 +35,10 @@ enum class CommandLineOption(val option: Option) {
             .desc("URL of ves configuration on consul")
             .build()
     ),
-    UPDATE_INTERVAL(Option.builder("I")
-            .longOpt("update-interval")
+    CONSUL_FIRST_REQUEST_DELAY(Option.builder("d")
+            .longOpt("first-request-delay")
             .hasArg()
-            .desc("Consul configuration update interval in seconds")
+            .desc("Delay of first request to consul in seconds")
             .build()
     ),
     VES_HV_PORT(Option.builder("p")
