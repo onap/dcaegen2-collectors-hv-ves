@@ -64,7 +64,7 @@ internal class ConsulConfigurationProvider(private val url: String,
                             withFixedPartitioning()
                         }
                     }.build())
-    ).doOnNext { logger.info("Applied default configuration") }.delayElement(firstRequestDelay)
+    ).doOnNext { logger.info("Applied default configuration") }
 
     private fun createConsulFlux(): Flux<CollectorConfiguration> =
             http.get(url, mapOf(Pair("index", lastModifyIndex.get())))
@@ -79,6 +79,7 @@ internal class ConsulConfigurationProvider(private val url: String,
                     .map(::decodeConfiguration)
                     .map(::createCollectorConfiguration)
                     .repeat()
+                    .delaySubscription(firstRequestDelay)
 
     private fun parseJsonResponse(responseString: String): JsonObject =
             Json.createReader(StringReader(responseString)).readArray().first().asJsonObject()
