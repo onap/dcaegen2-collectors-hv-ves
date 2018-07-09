@@ -39,7 +39,7 @@
 
     <modules>
         <module>hv-collector-analysis</module>
-        <module>hv-collector-client-simulator</module>
+        <module>hv-collector-xnf-simulator</module>
         <module>hv-collector-core</module>
         <module>hv-collector-coverage</module>
         <module>hv-collector-ct</module>

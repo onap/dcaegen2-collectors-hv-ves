@@ -20,11 +20,7 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import arrow.syntax.function.partially1
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.ByteBufAllocator
-import io.netty.buffer.CompositeByteBuf
-import io.netty.buffer.Unpooled
-import io.netty.buffer.UnpooledByteBufAllocator
+import io.netty.buffer.*
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

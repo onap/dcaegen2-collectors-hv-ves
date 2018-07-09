@@ -97,7 +97,7 @@
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-client-simulator</artifactId>
+            <artifactId>hv-collector-xnf-simulator</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

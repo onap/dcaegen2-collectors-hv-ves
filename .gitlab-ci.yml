@@ -16,7 +16,7 @@ build:
       - hv-collector-main/target/reports
       - hv-collector-utils/target/reports
       - hv-collector-dcae-app-simulator/target/reports
-      - hv-collector-client-simulator/target/reports
+      - hv-collector-xnf-simulator/target/reports
 
 
 publish:
@@ -44,5 +44,5 @@ pages:
     - mv hv-collector-main/target/reports public/analysis/main
     - mv hv-collector-utils/target/reports public/analysis/utils
     - mv hv-collector-dcae-app-simulator/target/reports public/analysis/dcae-app-simulator
-    - mv hv-collector-client-simulator/target/reports public/analysis/client-simulator
+    - mv hv-collector-xnf-simulator/target/reports public/analysis/xnf-simulator
 

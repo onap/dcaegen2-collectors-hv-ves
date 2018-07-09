@@ -37,12 +37,12 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>hv-collector-client-simulator</artifactId>
-    <description>VES HighVolume Collector :: Client simulator</description>
+    <artifactId>hv-collector-xnf-simulator</artifactId>
+    <description>VES HighVolume Collector :: XNF simulator</description>
 
     <properties>
         <skipAnalysis>false</skipAnalysis>
-        <docker-image.name>ves-hv-collector-client-simulator</docker-image.name>
+        <docker-image.name>ves-hv-collector-xnf-simulator</docker-image.name>
     </properties>
 
     <build>

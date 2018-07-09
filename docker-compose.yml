@@ -42,9 +42,9 @@ services:
       - ./ssl/:/etc/ves-hv/
 
   xnf-simulator:
-    image: onap/ves-hv-collector-client-simulator
+    image: onap/ves-hv-collector-xnf-simulator
 #    build:
-#      context: hv-collector-client-simulator
+#      context: hv-collector-xnf-simulator
 #      dockerfile: Dockerfile
     ports:
       - "8000:5000/tcp"

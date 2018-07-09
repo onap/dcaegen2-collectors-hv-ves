@@ -37,7 +37,7 @@ import javax.json.JsonObject
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal class HttpServer(private val vesClient: VesHvClient) {
+internal class HttpServer(private val vesClient: XnfSimulator) {
 
     fun start(port: Int = DEFAULT_PORT): IO<RatpackServer> = IO {
         RatpackServer.start { server ->

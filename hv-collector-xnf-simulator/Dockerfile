@@ -12,4 +12,4 @@ ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.simulators.xnf.
 CMD ["--ves-host", "ves-hv-collector", "--ves-port", "6061"]
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./
-COPY target/hv-collector-client-simulator-*.jar ./
+COPY target/hv-collector-xnf-simulator-*.jar ./

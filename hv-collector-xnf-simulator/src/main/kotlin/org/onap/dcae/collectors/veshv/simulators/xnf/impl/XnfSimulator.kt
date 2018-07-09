@@ -28,7 +28,7 @@ import io.netty.handler.ssl.SslProvider
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrame
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
@@ -42,7 +42,7 @@ import reactor.ipc.netty.tcp.TcpClient
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal class VesHvClient(private val configuration: ClientConfiguration) {
+internal class XnfSimulator(private val configuration: SimulatorConfiguration) {
 
     private val client: TcpClient = TcpClient.builder()
             .options { opts ->
@@ -116,6 +116,6 @@ internal class VesHvClient(private val configuration: ClientConfiguration) {
 
     companion object {
         private const val MAX_BATCH_SIZE = 128
-        private val logger = Logger(VesHvClient::class)
+        private val logger = Logger(XnfSimulator::class)
     }
 }

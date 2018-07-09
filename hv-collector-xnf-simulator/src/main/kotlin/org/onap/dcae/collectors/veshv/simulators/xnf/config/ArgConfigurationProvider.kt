@@ -35,16 +35,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal object DefaultValues {
-    const val MESSAGES_AMOUNT = -1L
-    const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
-    const val CERT_FILE = "/etc/ves-hv/client.crt"
-    const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
-    const val VES_HV_PORT = 6061
-    const val VES_HV_HOST = "veshvcollector"
-}
-
-internal class ArgBasedClientConfiguration : ArgBasedConfiguration<ClientConfiguration>(DefaultParser()) {
+internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList = listOf(
             VES_HV_PORT,
             VES_HV_HOST,
@@ -54,11 +45,11 @@ internal class ArgBasedClientConfiguration : ArgBasedConfiguration<ClientConfigu
             TRUST_CERT_FILE
     )
 
-    override fun getConfiguration(cmdLine: CommandLine): ClientConfiguration {
+    override fun getConfiguration(cmdLine: CommandLine): SimulatorConfiguration {
         val host = cmdLine.stringValue(VES_HV_HOST, DefaultValues.VES_HV_HOST)
         val port = cmdLine.intValue(VES_HV_PORT, DefaultValues.VES_HV_PORT)
         val messagesAmount = cmdLine.longValue(MESSAGES_TO_SEND_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
-        return ClientConfiguration(
+        return SimulatorConfiguration(
                 host,
                 port,
                 parseSecurityConfig(cmdLine),
@@ -75,4 +66,12 @@ internal class ArgBasedClientConfiguration : ArgBasedConfiguration<ClientConfigu
                 trustedCert = stringPathToPath(trustCertFile))
     }
 
+    internal object DefaultValues {
+        const val MESSAGES_AMOUNT = -1L
+        const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
+        const val CERT_FILE = "/etc/ves-hv/client.crt"
+        const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
+        const val VES_HV_PORT = 6061
+        const val VES_HV_HOST = "veshvcollector"
+    }
 }

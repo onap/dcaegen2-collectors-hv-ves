@@ -19,15 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.HttpServer
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.VesHvClient
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.arrow.void
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.slf4j.LoggerFactory
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.xnf"
 private val logger = Logger(PACKAGE_NAME)
@@ -38,9 +37,9 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
  * @since June 2018
  */
 fun main(args: Array<String>) =
-    ArgBasedClientConfiguration().parse(args)
+    ArgConfigurationProvider().parse(args)
             .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-            .map(::VesHvClient)
+            .map(::XnfSimulator)
             .map(::HttpServer)
             .map { it.start().void() }
             .unsafeRunEitherSync(

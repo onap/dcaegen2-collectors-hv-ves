@@ -25,7 +25,7 @@ import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal data class ClientConfiguration(
+internal data class SimulatorConfiguration(
         val vesHost: String,
         val vesPort: Int,
         val security: SecurityConfiguration,

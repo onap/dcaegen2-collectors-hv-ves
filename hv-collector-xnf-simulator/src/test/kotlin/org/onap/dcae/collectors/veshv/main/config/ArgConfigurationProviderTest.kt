@@ -19,8 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.main.config
 
-import arrow.core.Failure
-import arrow.core.Success
 import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -29,14 +27,14 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgBasedClientConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ClientConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.DefaultValues
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider.*
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
 import java.nio.file.Paths
 
 
-object ArgBasedClientConfigurationTest : Spek({
-    lateinit var cut: ArgBasedClientConfiguration
+object ArgConfigurationProviderTest : Spek({
+    lateinit var cut: ArgConfigurationProvider
     val messagesAmount = 3L
     val vesHost = "localhosting"
     val pk = Paths.get("/", "etc", "ves", "pk.pem")
@@ -44,17 +42,17 @@ object ArgBasedClientConfigurationTest : Spek({
     val trustCert = Paths.get("/", "etc", "ves", "trusted.crt")
 
     beforeEachTest {
-        cut = ArgBasedClientConfiguration()
+        cut = ArgConfigurationProvider()
     }
 
-    fun parse(vararg cmdLine: String): ClientConfiguration =
+    fun parse(vararg cmdLine: String): SimulatorConfiguration =
             cut.parse(cmdLine).fold(
                     {throw AssertionError("Parsing result should be present")},
                     ::identity
             )
 
     describe("parsing arguments") {
-        lateinit var result: ClientConfiguration
+        lateinit var result: SimulatorConfiguration
 
         given("all parameters are present in the long form") {
 
