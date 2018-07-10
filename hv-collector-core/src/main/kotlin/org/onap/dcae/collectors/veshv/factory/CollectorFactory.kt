@@ -57,7 +57,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
         return VesHvCollector(
                 wireChunkDecoderSupplier = { alloc -> WireChunkDecoder(WireFrameDecoder(), alloc) },
                 protobufDecoder = VesDecoder(),
-                validator = MessageValidator(),
+                messageValidator = MessageValidator(),
                 router = Router(config.routing),
                 sink = sinkProvider(config),
                 metrics = metrics)
