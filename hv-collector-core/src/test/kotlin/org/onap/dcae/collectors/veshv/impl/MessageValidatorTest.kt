@@ -46,7 +46,7 @@ internal object MessageValidatorTest : Spek({
     }
 
     given("Message validator") {
-        val cut = MessageValidator()
+        val cut = MessageValidator
 
         on("ves hv message including header with fully initialized fields") {
             val commonHeader = newBuilder()

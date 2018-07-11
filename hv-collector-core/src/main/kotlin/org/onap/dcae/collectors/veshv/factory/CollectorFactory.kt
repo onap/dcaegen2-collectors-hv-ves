@@ -25,7 +25,6 @@ import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
-import org.onap.dcae.collectors.veshv.impl.MessageValidator
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
@@ -57,7 +56,6 @@ class CollectorFactory(val configuration: ConfigurationProvider,
         return VesHvCollector(
                 wireChunkDecoderSupplier = { alloc -> WireChunkDecoder(WireFrameDecoder(), alloc) },
                 protobufDecoder = VesDecoder(),
-                messageValidator = MessageValidator(),
                 router = Router(config.routing),
                 sink = sinkProvider(config),
                 metrics = metrics)

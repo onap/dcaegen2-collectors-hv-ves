@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.impl
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 
-internal class MessageValidator {
+internal object MessageValidator {
 
     val requiredFieldDescriptors = listOf(
             "version",
@@ -35,7 +35,7 @@ internal class MessageValidator {
             "startEpochMicrosec",
             "lastEpochMicrosec",
             "sequence")
-    .map { fieldName -> CommonEventHeader.getDescriptor().findFieldByName(fieldName)}
+            .map { fieldName -> CommonEventHeader.getDescriptor().findFieldByName(fieldName) }
 
     fun isValid(message: VesMessage): Boolean {
         return allMandatoryFieldsArePresent(message.header)

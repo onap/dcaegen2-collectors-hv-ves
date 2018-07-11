@@ -45,7 +45,6 @@ import java.util.function.BiConsumer
 internal class VesHvCollector(
         private val wireChunkDecoderSupplier: (ByteBufAllocator) -> WireChunkDecoder,
         private val protobufDecoder: VesDecoder,
-        private val messageValidator: MessageValidator,
         private val router: Router,
         private val sink: Sink,
         private val metrics: Metrics) : Collector {
@@ -56,7 +55,7 @@ internal class VesHvCollector(
                         .transform { decodeWireFrame(it, wireDecoder) }
                         .filter(PayloadWireFrameMessage::isValid)
                         .transform(::decodePayload)
-                        .filter(messageValidator::isValid)
+                        .filter(VesMessage::isValid)
                         .transform(::routeMessage)
                         .doOnTerminate { releaseBuffersMemory(wireDecoder) }
                         .onErrorResume(::handleErrors)
