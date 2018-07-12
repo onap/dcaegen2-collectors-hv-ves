@@ -19,16 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
+import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.ArgBasedDcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.DcaeAppSimConfiguration
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.KafkaSource
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote.ApiServer
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.arrow.void
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.slf4j.LoggerFactory
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.dcaeapp"
 private val logger = Logger(PACKAGE_NAME)
@@ -49,8 +49,8 @@ fun main(args: Array<String>) =
                 )
 
 
-private fun startApp(config: DcaeAppSimConfiguration) =
-        KafkaSource.create(config.kafkaBootstrapServers, config.kafkaTopics)
-                .start()
-                .map(::ApiServer)
-                .flatMap { it.start(config.apiPort).void() }
+private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
+    return ApiServer(ConsumerFactory(config.kafkaBootstrapServers))
+            .start(config.apiPort, config.kafkaTopics)
+            .void()
+}

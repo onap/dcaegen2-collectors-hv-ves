@@ -24,7 +24,9 @@ import arrow.core.getOrElse
 import arrow.effects.IO
 import com.google.protobuf.MessageOrBuilder
 import com.google.protobuf.util.JsonFormat
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerStateProvider
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields
 import org.onap.ves.VesEventV5.VesEvent
 import ratpack.handling.Chain
@@ -35,10 +37,13 @@ import ratpack.server.ServerConfig
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class ApiServer(private val consumerState: ConsumerStateProvider) {
+class ApiServer(private val consumerFactory: ConsumerFactory) {
+
+    private lateinit var consumerState: ConsumerStateProvider
     private val jsonPrinter = JsonFormat.printer()
 
-    fun start(port: Int): IO<RatpackServer> = IO {
+    fun start(port: Int, kafkaTopics: Set<String>): IO<RatpackServer> = IO {
+        consumerState = consumerFactory.createConsumerForTopics(kafkaTopics)
         RatpackServer.start { server ->
             server.serverConfig(ServerConfig.embedded().port(port))
                     .handlers(this::setupHandlers)
@@ -47,6 +52,17 @@ class ApiServer(private val consumerState: ConsumerStateProvider) {
 
     private fun setupHandlers(chain: Chain) {
         chain
+                .put("configuration/topics") { ctx ->
+                    ctx.request.body.then { it ->
+                        val topics = extractTopics(it.getText())
+                        logger.info("Received new configuration. Creating consumer for topics: $topics")
+                        consumerState = consumerFactory.createConsumerForTopics(topics)
+                        ctx.response.contentType(CONTENT_TEXT)
+                        ctx.response.send("OK")
+                    }
+
+                }
+
                 .get("messages/count") { ctx ->
                     ctx.response.contentType(CONTENT_TEXT)
                     val state = consumerState.currentState()
@@ -97,6 +113,11 @@ class ApiServer(private val consumerState: ConsumerStateProvider) {
                 }
     }
 
+    private fun extractTopics(it: String): Set<String> =
+            it.substringAfter("=")
+                    .split(",")
+                    .toSet()
+
     private fun protobufToJson(parseResult: Try<MessageOrBuilder>): String =
             parseResult.fold(
                     { ex -> "\"Failed to parse protobuf: ${ex.message}\"" },
@@ -104,6 +125,8 @@ class ApiServer(private val consumerState: ConsumerStateProvider) {
 
 
     companion object {
+        private val logger = Logger(ApiServer::class)
+
         private const val CONTENT_TEXT = "text/plain"
         private const val CONTENT_JSON = "application/json"
     }

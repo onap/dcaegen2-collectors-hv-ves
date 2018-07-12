@@ -66,3 +66,9 @@ class Consumer : ConsumerStateProvider {
         private val logger = Logger(Consumer::class)
     }
 }
+
+class ConsumerFactory(val kafkaBootstrapServers: String) {
+    fun createConsumerForTopics(kafkaTopics: Set<String>): ConsumerStateProvider {
+        return KafkaSource.create(kafkaBootstrapServers, kafkaTopics.toSet()).start().unsafeRunSync()
+    }
+}
