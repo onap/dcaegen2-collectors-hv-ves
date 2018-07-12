@@ -17,12 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import com.google.protobuf.ByteString
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
-import org.onap.dcae.collectors.veshv.simulators.xnf.api.MessageGenerator
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.config.MessageParameters
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import reactor.core.publisher.Flux
@@ -33,7 +33,7 @@ import javax.json.JsonObject
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal class MessageGeneratorImpl(private val payloadGenerator: PayloadGenerator) : MessageGenerator {
+class MessageGeneratorImpl internal constructor(private val payloadGenerator: PayloadGenerator) : MessageGenerator {
 
     override fun createMessageFlux(messageParameters: MessageParameters): Flux<PayloadWireFrameMessage> =
             Mono.fromCallable { createMessage(messageParameters.commonEventHeader) }.let {
@@ -43,7 +43,7 @@ internal class MessageGeneratorImpl(private val payloadGenerator: PayloadGenerat
                     it.repeat(messageParameters.amount)
             }
 
-    fun parseCommonHeader(json: JsonObject): CommonEventHeader = CommonEventHeader.newBuilder()
+    override fun parseCommonHeader(json: JsonObject): CommonEventHeader = CommonEventHeader.newBuilder()
             .setVersion(json.getString("version"))
             .setDomain(CommonEventHeader.Domain.forNumber(json.getInt("domain")))
             .setSequence(json.getInt("sequence"))
@@ -72,8 +72,4 @@ internal class MessageGeneratorImpl(private val payloadGenerator: PayloadGenerat
                     .setHvRanMeasFields(payloadGenerator.generatePayload().toByteString())
                     .build()
                     .toByteArray()
-
-    companion object {
-        val INSTANCE = MessageGeneratorImpl(PayloadGenerator())
-    }
 }

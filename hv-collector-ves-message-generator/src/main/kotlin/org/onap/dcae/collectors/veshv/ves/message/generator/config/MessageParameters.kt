@@ -17,16 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.api
+package org.onap.dcae.collectors.veshv.ves.message.generator.config
 
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
-import reactor.core.publisher.Flux
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-interface MessageGenerator {
-    fun createMessageFlux(messageParameters: MessageParameters): Flux<PayloadWireFrameMessage>
-}
+data class MessageParameters(val commonEventHeader: CommonEventHeader, val amount: Long = -1)

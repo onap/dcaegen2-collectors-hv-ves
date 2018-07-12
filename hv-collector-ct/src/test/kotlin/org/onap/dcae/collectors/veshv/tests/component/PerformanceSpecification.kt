@@ -26,10 +26,10 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
-import org.onap.dcae.collectors.veshv.simulators.xnf.createMessageGenerator
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.config.MessageParameters
 import reactor.core.publisher.Flux
 import reactor.math.sum
 import java.security.MessageDigest
@@ -161,7 +161,7 @@ fun dropWhenIndex(predicate: (Long) -> Boolean, stream: Flux<ByteBuf>): Flux<Byt
 
 private fun generateDataStream(alloc: ByteBufAllocator, params: MessageParameters): Flux<ByteBuf> =
         WireFrameEncoder(alloc).let { encoder ->
-            createMessageGenerator()
+            MessageGenerator.INSTANCE
                     .createMessageFlux(params)
                     .map(encoder::encode)
                     .transform { simulateRemoteTcp(alloc, 1000, it) }

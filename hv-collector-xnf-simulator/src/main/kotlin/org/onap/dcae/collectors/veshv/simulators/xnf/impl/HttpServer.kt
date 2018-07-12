@@ -21,8 +21,9 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.config.MessageParameters
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import ratpack.exec.Promise
 import ratpack.handling.Chain
 import ratpack.handling.Context
@@ -69,7 +70,7 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
         return ctx.request.body
                 .map { Json.createReader(it.inputStream).readObject() }
                 .map { extractMessageParameters(it) }
-                .map { MessageGeneratorImpl.INSTANCE.createMessageFlux(it) }
+                .map { MessageGenerator.INSTANCE.createMessageFlux(it) }
     }
 
     private fun sendAcceptedResponse(ctx: Context) {
@@ -95,7 +96,7 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
 
     private fun extractMessageParameters(request: JsonObject): MessageParameters =
             try {
-                val commonEventHeader = MessageGeneratorImpl.INSTANCE
+                val commonEventHeader = MessageGenerator.INSTANCE
                         .parseCommonHeader(request.getJsonObject("commonEventHeader"))
                 val messagesAmount = request.getJsonNumber("messagesAmount").longValue()
                 MessageParameters(commonEventHeader, messagesAmount)

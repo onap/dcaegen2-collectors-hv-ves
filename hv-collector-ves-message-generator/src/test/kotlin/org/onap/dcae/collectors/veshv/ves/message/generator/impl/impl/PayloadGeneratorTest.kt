@@ -17,13 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
 
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
 
 private const val DEFAULT_MEASUREMENTS_NUMBER = 2
 private const val DEFAULT_COUNTERS_NUMBER = 2

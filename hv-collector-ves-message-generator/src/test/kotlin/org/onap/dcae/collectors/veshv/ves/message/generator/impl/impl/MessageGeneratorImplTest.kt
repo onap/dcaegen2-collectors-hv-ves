@@ -17,14 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
 
 import com.google.protobuf.ByteString
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.config.MessageParameters
 import org.onap.ves.VesEventV5
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Priority.MEDIUM
@@ -37,22 +38,22 @@ const val SAMPLE_LAST_EPOCH: Long = 120034455
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-object MessageFactoryTest : Spek({
+object MessageGeneratorImplTest : Spek({
     describe("message factory") {
 
-        val factory = MessageGeneratorImpl.INSTANCE
+        val generator = MessageGenerator.INSTANCE
 
         given("only common header") {
             it("should return infinite flux") {
                 val limit = 1000L
-                factory.createMessageFlux(getSampleMessageParameters()).take(limit).test()
+                generator.createMessageFlux(getSampleMessageParameters()).take(limit).test()
                         .expectNextCount(limit)
                         .verifyComplete()
             }
         }
         given("common header and messages amount") {
             it("should return message flux of specified size") {
-                factory.createMessageFlux((getSampleMessageParameters(5))).test()
+                generator.createMessageFlux((getSampleMessageParameters(5))).test()
                         .expectNextCount(5)
                         .verifyComplete()
             }
@@ -60,7 +61,7 @@ object MessageFactoryTest : Spek({
     }
 })
 
-fun getSampleMessageParameters(amount: Long = -1): MessageParameters{
+fun getSampleMessageParameters(amount: Long = -1): MessageParameters {
     val commonHeader = VesEventV5.VesEvent.CommonEventHeader.newBuilder()
             .setVersion("sample-version")
             .setDomain(HVRANMEAS)
