@@ -48,11 +48,4 @@ interface SinkProvider {
 
 interface ConfigurationProvider {
     operator fun invoke(): Flux<CollectorConfiguration>
-
-    companion object {
-        fun from(function: () -> Flux<CollectorConfiguration>): ConfigurationProvider =
-                object : ConfigurationProvider {
-                    override fun invoke(): Flux<CollectorConfiguration> = function()
-                }
-    }
 }
