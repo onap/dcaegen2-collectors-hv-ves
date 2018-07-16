@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import io.netty.buffer.ByteBuf
+import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
@@ -39,10 +40,10 @@ import java.time.Duration
 class Sut(sink: Sink = StoringSink()) {
     val configurationProvider = FakeConfigurationProvider()
 
-    val alloc = UnpooledByteBufAllocator.DEFAULT
-    val metrics = FakeMetrics()
+    val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
+    private val metrics = FakeMetrics()
     private val collectorFactory = CollectorFactory(configurationProvider, SinkProvider.just(sink), metrics)
-    val collectorProvider = collectorFactory.createVesHvCollectorProvider()
+    private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
         get() = collectorProvider()

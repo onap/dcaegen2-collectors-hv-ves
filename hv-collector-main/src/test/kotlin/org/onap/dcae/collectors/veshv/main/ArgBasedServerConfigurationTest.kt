@@ -19,8 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import arrow.core.Failure
-import arrow.core.Success
 import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek

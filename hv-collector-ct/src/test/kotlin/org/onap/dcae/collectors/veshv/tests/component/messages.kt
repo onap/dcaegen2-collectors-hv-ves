@@ -24,6 +24,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
+import org.onap.ves.VesEventV5
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
@@ -85,7 +86,7 @@ fun vesMessageWithTooBigPayload(domain: Domain = Domain.OTHER, id: String = UUID
 
 fun vesEvent(domain: Domain = Domain.HVRANMEAS,
              id: String = UUID.randomUUID().toString(),
-             hvRanMeasFields: ByteString = ByteString.EMPTY) =
+             hvRanMeasFields: ByteString = ByteString.EMPTY): VesEventV5.VesEvent =
         VesEvent.newBuilder()
                 .setCommonEventHeader(
                         CommonEventHeader.getDefaultInstance().toBuilder()

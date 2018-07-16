@@ -39,7 +39,6 @@
 
     <modules>
         <module>hv-collector-analysis</module>
-        <module>hv-collector-xnf-simulator</module>
         <module>hv-collector-core</module>
         <module>hv-collector-coverage</module>
         <module>hv-collector-ct</module>
@@ -48,6 +47,7 @@
         <module>hv-collector-main</module>
         <module>hv-collector-utils</module>
         <module>hv-collector-ves-message-generator</module>
+        <module>hv-collector-xnf-simulator</module>
     </modules>
 
     <properties>

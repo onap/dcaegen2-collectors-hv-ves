@@ -58,7 +58,7 @@ object PayloadGeneratorTest : Spek({
 
         on("call with specified parameters") {
             val numOfCountPerMeas: Long = 5
-            val numOfMeasPerObject: Int = 10
+            val numOfMeasPerObject = 10
             val generatedPayload = payloadGenerator.generatePayload(numOfCountPerMeas, numOfMeasPerObject)
             it("should contain specified number of measurements") {
                 assertThat(generatedPayload.getPmObject(0).hvRanMeasCount).isEqualTo(numOfMeasPerObject)

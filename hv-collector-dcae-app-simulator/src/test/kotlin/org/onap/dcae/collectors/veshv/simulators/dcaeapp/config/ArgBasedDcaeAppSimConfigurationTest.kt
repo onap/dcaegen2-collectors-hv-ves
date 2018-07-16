@@ -19,8 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.config
 
-import arrow.core.Failure
-import arrow.core.Success
 import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -69,7 +67,7 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
             }
 
 
-            it("should set proper kafka boostrap servers") {
+            it("should set proper kafka bootstrap servers") {
                 assertThat(result.kafkaBootstrapServers).isEqualTo(kafkaBootstrapServers)
             }
 
@@ -92,7 +90,7 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
                 assertThat(result.apiPort).isEqualTo(666)
             }
 
-            it("should set proper kafka boostrap servers") {
+            it("should set proper kafka bootstrap servers") {
                 assertThat(result.kafkaBootstrapServers).isEqualTo(kafkaBootstrapServers)
             }
 

@@ -67,7 +67,7 @@ class Consumer : ConsumerStateProvider {
     }
 }
 
-class ConsumerFactory(val kafkaBootstrapServers: String) {
+class ConsumerFactory(private val kafkaBootstrapServers: String) {
     fun createConsumerForTopics(kafkaTopics: Set<String>): ConsumerStateProvider {
         return KafkaSource.create(kafkaBootstrapServers, kafkaTopics.toSet()).start().unsafeRunSync()
     }

@@ -54,7 +54,7 @@ class ApiServer(private val consumerFactory: ConsumerFactory) {
         chain
                 .put("configuration/topics") { ctx ->
                     ctx.request.body.then { it ->
-                        val topics = extractTopics(it.getText())
+                        val topics = extractTopics(it.text)
                         logger.info("Received new configuration. Creating consumer for topics: $topics")
                         consumerState = consumerFactory.createConsumerForTopics(topics)
                         ctx.response.contentType(CONTENT_TEXT)

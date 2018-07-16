@@ -24,7 +24,7 @@ import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 
 internal object MessageValidator {
 
-    val requiredFieldDescriptors = listOf(
+    private val requiredFieldDescriptors = listOf(
             "version",
             "eventName",
             // "domain", TODO to be restored back when GPB schema will include default value
