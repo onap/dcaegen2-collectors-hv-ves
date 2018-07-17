@@ -33,6 +33,7 @@ import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.SynchronousSink
@@ -71,19 +72,19 @@ internal class VesHvCollector(
     private fun decodePayload(flux: Flux<PayloadWireFrameMessage>): Flux<VesMessage> = flux
             .map(PayloadWireFrameMessage::payload)
             .map(protobufDecoder::decode)
-
+            .flatMap { omitWhenNone(it) }
 
     private fun routeMessage(flux: Flux<VesMessage>): Flux<RoutedMessage> = flux
             .flatMap(this::findRoute)
             .compose(sink::send)
             .doOnNext { metrics.notifyMessageSent(it.topic) }
 
-    private fun findRoute(msg: VesMessage): Mono<RoutedMessage> = omitWhenNull(msg, router::findDestination)
 
-    private fun <T, V> omitWhenNull(input: T, mapper: (T) -> Option<V>): Mono<V> =
-            mapper(input).fold(
-                    { Mono.empty() },
-                    { Mono.just(it) })
+    private fun findRoute(msg: VesMessage): Mono<RoutedMessage> = omitWhenNone((router::findDestination)(msg))
+
+    private fun <V> omitWhenNone(it: Option<V>): Mono<V> = it.fold(
+            { Mono.empty() },
+            { Mono.just(it) })
 
     private fun releaseBuffersMemory(wireChunkDecoder: WireChunkDecoder) = wireChunkDecoder.release()
 

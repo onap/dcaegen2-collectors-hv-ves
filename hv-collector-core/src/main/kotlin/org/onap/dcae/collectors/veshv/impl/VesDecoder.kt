@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import arrow.core.Try
+import arrow.core.Option
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.ves.VesEventV5.VesEvent
@@ -29,8 +31,9 @@ import org.onap.ves.VesEventV5.VesEvent
  */
 internal class VesDecoder {
 
-    fun decode(bytes: ByteData): VesMessage {
-        val decodedHeader = VesEvent.parseFrom(bytes.unsafeAsArray()).commonEventHeader
-        return VesMessage(decodedHeader, bytes)
-    }
+    fun decode(bytes: ByteData): Option<VesMessage> =
+            Try {
+                val decodedHeader = VesEvent.parseFrom(bytes.unsafeAsArray()).commonEventHeader
+                VesMessage(decodedHeader, bytes)
+            }.toOption()
 }

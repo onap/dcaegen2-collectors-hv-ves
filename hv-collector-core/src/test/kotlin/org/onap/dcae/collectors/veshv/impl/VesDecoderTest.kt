@@ -19,10 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import arrow.core.Option
 import com.google.protobuf.ByteString
-import com.google.protobuf.InvalidProtocolBufferException
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -33,6 +31,8 @@ import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import java.nio.charset.Charset
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 
 internal object VesDecoderTest : Spek({
@@ -41,13 +41,12 @@ internal object VesDecoderTest : Spek({
         val cut = VesDecoder()
 
         on("ves hv message bytes") {
-            val commonHeader = CommonEventHeader.getDefaultInstance()
+            val commonHeader = commonEventHeader()
             val msg = VesEvent.newBuilder()
                     .setCommonEventHeader(commonHeader)
                     .setHvRanMeasFields(ByteString.copyFromUtf8("highvolume measurements"))
                     .build()
             val rawMessageBytes = msg.toByteData()
-
 
             it("should decode only header and pass it on along with raw message") {
                 val expectedMessage = VesMessage(
@@ -55,8 +54,11 @@ internal object VesDecoderTest : Spek({
                         rawMessageBytes
                 )
 
-                assertThat(cut.decode(rawMessageBytes)).isEqualTo(expectedMessage)
-
+                assertTrue {
+                    cut.decode(rawMessageBytes).exists {
+                        it == expectedMessage
+                    }
+                }
             }
         }
 
@@ -64,9 +66,28 @@ internal object VesDecoderTest : Spek({
             val rawMessageBytes = ByteData("ala ma kota".toByteArray(Charset.defaultCharset()))
 
             it("should throw error") {
-                assertThatExceptionOfType(InvalidProtocolBufferException::class.java)
-                        .isThrownBy { cut.decode(rawMessageBytes) }
+                assertFailedWithError(cut.decode(rawMessageBytes))
             }
         }
     }
 })
+
+private fun <A> assertFailedWithError(option: Option<A>) =
+        option.exists {
+            fail("Error expected")
+        }
+
+
+private fun commonEventHeader() =
+        CommonEventHeader.getDefaultInstance().toBuilder()
+                .setDomain(CommonEventHeader.Domain.HEARTBEAT)
+                .setVersion("1.0")
+                .setEventName("xyz")
+                .setEventId("eventID")
+                .setEventName("Sample event name")
+                .setSourceName("Sample Source")
+                .setPriority(CommonEventHeader.Priority.MEDIUM)
+                .setStartEpochMicrosec(120034455)
+                .setLastEpochMicrosec(120034459)
+                .setSequence(1)
+                .build()
