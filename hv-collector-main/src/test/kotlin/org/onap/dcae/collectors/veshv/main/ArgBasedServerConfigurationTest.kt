@@ -59,7 +59,8 @@ object ArgBasedServerConfigurationTest : Spek({
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse("--listen-port", listenPort,
+                result = parse("--ssl-disable",
+                        "--listen-port", listenPort,
                         "--config-url", configurationUrl,
                         "--first-request-delay", firstRequestDelay,
                         "--private-key-file", pk.toFile().absolutePath,
@@ -81,7 +82,7 @@ object ArgBasedServerConfigurationTest : Spek({
 
             it("should set proper security configuration") {
                 assertThat(result.securityConfiguration).isEqualTo(
-                        SecurityConfiguration(pk, cert, trustCert)
+                        SecurityConfiguration(sslDisable = true, privateKey = pk, cert = cert, trustedCert = trustCert)
                 )
             }
 

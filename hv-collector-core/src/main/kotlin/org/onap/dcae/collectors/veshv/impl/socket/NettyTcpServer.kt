@@ -19,7 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.impl.socket
 
+import arrow.core.Option
 import arrow.effects.IO
+import io.netty.handler.ssl.SslContext
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.boundary.ServerHandle
@@ -54,8 +56,9 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
     }
 
     private fun configureServer(opts: ServerOptions.Builder<*>) {
+        val sslContext: Option<SslContext> = sslContextFactory.createSslContext(serverConfig.securityConfiguration)
+        if (sslContext.isDefined()) opts.sslContext(sslContext.orNull())
         opts.port(serverConfig.port)
-        opts.sslContext(sslContextFactory.createSslContext(serverConfig.securityConfiguration))
     }
 
     private fun handleConnection(nettyInbound: NettyInbound): Mono<Void> {

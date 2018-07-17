@@ -75,6 +75,11 @@ enum class CommandLineOption(val option: Option) {
             .desc("Comma-separated Kafka topics")
             .build()
     ),
+    SSL_DISABLE(Option.builder("l")
+            .longOpt("ssl-disable")
+            .desc("Disable SSL encryption")
+            .build()
+    ),
     PRIVATE_KEY_FILE(Option.builder("k")
             .longOpt("private-key-file")
             .hasArg()

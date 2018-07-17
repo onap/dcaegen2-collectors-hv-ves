@@ -42,6 +42,7 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
             LISTEN_PORT,
             CONSUL_CONFIG_URL,
             CONSUL_FIRST_REQUEST_DELAY,
+            SSL_DISABLE,
             PRIVATE_KEY_FILE,
             CERT_FILE,
             TRUST_CERT_FILE,
@@ -66,11 +67,13 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
     }
 
     private fun createSecurityConfiguration(cmdLine: CommandLine): SecurityConfiguration {
+        val sslDisable = cmdLine.hasOption(SSL_DISABLE)
         val pkFile = cmdLine.stringValue(PRIVATE_KEY_FILE, DefaultValues.PRIVATE_KEY_FILE)
         val certFile = cmdLine.stringValue(CERT_FILE, DefaultValues.CERT_FILE)
         val trustCertFile = cmdLine.stringValue(TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
 
         return SecurityConfiguration(
+                sslDisable = sslDisable,
                 privateKey = stringPathToPath(pkFile),
                 cert = stringPathToPath(certFile),
                 trustedCert = stringPathToPath(trustCertFile)
