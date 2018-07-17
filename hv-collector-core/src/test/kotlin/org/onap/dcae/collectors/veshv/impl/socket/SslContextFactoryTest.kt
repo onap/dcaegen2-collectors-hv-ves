@@ -20,15 +20,17 @@
 package org.onap.dcae.collectors.veshv.impl.socket
 
 import io.netty.handler.ssl.ClientAuth
-import io.netty.handler.ssl.OpenSslServerContext
 import io.netty.handler.ssl.ReferenceCountedOpenSslContext
 import io.netty.handler.ssl.SslContextBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import java.nio.file.Paths
+import kotlin.test.assertTrue
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -36,43 +38,66 @@ import java.nio.file.Paths
  */
 object SslContextFactoryTest : Spek({
     describe("SslContextFactory") {
-        val sampleConfig = SecurityConfiguration(
-                privateKey = Paths.get("/", "tmp", "pk.pem"),
-                cert = Paths.get("/", "tmp", "cert.crt"),
-                trustedCert = Paths.get("/", "tmp", "clientCa.crt"))
+        given("config without disabled SSL"){
+            val sampleConfig = SecurityConfiguration(
+                    privateKey = Paths.get("/", "tmp", "pk.pem"),
+                    cert = Paths.get("/", "tmp", "cert.crt"),
+                    trustedCert = Paths.get("/", "tmp", "clientCa.crt"))
 
-        val cut = object : SslContextFactory() {
-            var actualConfig: SecurityConfiguration? = null
-            override fun createSslContextWithConfiguredCerts(secConfig: SecurityConfiguration): SslContextBuilder {
-                actualConfig = secConfig
-                return SslContextBuilder.forServer(resource("/ssl/ca.crt"), resource("/ssl/server.key"))
+            val cut = object : SslContextFactory() {
+                override fun createSslContextWithConfiguredCerts(secConfig: SecurityConfiguration): SslContextBuilder {
+                    return SslContextBuilder.forServer(resource("/ssl/ca.crt"), resource("/ssl/server.key"))
+                }
+
+                private fun resource(path: String) = SslContextFactoryTest.javaClass.getResourceAsStream(path)
             }
 
-            private fun resource(path: String) = SslContextFactoryTest.javaClass.getResourceAsStream(path)
+            on("creation of SSL context"){
+                val result = cut.createSslContext(sampleConfig)
+
+                it("should be server context") {
+                    assertTrue(result.exists {
+                        it.isServer
+                    })
+                }
+
+                it("should use OpenSSL provider") {
+                    assertTrue(result.isDefined())
+                }
+
+                /*
+                 * It is too important to leave it untested on unit level.
+                 * Because of the Netty API design we need to do it this way.
+                 */
+                it("should turn on client authentication") {
+                    val clientAuth: ClientAuth = ReferenceCountedOpenSslContext::class.java
+                            .getDeclaredField("clientAuth")
+                            .run {
+                                isAccessible = true
+                                get(result.orNull()) as ClientAuth
+                            }
+                    assertThat(clientAuth).isEqualTo(ClientAuth.REQUIRE)
+                }
+            }
         }
 
-        val result = cut.createSslContext(sampleConfig)
+        given("config with SSL disabled") {
+            val securityConfiguration = SecurityConfiguration(
+                    sslDisable = true,
+                    privateKey = Paths.get("sample", "key"),
+                    cert = Paths.get("sample","cert"),
+                    trustedCert = Paths.get("/", "sample", "trusted", "cert")
+            )
+            val cut = SslContextFactory()
 
-        it("should be server context") {
-            assertThat(result.isServer).isTrue()
+            on("creation of SSL context") {
+                val result = cut.createSslContext(securityConfiguration)
+
+                it("should not create any SSL context "){
+                    assertThat(result.isDefined()).isFalse()
+                }
+            }
         }
 
-        it("should use OpenSSL provider") {
-            assertThat(result).isInstanceOf(OpenSslServerContext::class.java)
-        }
-
-        /*
-         * It is too important to leave it untested on unit level.
-         * Because of the Netty API design we need to do it this way.
-         */
-        it("should turn on client authentication") {
-            val clientAuth: ClientAuth = ReferenceCountedOpenSslContext::class.java
-                    .getDeclaredField("clientAuth")
-                    .run {
-                        isAccessible = true
-                        get(result) as ClientAuth
-                    }
-            assertThat(clientAuth).isEqualTo(ClientAuth.REQUIRE)
-        }
     }
 })

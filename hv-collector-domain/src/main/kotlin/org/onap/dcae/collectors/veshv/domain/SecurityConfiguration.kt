@@ -26,6 +26,7 @@ import java.nio.file.Path
  * @since May 2018
  */
 data class SecurityConfiguration(
+        val sslDisable: Boolean = false,
         val privateKey: Path,
         val cert: Path,
         val trustedCert: Path)

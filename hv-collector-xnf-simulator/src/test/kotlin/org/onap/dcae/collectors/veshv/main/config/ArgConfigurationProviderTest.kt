@@ -31,6 +31,7 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProv
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider.*
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
 import java.nio.file.Paths
+import kotlin.test.assertTrue
 
 
 object ArgConfigurationProviderTest : Spek({
@@ -47,7 +48,7 @@ object ArgConfigurationProviderTest : Spek({
 
     fun parse(vararg cmdLine: String): SimulatorConfiguration =
             cut.parse(cmdLine).fold(
-                    {throw AssertionError("Parsing result should be present")},
+                    { throw AssertionError("Parsing result should be present") },
                     ::identity
             )
 
@@ -57,7 +58,8 @@ object ArgConfigurationProviderTest : Spek({
         given("all parameters are present in the long form") {
 
             beforeEachTest {
-                result = parse("--ves-port", "6969",
+                result = parse("--ssl-disable",
+                        "--ves-port", "6969",
                         "--ves-host", vesHost,
                         "--messages", messagesAmount.toString(),
                         "--private-key-file", pk.toFile().absolutePath,
@@ -76,7 +78,7 @@ object ArgConfigurationProviderTest : Spek({
 
             it("should set proper security configuration") {
                 assertThat(result.security).isEqualTo(
-                        SecurityConfiguration(pk, cert, trustCert)
+                        SecurityConfiguration(sslDisable = true, privateKey = pk, cert = cert, trustedCert = trustCert)
                 )
             }
         }
@@ -119,6 +121,36 @@ object ArgConfigurationProviderTest : Spek({
 
                 it("should set default private key file") {
                     assertThat(securityConfiguration.privateKey.toString()).isEqualTo(DefaultValues.PRIVATE_KEY_FILE)
+                }
+            }
+        }
+
+        given("disabled ssl certs together with all other parameters") {
+            beforeEachTest {
+                result = parse("--ssl-disable",
+                        "--ves-port", "888",
+                        "--ves-host", vesHost,
+                        "--messages", messagesAmount.toString(),
+                        "--private-key-file", pk.toFile().absolutePath,
+                        "--cert-file", cert.toFile().absolutePath,
+                        "--trust-cert-file", trustCert.toFile().absolutePath)
+            }
+
+            on("security config") {
+                val securityConfiguration = result.security
+
+                it("should set ssl disable to true"){
+                    assertTrue(securityConfiguration.sslDisable)
+                }
+
+                it("should set proper security configuration") {
+                    assertThat(securityConfiguration).isEqualTo(
+                            SecurityConfiguration(
+                                    sslDisable = true,
+                                    privateKey = pk,
+                                    cert = cert,
+                                    trustedCert = trustCert)
+                    )
                 }
             }
         }

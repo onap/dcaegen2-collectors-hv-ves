@@ -23,12 +23,7 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CERT_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MESSAGES_TO_SEND_AMOUNT
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.PRIVATE_KEY_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_CERT_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_HOST
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
 
 
 /**
@@ -40,6 +35,7 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
             VES_HV_PORT,
             VES_HV_HOST,
             MESSAGES_TO_SEND_AMOUNT,
+            SSL_DISABLE,
             PRIVATE_KEY_FILE,
             CERT_FILE,
             TRUST_CERT_FILE
@@ -57,10 +53,12 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
     }
 
     private fun parseSecurityConfig(cmdLine: CommandLine): SecurityConfiguration {
+        val sslDisable = cmdLine.hasOption(SSL_DISABLE)
         val pkFile = cmdLine.stringValue(PRIVATE_KEY_FILE, DefaultValues.PRIVATE_KEY_FILE)
         val certFile = cmdLine.stringValue(CERT_FILE, DefaultValues.CERT_FILE)
         val trustCertFile = cmdLine.stringValue(TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
         return SecurityConfiguration(
+                sslDisable = sslDisable,
                 privateKey = stringPathToPath(pkFile),
                 cert = stringPathToPath(certFile),
                 trustedCert = stringPathToPath(trustCertFile))
