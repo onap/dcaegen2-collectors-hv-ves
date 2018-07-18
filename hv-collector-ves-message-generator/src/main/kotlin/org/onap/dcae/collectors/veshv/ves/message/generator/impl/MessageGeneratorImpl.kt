@@ -20,14 +20,23 @@
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import com.google.protobuf.ByteString
+import org.onap.dcae.collectors.veshv.domain.ByteData
+import org.onap.dcae.collectors.veshv.domain.PayloadContentType
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
-import org.onap.dcae.collectors.veshv.ves.message.generator.config.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.*
+import org.onap.ves.HVRanMeasFieldsV5
+import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields
+import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.OTHER
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import javax.json.JsonObject
+import java.nio.charset.Charset
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -35,41 +44,78 @@ import javax.json.JsonObject
  */
 class MessageGeneratorImpl internal constructor(private val payloadGenerator: PayloadGenerator) : MessageGenerator {
 
-    override fun createMessageFlux(messageParameters: MessageParameters): Flux<PayloadWireFrameMessage> =
-            Mono.fromCallable { createMessage(messageParameters.commonEventHeader) }.let {
-                if (messageParameters.amount < 0)
-                    it.repeat()
-                else
-                    it.repeat(messageParameters.amount)
+    override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<PayloadWireFrameMessage> = Flux
+            .fromIterable(messageParameters)
+            .flatMap { createMessageFlux(it) }
+
+    private fun createMessageFlux(parameters: MessageParameters): Flux<PayloadWireFrameMessage> =
+            Mono.fromCallable { createMessage(parameters.domain, parameters.messageType) }
+                    .let {
+                        if (parameters.amount < 0)
+                            it.repeat()
+                        else
+                            it.repeat(parameters.amount)
+                    }
+
+    private fun createMessage(domain: Domain, messageType: MessageType): PayloadWireFrameMessage =
+            when (messageType) {
+                VALID ->
+                    PayloadWireFrameMessage(vesEvent(domain, payloadGenerator.generatePayload()))
+                TOO_BIG_PAYLOAD ->
+                    PayloadWireFrameMessage(vesEvent(domain, oversizedPayload()))
+                UNSUPPORTED_DOMAIN ->
+                    PayloadWireFrameMessage(vesEvent(OTHER, payloadGenerator.generatePayload()))
+                INVALID_WIRE_FRAME -> {
+                    val payload = ByteData(vesEvent(domain, payloadGenerator.generatePayload()))
+                    PayloadWireFrameMessage(
+                            payload,
+                            UNSUPPORTED_VERSION,
+                            PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                            payload.size())
+                }
+                INVALID_GPB_DATA ->
+                    PayloadWireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
-    override fun parseCommonHeader(json: JsonObject): CommonEventHeader = CommonEventHeader.newBuilder()
-            .setVersion(json.getString("version"))
-            .setDomain(CommonEventHeader.Domain.forNumber(json.getInt("domain")))
-            .setSequence(json.getInt("sequence"))
-            .setPriority(CommonEventHeader.Priority.forNumber(json.getInt("priority")))
-            .setEventId(json.getString("eventId"))
-            .setEventName(json.getString("eventName"))
-            .setEventType(json.getString("eventType"))
-            .setStartEpochMicrosec(json.getJsonNumber("startEpochMicrosec").longValue())
-            .setLastEpochMicrosec(json.getJsonNumber("lastEpochMicrosec").longValue())
-            .setNfNamingCode(json.getString("nfNamingCode"))
-            .setNfcNamingCode(json.getString("nfcNamingCode"))
-            .setReportingEntityId(json.getString("reportingEntityId"))
-            .setReportingEntityName(ByteString.copyFromUtf8(json.getString("reportingEntityName")))
-            .setSourceId(ByteString.copyFromUtf8(json.getString("sourceId")))
-            .setSourceName(json.getString("sourceName"))
+    private fun vesEvent(domain: Domain, hvRanMeasPayload: HVRanMeasPayload): ByteArray {
+        return vesEvent(domain, hvRanMeasPayload.toByteString())
+    }
+
+    private fun vesEvent(domain: Domain, hvRanMeasPayload: ByteString): ByteArray {
+        return createVesEvent(createCommonHeader(domain), hvRanMeasPayload).toByteArray()
+    }
+
+    private fun createVesEvent(commonEventHeader: CommonEventHeader, payload: ByteString): VesEvent =
+            VesEvent.newBuilder()
+                    .setCommonEventHeader(commonEventHeader)
+                    .setHvRanMeasFields(payload)
+                    .build()
+
+    private fun oversizedPayload() =
+            payloadGenerator.generateRawPayload(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE + 1)
+
+
+    private fun createCommonHeader(domain: Domain): CommonEventHeader = CommonEventHeader.newBuilder()
+            .setVersion("sample-version")
+            .setDomain(domain)
+            .setSequence(1)
+            .setPriority(CommonEventHeader.Priority.NORMAL)
+            .setEventId("sample-event-id")
+            .setEventName("sample-event-name")
+            .setEventType("sample-event-type")
+            .setStartEpochMicrosec(SAMPLE_START_EPOCH)
+            .setLastEpochMicrosec(SAMPLE_LAST_EPOCH)
+            .setNfNamingCode("sample-nf-naming-code")
+            .setNfcNamingCode("sample-nfc-naming-code")
+            .setReportingEntityId("sample-reporting-entity-id")
+            .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
+            .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
+            .setSourceName("sample-source-name")
             .build()
 
-
-    private fun createMessage(commonHeader: CommonEventHeader): PayloadWireFrameMessage =
-            PayloadWireFrameMessage(vesMessageBytes(commonHeader))
-
-
-    private fun vesMessageBytes(commonHeader: CommonEventHeader): ByteArray =
-            VesEvent.newBuilder()
-                    .setCommonEventHeader(commonHeader)
-                    .setHvRanMeasFields(payloadGenerator.generatePayload().toByteString())
-                    .build()
-                    .toByteArray()
+    companion object {
+        private const val UNSUPPORTED_VERSION: Short = 2
+        private const val SAMPLE_START_EPOCH = 120034455L
+        private const val SAMPLE_LAST_EPOCH = 120034455L
+    }
 }

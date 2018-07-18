@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
+import com.google.protobuf.ByteString
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload.PMObject
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload.PMObject.HVRanMeas
@@ -27,6 +28,9 @@ import java.util.*
 internal class PayloadGenerator {
 
     private val randomGenerator = Random()
+
+    fun generateRawPayload(size: Int): ByteString =
+            ByteString.copyFrom(ByteArray(size))
 
     fun generatePayload(numOfCountPerMeas: Long = 2, numOfMeasPerObject: Int = 2): HVRanMeasPayload {
         val pmObject = generatePmObject(numOfCountPerMeas, numOfMeasPerObject)

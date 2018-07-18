@@ -19,22 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageGeneratorImpl
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
-import reactor.core.publisher.Flux
-
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since July 2018
  */
-interface MessageGenerator {
-    fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<PayloadWireFrameMessage>
-
-    companion object {
-        val INSTANCE: MessageGenerator by lazy {
-            MessageGeneratorImpl(PayloadGenerator())
-        }
-    }
+enum class MessageType {
+    VALID,
+    TOO_BIG_PAYLOAD,
+    UNSUPPORTED_DOMAIN,
+    INVALID_WIRE_FRAME,
+    INVALID_GPB_DATA
 }
-

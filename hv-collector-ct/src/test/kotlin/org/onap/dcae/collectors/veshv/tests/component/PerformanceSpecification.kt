@@ -29,7 +29,9 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
-import org.onap.dcae.collectors.veshv.ves.message.generator.config.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
 import reactor.core.publisher.Flux
 import reactor.math.sum
 import java.security.MessageDigest
@@ -55,8 +57,10 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofMinutes((1 + (runs / 2)).toLong())
 
             val params = MessageParameters(
-                    commonEventHeader = vesEvent().commonEventHeader,
+                    domain = HVRANMEAS,
+                    messageType = VALID,
                     amount = numMessages)
+
             val fluxes = (1.rangeTo(runs)).map {
                 sut.collector.handleConnection(sut.alloc, generateDataStream(sut.alloc, params))
             }
@@ -82,7 +86,8 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofSeconds(30)
 
             val params = MessageParameters(
-                    commonEventHeader = vesEvent().commonEventHeader,
+                    domain = HVRANMEAS,
+                    messageType = VALID,
                     amount = numMessages)
 
             val dataStream = generateDataStream(sut.alloc, params)
@@ -162,7 +167,7 @@ fun dropWhenIndex(predicate: (Long) -> Boolean, stream: Flux<ByteBuf>): Flux<Byt
 private fun generateDataStream(alloc: ByteBufAllocator, params: MessageParameters): Flux<ByteBuf> =
         WireFrameEncoder(alloc).let { encoder ->
             MessageGenerator.INSTANCE
-                    .createMessageFlux(params)
+                    .createMessageFlux(listOf(params))
                     .map(encoder::encode)
                     .transform { simulateRemoteTcp(alloc, 1000, it) }
         }

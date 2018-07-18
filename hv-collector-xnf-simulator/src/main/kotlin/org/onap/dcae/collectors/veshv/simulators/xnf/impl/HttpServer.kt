@@ -21,9 +21,11 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
-import org.onap.dcae.collectors.veshv.ves.message.generator.config.MessageParameters
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import ratpack.exec.Promise
 import ratpack.handling.Chain
 import ratpack.handling.Context
@@ -31,8 +33,9 @@ import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
+import java.nio.charset.Charset
 import javax.json.Json
-import javax.json.JsonObject
+import javax.json.JsonArray
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -46,7 +49,6 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
                     .handlers(this::configureHandlers)
         }
     }
-
 
     private fun configureHandlers(chain: Chain) {
         chain
@@ -68,10 +70,25 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
 
     private fun createMessageFlux(ctx: Context): Promise<Flux<PayloadWireFrameMessage>> {
         return ctx.request.body
-                .map { Json.createReader(it.inputStream).readObject() }
+                .map { Json.createReader(it.inputStream).readArray() }
                 .map { extractMessageParameters(it) }
                 .map { MessageGenerator.INSTANCE.createMessageFlux(it) }
     }
+
+    private fun extractMessageParameters(request: JsonArray): List<MessageParameters> =
+            try {
+                request
+                        .map { it.asJsonObject() }
+                        .map {
+
+                            val domain = Domain.valueOf(it.getString("domain"))
+                            val messageType = MessageType.valueOf(it.getString("messageType"))
+                            val messagesAmount = it.getJsonNumber("messagesAmount").longValue()
+                            MessageParameters(domain, messageType, messagesAmount)
+                        }
+            } catch (e: Exception) {
+                throw ValidationException("Validating request body failed", e)
+            }
 
     private fun sendAcceptedResponse(ctx: Context) {
         ctx.response
@@ -93,17 +110,6 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
                         .build()
                         .toString())
     }
-
-    private fun extractMessageParameters(request: JsonObject): MessageParameters =
-            try {
-                val commonEventHeader = MessageGenerator.INSTANCE
-                        .parseCommonHeader(request.getJsonObject("commonEventHeader"))
-                val messagesAmount = request.getJsonNumber("messagesAmount").longValue()
-                MessageParameters(commonEventHeader, messagesAmount)
-            } catch (e: Exception) {
-                throw ValidationException("Validating request body failed", e)
-            }
-
 
     companion object {
         private val logger = Logger(HttpServer::class)

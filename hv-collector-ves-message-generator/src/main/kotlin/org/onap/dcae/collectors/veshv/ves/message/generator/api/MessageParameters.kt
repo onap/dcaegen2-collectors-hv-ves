@@ -17,12 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.config
+package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-data class MessageParameters(val commonEventHeader: CommonEventHeader, val amount: Long = -1)
+data class MessageParameters(val domain: Domain,
+                             val messageType: MessageType,
+                             val amount: Long = -1)
