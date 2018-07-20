@@ -54,7 +54,9 @@ fun main(args: Array<String>) =
 private fun createServer(config: ServerConfiguration): Server {
     val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
     val collectorProvider = CollectorFactory(
-            AdapterFactory.consulConfigurationProvider(config.configurationUrl, config.firstRequestDelay), sink, MicrometerMetrics()
+            AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
+            sink,
+            MicrometerMetrics()
     ).createVesHvCollectorProvider()
 
     return ServerFactory.createNettyTcpServer(config, collectorProvider)

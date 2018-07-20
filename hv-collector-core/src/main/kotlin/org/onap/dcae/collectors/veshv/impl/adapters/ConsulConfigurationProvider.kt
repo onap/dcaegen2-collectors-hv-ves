@@ -41,10 +41,10 @@ import javax.json.JsonObject
  */
 internal class ConsulConfigurationProvider(private val url: String,
                                            private val http: HttpAdapter,
-                                           private val firstRequestDelay: Duration
+                                           private val firstRequestDelay: Duration,
+                                           private val requestInterval: Duration
 ) : ConfigurationProvider {
 
-    private val lastModifyIndex: AtomicReference<Int> = AtomicReference(0)
     private val lastConfigurationHash: AtomicReference<Int> = AtomicReference(0)
 
     override fun invoke(): Flux<CollectorConfiguration> =
@@ -62,26 +62,21 @@ internal class ConsulConfigurationProvider(private val url: String,
                     }.build())
     ).doOnNext { logger.info("Applied default configuration") }
 
-    private fun createConsulFlux(): Flux<CollectorConfiguration> =
-            http.get(url, mapOf(Pair("index", lastModifyIndex.get())))
-                    .doOnError {
-                        logger.error("Encountered an error " +
-                                "when trying to acquire configuration from consul. Shutting down..")
-                    }
-                    .map(::parseJsonResponse)
-                    .doOnNext(::updateModifyIndex)
-                    .map(::extractEncodedConfiguration)
-                    .flatMap(::filterDifferentValues)
-                    .map(::decodeConfiguration)
-                    .map(::createCollectorConfiguration)
-                    .repeat()
-                    .delaySubscription(firstRequestDelay)
+    private fun createConsulFlux(): Flux<CollectorConfiguration> = Flux
+            .interval(firstRequestDelay, requestInterval)
+            .flatMap { http.get(url) }
+            .doOnError {
+                logger.error("Encountered an error " +
+                        "when trying to acquire configuration from consul. Shutting down..")
+            }
+            .map(::parseJsonResponse)
+            .map(::extractEncodedConfiguration)
+            .flatMap(::filterDifferentValues)
+            .map(::decodeConfiguration)
+            .map(::createCollectorConfiguration)
 
     private fun parseJsonResponse(responseString: String): JsonObject =
             Json.createReader(StringReader(responseString)).readArray().first().asJsonObject()
-
-    private fun updateModifyIndex(response: JsonObject) =
-            lastModifyIndex.set(response.getInt("ModifyIndex"))
 
     private fun extractEncodedConfiguration(response: JsonObject): String =
             response.getString("Value")
