@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.main
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
@@ -30,6 +31,7 @@ import java.time.Duration
 internal object DefaultValues {
     const val PORT = 6061
     const val CONSUL_FIRST_REQUEST_DELAY = 10L
+    const val CONSUL_REQUEST_INTERVAL = 5L
     const val CONFIG_URL = ""
     const val PRIVATE_KEY_FILE = "/etc/ves-hv/server.key"
     const val CERT_FILE = "/etc/ves-hv/server.crt"
@@ -42,6 +44,7 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
             LISTEN_PORT,
             CONSUL_CONFIG_URL,
             CONSUL_FIRST_REQUEST_DELAY,
+            CONSUL_REQUEST_INTERVAL,
             SSL_DISABLE,
             PRIVATE_KEY_FILE,
             CERT_FILE,
@@ -52,18 +55,28 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
 
     override fun getConfiguration(cmdLine: CommandLine): ServerConfiguration {
         val port = cmdLine.intValue(LISTEN_PORT, DefaultValues.PORT)
-        val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL, DefaultValues.CONFIG_URL)
-        val firstRequestDelay = cmdLine.longValue(CONSUL_FIRST_REQUEST_DELAY, DefaultValues.CONSUL_FIRST_REQUEST_DELAY)
         val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
         val dummyMode = cmdLine.hasOption(DUMMY_MODE)
         val security = createSecurityConfiguration(cmdLine)
+        val configurationProviderParams = createConfigurationProviderParams(cmdLine);
         return ServerConfiguration(
                 port = port,
-                configurationUrl = configUrl,
-                firstRequestDelay = Duration.ofSeconds(firstRequestDelay),
+                configurationProviderParams = configurationProviderParams,
                 securityConfiguration = security,
                 idleTimeout = Duration.ofSeconds(idleTimeoutSec),
                 dummyMode = dummyMode)
+    }
+
+    private fun createConfigurationProviderParams(cmdLine: CommandLine): ConfigurationProviderParams {
+        val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL, DefaultValues.CONFIG_URL)
+        val firstRequestDelay = cmdLine.longValue(CONSUL_FIRST_REQUEST_DELAY, DefaultValues.CONSUL_FIRST_REQUEST_DELAY)
+        val requestInterval = cmdLine.longValue(CONSUL_REQUEST_INTERVAL, DefaultValues.CONSUL_REQUEST_INTERVAL)
+
+        return ConfigurationProviderParams(
+                configUrl,
+                Duration.ofSeconds(firstRequestDelay),
+                Duration.ofSeconds(requestInterval)
+        )
     }
 
     private fun createSecurityConfiguration(cmdLine: CommandLine): SecurityConfiguration {

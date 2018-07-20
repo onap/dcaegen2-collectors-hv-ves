@@ -41,11 +41,12 @@ internal object ConsulConfigurationProviderTest : Spek({
 
     val httpAdapterMock: HttpAdapter = mock()
     val firstRequestDelay = Duration.ofMillis(1)
+    val requestInterval = Duration.ofMillis(1)
 
     given("valid resource url") {
 
         val validUrl = "http://valid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(validUrl, httpAdapterMock, firstRequestDelay)
+        val consulConfigProvider = ConsulConfigurationProvider(validUrl, httpAdapterMock, firstRequestDelay, requestInterval)
 
         whenever(httpAdapterMock.get(eq(validUrl), Mockito.anyMap()))
                 .thenReturn(Mono.just(constructConsulResponse()))
@@ -80,7 +81,7 @@ internal object ConsulConfigurationProviderTest : Spek({
     given("invalid resource url") {
 
         val invalidUrl = "http://invalid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(invalidUrl, httpAdapterMock, firstRequestDelay)
+        val consulConfigProvider = ConsulConfigurationProvider(invalidUrl, httpAdapterMock, firstRequestDelay, requestInterval)
 
         whenever(httpAdapterMock.get(eq(invalidUrl), Mockito.anyMap()))
                 .thenReturn(Mono.error(RuntimeException("Test exception")))

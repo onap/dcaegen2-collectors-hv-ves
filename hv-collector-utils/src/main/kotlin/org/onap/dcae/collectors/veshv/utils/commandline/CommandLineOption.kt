@@ -41,6 +41,12 @@ enum class CommandLineOption(val option: Option) {
             .desc("Delay of first request to consul in seconds")
             .build()
     ),
+    CONSUL_REQUEST_INTERVAL(Option.builder("I")
+            .longOpt("request-interval")
+            .hasArg()
+            .desc("Interval of consul configuration requests in seconds")
+            .build()
+    ),
     VES_HV_PORT(Option.builder("p")
             .longOpt("ves-port")
             .required()
@@ -105,7 +111,7 @@ enum class CommandLineOption(val option: Option) {
                 |connection might be closed.""".trimMargin())
             .build()
     ),
-    DUMMY_MODE(Option.builder("d")
+    DUMMY_MODE(Option.builder("u")
             .longOpt("dummy")
             .desc("If present will start in dummy mode (dummy external services)")
             .build()

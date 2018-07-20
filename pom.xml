@@ -71,8 +71,8 @@
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
         <skipAnalysis>true</skipAnalysis>
 
-        <skipDocker>true</skipDocker> <!-- TODO: unskip docker -->
         <!-- Docker -->
+        <skipDocker>true</skipDocker> <!-- TODO: unskip docker -->
         <onap.nexus.dockerregistry.daily>nexus3.onap.org:10003</onap.nexus.dockerregistry.daily>
         <onap.nexus.dockerregistry.release>nexus3.onap.org:10002</onap.nexus.dockerregistry.release>
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
