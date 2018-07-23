@@ -27,6 +27,7 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.main.ArgBasedServerConfiguration.*
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import java.nio.file.Paths
 import java.time.Duration

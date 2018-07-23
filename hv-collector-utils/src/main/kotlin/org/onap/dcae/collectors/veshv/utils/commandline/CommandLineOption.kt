@@ -47,7 +47,7 @@ enum class CommandLineOption(val option: Option) {
             .desc("Interval of consul configuration requests in seconds")
             .build()
     ),
-    VES_HV_PORT(Option.builder("p")
+    VES_HV_PORT(Option.builder("v")
             .longOpt("ves-port")
             .required()
             .hasArg()
@@ -59,12 +59,6 @@ enum class CommandLineOption(val option: Option) {
             .required()
             .hasArg()
             .desc("VesHvCollector host")
-            .build()
-    ),
-    MESSAGES_TO_SEND_AMOUNT(Option.builder("m")
-            .longOpt("messages")
-            .hasArg()
-            .desc("Amount of messages to send")
             .build()
     ),
     KAFKA_SERVERS(Option.builder("s")

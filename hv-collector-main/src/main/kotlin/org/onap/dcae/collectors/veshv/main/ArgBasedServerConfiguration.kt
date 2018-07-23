@@ -28,17 +28,6 @@ import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
 import java.time.Duration
 
-internal object DefaultValues {
-    const val PORT = 6061
-    const val CONSUL_FIRST_REQUEST_DELAY = 10L
-    const val CONSUL_REQUEST_INTERVAL = 5L
-    const val CONFIG_URL = ""
-    const val PRIVATE_KEY_FILE = "/etc/ves-hv/server.key"
-    const val CERT_FILE = "/etc/ves-hv/server.crt"
-    const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
-    const val IDLE_TIMEOUT_SEC = 60L
-}
-
 internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList = listOf(
             LISTEN_PORT,
@@ -91,5 +80,16 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
                 cert = stringPathToPath(certFile),
                 trustedCert = stringPathToPath(trustCertFile)
         )
+    }
+
+    internal object DefaultValues {
+        const val PORT = 6061
+        const val CONSUL_FIRST_REQUEST_DELAY = 10L
+        const val CONSUL_REQUEST_INTERVAL = 5L
+        const val CONFIG_URL = ""
+        const val PRIVATE_KEY_FILE = "/etc/ves-hv/server.key"
+        const val CERT_FILE = "/etc/ves-hv/server.crt"
+        const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
+        const val IDLE_TIMEOUT_SEC = 60L
     }
 }

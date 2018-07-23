@@ -36,18 +36,21 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-fun main(args: Array<String>) =
-    ArgConfigurationProvider().parse(args)
-            .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-            .map(::XnfSimulator)
-            .map(::HttpServer)
-            .map { it.start().void() }
-            .unsafeRunEitherSync(
-                    { ex ->
-                        logger.error("Failed to start a server", ex)
-                        ExitFailure(1)
-                    },
-                    {
-                        logger.info("Started xNF Simulator API server")
-                    }
-            )
+fun main(args: Array<String>) = ArgConfigurationProvider().parse(args)
+        .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
+        .map {
+            XnfSimulator(it)
+                    .run(::HttpServer)
+                    .start(it.listenPort)
+                    .void()
+        }
+        .unsafeRunEitherSync(
+                { ex ->
+                    logger.error("Failed to start a server", ex)
+                    ExitFailure(1)
+                },
+                {
+                    logger.info("Started xNF Simulator API server")
+                }
+        )
+

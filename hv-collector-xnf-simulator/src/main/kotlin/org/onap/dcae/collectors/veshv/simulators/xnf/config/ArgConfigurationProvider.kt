@@ -34,7 +34,7 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
     override val cmdLineOptionsList = listOf(
             VES_HV_PORT,
             VES_HV_HOST,
-            MESSAGES_TO_SEND_AMOUNT,
+            LISTEN_PORT,
             SSL_DISABLE,
             PRIVATE_KEY_FILE,
             CERT_FILE,
@@ -42,14 +42,15 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
     )
 
     override fun getConfiguration(cmdLine: CommandLine): SimulatorConfiguration {
-        val host = cmdLine.stringValue(VES_HV_HOST, DefaultValues.VES_HV_HOST)
-        val port = cmdLine.intValue(VES_HV_PORT, DefaultValues.VES_HV_PORT)
-        val messagesAmount = cmdLine.longValue(MESSAGES_TO_SEND_AMOUNT, DefaultValues.MESSAGES_AMOUNT)
+        val vesHost = cmdLine.stringValue(VES_HV_HOST, DefaultValues.VES_HV_HOST)
+        val vesPort = cmdLine.intValue(VES_HV_PORT, DefaultValues.VES_HV_PORT)
+        val listenPort = cmdLine.intValue(LISTEN_PORT, DefaultValues.LISTEN_PORT)
+
         return SimulatorConfiguration(
-                host,
-                port,
-                parseSecurityConfig(cmdLine),
-                messagesAmount)
+                listenPort,
+                vesHost,
+                vesPort,
+                parseSecurityConfig(cmdLine))
     }
 
     private fun parseSecurityConfig(cmdLine: CommandLine): SecurityConfiguration {
@@ -57,6 +58,7 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
         val pkFile = cmdLine.stringValue(PRIVATE_KEY_FILE, DefaultValues.PRIVATE_KEY_FILE)
         val certFile = cmdLine.stringValue(CERT_FILE, DefaultValues.CERT_FILE)
         val trustCertFile = cmdLine.stringValue(TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
+
         return SecurityConfiguration(
                 sslDisable = sslDisable,
                 privateKey = stringPathToPath(pkFile),
@@ -65,11 +67,11 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
     }
 
     internal object DefaultValues {
-        const val MESSAGES_AMOUNT = -1L
         const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
         const val CERT_FILE = "/etc/ves-hv/client.crt"
         const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
         const val VES_HV_PORT = 6061
         const val VES_HV_HOST = "veshvcollector"
+        const val LISTEN_PORT = 6062
     }
 }

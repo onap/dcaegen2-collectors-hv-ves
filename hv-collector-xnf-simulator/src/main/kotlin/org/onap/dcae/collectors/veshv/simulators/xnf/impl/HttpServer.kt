@@ -33,7 +33,6 @@ import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
 import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
-import java.nio.charset.Charset
 import javax.json.Json
 import javax.json.JsonArray
 
@@ -43,7 +42,7 @@ import javax.json.JsonArray
  */
 internal class HttpServer(private val vesClient: XnfSimulator) {
 
-    fun start(port: Int = DEFAULT_PORT): IO<RatpackServer> = IO {
+    fun start(port: Int): IO<RatpackServer> = IO {
         RatpackServer.start { server ->
             server.serverConfig(ServerConfig.embedded().port(port))
                     .handlers(this::configureHandlers)
@@ -113,7 +112,6 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
 
     companion object {
         private val logger = Logger(HttpServer::class)
-        const val DEFAULT_PORT = 5000
         const val STATUS_OK = 200
         const val STATUS_BAD_REQUEST = 400
         const val CONTENT_TYPE_APPLICATION_JSON = "application/json"

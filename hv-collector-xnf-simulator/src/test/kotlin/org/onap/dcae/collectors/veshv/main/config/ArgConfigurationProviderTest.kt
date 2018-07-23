@@ -28,7 +28,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider.*
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider.DefaultValues
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
 import java.nio.file.Paths
 import kotlin.test.assertTrue
@@ -36,7 +36,6 @@ import kotlin.test.assertTrue
 
 object ArgConfigurationProviderTest : Spek({
     lateinit var cut: ArgConfigurationProvider
-    val messagesAmount = 3L
     val vesHost = "localhosting"
     val pk = Paths.get("/", "etc", "ves", "pk.pem")
     val cert = Paths.get("/", "etc", "ssl", "certs", "ca-bundle.crt")
@@ -61,7 +60,6 @@ object ArgConfigurationProviderTest : Spek({
                 result = parse("--ssl-disable",
                         "--ves-port", "6969",
                         "--ves-host", vesHost,
-                        "--messages", messagesAmount.toString(),
                         "--private-key-file", pk.toFile().absolutePath,
                         "--cert-file", cert.toFile().absolutePath,
                         "--trust-cert-file", trustCert.toFile().absolutePath)
@@ -69,11 +67,6 @@ object ArgConfigurationProviderTest : Spek({
 
             it("should set proper port") {
                 assertThat(result.vesPort).isEqualTo(6969)
-            }
-
-
-            it("should set proper config url") {
-                assertThat(result.messagesAmount).isEqualTo(messagesAmount)
             }
 
             it("should set proper security configuration") {
@@ -86,26 +79,18 @@ object ArgConfigurationProviderTest : Spek({
         given("some parameters are present in the short form") {
 
             beforeEachTest {
-                result = parse("-h", "ves-hv", "--ves-port", "666", "-m", messagesAmount.toString())
+                result = parse("-h", "ves-hv", "--ves-port", "666")
             }
 
             it("should set proper port") {
                 assertThat(result.vesPort).isEqualTo(666)
-            }
-
-            it("should set proper messages amount") {
-                assertThat(result.messagesAmount).isEqualTo(messagesAmount)
             }
         }
 
         given("all optional parameters are absent") {
 
             beforeEachTest {
-                result = parse("-h", "ves-hv", "-p", "666")
-            }
-
-            it("should set default messages amount") {
-                assertThat(result.messagesAmount).isEqualTo(DefaultValues.MESSAGES_AMOUNT)
+                result = parse("-h", "ves-hv", "-v", "666")
             }
 
             on("security config") {
@@ -130,7 +115,6 @@ object ArgConfigurationProviderTest : Spek({
                 result = parse("--ssl-disable",
                         "--ves-port", "888",
                         "--ves-host", vesHost,
-                        "--messages", messagesAmount.toString(),
                         "--private-key-file", pk.toFile().absolutePath,
                         "--cert-file", cert.toFile().absolutePath,
                         "--trust-cert-file", trustCert.toFile().absolutePath)
@@ -139,7 +123,7 @@ object ArgConfigurationProviderTest : Spek({
             on("security config") {
                 val securityConfiguration = result.security
 
-                it("should set ssl disable to true"){
+                it("should set ssl disable to true") {
                     assertTrue(securityConfiguration.sslDisable)
                 }
 

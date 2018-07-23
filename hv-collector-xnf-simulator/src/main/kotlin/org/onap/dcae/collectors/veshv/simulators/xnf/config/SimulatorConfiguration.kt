@@ -26,7 +26,7 @@ import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
  * @since June 2018
  */
 internal data class SimulatorConfiguration(
+        val listenPort: Int,
         val vesHost: String,
         val vesPort: Int,
-        val security: SecurityConfiguration,
-        val messagesAmount: Long)
+        val security: SecurityConfiguration)

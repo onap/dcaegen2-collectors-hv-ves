@@ -25,8 +25,8 @@ import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.SslProvider
 import org.onap.dcae.collectors.veshv.domain.EndOfTransmissionMessage
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -73,8 +73,8 @@ internal class XnfSimulator(private val configuration: SimulatorConfiguration) {
 
     private fun handler(complete: ReplayProcessor<Void>,
                         messages: Flux<PayloadWireFrameMessage>,
-                        nettyOutbound: NettyOutbound):
-            Publisher<Void> {
+                        nettyOutbound: NettyOutbound): Publisher<Void> {
+
         val allocator = nettyOutbound.alloc()
         val encoder = WireFrameEncoder(allocator)
         val frames = messages
@@ -109,8 +109,8 @@ internal class XnfSimulator(private val configuration: SimulatorConfiguration) {
     }
 
     companion object {
+        private val logger = Logger(XnfSimulator::class)
         private const val MAX_BATCH_SIZE = 128
         private const val eotMessageByte = EndOfTransmissionMessage.MARKER_BYTE
-        private val logger = Logger(XnfSimulator::class)
     }
 }
