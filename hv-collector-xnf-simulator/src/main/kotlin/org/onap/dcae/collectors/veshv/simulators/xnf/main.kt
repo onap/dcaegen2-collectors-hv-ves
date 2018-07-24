@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgConfigurationProvider
+import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgXnfSimulatorConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.HttpServer
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
@@ -36,7 +36,7 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-fun main(args: Array<String>) = ArgConfigurationProvider().parse(args)
+fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
         .map {
             XnfSimulator(it)

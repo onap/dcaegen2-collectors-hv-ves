@@ -34,7 +34,7 @@ private val logger = Logger("org.onap.dcae.collectors.veshv.main")
 private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
 
 fun main(args: Array<String>) =
-        ArgBasedServerConfiguration().parse(args)
+        ArgVesHvConfiguration().parse(args)
                 .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
                 .map(::createServer)
                 .map {

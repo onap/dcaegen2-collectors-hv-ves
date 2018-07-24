@@ -19,6 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.config
 
+import arrow.core.ForOption
+import arrow.core.Option
+import arrow.core.fix
+import arrow.instances.extensions
+import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
@@ -30,7 +35,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfiguration>(DefaultParser()) {
+internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList = listOf(
             VES_HV_PORT,
             VES_HV_HOST,
@@ -41,17 +46,20 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
             TRUST_CERT_FILE
     )
 
-    override fun getConfiguration(cmdLine: CommandLine): SimulatorConfiguration {
-        val vesHost = cmdLine.stringValue(VES_HV_HOST, DefaultValues.VES_HV_HOST)
-        val vesPort = cmdLine.intValue(VES_HV_PORT, DefaultValues.VES_HV_PORT)
-        val listenPort = cmdLine.intValue(LISTEN_PORT, DefaultValues.LISTEN_PORT)
+    override fun getConfiguration(cmdLine: CommandLine): Option<SimulatorConfiguration> =
+            ForOption extensions {
+                binding {
+                    val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
+                    val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
+                    val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
 
-        return SimulatorConfiguration(
-                listenPort,
-                vesHost,
-                vesPort,
-                parseSecurityConfig(cmdLine))
-    }
+                    SimulatorConfiguration(
+                            listenPort,
+                            vesHost,
+                            vesPort,
+                            parseSecurityConfig(cmdLine))
+                }.fix()
+            }
 
     private fun parseSecurityConfig(cmdLine: CommandLine): SecurityConfiguration {
         val sslDisable = cmdLine.hasOption(SSL_DISABLE)
@@ -70,8 +78,5 @@ internal class ArgConfigurationProvider : ArgBasedConfiguration<SimulatorConfigu
         const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
         const val CERT_FILE = "/etc/ves-hv/client.crt"
         const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
-        const val VES_HV_PORT = 6061
-        const val VES_HV_HOST = "veshvcollector"
-        const val LISTEN_PORT = 6062
     }
 }

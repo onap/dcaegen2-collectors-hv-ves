@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.utils.commandline
 import arrow.core.Either
 import arrow.core.Option
 import arrow.core.Try
+import arrow.core.flatMap
 import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
@@ -42,9 +43,16 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
                 .toEither()
                 .mapLeft { ex -> WrongArgumentError(ex, commandLineOptions) }
                 .map(this::getConfiguration)
+                .flatMap {
+                    it.toEither {
+                        WrongArgumentError(
+                                "Unexpected error when parsing command line arguments",
+                                commandLineOptions)
+                    }
+                }
     }
 
-    protected abstract fun getConfiguration(cmdLine: CommandLine): T
+    protected abstract fun getConfiguration(cmdLine: CommandLine): Option<T>
 
     protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption, default: Int): Int =
             intValue(cmdLineOpt).getOrElse { default }
@@ -52,11 +60,18 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
     protected fun CommandLine.longValue(cmdLineOpt: CommandLineOption, default: Long): Long =
             longValue(cmdLineOpt).getOrElse { default }
 
-    protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption): Option<String> =
-            optionValue(cmdLineOpt)
-
     protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption, default: String): String =
             optionValue(cmdLineOpt).getOrElse { default }
+
+
+    protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption): Option<Int> =
+            optionValue(cmdLineOpt).map(String::toInt)
+
+    protected fun CommandLine.longValue(cmdLineOpt: CommandLineOption): Option<Long> =
+            optionValue(cmdLineOpt).map(String::toLong)
+
+    protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption): Option<String> =
+            optionValue(cmdLineOpt)
 
     protected fun CommandLine.hasOption(cmdLineOpt: CommandLineOption): Boolean =
             this.hasOption(cmdLineOpt.option.opt)
@@ -65,10 +80,4 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
 
     private fun CommandLine.optionValue(cmdLineOpt: CommandLineOption): Option<String> =
             Option.fromNullable(getOptionValue(cmdLineOpt.option.opt))
-
-    private fun CommandLine.intValue(cmdLineOpt: CommandLineOption): Option<Int> =
-            optionValue(cmdLineOpt).map(String::toInt)
-
-    private fun CommandLine.longValue(cmdLineOpt: CommandLineOption): Option<Long> =
-            optionValue(cmdLineOpt).map(String::toLong)
 }

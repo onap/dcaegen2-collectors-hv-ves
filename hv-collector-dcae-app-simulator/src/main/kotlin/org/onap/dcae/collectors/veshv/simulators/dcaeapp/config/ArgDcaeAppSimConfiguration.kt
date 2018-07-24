@@ -19,36 +19,42 @@
 */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.config
 
+import arrow.core.ForOption
+import arrow.core.Option
+import arrow.core.fix
+import arrow.instances.extensions
+import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.DefaultValues.API_PORT
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_SERVERS
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_TOPICS
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
 
-internal object DefaultValues {
-    const val API_PORT = 8080
-    const val KAFKA_SERVERS = "kafka:9092"
-    const val KAFKA_TOPICS = "ves_hvRanMeas"
-}
-
-class ArgBasedDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
+class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList: List<CommandLineOption> = listOf(
             LISTEN_PORT,
             KAFKA_SERVERS,
             KAFKA_TOPICS
     )
 
-    override fun getConfiguration(cmdLine: CommandLine): DcaeAppSimConfiguration {
-        val port = cmdLine.intValue(LISTEN_PORT, API_PORT)
-        val kafkaBootstrapServers = cmdLine.stringValue(KAFKA_SERVERS, DefaultValues.KAFKA_SERVERS)
-        val kafkaTopics = cmdLine.stringValue(KAFKA_TOPICS, DefaultValues.KAFKA_TOPICS).split(",").toSet()
-        return DcaeAppSimConfiguration(
-                port,
-                kafkaBootstrapServers,
-                kafkaTopics)
-    }
+    override fun getConfiguration(cmdLine: CommandLine): Option<DcaeAppSimConfiguration> =
+            ForOption extensions {
+                binding {
+                    val listenPort = cmdLine
+                            .intValue(LISTEN_PORT)
+                            .bind()
+                    val kafkaBootstrapServers = cmdLine
+                            .stringValue(KAFKA_SERVERS)
+                            .bind()
+                    val kafkaTopics = cmdLine
+                            .stringValue(KAFKA_TOPICS)
+                            .map { it.split(",").toSet() }
+                            .bind()
 
+                    DcaeAppSimConfiguration(
+                            listenPort,
+                            kafkaBootstrapServers,
+                            kafkaTopics)
+                }.fix()
+            }
 }

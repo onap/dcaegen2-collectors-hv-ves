@@ -25,6 +25,7 @@ import org.apache.commons.cli.Option
 enum class CommandLineOption(val option: Option) {
     LISTEN_PORT(Option.builder("p")
             .longOpt("listen-port")
+            .required()
             .hasArg()
             .desc("Listen port")
             .build()

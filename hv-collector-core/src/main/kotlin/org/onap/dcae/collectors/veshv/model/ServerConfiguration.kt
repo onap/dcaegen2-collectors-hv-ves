@@ -27,7 +27,7 @@ import java.time.Duration
  * @since May 2018
  */
 data class ServerConfiguration(
-        val port: Int,
+        val listenPort: Int,
         val configurationProviderParams: ConfigurationProviderParams,
         val securityConfiguration: SecurityConfiguration,
         val idleTimeout: Duration,

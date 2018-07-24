@@ -19,6 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
+import arrow.core.ForOption
+import arrow.core.Option
+import arrow.core.fix
+import arrow.instances.extensions
+import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
@@ -28,7 +33,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
 import java.time.Duration
 
-internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
+internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList = listOf(
             LISTEN_PORT,
             CONSUL_CONFIG_URL,
@@ -42,19 +47,24 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
             DUMMY_MODE
     )
 
-    override fun getConfiguration(cmdLine: CommandLine): ServerConfiguration {
-        val port = cmdLine.intValue(LISTEN_PORT, DefaultValues.PORT)
-        val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
-        val dummyMode = cmdLine.hasOption(DUMMY_MODE)
-        val security = createSecurityConfiguration(cmdLine)
-        val configurationProviderParams = createConfigurationProviderParams(cmdLine);
-        return ServerConfiguration(
-                port = port,
-                configurationProviderParams = configurationProviderParams,
-                securityConfiguration = security,
-                idleTimeout = Duration.ofSeconds(idleTimeoutSec),
-                dummyMode = dummyMode)
-    }
+    override fun getConfiguration(cmdLine: CommandLine): Option<ServerConfiguration> =
+            ForOption extensions {
+                binding {
+                    val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
+                    val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
+                    val dummyMode = cmdLine.hasOption(DUMMY_MODE)
+                    val security = createSecurityConfiguration(cmdLine)
+                    val configurationProviderParams = createConfigurationProviderParams(cmdLine)
+
+                    ServerConfiguration(
+                            listenPort = listenPort,
+                            configurationProviderParams = configurationProviderParams,
+                            securityConfiguration = security,
+                            idleTimeout = Duration.ofSeconds(idleTimeoutSec),
+                            dummyMode = dummyMode)
+                }.fix()
+            }
+
 
     private fun createConfigurationProviderParams(cmdLine: CommandLine): ConfigurationProviderParams {
         val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL, DefaultValues.CONFIG_URL)
@@ -83,7 +93,6 @@ internal class ArgBasedServerConfiguration : ArgBasedConfiguration<ServerConfigu
     }
 
     internal object DefaultValues {
-        const val PORT = 6061
         const val CONSUL_FIRST_REQUEST_DELAY = 10L
         const val CONSUL_REQUEST_INTERVAL = 5L
         const val CONFIG_URL = ""

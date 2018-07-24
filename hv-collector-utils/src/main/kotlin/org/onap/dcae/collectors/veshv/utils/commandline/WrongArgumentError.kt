@@ -39,3 +39,4 @@ data class WrongArgumentError(
         formatter.printHelp(programName, options)
     }
 }
+

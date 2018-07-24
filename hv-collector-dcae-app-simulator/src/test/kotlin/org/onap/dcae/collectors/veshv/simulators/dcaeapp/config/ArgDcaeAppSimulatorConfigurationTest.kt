@@ -28,14 +28,15 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 
 
-internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
+internal class ArgDcaeAppSimulatorConfigurationTest : Spek({
 
-    lateinit var cut: ArgBasedDcaeAppSimConfiguration
+    lateinit var cut: ArgDcaeAppSimConfiguration
+    val listenPort = "1234"
     val kafkaBootstrapServers = "localhosting:123,localhostinger:12345"
     val kafkaTopics = "top1,top2"
 
     beforeEachTest {
-        cut = ArgBasedDcaeAppSimConfiguration()
+        cut = ArgDcaeAppSimConfiguration()
     }
 
     fun parseExpectingSuccess(vararg cmdLine: String): DcaeAppSimConfiguration =
@@ -56,14 +57,15 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
         given("all parameters are present in the long form") {
 
             beforeEachTest {
-                result = parseExpectingSuccess("--listen-port", "6969",
+                result = parseExpectingSuccess(
+                        "--listen-port", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "--kafka-topics", kafkaTopics
                 )
             }
 
             it("should set proper port") {
-                assertThat(result.apiPort).isEqualTo(6969)
+                assertThat(result.apiPort).isEqualTo(listenPort.toInt())
             }
 
 
@@ -81,13 +83,14 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
         given("some parameters are present in the short form") {
 
             beforeEachTest {
-                result = parseExpectingSuccess("-p", "666",
+                result = parseExpectingSuccess(
+                        "-p", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "-f", kafkaTopics)
             }
 
             it("should set proper port") {
-                assertThat(result.apiPort).isEqualTo(666)
+                assertThat(result.apiPort).isEqualTo(listenPort.toInt())
             }
 
             it("should set proper kafka bootstrap servers") {
@@ -101,29 +104,31 @@ internal class ArgBasedDcaeAppSimConfigurationTest : Spek({
             }
         }
 
-        given("all optional parameters are absent") {
-
-            beforeEachTest {
-                result = parseExpectingSuccess("-s", kafkaBootstrapServers, "-f", kafkaTopics)
-            }
-
-            it("should set default port") {
-                assertThat(result.apiPort).isEqualTo(DefaultValues.API_PORT)
-            }
-        }
-
         describe("required parameter is absent") {
             given("kafka topics are missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure("-s", kafkaBootstrapServers))
-                            .isInstanceOf(WrongArgumentError::class.java)
+                    assertThat(parseExpectingFailure(
+                            "-p", listenPort,
+                            "-s", kafkaBootstrapServers
+                    )).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
 
-            given("kafka bootstrap servers are missing") {
+            given("kafka bootstrap servers is missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure("-f", kafkaTopics))
-                            .isInstanceOf(WrongArgumentError::class.java)
+                    assertThat(parseExpectingFailure(
+                            "-p", listenPort,
+                            "-f", kafkaTopics
+                    )).isInstanceOf(WrongArgumentError::class.java)
+                }
+            }
+
+            given("listen port is missing") {
+                it("should throw exception") {
+                    assertThat(parseExpectingFailure(
+                            "-p", kafkaTopics,
+                            "-s", kafkaBootstrapServers
+                    )).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
         }

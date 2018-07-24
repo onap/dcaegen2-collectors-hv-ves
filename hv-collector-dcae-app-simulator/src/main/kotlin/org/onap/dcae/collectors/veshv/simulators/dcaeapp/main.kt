@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.ArgBasedDcaeAppSimConfiguration
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.ArgDcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote.ApiServer
@@ -35,7 +35,7 @@ private val logger = Logger(PACKAGE_NAME)
 const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
 
 fun main(args: Array<String>) =
-        ArgBasedDcaeAppSimConfiguration().parse(args)
+        ArgDcaeAppSimConfiguration().parse(args)
                 .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
                 .map(::startApp)
                 .unsafeRunEitherSync(

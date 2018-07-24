@@ -27,8 +27,9 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.main.ArgBasedServerConfiguration.*
+import org.onap.dcae.collectors.veshv.main.ArgVesHvConfiguration.DefaultValues
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 import java.nio.file.Paths
 import java.time.Duration
 
@@ -36,8 +37,8 @@ import java.time.Duration
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-object ArgBasedServerConfigurationTest : Spek({
-    lateinit var cut: ArgBasedServerConfiguration
+object ArgVesHvConfigurationTest : Spek({
+    lateinit var cut: ArgVesHvConfiguration
     val configurationUrl = "http://test-address/test"
     val firstRequestDelay = "10"
     val requestInterval = "5"
@@ -47,14 +48,19 @@ object ArgBasedServerConfigurationTest : Spek({
     val trustCert = Paths.get("/", "etc", "ves", "trusted.crt")
 
     beforeEachTest {
-        cut = ArgBasedServerConfiguration()
+        cut = ArgVesHvConfiguration()
     }
 
     fun parse(vararg cmdLine: String): ServerConfiguration =
             cut.parse(cmdLine).fold(
-                    {throw AssertionError("Parsing result should be present")},
+                    { throw AssertionError("Parsing result should be present") },
                     ::identity
             )
+
+    fun parseExpectingFailure(vararg cmdLine: String) =
+            cut.parse(cmdLine).fold(::identity) {
+                throw AssertionError("parsing should have failed")
+            }
 
     describe("parsing arguments") {
         given("all parameters are present in the long form") {
@@ -72,17 +78,17 @@ object ArgBasedServerConfigurationTest : Spek({
             }
 
             it("should set proper port") {
-                assertThat(result.port).isEqualTo(6969)
+                assertThat(result.listenPort).isEqualTo(listenPort.toInt())
             }
 
             it("should set proper first consul request delay") {
                 assertThat(result.configurationProviderParams.firstRequestDelay)
-                        .isEqualTo(Duration.ofSeconds(10))
+                        .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
             }
 
             it("should set proper consul request interval") {
                 assertThat(result.configurationProviderParams.requestInterval)
-                        .isEqualTo(Duration.ofSeconds(5))
+                        .isEqualTo(Duration.ofSeconds(requestInterval.toLong()))
             }
 
             it("should set proper config url") {
@@ -101,16 +107,16 @@ object ArgBasedServerConfigurationTest : Spek({
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse("-p", "666", "-c", configurationUrl, "-d", firstRequestDelay)
+                result = parse("-p", listenPort, "-c", configurationUrl, "-d", firstRequestDelay)
             }
 
             it("should set proper port") {
-                assertThat(result.port).isEqualTo(666)
+                assertThat(result.listenPort).isEqualTo(listenPort.toInt())
             }
 
             it("should set proper first consul request delay") {
                 assertThat(result.configurationProviderParams.firstRequestDelay)
-                        .isEqualTo(Duration.ofSeconds(10))
+                        .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
             }
 
             it("should set proper config url") {
@@ -123,11 +129,7 @@ object ArgBasedServerConfigurationTest : Spek({
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = parse()
-            }
-
-            it("should set default port") {
-                assertThat(result.port).isEqualTo(DefaultValues.PORT)
+                result = parse("--listen-port", listenPort)
             }
 
             it("should set default config url") {
@@ -158,6 +160,22 @@ object ArgBasedServerConfigurationTest : Spek({
 
                 it("should set default private key file") {
                     assertThat(securityConfiguration.privateKey.toString()).isEqualTo(DefaultValues.PRIVATE_KEY_FILE)
+                }
+            }
+        }
+
+        describe("required parameter is absent") {
+            given("listen port is missing") {
+                it("should throw exception") {
+                    assertThat(parseExpectingFailure(
+                            "--ssl-disable",
+                            "--config-url", configurationUrl,
+                            "--first-request-delay", firstRequestDelay,
+                            "--request-interval", requestInterval,
+                            "--private-key-file", pk.toFile().absolutePath,
+                            "--cert-file", cert.toFile().absolutePath,
+                            "--trust-cert-file", trustCert.toFile().absolutePath)
+                    ).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
         }

@@ -58,7 +58,7 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
     private fun configureServer(opts: ServerOptions.Builder<*>) {
         val sslContext: Option<SslContext> = sslContextFactory.createSslContext(serverConfig.securityConfiguration)
         if (sslContext.isDefined()) opts.sslContext(sslContext.orNull())
-        opts.port(serverConfig.port)
+        opts.port(serverConfig.listenPort)
     }
 
     private fun handleConnection(nettyInbound: NettyInbound): Mono<Void> {
