@@ -20,7 +20,12 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import arrow.syntax.function.partially1
-import io.netty.buffer.*
+import com.google.protobuf.ByteString
+import io.netty.buffer.ByteBuf
+import io.netty.buffer.ByteBufAllocator
+import io.netty.buffer.CompositeByteBuf
+import io.netty.buffer.Unpooled
+import io.netty.buffer.UnpooledByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -31,6 +36,8 @@ import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
+import org.onap.ves.VesEventV5
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
 import reactor.core.publisher.Flux
 import reactor.math.sum
@@ -57,9 +64,10 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofMinutes((1 + (runs / 2)).toLong())
 
             val params = MessageParameters(
-                    domain = HVRANMEAS,
+                    commonEventHeader = createSampleCommonHeader(HVRANMEAS),
                     messageType = VALID,
-                    amount = numMessages)
+                    amount = numMessages
+            )
 
             val fluxes = (1.rangeTo(runs)).map {
                 sut.collector.handleConnection(sut.alloc, generateDataStream(sut.alloc, params))
@@ -86,9 +94,10 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofSeconds(30)
 
             val params = MessageParameters(
-                    domain = HVRANMEAS,
+                    commonEventHeader = createSampleCommonHeader(HVRANMEAS),
                     messageType = VALID,
-                    amount = numMessages)
+                    amount = numMessages
+            )
 
             val dataStream = generateDataStream(sut.alloc, params)
                     .transform(::dropWhenIndex.partially1 { it % 101 == 0L })
@@ -193,3 +202,21 @@ private fun randomlySplitTcpFrames(bb: CompositeByteBuf): Flux<ByteBuf> {
         sink.complete()
     }
 }
+
+private fun createSampleCommonHeader(domain: Domain): VesEventV5.VesEvent.CommonEventHeader = VesEventV5.VesEvent.CommonEventHeader.newBuilder()
+        .setVersion("sample-version")
+        .setDomain(domain)
+        .setSequence(1)
+        .setPriority(VesEventV5.VesEvent.CommonEventHeader.Priority.NORMAL)
+        .setEventId("sample-event-id")
+        .setEventName("sample-event-name")
+        .setEventType("sample-event-type")
+        .setStartEpochMicrosec(120034455)
+        .setLastEpochMicrosec(120034455)
+        .setNfNamingCode("sample-nf-naming-code")
+        .setNfcNamingCode("sample-nfc-naming-code")
+        .setReportingEntityId("sample-reporting-entity-id")
+        .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
+        .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
+        .setSourceName("sample-source-name")
+        .build()

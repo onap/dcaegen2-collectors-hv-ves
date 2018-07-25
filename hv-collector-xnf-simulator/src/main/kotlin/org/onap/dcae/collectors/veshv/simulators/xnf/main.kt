@@ -38,10 +38,10 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
  */
 fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-        .map {
-            XnfSimulator(it)
-                    .run(::HttpServer)
-                    .start(it.listenPort)
+        .map {config ->
+            XnfSimulator(config)
+                    .let { HttpServer(it) }
+                    .start(config.listenPort)
                     .void()
         }
         .unsafeRunEitherSync(
@@ -53,4 +53,3 @@ fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
                     logger.info("Started xNF Simulator API server")
                 }
         )
-

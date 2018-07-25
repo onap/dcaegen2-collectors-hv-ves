@@ -20,27 +20,22 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.messages.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import ratpack.exec.Promise
 import ratpack.handling.Chain
 import ratpack.handling.Context
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
-import reactor.core.publisher.Flux
 import reactor.core.scheduler.Schedulers
 import javax.json.Json
-import javax.json.JsonArray
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal class HttpServer(private val vesClient: XnfSimulator) {
+internal class HttpServer(private val vesClient: XnfSimulator,
+                          private val messageParametersParser: MessageParametersParser = MessageParametersParser()) {
 
     fun start(port: Int): IO<RatpackServer> = IO {
         RatpackServer.start { server ->
@@ -52,42 +47,26 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
     private fun configureHandlers(chain: Chain) {
         chain
                 .post("simulator/sync") { ctx ->
-                    createMessageFlux(ctx)
+                    ctx.request.body
+                            .map { Json.createReader(it.inputStream).readArray() }
+                            .map { messageParametersParser.parse(it) }
+                            .map { MessageGenerator.INSTANCE.createMessageFlux(it) }
                             .map { vesClient.sendIo(it) }
                             .map { it.unsafeRunSync() }
                             .onError { handleException(it, ctx) }
                             .then { sendAcceptedResponse(ctx) }
                 }
                 .post("simulator/async") { ctx ->
-                    createMessageFlux(ctx)
+                    ctx.request.body
+                            .map { Json.createReader(it.inputStream).readArray() }
+                            .map { messageParametersParser.parse(it) }
+                            .map { MessageGenerator.INSTANCE.createMessageFlux(it) }
                             .map { vesClient.sendRx(it) }
                             .map { it.subscribeOn(Schedulers.elastic()).subscribe() }
                             .onError { handleException(it, ctx) }
                             .then { sendAcceptedResponse(ctx) }
                 }
     }
-
-    private fun createMessageFlux(ctx: Context): Promise<Flux<PayloadWireFrameMessage>> {
-        return ctx.request.body
-                .map { Json.createReader(it.inputStream).readArray() }
-                .map { extractMessageParameters(it) }
-                .map { MessageGenerator.INSTANCE.createMessageFlux(it) }
-    }
-
-    private fun extractMessageParameters(request: JsonArray): List<MessageParameters> =
-            try {
-                request
-                        .map { it.asJsonObject() }
-                        .map {
-
-                            val domain = Domain.valueOf(it.getString("domain"))
-                            val messageType = MessageType.valueOf(it.getString("messageType"))
-                            val messagesAmount = it.getJsonNumber("messagesAmount").longValue()
-                            MessageParameters(domain, messageType, messagesAmount)
-                        }
-            } catch (e: Exception) {
-                throw ValidationException("Validating request body failed", e)
-            }
 
     private fun sendAcceptedResponse(ctx: Context) {
         ctx.response
@@ -117,5 +96,3 @@ internal class HttpServer(private val vesClient: XnfSimulator) {
         const val CONTENT_TYPE_APPLICATION_JSON = "application/json"
     }
 }
-
-internal class ValidationException(message: String?, cause: Exception) : Exception(message, cause)

@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
 
+import com.google.protobuf.ByteString
 import com.google.protobuf.InvalidProtocolBufferException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -34,7 +35,9 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameter
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.*
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.FAULT
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HEARTBEAT
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
 import reactor.test.test
 
 /**
@@ -49,7 +52,10 @@ object MessageGeneratorImplTest : Spek({
                 it("should create infinite flux") {
                     val limit = 1000L
                     generator
-                            .createMessageFlux(listOf(MessageParameters(HVRANMEAS, MessageType.VALID)))
+                            .createMessageFlux(listOf(MessageParameters(
+                                    createSampleCommonHeader(HVRANMEAS),
+                                    MessageType.VALID
+                            )))
                             .take(limit)
                             .test()
                             .expectNextCount(limit)
@@ -59,7 +65,11 @@ object MessageGeneratorImplTest : Spek({
             on("messages amount specified in parameters") {
                 it("should create message flux of specified size") {
                     generator
-                            .createMessageFlux(listOf(MessageParameters(HVRANMEAS, MessageType.VALID, 5)))
+                            .createMessageFlux(listOf(MessageParameters(
+                                    createSampleCommonHeader(HVRANMEAS),
+                                    MessageType.VALID,
+                                    5
+                            )))
                             .test()
                             .expectNextCount(5)
                             .verifyComplete()
@@ -68,12 +78,16 @@ object MessageGeneratorImplTest : Spek({
             on("message type requesting valid message") {
                 it("should create flux of valid messages with given domain") {
                     generator
-                            .createMessageFlux(listOf(MessageParameters(HVRANMEAS, MessageType.VALID, 1)))
+                            .createMessageFlux(listOf(MessageParameters(
+                                    createSampleCommonHeader(FAULT),
+                                    MessageType.VALID,
+                                    1
+                            )))
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
                                 assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVRANMEAS)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT)
                             }
                             .verifyComplete()
                 }
@@ -82,7 +96,11 @@ object MessageGeneratorImplTest : Spek({
                 it("should create flux of messages with given domain and payload exceeding threshold") {
 
                     generator
-                            .createMessageFlux(listOf(MessageParameters(HVRANMEAS, MessageType.TOO_BIG_PAYLOAD, 1)))
+                            .createMessageFlux(listOf(MessageParameters(
+                                    createSampleCommonHeader(HVRANMEAS),
+                                    MessageType.TOO_BIG_PAYLOAD,
+                                    1
+                            )))
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
@@ -92,24 +110,14 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
-            on("message type requesting unsupported domain") {
-                it("should create flux of messages with domain other than HVRANMEAS") {
-
-                    generator
-                            .createMessageFlux(listOf(MessageParameters(HVRANMEAS, MessageType.UNSUPPORTED_DOMAIN, 1)))
-                            .test()
-                            .assertNext {
-                                assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isNotEqualTo(HVRANMEAS)
-                            }
-                            .verifyComplete()
-                }
-            }
             on("message type requesting invalid GPB data ") {
                 it("should create flux of messages with invalid payload") {
                     generator
-                            .createMessageFlux(listOf(MessageParameters(HVRANMEAS, MessageType.INVALID_GPB_DATA, 1)))
+                            .createMessageFlux(listOf(MessageParameters(
+                                    createSampleCommonHeader(HVRANMEAS),
+                                    MessageType.INVALID_GPB_DATA,
+                                    1
+                            )))
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
@@ -123,7 +131,11 @@ object MessageGeneratorImplTest : Spek({
             on("message type requesting invalid wire frame ") {
                 it("should create flux of messages with invalid version") {
                     generator
-                            .createMessageFlux(listOf(MessageParameters(HVRANMEAS, MessageType.INVALID_WIRE_FRAME, 1)))
+                            .createMessageFlux(listOf(MessageParameters(
+                                    createSampleCommonHeader(HVRANMEAS),
+                                    MessageType.INVALID_WIRE_FRAME,
+                                    1
+                            )))
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isFalse()
@@ -139,9 +151,9 @@ object MessageGeneratorImplTest : Spek({
             it("should create concatenated flux of messages") {
                 val singleFluxSize = 5L
                 val messageParameters = listOf(
-                        MessageParameters(HVRANMEAS, MessageType.VALID, singleFluxSize),
-                        MessageParameters(FAULT, MessageType.TOO_BIG_PAYLOAD, singleFluxSize),
-                        MessageParameters(HEARTBEAT, MessageType.VALID, singleFluxSize)
+                        MessageParameters(createSampleCommonHeader(HVRANMEAS), MessageType.VALID, singleFluxSize),
+                        MessageParameters(createSampleCommonHeader(FAULT), MessageType.TOO_BIG_PAYLOAD, singleFluxSize),
+                        MessageParameters(createSampleCommonHeader(HEARTBEAT), MessageType.VALID, singleFluxSize)
                 )
                 generator.createMessageFlux(messageParameters)
                         .test()
@@ -169,3 +181,23 @@ object MessageGeneratorImplTest : Spek({
 fun extractCommonEventHeader(bytes: ByteData): CommonEventHeader {
     return VesEvent.parseFrom(bytes.unsafeAsArray()).commonEventHeader
 }
+
+private fun createSampleCommonHeader(domain: CommonEventHeader.Domain): CommonEventHeader = CommonEventHeader.newBuilder()
+        .setVersion("sample-version")
+        .setDomain(domain)
+        .setSequence(1)
+        .setPriority(CommonEventHeader.Priority.NORMAL)
+        .setEventId("sample-event-id")
+        .setEventName("sample-event-name")
+        .setEventType("sample-event-type")
+        .setStartEpochMicrosec(120034455)
+        .setLastEpochMicrosec(120034455)
+        .setNfNamingCode("sample-nf-naming-code")
+        .setNfcNamingCode("sample-nfc-naming-code")
+        .setReportingEntityId("sample-reporting-entity-id")
+        .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
+        .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
+        .setSourceName("sample-source-name")
+        .build()
+
+

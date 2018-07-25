@@ -26,14 +26,14 @@ import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.*
-import org.onap.ves.HVRanMeasFieldsV5
-import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_GPB_DATA
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_WIRE_FRAME
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.TOO_BIG_PAYLOAD
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
 import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.OTHER
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.nio.charset.Charset
@@ -49,7 +49,7 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
             .flatMap { createMessageFlux(it) }
 
     private fun createMessageFlux(parameters: MessageParameters): Flux<PayloadWireFrameMessage> =
-            Mono.fromCallable { createMessage(parameters.domain, parameters.messageType) }
+            Mono.fromCallable { createMessage(parameters.commonEventHeader, parameters.messageType) }
                     .let {
                         if (parameters.amount < 0)
                             it.repeat()
@@ -57,16 +57,14 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                             it.repeat(parameters.amount)
                     }
 
-    private fun createMessage(domain: Domain, messageType: MessageType): PayloadWireFrameMessage =
+    private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): PayloadWireFrameMessage =
             when (messageType) {
                 VALID ->
-                    PayloadWireFrameMessage(vesEvent(domain, payloadGenerator.generatePayload()))
+                    PayloadWireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
                 TOO_BIG_PAYLOAD ->
-                    PayloadWireFrameMessage(vesEvent(domain, oversizedPayload()))
-                UNSUPPORTED_DOMAIN ->
-                    PayloadWireFrameMessage(vesEvent(OTHER, payloadGenerator.generatePayload()))
+                    PayloadWireFrameMessage(vesEvent(commonEventHeader, oversizedPayload()))
                 INVALID_WIRE_FRAME -> {
-                    val payload = ByteData(vesEvent(domain, payloadGenerator.generatePayload()))
+                    val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
                     PayloadWireFrameMessage(
                             payload,
                             UNSUPPORTED_VERSION,
@@ -77,12 +75,12 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                     PayloadWireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
-    private fun vesEvent(domain: Domain, hvRanMeasPayload: HVRanMeasPayload): ByteArray {
-        return vesEvent(domain, hvRanMeasPayload.toByteString())
+    private fun vesEvent(commonEventHeader: CommonEventHeader, hvRanMeasPayload: HVRanMeasPayload): ByteArray {
+        return vesEvent(commonEventHeader, hvRanMeasPayload.toByteString())
     }
 
-    private fun vesEvent(domain: Domain, hvRanMeasPayload: ByteString): ByteArray {
-        return createVesEvent(createCommonHeader(domain), hvRanMeasPayload).toByteArray()
+    private fun vesEvent(commonEventHeader: CommonEventHeader, hvRanMeasPayload: ByteString): ByteArray {
+        return createVesEvent(commonEventHeader, hvRanMeasPayload).toByteArray()
     }
 
     private fun createVesEvent(commonEventHeader: CommonEventHeader, payload: ByteString): VesEvent =
@@ -94,28 +92,7 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
     private fun oversizedPayload() =
             payloadGenerator.generateRawPayload(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE + 1)
 
-
-    private fun createCommonHeader(domain: Domain): CommonEventHeader = CommonEventHeader.newBuilder()
-            .setVersion("sample-version")
-            .setDomain(domain)
-            .setSequence(1)
-            .setPriority(CommonEventHeader.Priority.NORMAL)
-            .setEventId("sample-event-id")
-            .setEventName("sample-event-name")
-            .setEventType("sample-event-type")
-            .setStartEpochMicrosec(SAMPLE_START_EPOCH)
-            .setLastEpochMicrosec(SAMPLE_LAST_EPOCH)
-            .setNfNamingCode("sample-nf-naming-code")
-            .setNfcNamingCode("sample-nfc-naming-code")
-            .setReportingEntityId("sample-reporting-entity-id")
-            .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
-            .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
-            .setSourceName("sample-source-name")
-            .build()
-
     companion object {
         private const val UNSUPPORTED_VERSION: Short = 2
-        private const val SAMPLE_START_EPOCH = 120034455L
-        private const val SAMPLE_LAST_EPOCH = 120034455L
     }
 }
