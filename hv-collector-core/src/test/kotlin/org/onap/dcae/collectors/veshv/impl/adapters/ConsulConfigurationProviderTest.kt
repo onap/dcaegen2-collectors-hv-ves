@@ -68,11 +68,11 @@ internal object ConsulConfigurationProviderTest : Spek({
                         assertEquals("kafka:9093", it.kafkaBootstrapServers)
 
                         val route1 = it.routing.routes[0]
-                        assertEquals(Domain.HEARTBEAT, route1.domain)
+                        assertEquals(Domain.FAULT, route1.domain)
                         assertEquals("test-topic-1", route1.targetTopic)
 
                         val route2 = it.routing.routes[1]
-                        assertEquals(Domain.MEASUREMENTS_FOR_VF_SCALING, route2.domain)
+                        assertEquals(Domain.HEARTBEAT, route2.domain)
                         assertEquals("test-topic-2", route2.targetTopic)
 
                     }.verifyComplete()

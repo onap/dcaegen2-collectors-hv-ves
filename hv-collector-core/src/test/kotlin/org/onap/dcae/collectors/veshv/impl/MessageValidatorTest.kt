@@ -49,18 +49,7 @@ internal object MessageValidatorTest : Spek({
         val cut = MessageValidator
 
         on("ves hv message including header with fully initialized fields") {
-            val commonHeader = newBuilder()
-                    .setVersion("1.9")
-                    .setEventName("Sample event name")
-                    .setDomain(Domain.HVRANMEAS)
-                    .setEventId("Sample event Id")
-                    .setSourceName("Sample Source")
-                    .setReportingEntityName(ByteString.copyFromUtf8("Sample byte String"))
-                    .setPriority(Priority.MEDIUM)
-                    .setStartEpochMicrosec(120034455)
-                    .setLastEpochMicrosec(120034459)
-                    .setSequence(2)
-                    .build()
+            val commonHeader = createInitializedHeaderBuilder().build()
 
             it("should accept message with fully initialized message header") {
                 val vesMessage = VesMessage(commonHeader, vesMessageBytes(commonHeader))
@@ -68,9 +57,9 @@ internal object MessageValidatorTest : Spek({
             }
 
             Domain.values()
-                    .filter { it != Domain.UNRECOGNIZED }
-                    .forEach {domain ->
-                        it("should accept message with $domain domain"){
+                    .filter { (it != Domain.UNRECOGNIZED && it != Domain.DOMAIN_UNDEFINED) }
+                    .forEach { domain ->
+                        it("should accept message with $domain domain") {
                             val header = newBuilder(commonHeader).setDomain(domain).build()
                             val vesMessage = VesMessage(header, vesMessageBytes(header))
                             assertThat(cut.isValid(vesMessage))
@@ -83,6 +72,45 @@ internal object MessageValidatorTest : Spek({
             val vesMessage = VesMessage(getDefaultInstance(), ByteData.EMPTY)
             it("should not accept message with default header") {
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
+
+
+        val domainTestCases = mapOf(
+                Domain.DOMAIN_UNDEFINED to false,
+                Domain.FAULT to true
+        )
+
+        domainTestCases.forEach { value, expectedResult ->
+            on("ves hv message including header with domain $value") {
+                val commonEventHeader = createInitializedHeaderBuilder()
+                        .setDomain(value)
+                        .build()
+                val vesMessage = VesMessage(commonEventHeader, vesMessageBytes(commonEventHeader))
+
+                it("should resolve validation result") {
+                    assertThat(cut.isValid(vesMessage)).describedAs("message validation results")
+                            .isEqualTo(expectedResult)
+                }
+            }
+        }
+
+        val priorityTestCases = mapOf(
+                Priority.PRIORITY_UNDEFINED to false,
+                Priority.HIGH to true
+        )
+
+        priorityTestCases.forEach { value, expectedResult ->
+            on("ves hv message including header with priority $value") {
+                val commonEventHeader = createInitializedHeaderBuilder()
+                        .setPriority(value)
+                        .build()
+                val vesMessage = VesMessage(commonEventHeader, vesMessageBytes(commonEventHeader))
+
+                it("should resolve validation result") {
+                    assertThat(cut.isValid(vesMessage)).describedAs("message validation results")
+                            .isEqualTo(expectedResult)
+                }
             }
         }
 
@@ -107,3 +135,16 @@ internal object MessageValidatorTest : Spek({
         }
     }
 })
+
+private fun createInitializedHeaderBuilder(): CommonEventHeader.Builder =
+        newBuilder()
+                .setVersion("1.9")
+                .setEventName("Sample event name")
+                .setDomain(Domain.HVRANMEAS)
+                .setEventId("Sample event Id")
+                .setSourceName("Sample Source")
+                .setReportingEntityName(ByteString.copyFromUtf8("Sample byte String"))
+                .setPriority(Priority.MEDIUM)
+                .setStartEpochMicrosec(120034455)
+                .setLastEpochMicrosec(120034459)
+                .setSequence(2)

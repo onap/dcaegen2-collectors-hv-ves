@@ -27,11 +27,11 @@ internal object MessageValidator {
     private val requiredFieldDescriptors = listOf(
             "version",
             "eventName",
-            // "domain", TODO to be restored back when GPB schema will include default value
+            "domain",
             "eventId",
             "sourceName",
             "reportingEntityName",
-            // "priority", TODO to be restored back when GPB schema will include default value
+            "priority",
             "startEpochMicrosec",
             "lastEpochMicrosec",
             "sequence")

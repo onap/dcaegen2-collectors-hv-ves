@@ -30,27 +30,29 @@ message VesEvent {
   message CommonEventHeader {
     string version = 1; // required, "version of the event header"
     enum Domain {
-      FAULT = 0;
-      HEARTBEAT = 1;
-      MEASUREMENTS_FOR_VF_SCALING = 2;
-      MOBILE_FLOW = 3;
-      SIP_SIGNALING = 4;
-      STATE_CHANGE = 5;
-      SYSLOG = 6;
-      THRESHOLD_CROSSING_ALERT = 7;
-      VOICE_QUALITY = 8;
-      OTHER = 9;
-      HVRANMEAS = 10;
+      DOMAIN_UNDEFINED = 0;
+      FAULT = 1;
+      HEARTBEAT = 2;
+      MEASUREMENTS_FOR_VF_SCALING = 3;
+      MOBILE_FLOW = 4;
+      SIP_SIGNALING = 5;
+      STATE_CHANGE = 6;
+      SYSLOG = 7;
+      THRESHOLD_CROSSING_ALERT = 8;
+      VOICE_QUALITY = 9;
+      OTHER = 10;
+      HVRANMEAS = 11;
     }
     Domain domain = 2; // required, "the eventing domain associated with the event" [map to string]
 
     uint32 sequence = 3; // required, "ordering of events communicated by an event source instance or 0 if not needed"
 
     enum Priority {
-      HIGH = 0;
-      MEDIUM = 1;
-      NORMAL = 2;
-      LOW = 3;
+      PRIORITY_UNDEFINED = 0;
+      HIGH = 1;
+      MEDIUM = 2;
+      NORMAL = 3;
+      LOW = 4;
     }
     Priority priority = 4; // required, "processing priority"
 
