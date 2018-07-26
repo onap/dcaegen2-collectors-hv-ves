@@ -35,6 +35,8 @@ interface MessageGenerator {
         val INSTANCE: MessageGenerator by lazy {
             MessageGeneratorImpl(PayloadGenerator())
         }
+
+        const val FIXED_PAYLOAD_SIZE = 100
     }
 }
 

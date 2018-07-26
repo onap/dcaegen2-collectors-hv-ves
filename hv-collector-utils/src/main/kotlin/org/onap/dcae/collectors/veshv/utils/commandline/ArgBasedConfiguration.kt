@@ -54,20 +54,16 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
 
     protected abstract fun getConfiguration(cmdLine: CommandLine): Option<T>
 
-    protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption, default: Int): Int =
-            intValue(cmdLineOpt).getOrElse { default }
-
     protected fun CommandLine.longValue(cmdLineOpt: CommandLineOption, default: Long): Long =
             longValue(cmdLineOpt).getOrElse { default }
 
     protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption, default: String): String =
             optionValue(cmdLineOpt).getOrElse { default }
 
-
     protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption): Option<Int> =
             optionValue(cmdLineOpt).map(String::toInt)
 
-    protected fun CommandLine.longValue(cmdLineOpt: CommandLineOption): Option<Long> =
+    private fun CommandLine.longValue(cmdLineOpt: CommandLineOption): Option<Long> =
             optionValue(cmdLineOpt).map(String::toLong)
 
     protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption): Option<String> =

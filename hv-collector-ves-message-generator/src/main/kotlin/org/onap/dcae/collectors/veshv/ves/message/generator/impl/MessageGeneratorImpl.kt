@@ -26,6 +26,7 @@ import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.FIXED_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_GPB_DATA
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_WIRE_FRAME
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.TOO_BIG_PAYLOAD
@@ -63,6 +64,8 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                     PayloadWireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
                 TOO_BIG_PAYLOAD ->
                     PayloadWireFrameMessage(vesEvent(commonEventHeader, oversizedPayload()))
+                FIXED_PAYLOAD ->
+                    PayloadWireFrameMessage(vesEvent(commonEventHeader, fixedPayload()))
                 INVALID_WIRE_FRAME -> {
                     val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
                     PayloadWireFrameMessage(
@@ -91,6 +94,9 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
 
     private fun oversizedPayload() =
             payloadGenerator.generateRawPayload(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE + 1)
+
+    private fun fixedPayload() =
+            payloadGenerator.generateRawPayload(MessageGenerator.FIXED_PAYLOAD_SIZE)
 
     companion object {
         private const val UNSUPPORTED_VERSION: Short = 2

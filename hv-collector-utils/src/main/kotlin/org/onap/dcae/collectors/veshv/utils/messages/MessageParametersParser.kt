@@ -35,14 +35,17 @@ class MessageParametersParser(
                 request
                         .map { it.asJsonObject() }
                         .map {
-                            val commonEventHeader = commonEventHeaderParser.parse(it.getJsonObject("commonEventHeader"))
+                            val commonEventHeader = commonEventHeaderParser
+                                    .parse(it.getJsonObject("commonEventHeader"))
                             val messageType = MessageType.valueOf(it.getString("messageType"))
-                            val messagesAmount = it.getJsonNumber("messagesAmount").longValue()
+                            val messagesAmount = it.getJsonNumber("messagesAmount")?.longValue()
+                                    ?: throw ParsingException("\"messagesAmount\" could not be parsed from message.",
+                                            NullPointerException())
                             MessageParameters(commonEventHeader, messageType, messagesAmount)
                         }
             } catch (e: Exception) {
                 throw ParsingException("Parsing request body failed", e)
             }
 
-    internal class ParsingException(message: String?, cause: Exception) : Exception(message, cause)
+    internal class ParsingException(message: String, cause: Exception) : Exception(message, cause)
 }

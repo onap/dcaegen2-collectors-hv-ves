@@ -26,6 +26,7 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.api
 enum class MessageType {
     VALID,
     TOO_BIG_PAYLOAD,
+    FIXED_PAYLOAD,
     INVALID_WIRE_FRAME,
-    INVALID_GPB_DATA
+    INVALID_GPB_DATA,
 }

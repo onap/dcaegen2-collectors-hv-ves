@@ -146,6 +146,24 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
+            on("message type requesting fixed payload") {
+                it("should create flux of valid messages with fixed payload") {
+                    generator
+                            .createMessageFlux(listOf(MessageParameters(
+                                    createSampleCommonHeader(FAULT),
+                                    MessageType.FIXED_PAYLOAD,
+                                    1
+                            )))
+                            .test()
+                            .assertNext {
+                                assertThat(it.isValid()).isTrue()
+                                assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(extractHvRanMeasFields(it.payload).size()).isEqualTo(MessageGenerator.FIXED_PAYLOAD_SIZE)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT)
+                            }
+                            .verifyComplete()
+                }
+            }
         }
         given("list of message parameters") {
             it("should create concatenated flux of messages") {
@@ -180,6 +198,10 @@ object MessageGeneratorImplTest : Spek({
 
 fun extractCommonEventHeader(bytes: ByteData): CommonEventHeader {
     return VesEvent.parseFrom(bytes.unsafeAsArray()).commonEventHeader
+}
+
+fun extractHvRanMeasFields(bytes: ByteData): ByteString {
+    return VesEvent.parseFrom(bytes.unsafeAsArray()).hvRanMeasFields
 }
 
 private fun createSampleCommonHeader(domain: CommonEventHeader.Domain): CommonEventHeader = CommonEventHeader.newBuilder()
