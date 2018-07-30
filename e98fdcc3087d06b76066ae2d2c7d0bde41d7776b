@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a6a9dd7_3aaa3dd5",
+        "filename": ".gitreview",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 3625
+      },
+      "writtenOn": "2018-07-30T09:20:44Z",
+      "side": 1,
+      "message": "I can\u0027t stand it is not ves-hv, at least those would be next to each other on repo list.\n\nToo late for but I guess",
+      "revId": "e98fdcc3087d06b76066ae2d2c7d0bde41d7776b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_ba5e4d11",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/boundary/adapters.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3625
+      },
+      "writtenOn": "2018-07-30T09:20:44Z",
+      "side": 1,
+      "message": "@FunctionalInterface here, but it is missing from ConfigurationProvider and Sink. Is it intentional?",
+      "revId": "e98fdcc3087d06b76066ae2d2c7d0bde41d7776b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
