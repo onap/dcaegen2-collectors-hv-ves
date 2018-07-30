@@ -78,6 +78,8 @@
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
+        <docker.http_proxy> </docker.http_proxy>
+        <docker.https_proxy> </docker.https_proxy>
     </properties>
 
 
@@ -412,6 +414,10 @@
                                         <alias>${project.artifactId}</alias>
                                         <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}</name>
                                         <build>
+                                            <args>
+                                                <http_proxy>${docker.http_proxy}</http_proxy>
+                                                <https_proxy>${docker.https_proxy}</https_proxy>
+                                            </args>
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
                                         </build>
                                     </image>

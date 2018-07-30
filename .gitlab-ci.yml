@@ -8,7 +8,7 @@ stages:
 build:
   stage: build
   script:
-    - mvn -e -T2 -Panalysis clean install
+    - mvn -e -T2 -Panalysis clean install -Ddocker.http_proxy="http://$PROXY_HOST:$PROXY_PORT" -Ddocker.https_proxy="http://$PROXY_HOST:$PROXY_PORT"
   artifacts:
     paths:
       - hv-collector-coverage/target/site/jacoco-aggregate

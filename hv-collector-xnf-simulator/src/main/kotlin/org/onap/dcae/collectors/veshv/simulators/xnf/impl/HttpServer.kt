@@ -66,6 +66,9 @@ internal class HttpServer(private val vesClient: XnfSimulator,
                             .onError { handleException(it, ctx) }
                             .then { sendAcceptedResponse(ctx) }
                 }
+                .get("healthcheck") { ctx ->
+                    ctx.response.status(STATUS_OK).send()
+                }
     }
 
     private fun sendAcceptedResponse(ctx: Context) {

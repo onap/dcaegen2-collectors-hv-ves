@@ -93,6 +93,9 @@ class ApiServer(private val consumerFactory: ConsumerFactory,
                                         .block()
                             }
                 }
+                .get("healthcheck") { ctx ->
+                    ctx.response.status(STATUS_OK).send()
+                }
     }
 
     private fun generateEvents(ctx: Context, parameters: List<MessageParameters>):
