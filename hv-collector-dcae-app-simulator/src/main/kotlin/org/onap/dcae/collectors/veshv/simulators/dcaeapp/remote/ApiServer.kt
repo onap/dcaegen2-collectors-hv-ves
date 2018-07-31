@@ -24,7 +24,7 @@ import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerStateProvider
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.dcae.collectors.veshv.utils.messages.MessageParametersParser
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.FIXED_PAYLOAD
@@ -41,7 +41,7 @@ import javax.json.Json
  * @since May 2018
  */
 class ApiServer(private val consumerFactory: ConsumerFactory,
-                private val messageParametersParser: MessageParametersParser = MessageParametersParser()) {
+                private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {
 
     private lateinit var consumerState: ConsumerStateProvider
 

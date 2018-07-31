@@ -17,9 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.messages
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
 import javax.json.JsonArray
 
@@ -27,10 +28,11 @@ import javax.json.JsonArray
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since July 2018
  */
-class MessageParametersParser(
-        private val commonEventHeaderParser: CommonEventHeaderParser = CommonEventHeaderParser()) {
+internal class MessageParametersParserImpl(
+        private val commonEventHeaderParser: CommonEventHeaderParser = CommonEventHeaderParser()
+) : MessageParametersParser {
 
-    fun parse(request: JsonArray): List<MessageParameters> =
+    override fun parse(request: JsonArray): List<MessageParameters> =
             try {
                 request
                         .map { it.asJsonObject() }
