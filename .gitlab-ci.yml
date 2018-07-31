@@ -25,7 +25,12 @@ publish:
     - master
   script:
     - docker login $DOCKER_REPO_ADDR -u $DOCKER_REPO_USER -p $DOCKER_REPO_PASS
-    - mvn -e -DskipTests -DskipAnalysis -Ddocker-image.registry="$DOCKER_REPO_ADDR" deploy
+    - |
+        mvn -e -DskipTests -DskipAnalysis \
+           -Ddocker-image.registry="$DOCKER_REPO_ADDR" \
+           -Ddocker.http_proxy="http://$PROXY_HOST:$PROXY_PORT" \
+           -Ddocker.https_proxy="http://$PROXY_HOST:$PROXY_PORT" \
+           deploy
     - "curl -X POST -F token=$INTEGRATION_TESTS_TRIGGER_TOKEN -F ref=master https://gitlabe1.ext.net.nokia.com/api/v4/projects/33403/trigger/pipeline"
 
 pages:
