@@ -28,9 +28,12 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
+import org.onap.dcae.collectors.veshv.impl.adapters.ConsulConfigurationProvider
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import reactor.core.publisher.Flux
+import org.onap.dcae.collectors.veshv.model.routing
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.ves.VesEventV5
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -42,15 +45,32 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                        private val metrics: Metrics) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
-        val collector: AtomicReference<Collector> = AtomicReference()
-        createVesHvCollector().subscribe(collector::set)
+        val initialValue = createVesHvCollector(defaultConfiguration())
+        val collector: AtomicReference<Collector> = AtomicReference(initialValue)
+        configuration()
+                .map(this::createVesHvCollector)
+                .doOnNext { logger.info("Using updated configuration for new connections") }
+                .doOnError {
+                    logger.error("Shutting down", it)
+                    // TODO: create Health class
+                    // It should monitor all incidents and expose the results for the
+                    // container health check mechanism
+                    System.exit(ERROR_CODE)
+                }
+                .subscribe(collector::set)
         return collector::get
     }
 
-    private fun createVesHvCollector(): Flux<Collector> =
-            configuration()
-                    .doOnError { System.exit(ERROR_CODE) }
-                    .map(this::createVesHvCollector)
+    private fun defaultConfiguration() =
+            CollectorConfiguration(
+                    kafkaBootstrapServers = "kafka:9092",
+                    routing = routing {
+                        defineRoute {
+                            fromDomain(VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS)
+                            toTopic("ves_hvRanMeas")
+                            withFixedPartitioning()
+                        }
+                    }.build())
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
         return VesHvCollector(
@@ -62,7 +82,8 @@ class CollectorFactory(val configuration: ConfigurationProvider,
     }
 
     companion object {
-        const val ERROR_CODE = 3
+        private const val ERROR_CODE = 3
+        private val logger = Logger(CollectorFactory::class)
     }
 }
 

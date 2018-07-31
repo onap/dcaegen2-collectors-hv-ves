@@ -28,6 +28,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.mockito.Mockito
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Mono
+import reactor.retry.Retry
 import reactor.test.StepVerifier
 import java.time.Duration
 import java.util.*
@@ -42,27 +43,24 @@ internal object ConsulConfigurationProviderTest : Spek({
     val httpAdapterMock: HttpAdapter = mock()
     val firstRequestDelay = Duration.ofMillis(1)
     val requestInterval = Duration.ofMillis(1)
+    val retry = Retry.onlyIf<Any> { it.iteration() < 2 }.fixedBackoff(Duration.ofNanos(1))
 
     given("valid resource url") {
 
         val validUrl = "http://valid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(validUrl, httpAdapterMock, firstRequestDelay, requestInterval)
+        val consulConfigProvider = ConsulConfigurationProvider(
+                httpAdapterMock,
+                validUrl,
+                firstRequestDelay,
+                requestInterval,
+                retry)
 
         whenever(httpAdapterMock.get(eq(validUrl), Mockito.anyMap()))
                 .thenReturn(Mono.just(constructConsulResponse()))
 
-        it("should use default configuration at the beginning, " +
-                "then apply received configuration") {
+        it("should use received configuration") {
 
-            StepVerifier.create(consulConfigProvider().take(2))
-                    .consumeNextWith {
-
-                        assertEquals("kafka:9092", it.kafkaBootstrapServers)
-
-                        val route1 = it.routing.routes[0]
-                        assertEquals(Domain.HVRANMEAS, route1.domain)
-                        assertEquals("ves_hvRanMeas", route1.targetTopic)
-                    }
+            StepVerifier.create(consulConfigProvider().take(1))
                     .consumeNextWith {
 
                         assertEquals("kafka:9093", it.kafkaBootstrapServers)
@@ -81,23 +79,19 @@ internal object ConsulConfigurationProviderTest : Spek({
     given("invalid resource url") {
 
         val invalidUrl = "http://invalid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(invalidUrl, httpAdapterMock, firstRequestDelay, requestInterval)
+        val consulConfigProvider = ConsulConfigurationProvider(
+                httpAdapterMock,
+                invalidUrl,
+                firstRequestDelay,
+                requestInterval,
+                retry)
 
         whenever(httpAdapterMock.get(eq(invalidUrl), Mockito.anyMap()))
                 .thenReturn(Mono.error(RuntimeException("Test exception")))
 
-        it("should use default configuration at the beginning, then should interrupt the flux") {
+        it("should interrupt the flux") {
 
             StepVerifier.create(consulConfigProvider())
-                    .consumeNextWith {
-
-
-                        assertEquals("kafka:9092", it.kafkaBootstrapServers)
-
-                        val route1 = it.routing.routes[0]
-                        assertEquals(Domain.HVRANMEAS, route1.domain)
-                        assertEquals("ves_hvRanMeas", route1.targetTopic)
-                    }
                     .verifyErrorMessage("Test exception")
         }
     }
@@ -106,18 +100,18 @@ internal object ConsulConfigurationProviderTest : Spek({
 fun constructConsulResponse(): String {
 
     val config = """{
-	"kafkaBootstrapServers": "kafka:9093",
-	"routing": [
-		    {
-		    	"fromDomain": 1,
-		    	"toTopic": "test-topic-1"
-		    },
-		    {
-		    	"fromDomain": 2,
-		    	"toTopic": "test-topic-2"
-	    	}
+    "kafkaBootstrapServers": "kafka:9093",
+    "routing": [
+            {
+                "fromDomain": 1,
+                "toTopic": "test-topic-1"
+            },
+            {
+                "fromDomain": 2,
+                "toTopic": "test-topic-2"
+            }
     ]
-    }"""
+}"""
 
     val encodedValue = String(Base64.getEncoder().encode(config.toByteArray()))
 

@@ -21,12 +21,14 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import org.onap.dcae.collectors.veshv.model.routing
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
+import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.forNumber
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.retry.Jitter
+import reactor.retry.Retry
 import java.io.StringReader
 import java.time.Duration
 import java.util.*
@@ -39,41 +41,40 @@ import javax.json.JsonObject
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-internal class ConsulConfigurationProvider(private val url: String,
-                                           private val http: HttpAdapter,
+internal class ConsulConfigurationProvider(private val http: HttpAdapter,
+                                           private val url: String,
                                            private val firstRequestDelay: Duration,
-                                           private val requestInterval: Duration
+                                           private val requestInterval: Duration,
+                                           retrySpec: Retry<Any>
 ) : ConfigurationProvider {
 
     private val lastConfigurationHash: AtomicReference<Int> = AtomicReference(0)
+    private val retry = retrySpec
+            .doOnRetry {
+                logger.warn("Could not get fresh configuration", it.exception())
+            }
+
+    constructor(http: HttpAdapter, params: ConfigurationProviderParams) : this(
+            http,
+            params.configurationUrl,
+            params.firstRequestDelay,
+            params.requestInterval,
+            Retry.any<Any>()
+                    .retryMax(MAX_RETRIES)
+                    .fixedBackoff(params.requestInterval.dividedBy(BACKOFF_INTERVAL_FACTOR))
+                    .jitter(Jitter.random()))
 
     override fun invoke(): Flux<CollectorConfiguration> =
-            Flux.concat(createDefaultConfigurationFlux(), createConsulFlux())
+            Flux.interval(firstRequestDelay, requestInterval)
+                    .flatMap { askForConfig() }
+                    .map(::parseJsonResponse)
+                    .map(::extractEncodedConfiguration)
+                    .flatMap(::filterDifferentValues)
+                    .map(::decodeConfiguration)
+                    .map(::createCollectorConfiguration)
+                    .retryWhen(retry)
 
-    private fun createDefaultConfigurationFlux(): Mono<CollectorConfiguration> = Mono.just(
-            CollectorConfiguration(
-                    kafkaBootstrapServers = "kafka:9092",
-                    routing = routing {
-                        defineRoute {
-                            fromDomain(HVRANMEAS)
-                            toTopic("ves_hvRanMeas")
-                            withFixedPartitioning()
-                        }
-                    }.build())
-    ).doOnNext { logger.info("Applied default configuration") }
-
-    private fun createConsulFlux(): Flux<CollectorConfiguration> = Flux
-            .interval(firstRequestDelay, requestInterval)
-            .flatMap { http.get(url) }
-            .doOnError {
-                logger.error("Encountered an error " +
-                        "when trying to acquire configuration from consul. Shutting down..")
-            }
-            .map(::parseJsonResponse)
-            .map(::extractEncodedConfiguration)
-            .flatMap(::filterDifferentValues)
-            .map(::decodeConfiguration)
-            .map(::createCollectorConfiguration)
+    private fun askForConfig(): Mono<String> = http.get(url)
 
     private fun parseJsonResponse(responseString: String): JsonObject =
             Json.createReader(StringReader(responseString)).readArray().first().asJsonObject()
@@ -118,7 +119,9 @@ internal class ConsulConfigurationProvider(private val url: String,
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(ConsulConfigurationProvider::class.java)
+        private const val MAX_RETRIES = 5
+        private const val BACKOFF_INTERVAL_FACTOR = 30L
+        private val logger = Logger(ConsulConfigurationProvider::class)
     }
 }
 
