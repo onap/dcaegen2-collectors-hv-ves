@@ -28,12 +28,9 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
-import org.onap.dcae.collectors.veshv.impl.adapters.ConsulConfigurationProvider
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.ves.VesEventV5
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -45,8 +42,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                        private val metrics: Metrics) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
-        val initialValue = createVesHvCollector(defaultConfiguration())
-        val collector: AtomicReference<Collector> = AtomicReference(initialValue)
+        val collector: AtomicReference<Collector> = AtomicReference()
         configuration()
                 .map(this::createVesHvCollector)
                 .doOnNext { logger.info("Using updated configuration for new connections") }
@@ -60,17 +56,6 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                 .subscribe(collector::set)
         return collector::get
     }
-
-    private fun defaultConfiguration() =
-            CollectorConfiguration(
-                    kafkaBootstrapServers = "kafka:9092",
-                    routing = routing {
-                        defineRoute {
-                            fromDomain(VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS)
-                            toTopic("ves_hvRanMeas")
-                            withFixedPartitioning()
-                        }
-                    }.build())
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
         return VesHvCollector(

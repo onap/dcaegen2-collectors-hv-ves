@@ -19,9 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.socket
 
-import arrow.core.None
 import arrow.core.Option
-import arrow.core.Some
 import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder

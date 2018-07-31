@@ -32,6 +32,7 @@ enum class CommandLineOption(val option: Option) {
     ),
     CONSUL_CONFIG_URL(Option.builder("c")
             .longOpt("config-url")
+            .required()
             .hasArg()
             .desc("URL of ves configuration on consul")
             .build()

@@ -97,7 +97,9 @@ object ArgVesHvConfigurationTest : Spek({
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = cut.parseExpectingSuccess("-p", listenPort, "-c", configurationUrl, "-d", firstRequestDelay)
+                result = cut.parseExpectingSuccess(
+                        "-p", listenPort, "-c", configurationUrl, "-d", firstRequestDelay
+                )
             }
 
             it("should set proper port") {
@@ -119,12 +121,9 @@ object ArgVesHvConfigurationTest : Spek({
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = cut.parseExpectingSuccess("--listen-port", listenPort)
-            }
-
-            it("should set default config url") {
-                assertThat(result.configurationProviderParams.configurationUrl)
-                        .isEqualTo(DefaultValues.CONFIG_URL)
+                result = cut.parseExpectingSuccess(
+                        "--listen-port", listenPort, "--config-url", configurationUrl
+                )
             }
 
             it("should set default first consul request delay") {
@@ -155,11 +154,24 @@ object ArgVesHvConfigurationTest : Spek({
         }
 
         describe("required parameter is absent") {
-            given("listen port is missing") {
+            on("missing listen port") {
                 it("should throw exception") {
                     assertThat(cut.parseExpectingFailure(
-                            "--ssl-disable",
                             "--config-url", configurationUrl,
+                            "--ssl-disable",
+                            "--first-request-delay", firstRequestDelay,
+                            "--request-interval", requestInterval,
+                            "--private-key-file", pk.toFile().absolutePath,
+                            "--cert-file", cert.toFile().absolutePath,
+                            "--trust-cert-file", trustCert.toFile().absolutePath)
+                    ).isInstanceOf(WrongArgumentError::class.java)
+                }
+            }
+            on("missing configuration url") {
+                it("should throw exception") {
+                    assertThat(cut.parseExpectingFailure(
+                            "--listen-port", listenPort,
+                            "--ssl-disable",
                             "--first-request-delay", firstRequestDelay,
                             "--request-interval", requestInterval,
                             "--private-key-file", pk.toFile().absolutePath,
