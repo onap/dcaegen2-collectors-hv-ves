@@ -23,6 +23,7 @@ import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser.Companion.INSTANCE
 import ratpack.handling.Chain
 import ratpack.handling.Context
 import ratpack.server.RatpackServer
@@ -35,7 +36,7 @@ import javax.json.Json
  * @since June 2018
  */
 internal class HttpServer(private val vesClient: XnfSimulator,
-                          private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {
+                          private val messageParametersParser: MessageParametersParser = INSTANCE) {
 
     fun start(port: Int): IO<RatpackServer> = IO {
         RatpackServer.start { server ->

@@ -19,12 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.config
 
-import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
+import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 
 
@@ -39,25 +40,13 @@ internal class ArgDcaeAppSimulatorConfigurationTest : Spek({
         cut = ArgDcaeAppSimConfiguration()
     }
 
-    fun parseExpectingSuccess(vararg cmdLine: String): DcaeAppSimConfiguration =
-            cut.parse(cmdLine).fold(
-                    { throw AssertionError("Parsing result should be present") },
-                    ::identity
-            )
-
-    fun parseExpectingFailure(vararg cmdLine: String) =
-            cut.parse(cmdLine).fold(
-                    ::identity,
-                    { throw AssertionError("parsing should have failed") }
-            )
-
     describe("parsing arguments") {
         lateinit var result: DcaeAppSimConfiguration
 
         given("all parameters are present in the long form") {
 
             beforeEachTest {
-                result = parseExpectingSuccess(
+                result = cut.parseExpectingSuccess(
                         "--listen-port", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "--kafka-topics", kafkaTopics
@@ -83,7 +72,7 @@ internal class ArgDcaeAppSimulatorConfigurationTest : Spek({
         given("some parameters are present in the short form") {
 
             beforeEachTest {
-                result = parseExpectingSuccess(
+                result = cut.parseExpectingSuccess(
                         "-p", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "-f", kafkaTopics)
@@ -107,7 +96,7 @@ internal class ArgDcaeAppSimulatorConfigurationTest : Spek({
         describe("required parameter is absent") {
             given("kafka topics are missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure(
+                    assertThat(cut.parseExpectingFailure(
                             "-p", listenPort,
                             "-s", kafkaBootstrapServers
                     )).isInstanceOf(WrongArgumentError::class.java)
@@ -116,7 +105,7 @@ internal class ArgDcaeAppSimulatorConfigurationTest : Spek({
 
             given("kafka bootstrap servers is missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure(
+                    assertThat(cut.parseExpectingFailure(
                             "-p", listenPort,
                             "-f", kafkaTopics
                     )).isInstanceOf(WrongArgumentError::class.java)
@@ -125,7 +114,7 @@ internal class ArgDcaeAppSimulatorConfigurationTest : Spek({
 
             given("listen port is missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure(
+                    assertThat(cut.parseExpectingFailure(
                             "-p", kafkaTopics,
                             "-s", kafkaBootstrapServers
                     )).isInstanceOf(WrongArgumentError::class.java)

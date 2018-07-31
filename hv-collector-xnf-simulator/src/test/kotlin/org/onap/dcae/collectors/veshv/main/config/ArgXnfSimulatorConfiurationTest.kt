@@ -19,8 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.main.config
 
-import arrow.core.identity
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -31,6 +29,8 @@ import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgXnfSimulatorConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgXnfSimulatorConfiguration.DefaultValues
 import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
+import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
+import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 import java.nio.file.Paths
 import kotlin.test.assertTrue
@@ -49,25 +49,13 @@ object ArgXnfSimulatorConfiurationTest : Spek({
         cut = ArgXnfSimulatorConfiguration()
     }
 
-    fun parse(vararg cmdLine: String): SimulatorConfiguration =
-            cut.parse(cmdLine).fold(
-                    { throw AssertionError("Parsing result should be present") },
-                    ::identity
-            )
-
-    fun parseExpectingFailure(vararg cmdLine: String) =
-            cut.parse(cmdLine).fold(
-                    ::identity,
-                    { throw AssertionError("parsing should have failed") }
-            )
-
     describe("parsing arguments") {
         lateinit var result: SimulatorConfiguration
 
         given("all parameters are present in the long form") {
 
             beforeEachTest {
-                result = parse("--ssl-disable",
+                result = cut.parseExpectingSuccess("--ssl-disable",
                         "--listen-port", listenPort,
                         "--ves-host", vesHost,
                         "--ves-port", vesPort,
@@ -98,7 +86,7 @@ object ArgXnfSimulatorConfiurationTest : Spek({
         given("some parameters are present in the short form") {
 
             beforeEachTest {
-                result = parse("-p", listenPort, "-h", vesHost, "--ves-port", vesPort)
+                result = cut.parseExpectingSuccess("-p", listenPort, "-h", vesHost, "--ves-port", vesPort)
             }
 
             it("should set proper listen port") {
@@ -117,7 +105,7 @@ object ArgXnfSimulatorConfiurationTest : Spek({
         given("all optional parameters are absent") {
 
             beforeEachTest {
-                result = parse("-p", listenPort, "-h", vesHost, "-v", vesPort)
+                result = cut.parseExpectingSuccess("-p", listenPort, "-h", vesHost, "-v", vesPort)
             }
 
             on("security config") {
@@ -139,7 +127,7 @@ object ArgXnfSimulatorConfiurationTest : Spek({
 
         given("disabled ssl certs together with all other parameters") {
             beforeEachTest {
-                result = parse("--ssl-disable",
+                result = cut.parseExpectingSuccess("--ssl-disable",
                         "--listen-port", listenPort,
                         "--ves-port", "888",
                         "--ves-host", vesHost,
@@ -170,21 +158,21 @@ object ArgXnfSimulatorConfiurationTest : Spek({
         describe("required parameter is absent") {
             given("ves port is missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure("-p", listenPort, "-h", vesHost))
+                    assertThat(cut.parseExpectingFailure("-p", listenPort, "-h", vesHost))
                             .isInstanceOf(WrongArgumentError::class.java)
                 }
             }
 
             given("ves host is missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure("-p", listenPort, "-v", vesPort))
+                    assertThat(cut.parseExpectingFailure("-p", listenPort, "-v", vesPort))
                             .isInstanceOf(WrongArgumentError::class.java)
                 }
             }
 
             given("listen port is missing") {
                 it("should throw exception") {
-                    assertThat(parseExpectingFailure("-h", vesHost, "-v", vesPort))
+                    assertThat(cut.parseExpectingFailure("-h", vesHost, "-v", vesPort))
                             .isInstanceOf(WrongArgumentError::class.java)
                 }
             }

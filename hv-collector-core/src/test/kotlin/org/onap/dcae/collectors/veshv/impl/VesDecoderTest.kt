@@ -26,10 +26,10 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.toByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.ves.VesEventV5.VesEvent
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
+import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -41,12 +41,8 @@ internal object VesDecoderTest : Spek({
         val cut = VesDecoder()
 
         on("ves hv message bytes") {
-            val commonHeader = commonEventHeader()
-            val msg = VesEvent.newBuilder()
-                    .setCommonEventHeader(commonHeader)
-                    .setHvRanMeasFields(ByteString.copyFromUtf8("highvolume measurements"))
-                    .build()
-            val rawMessageBytes = msg.toByteData()
+            val commonHeader = commonHeader(Domain.HEARTBEAT)
+            val rawMessageBytes = vesEventBytes(commonHeader, ByteString.copyFromUtf8("highvolume measurements"))
 
             it("should decode only header and pass it on along with raw message") {
                 val expectedMessage = VesMessage(
@@ -76,18 +72,3 @@ private fun <A> assertFailedWithError(option: Option<A>) =
         option.exists {
             fail("Error expected")
         }
-
-
-private fun commonEventHeader() =
-        CommonEventHeader.getDefaultInstance().toBuilder()
-                .setDomain(CommonEventHeader.Domain.HEARTBEAT)
-                .setVersion("1.0")
-                .setEventName("xyz")
-                .setEventId("eventID")
-                .setEventName("Sample event name")
-                .setSourceName("Sample Source")
-                .setPriority(CommonEventHeader.Priority.MEDIUM)
-                .setStartEpochMicrosec(120034455)
-                .setLastEpochMicrosec(120034459)
-                .setSequence(1)
-                .build()

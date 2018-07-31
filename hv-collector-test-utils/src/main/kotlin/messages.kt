@@ -17,45 +17,44 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.tests.component
+package org.onap.dcae.collectors.veshv.tests.utils
 
 import com.google.protobuf.ByteString
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
-import org.onap.ves.VesEventV5
-import org.onap.ves.VesEventV5.VesEvent
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import java.util.*
+import java.util.UUID.randomUUID
+
 
 val allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT
 
-fun vesMessage(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()): ByteBuf =
+private fun ByteBuf.writeValidWireFrameHeaders() {
+    writeByte(0xFF) // always 0xFF
+    writeByte(0x01)   // version
+    writeByte(0x01)   // content type = GPB
+}
+
+fun vesWireFrameMessage(domain: Domain = Domain.OTHER,
+                        id: String = randomUUID().toString()): ByteBuf =
         allocator.buffer().run {
-            writeByte(0xFF) // always 0xFF
-            writeByte(0x01)   // version
-            writeByte(0x01)   // content type = GPB
+            writeValidWireFrameHeaders()
 
             val gpb = vesEvent(domain, id).toByteString().asReadOnlyByteBuffer()
             writeInt(gpb.limit())  // ves event size in bytes
             writeBytes(gpb)  // ves event as GPB bytes
         }
 
-fun endOfTransmissionMessage(): ByteBuf =
+fun endOfTransmissionWireMessage(): ByteBuf =
         allocator.buffer().writeByte(0xAA)
 
-
-fun invalidVesMessage(): ByteBuf = allocator.buffer().run {
-    writeByte(0xFF) // always 0xFF
-    writeByte(0x01)   // version
-    writeByte(0x01)   // content type = GPB
+fun wireFrameMessageWithInvalidPayload(): ByteBuf = allocator.buffer().run {
+    writeValidWireFrameHeaders()
 
     val invalidGpb = "some random data".toByteArray(Charsets.UTF_8)
     writeInt(invalidGpb.size)  // ves event size in bytes
     writeBytes(invalidGpb)
-
 }
 
 fun garbageFrame(): ByteBuf = allocator.buffer().run {
@@ -68,38 +67,17 @@ fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
     writeByte(0x01)   // content type = GPB
 }
 
-fun vesMessageWithTooBigPayload(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()): ByteBuf =
+fun vesMessageWithTooBigPayload(domain: Domain = Domain.DOMAIN_UNDEFINED): ByteBuf =
         allocator.buffer().run {
-            writeByte(0xFF) // always 0xFF
-            writeByte(0x01)   // version
-            writeByte(0x01)   // content type = GPB
+            writeValidWireFrameHeaders()
 
             val gpb = vesEvent(
-                    domain,
-                    id,
-                    ByteString.copyFrom(ByteArray(MAX_PAYLOAD_SIZE))
+                    domain = domain,
+                    hvRanMeasFields = ByteString.copyFrom(ByteArray(MAX_PAYLOAD_SIZE))
             ).toByteString().asReadOnlyByteBuffer()
 
             writeInt(gpb.limit())  // ves event size in bytes
             writeBytes(gpb)  // ves event as GPB bytes
         }
 
-fun vesEvent(domain: Domain = Domain.HVRANMEAS,
-             id: String = UUID.randomUUID().toString(),
-             hvRanMeasFields: ByteString = ByteString.EMPTY): VesEventV5.VesEvent =
-        VesEvent.newBuilder()
-                .setCommonEventHeader(
-                        CommonEventHeader.getDefaultInstance().toBuilder()
-                                .setVersion("1.0")
-                                .setEventName("xyz")
-                                .setEventId(id)
-                                .setDomain(domain)
-                                .setEventName("Sample event name")
-                                .setSourceName("Sample Source")
-                                .setReportingEntityName(ByteString.copyFromUtf8("Sample byte String"))
-                                .setPriority(CommonEventHeader.Priority.MEDIUM)
-                                .setStartEpochMicrosec(120034455)
-                                .setLastEpochMicrosec(120034459)
-                                .setSequence(1))
-                .setHvRanMeasFields(hvRanMeasFields)
-                .build()
+

@@ -30,6 +30,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
@@ -53,7 +54,7 @@ object MessageGeneratorImplTest : Spek({
                     val limit = 1000L
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    createSampleCommonHeader(HVRANMEAS),
+                                    commonHeader(HVRANMEAS),
                                     MessageType.VALID
                             )))
                             .take(limit)
@@ -66,7 +67,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create message flux of specified size") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    createSampleCommonHeader(HVRANMEAS),
+                                    commonHeader(HVRANMEAS),
                                     MessageType.VALID,
                                     5
                             )))
@@ -79,7 +80,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create flux of valid messages with given domain") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    createSampleCommonHeader(FAULT),
+                                    commonHeader(FAULT),
                                     MessageType.VALID,
                                     1
                             )))
@@ -97,7 +98,7 @@ object MessageGeneratorImplTest : Spek({
 
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    createSampleCommonHeader(HVRANMEAS),
+                                    commonHeader(HVRANMEAS),
                                     MessageType.TOO_BIG_PAYLOAD,
                                     1
                             )))
@@ -114,7 +115,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create flux of messages with invalid payload") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    createSampleCommonHeader(HVRANMEAS),
+                                    commonHeader(HVRANMEAS),
                                     MessageType.INVALID_GPB_DATA,
                                     1
                             )))
@@ -132,7 +133,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create flux of messages with invalid version") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    createSampleCommonHeader(HVRANMEAS),
+                                    commonHeader(HVRANMEAS),
                                     MessageType.INVALID_WIRE_FRAME,
                                     1
                             )))
@@ -150,7 +151,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create flux of valid messages with fixed payload") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    createSampleCommonHeader(FAULT),
+                                    commonHeader(FAULT),
                                     MessageType.FIXED_PAYLOAD,
                                     1
                             )))
@@ -169,9 +170,9 @@ object MessageGeneratorImplTest : Spek({
             it("should create concatenated flux of messages") {
                 val singleFluxSize = 5L
                 val messageParameters = listOf(
-                        MessageParameters(createSampleCommonHeader(HVRANMEAS), MessageType.VALID, singleFluxSize),
-                        MessageParameters(createSampleCommonHeader(FAULT), MessageType.TOO_BIG_PAYLOAD, singleFluxSize),
-                        MessageParameters(createSampleCommonHeader(HEARTBEAT), MessageType.VALID, singleFluxSize)
+                        MessageParameters(commonHeader(HVRANMEAS), MessageType.VALID, singleFluxSize),
+                        MessageParameters(commonHeader(FAULT), MessageType.TOO_BIG_PAYLOAD, singleFluxSize),
+                        MessageParameters(commonHeader(HEARTBEAT), MessageType.VALID, singleFluxSize)
                 )
                 generator.createMessageFlux(messageParameters)
                         .test()
@@ -203,23 +204,3 @@ fun extractCommonEventHeader(bytes: ByteData): CommonEventHeader {
 fun extractHvRanMeasFields(bytes: ByteData): ByteString {
     return VesEvent.parseFrom(bytes.unsafeAsArray()).hvRanMeasFields
 }
-
-private fun createSampleCommonHeader(domain: CommonEventHeader.Domain): CommonEventHeader = CommonEventHeader.newBuilder()
-        .setVersion("sample-version")
-        .setDomain(domain)
-        .setSequence(1)
-        .setPriority(CommonEventHeader.Priority.NORMAL)
-        .setEventId("sample-event-id")
-        .setEventName("sample-event-name")
-        .setEventType("sample-event-type")
-        .setStartEpochMicrosec(120034455)
-        .setLastEpochMicrosec(120034455)
-        .setNfNamingCode("sample-nf-naming-code")
-        .setNfcNamingCode("sample-nfc-naming-code")
-        .setReportingEntityId("sample-reporting-entity-id")
-        .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
-        .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
-        .setSourceName("sample-source-name")
-        .build()
-
-

@@ -17,41 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
+package org.onap.dcae.collectors.veshv.tests.utils
 
-import com.google.protobuf.MessageLite
-import io.netty.buffer.ByteBuf
-import java.nio.charset.Charset
+import arrow.core.identity
+import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
+import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
- */
-class ByteData(private val data: ByteArray) {
 
-    fun size() = data.size
+fun <T> ArgBasedConfiguration<T>.parseExpectingSuccess(vararg cmdLine: String): T =
+        parse(cmdLine).fold(
+                { throw AssertionError("Parsing result should be present") },
+                ::identity
+        )
 
-    /**
-     * This will expose mutable state of the data.
-     *
-     * @return wrapped data buffer (NOT a copy)
-     */
-    fun unsafeAsArray() = data
-
-    fun writeTo(byteBuf: ByteBuf) {
-        byteBuf.writeBytes(data)
-    }
-
-    fun asString(charset: Charset = Charset.defaultCharset()) = String(data, charset)
-
-    companion object {
-        val EMPTY = ByteData(byteArrayOf())
-
-        fun readFrom(byteBuf: ByteBuf, length: Int): ByteData {
-            val dataArray = ByteArray(length)
-            byteBuf.readBytes(dataArray)
-            return ByteData(dataArray)
-        }
-    }
-}
-
+fun <T> ArgBasedConfiguration<T>.parseExpectingFailure(vararg cmdLine: String): WrongArgumentError =
+        parse(cmdLine).fold(
+                ::identity,
+                { throw AssertionError("parsing should have failed") }
+        )

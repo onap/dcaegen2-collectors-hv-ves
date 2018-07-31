@@ -20,7 +20,6 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import arrow.syntax.function.partially1
-import com.google.protobuf.ByteString
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.CompositeByteBuf
@@ -33,17 +32,16 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
+import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
-import org.onap.ves.VesEventV5
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
 import reactor.core.publisher.Flux
 import reactor.math.sum
 import java.security.MessageDigest
 import java.time.Duration
-import java.util.*
+import java.util.Random
 import kotlin.system.measureTimeMillis
 
 /**
@@ -64,7 +62,7 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofMinutes((1 + (runs / 2)).toLong())
 
             val params = MessageParameters(
-                    commonEventHeader = createSampleCommonHeader(HVRANMEAS),
+                    commonEventHeader = commonHeader(HVRANMEAS),
                     messageType = VALID,
                     amount = numMessages
             )
@@ -94,7 +92,7 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofSeconds(30)
 
             val params = MessageParameters(
-                    commonEventHeader = createSampleCommonHeader(HVRANMEAS),
+                    commonEventHeader = commonHeader(HVRANMEAS),
                     messageType = VALID,
                     amount = numMessages
             )
@@ -203,20 +201,3 @@ private fun randomlySplitTcpFrames(bb: CompositeByteBuf): Flux<ByteBuf> {
     }
 }
 
-private fun createSampleCommonHeader(domain: Domain): VesEventV5.VesEvent.CommonEventHeader = VesEventV5.VesEvent.CommonEventHeader.newBuilder()
-        .setVersion("sample-version")
-        .setDomain(domain)
-        .setSequence(1)
-        .setPriority(VesEventV5.VesEvent.CommonEventHeader.Priority.NORMAL)
-        .setEventId("sample-event-id")
-        .setEventName("sample-event-name")
-        .setEventType("sample-event-type")
-        .setStartEpochMicrosec(120034455)
-        .setLastEpochMicrosec(120034455)
-        .setNfNamingCode("sample-nf-naming-code")
-        .setNfcNamingCode("sample-nfc-naming-code")
-        .setReportingEntityId("sample-reporting-entity-id")
-        .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
-        .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
-        .setSourceName("sample-source-name")
-        .build()

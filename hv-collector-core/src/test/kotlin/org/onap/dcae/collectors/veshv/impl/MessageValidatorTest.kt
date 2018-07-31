@@ -19,17 +19,15 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
-import com.google.protobuf.ByteString
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.toByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.ves.VesEventV5.VesEvent
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
+import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Priority
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.getDefaultInstance
@@ -37,22 +35,14 @@ import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.newBuilder
 
 internal object MessageValidatorTest : Spek({
 
-    fun vesMessageBytes(commonHeader: CommonEventHeader): ByteData {
-        val msg = VesEvent.newBuilder()
-                .setCommonEventHeader(commonHeader)
-                .setHvRanMeasFields(ByteString.copyFromUtf8("high volume data"))
-                .build()
-        return msg.toByteData()
-    }
-
     given("Message validator") {
         val cut = MessageValidator
 
         on("ves hv message including header with fully initialized fields") {
-            val commonHeader = createInitializedHeaderBuilder().build()
+            val commonHeader = commonHeader()
 
             it("should accept message with fully initialized message header") {
-                val vesMessage = VesMessage(commonHeader, vesMessageBytes(commonHeader))
+                val vesMessage = VesMessage(commonHeader, vesEventBytes(commonHeader))
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isTrue()
             }
 
@@ -60,8 +50,8 @@ internal object MessageValidatorTest : Spek({
                     .filter { (it != Domain.UNRECOGNIZED && it != Domain.DOMAIN_UNDEFINED) }
                     .forEach { domain ->
                         it("should accept message with $domain domain") {
-                            val header = newBuilder(commonHeader).setDomain(domain).build()
-                            val vesMessage = VesMessage(header, vesMessageBytes(header))
+                            val header = commonHeader(domain)
+                            val vesMessage = VesMessage(header, vesEventBytes(header))
                             assertThat(cut.isValid(vesMessage))
                                     .isTrue()
                         }
@@ -83,10 +73,8 @@ internal object MessageValidatorTest : Spek({
 
         domainTestCases.forEach { value, expectedResult ->
             on("ves hv message including header with domain $value") {
-                val commonEventHeader = createInitializedHeaderBuilder()
-                        .setDomain(value)
-                        .build()
-                val vesMessage = VesMessage(commonEventHeader, vesMessageBytes(commonEventHeader))
+                val commonEventHeader = commonHeader(value)
+                val vesMessage = VesMessage(commonEventHeader, vesEventBytes(commonEventHeader))
 
                 it("should resolve validation result") {
                     assertThat(cut.isValid(vesMessage)).describedAs("message validation results")
@@ -102,10 +90,8 @@ internal object MessageValidatorTest : Spek({
 
         priorityTestCases.forEach { value, expectedResult ->
             on("ves hv message including header with priority $value") {
-                val commonEventHeader = createInitializedHeaderBuilder()
-                        .setPriority(value)
-                        .build()
-                val vesMessage = VesMessage(commonEventHeader, vesMessageBytes(commonEventHeader))
+                val commonEventHeader = commonHeader(priority = value)
+                val vesMessage = VesMessage(commonEventHeader, vesEventBytes(commonEventHeader))
 
                 it("should resolve validation result") {
                     assertThat(cut.isValid(vesMessage)).describedAs("message validation results")
@@ -114,7 +100,6 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-
         on("ves hv message including header with not initialized fields") {
             val commonHeader = newBuilder()
                     .setVersion("1.9")
@@ -122,11 +107,7 @@ internal object MessageValidatorTest : Spek({
                     .setEventId("Sample event Id")
                     .setSourceName("Sample Source")
                     .build()
-            val msg = VesEvent.newBuilder()
-                    .setCommonEventHeader(commonHeader)
-                    .setHvRanMeasFields(ByteString.copyFromUtf8("high volume data !!!"))
-                    .build()
-            val rawMessageBytes = msg.toByteData()
+            val rawMessageBytes = vesEventBytes(commonHeader)
 
             it("should not accept not fully initialized message header ") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
@@ -135,16 +116,3 @@ internal object MessageValidatorTest : Spek({
         }
     }
 })
-
-private fun createInitializedHeaderBuilder(): CommonEventHeader.Builder =
-        newBuilder()
-                .setVersion("1.9")
-                .setEventName("Sample event name")
-                .setDomain(Domain.HVRANMEAS)
-                .setEventId("Sample event Id")
-                .setSourceName("Sample Source")
-                .setReportingEntityName(ByteString.copyFromUtf8("Sample byte String"))
-                .setPriority(Priority.MEDIUM)
-                .setStartEpochMicrosec(120034455)
-                .setLastEpochMicrosec(120034459)
-                .setSequence(2)

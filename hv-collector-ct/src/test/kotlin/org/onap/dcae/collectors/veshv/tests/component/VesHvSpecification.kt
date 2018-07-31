@@ -24,7 +24,13 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.tests.fakes.*
+import org.onap.dcae.collectors.veshv.tests.utils.endOfTransmissionWireMessage
+import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
+import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
+import org.onap.dcae.collectors.veshv.tests.utils.invalidWireFrame
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
+import org.onap.dcae.collectors.veshv.tests.utils.vesMessageWithTooBigPayload
 import reactor.core.publisher.Flux
 import java.time.Duration
 
@@ -38,7 +44,10 @@ object VesHvSpecification : Spek({
     describe("VES High Volume Collector") {
         it("should handle multiple HV RAN events") {
             val (sut, sink) = vesHvWithStoringSink()
-            val messages = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS), vesMessage(Domain.HVRANMEAS))
+            val messages = sut.handleConnection(sink,
+                    vesWireFrameMessage(Domain.HVRANMEAS),
+                    vesWireFrameMessage(Domain.HVRANMEAS)
+            )
 
             assertThat(messages)
                     .describedAs("should send all events")
@@ -47,9 +56,9 @@ object VesHvSpecification : Spek({
 
         it("should not handle messages received from client after end-of-transmission message") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesMessage(Domain.HVRANMEAS)
-            val anotherValidMessage = vesMessage(Domain.HVRANMEAS)
-            val endOfTransmissionMessage = endOfTransmissionMessage()
+            val validMessage = vesWireFrameMessage(Domain.HVRANMEAS)
+            val anotherValidMessage = vesWireFrameMessage(Domain.HVRANMEAS)
+            val endOfTransmissionMessage = endOfTransmissionWireMessage()
 
             val handledEvents = sut.handleConnection(sink,
                     validMessage,
@@ -73,8 +82,8 @@ object VesHvSpecification : Spek({
     describe("Memory management") {
         it("should release memory for each handled and dropped message") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesMessage(Domain.HVRANMEAS)
-            val msgWithInvalidDomain = vesMessage(Domain.OTHER)
+            val validMessage = vesWireFrameMessage(Domain.HVRANMEAS)
+            val msgWithInvalidDomain = vesWireFrameMessage(Domain.OTHER)
             val msgWithInvalidFrame = invalidWireFrame()
             val msgWithTooBigPayload = vesMessageWithTooBigPayload(Domain.HVRANMEAS)
             val expectedRefCnt = 0
@@ -100,8 +109,8 @@ object VesHvSpecification : Spek({
 
         it("should release memory for end-of-transmission message") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesMessage(Domain.HVRANMEAS)
-            val endOfTransmissionMessage = endOfTransmissionMessage()
+            val validMessage = vesWireFrameMessage(Domain.HVRANMEAS)
+            val endOfTransmissionMessage = endOfTransmissionWireMessage()
             val expectedRefCnt = 0
 
             val handledEvents = sut.handleConnection(sink,
@@ -120,8 +129,8 @@ object VesHvSpecification : Spek({
 
         it("should release memory for each message with invalid payload") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesMessage(Domain.HVRANMEAS)
-            val msgWithInvalidPayload = invalidVesMessage()
+            val validMessage = vesWireFrameMessage(Domain.HVRANMEAS)
+            val msgWithInvalidPayload = wireFrameMessageWithInvalidPayload()
             val expectedRefCnt = 0
 
             val handledEvents = sut.handleConnection(sink, validMessage, msgWithInvalidPayload)
@@ -139,7 +148,7 @@ object VesHvSpecification : Spek({
 
         it("should release memory for each message with garbage frame") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesMessage(Domain.HVRANMEAS)
+            val validMessage = vesWireFrameMessage(Domain.HVRANMEAS)
             val msgWithGarbageFrame = garbageFrame()
             val expectedRefCnt = 0
 
@@ -161,7 +170,7 @@ object VesHvSpecification : Spek({
         it("should direct message to a topic by means of routing configuration") {
             val (sut, sink) = vesHvWithStoringSink()
 
-            val messages = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS))
+            val messages = sut.handleConnection(sink, vesWireFrameMessage(Domain.HVRANMEAS))
             assertThat(messages).describedAs("number of routed messages").hasSize(1)
 
             val msg = messages[0]
@@ -175,9 +184,9 @@ object VesHvSpecification : Spek({
             sut.configurationProvider.updateConfiguration(twoDomainsToOneTopicConfiguration)
 
             val messages = sut.handleConnection(sink,
-                    vesMessage(Domain.HVRANMEAS),
-                    vesMessage(Domain.HEARTBEAT),
-                    vesMessage(Domain.MEASUREMENTS_FOR_VF_SCALING))
+                    vesWireFrameMessage(Domain.HVRANMEAS),
+                    vesWireFrameMessage(Domain.HEARTBEAT),
+                    vesWireFrameMessage(Domain.MEASUREMENTS_FOR_VF_SCALING))
 
             assertThat(messages).describedAs("number of routed messages").hasSize(3)
 
@@ -194,9 +203,9 @@ object VesHvSpecification : Spek({
         it("should drop message if route was not found") {
             val (sut, sink) = vesHvWithStoringSink()
             val messages = sut.handleConnection(sink,
-                    vesMessage(Domain.OTHER, "first"),
-                    vesMessage(Domain.HVRANMEAS, "second"),
-                    vesMessage(Domain.HEARTBEAT, "third"))
+                    vesWireFrameMessage(Domain.OTHER, "first"),
+                    vesWireFrameMessage(Domain.HVRANMEAS, "second"),
+                    vesWireFrameMessage(Domain.HEARTBEAT, "third"))
 
             assertThat(messages).describedAs("number of routed messages").hasSize(1)
 
@@ -228,12 +237,12 @@ object VesHvSpecification : Spek({
 
             sut.configurationProvider.updateConfiguration(configurationWithoutRouting)
 
-            val messages = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS))
+            val messages = sut.handleConnection(sink, vesWireFrameMessage(Domain.HVRANMEAS))
             assertThat(messages).isEmpty()
 
             sut.configurationProvider.updateConfiguration(basicConfiguration)
 
-            val messagesAfterUpdate = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS))
+            val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(Domain.HVRANMEAS))
             assertThat(messagesAfterUpdate).hasSize(1)
             val message = messagesAfterUpdate[0]
 
@@ -248,7 +257,7 @@ object VesHvSpecification : Spek({
 
             sut.configurationProvider.updateConfiguration(basicConfiguration)
 
-            val messages = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS))
+            val messages = sut.handleConnection(sink, vesWireFrameMessage(Domain.HVRANMEAS))
             assertThat(messages).hasSize(1)
             val firstMessage = messages[0]
 
@@ -260,7 +269,7 @@ object VesHvSpecification : Spek({
 
             sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
 
-            val messagesAfterUpdate = sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS))
+            val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(Domain.HVRANMEAS))
             assertThat(messagesAfterUpdate).hasSize(2)
             val secondMessage = messagesAfterUpdate[1]
 
@@ -283,7 +292,7 @@ object VesHvSpecification : Spek({
                     sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
                 }
             }.doOnNext {
-                sut.handleConnection(sink, vesMessage(Domain.HVRANMEAS))
+                sut.handleConnection(sink, vesWireFrameMessage(Domain.HVRANMEAS))
             }.then().block(defaultTimeout)
 
 
@@ -314,7 +323,7 @@ object VesHvSpecification : Spek({
                             println("config changed")
                         }
                     }
-                    .map { vesMessage(Domain.HVRANMEAS) }
+                    .map { vesWireFrameMessage(Domain.HVRANMEAS) }
 
 
             sut.collector.handleConnection(sut.alloc, incomingMessages).block(defaultTimeout)
@@ -339,9 +348,9 @@ object VesHvSpecification : Spek({
             val (sut, sink) = vesHvWithStoringSink()
 
             val handledMessages = sut.handleConnection(sink,
-                    vesMessage(Domain.HVRANMEAS, "first"),
-                    vesMessageWithTooBigPayload(Domain.HVRANMEAS, "second"),
-                    vesMessage(Domain.HVRANMEAS, "third"))
+                    vesWireFrameMessage(Domain.HVRANMEAS, "first"),
+                    vesMessageWithTooBigPayload(Domain.HVRANMEAS),
+                    vesWireFrameMessage(Domain.HVRANMEAS))
 
             assertThat(handledMessages).hasSize(1)
             assertThat(handledMessages.first().message.header.eventId).isEqualTo("first")
