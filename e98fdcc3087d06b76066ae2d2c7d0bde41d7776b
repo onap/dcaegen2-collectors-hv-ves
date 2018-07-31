@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_a63398f5",
+        "filename": ".gitreview",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-07-31T06:30:12Z",
+      "side": 1,
+      "message": "High Volume VES Collector makes more sense in plain English. ves-hv is better for sorting by name. Both have + and -.",
+      "parentUuid": "9a6a9dd7_3aaa3dd5",
+      "revId": "e98fdcc3087d06b76066ae2d2c7d0bde41d7776b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_ba5e4d11",
         "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/boundary/adapters.kt",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2018-07-30T09:20:44Z",
       "side": 1,
       "message": "@FunctionalInterface here, but it is missing from ConfigurationProvider and Sink. Is it intentional?",
+      "revId": "e98fdcc3087d06b76066ae2d2c7d0bde41d7776b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_664d8072",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/boundary/adapters.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-07-31T06:30:12Z",
+      "side": 1,
+      "message": "This annotation is not necessary in Kotlin since the expected usage is by means of invoke operator (that is sinkProvider()). AFAIR it was changed in later commits. Let\u0027s check it later after whole seed code is published.",
+      "parentUuid": "9a6a9dd7_ba5e4d11",
       "revId": "e98fdcc3087d06b76066ae2d2c7d0bde41d7776b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
