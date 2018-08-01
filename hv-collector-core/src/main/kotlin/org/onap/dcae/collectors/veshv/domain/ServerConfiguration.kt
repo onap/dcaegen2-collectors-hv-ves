@@ -23,4 +23,4 @@ package org.onap.dcae.collectors.veshv.domain
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class ServerConfiguration(val port: Int, val configurationUrl: String)
+data class ServerConfiguration( val configurationUrl: String, val port: Int)

@@ -54,8 +54,8 @@ internal object ArgBasedServerConfiguration {
         try {
             parser.parse(options, args).run {
                 return ServerConfiguration(
-                        intValue(OPT_PORT, DefaultValues.PORT),
-                        stringValue(OPT_CONFIG_URL, DefaultValues.CONFIG_URL))
+                        stringValue(OPT_CONFIG_URL, DefaultValues.CONFIG_URL),
+                        intValue(OPT_PORT, DefaultValues.PORT))
             }
         } catch (ex: Exception) {
             throw WrongArgumentException(ex)
