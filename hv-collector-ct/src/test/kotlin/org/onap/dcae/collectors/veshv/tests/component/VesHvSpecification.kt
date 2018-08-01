@@ -47,21 +47,22 @@ object VesHvSpecification : Spek({
             val msgWithInvalidPayload = invalidVesMessage()
             val msgWithInvalidFrame = invalidWireFrame()
             val validMessage = vesMessage(Domain.HVRANMEAS)
+            val refCntBeforeSending = msgWithInvalidDomain.refCnt()
 
             sut.handleConnection(msgWithInvalidDomain, msgWithInvalidPayload, msgWithInvalidFrame, validMessage)
 
             assertThat(msgWithInvalidDomain.refCnt())
                     .describedAs("message with invalid domain should be released")
-                    .isEqualTo(0)
+                    .isEqualTo(refCntBeforeSending)
             assertThat(msgWithInvalidPayload.refCnt())
                     .describedAs("message with invalid payload should be released")
-                    .isEqualTo(0)
+                    .isEqualTo(refCntBeforeSending)
             assertThat(msgWithInvalidFrame.refCnt())
                     .describedAs("message with invalid frame should be released")
-                    .isEqualTo(0)
+                    .isEqualTo(refCntBeforeSending)
             assertThat(validMessage.refCnt())
                     .describedAs("handled message should be released")
-                    .isEqualTo(0)
+                    .isEqualTo(refCntBeforeSending)
         }
     }
 

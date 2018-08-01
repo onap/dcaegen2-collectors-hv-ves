@@ -32,11 +32,11 @@ import reactor.core.publisher.Mono
  * @since May 2018
  */
 internal class VesHvCollector(
-        val wireDecoder: WireDecoder,
-        val protobufDecoder: VesDecoder,
-        val validator: MessageValidator,
-        val router: Router,
-        val sink: Sink) : Collector {
+        private val wireDecoder: WireDecoder,
+        private val protobufDecoder: VesDecoder,
+        private val validator: MessageValidator,
+        private val router: Router,
+        private val sink: Sink) : Collector {
     override fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void> =
             dataStream
                     .flatMap(this::decodeWire)
@@ -47,7 +47,7 @@ internal class VesHvCollector(
                     .doOnNext(this::releaseMemory)
                     .then()
 
-    private fun decodeWire(wire: ByteBuf) = releaseWhenNull(wire, wireDecoder::decode)
+    private fun decodeWire(wire: ByteBuf) = omitWhenNull(wire, wireDecoder::decode)
 
     private fun decodeProtobuf(protobuf: ByteBuf) = releaseWhenNull(protobuf, protobufDecoder::decode)
 
@@ -70,6 +70,11 @@ internal class VesHvCollector(
     private fun releaseMemory(msg: VesMessage) {
         msg.rawMessage.release()
     }
+
+
+
+    private fun <T>omitWhenNull(input: ByteBuf, mapper: (ByteBuf) -> T?): Mono<T> =
+            Mono.justOrEmpty(mapper(input))
 
     private fun <T>releaseWhenNull(input: ByteBuf, mapper: (ByteBuf) -> T?): Mono<T> {
         val result = mapper(input)

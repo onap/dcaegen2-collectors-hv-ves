@@ -81,7 +81,7 @@ data class WireFrame(val payload: ByteBuf,
             val majorVersion = byteBuf.readUnsignedByte()
             val minorVersion = byteBuf.readUnsignedByte()
             val payloadSize = byteBuf.readInt()
-            val payload = byteBuf.slice()
+            val payload = byteBuf.retainedSlice()
 
             return WireFrame(payload, mark, majorVersion, minorVersion, payloadSize)
         }
