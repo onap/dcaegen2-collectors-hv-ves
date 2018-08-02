@@ -67,17 +67,16 @@ internal object MessageValidatorTest : Spek({
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isTrue()
             }
 
-            it("should reject message with domain other than HVRANMEAS") {
-                Domain.values()
-                        .filter { it != Domain.HVRANMEAS && it != Domain.UNRECOGNIZED }
-                        .forEach { domain ->
+            Domain.values()
+                    .filter { it != Domain.UNRECOGNIZED }
+                    .forEach {domain ->
+                        it("should accept message with $domain domain"){
                             val header = newBuilder(commonHeader).setDomain(domain).build()
                             val vesMessage = VesMessage(header, vesMessageBytes(header))
                             assertThat(cut.isValid(vesMessage))
-                                    .describedAs("message with $domain domain")
-                                    .isFalse()
+                                    .isTrue()
                         }
-            }
+                    }
         }
 
         on("ves hv message bytes") {

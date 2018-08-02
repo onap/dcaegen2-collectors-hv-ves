@@ -23,9 +23,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.tests.fakes.HVRANMEAS_TOPIC
-import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
-import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.Routing
+import org.onap.dcae.collectors.veshv.model.routing
+import org.onap.dcae.collectors.veshv.tests.fakes.*
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 
 /**
@@ -137,6 +138,29 @@ object VesHvSpecification : Spek({
             assertThat(msg.partition).describedAs("routed message partition").isEqualTo(0)
         }
 
+        it("should be able to direct 2 messages from different domains to one topic") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
+
+            sut.configurationProvider.updateConfiguration(twoDomainsToOneTopicConfiguration)
+
+            val messages = sut.handleConnection(sink,
+                    vesMessage(Domain.HVRANMEAS),
+                    vesMessage(Domain.HEARTBEAT),
+                    vesMessage(Domain.MEASUREMENTS_FOR_VF_SCALING))
+
+            assertThat(messages).describedAs("number of routed messages").hasSize(3)
+
+            assertThat(messages.get(0).topic).describedAs("first message topic")
+                    .isEqualTo(HVRANMEAS_TOPIC)
+
+            assertThat(messages.get(1).topic).describedAs("second message topic")
+                    .isEqualTo(HVRANMEAS_TOPIC)
+
+            assertThat(messages.get(2).topic).describedAs("last message topic")
+                    .isEqualTo(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
+        }
+        
         it("should drop message if route was not found") {
             val sink = StoringSink()
             val sut = Sut(sink)
@@ -169,4 +193,5 @@ object VesHvSpecification : Spek({
             assertThat(handledMessages.first().message.header.eventId).isEqualTo("first")
         }
     }
+
 })
