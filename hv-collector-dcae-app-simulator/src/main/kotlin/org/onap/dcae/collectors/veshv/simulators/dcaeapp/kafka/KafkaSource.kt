@@ -25,9 +25,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Mono
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOptions
-import reactor.kafka.receiver.ReceiverRecord
 import java.util.*
-import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -35,17 +33,10 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
 
-    private val consumedMessages = AtomicLong(0)
-
-    fun start(): Mono<Void> = Mono.create { sink ->
-        receiver.doOnConsumer { it.subscription() }.subscribe({ sink.success() }, sink::error)
-        receiver.receive().subscribe(this::update)
-    }
-
-    fun consumedMessages() = consumedMessages.get()
-
-    private fun update(record: ReceiverRecord<ByteArray, ByteArray>) {
-        consumedMessages.incrementAndGet()
+    fun start(): Mono<Consumer> = Mono.create { sink ->
+        val consumer = Consumer()
+        receiver.receive().subscribe(consumer::update)
+        sink.success(consumer)
     }
 
     companion object {
@@ -60,8 +51,8 @@ class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
             props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java
             props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
             val receiverOptions = ReceiverOptions.create<ByteArray, ByteArray>(props)
-                    .addAssignListener { partitions -> logger.debug { "onPartitionsAssigned $partitions" } }
-                    .addRevokeListener { partitions -> logger.debug { "onPartitionsRevoked $partitions" } }
+                    .addAssignListener { partitions -> logger.debug { "Partitions assigned $partitions" } }
+                    .addRevokeListener { partitions -> logger.debug { "Partitions revoked $partitions" } }
                     .subscription(topics)
             return KafkaSource(KafkaReceiver.create(receiverOptions))
         }

@@ -70,7 +70,7 @@
         <skipAnalysis>true</skipAnalysis>
 
         <!-- Docker -->
-        <skipDocker>true</skipDocker>
+        <skipDocker>true</skipDocker> <!-- TODO: unskip docker -->
         <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
         <docker-image.namespace>onap</docker-image.namespace>
     </properties>
@@ -236,11 +236,6 @@
                             <scope>runtime</scope>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -412,7 +407,37 @@
                                 </images>
                             </configuration>
                         </plugin>
-
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-dependency-plugin</artifactId>
+                            <version>3.1.1</version>
+                            <executions>
+                                <execution>
+                                    <id>copy-internal-deps</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>copy-dependencies</goal>
+                                    </goals>
+                                    <configuration>
+                                        <outputDirectory>${project.build.directory}/libs/internal</outputDirectory>
+                                        <includeGroupIds>${project.parent.groupId}</includeGroupIds>
+                                        <includeScope>runtime</includeScope>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>copy-external-deps</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>copy-dependencies</goal>
+                                    </goals>
+                                    <configuration>
+                                        <outputDirectory>${project.build.directory}/libs/external</outputDirectory>
+                                        <excludeGroupIds>${project.parent.groupId}</excludeGroupIds>
+                                        <includeScope>runtime</includeScope>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
                     </plugins>
                 </pluginManagement>
             </build>
@@ -530,6 +555,11 @@
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java-util</artifactId>
                 <version>${protobuf.version}</version>
             </dependency>
             <dependency>

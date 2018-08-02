@@ -29,10 +29,10 @@ private val logger = Logger(LoggerFactory.getLogger("DCAE simulator :: main"))
 fun main(args: Array<String>) {
     logger.info("Starting DCAE APP simulator")
     val port = 8080
-    val messageSource = KafkaSource.create("kafka:9092", setOf("ves_hvRanMeas"))
-    val apiServer = ApiServer(messageSource)
 
-    messageSource.start()
-            .then(apiServer.start(port))
+    KafkaSource.create("kafka:9092", setOf("ves_hvRanMeas"))
+            .start()
+            .map(::ApiServer)
+            .flatMap { it.start(port) }
             .block()
 }
