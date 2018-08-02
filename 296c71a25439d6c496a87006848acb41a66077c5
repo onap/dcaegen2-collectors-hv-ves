@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6d04797e",
+        "filename": "INFO.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-02T07:03:35Z",
+      "side": 1,
+      "message": "Why is prh listed in hv-ves descriptor?",
+      "revId": "296c71a25439d6c496a87006848acb41a66077c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
