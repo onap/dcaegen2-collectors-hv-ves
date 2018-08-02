@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder.Companion.MAX_PAYLOAD_SIZE
+
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
@@ -35,6 +37,7 @@ class InvalidWireFrameMarker(actualMarker: Short)
     : InvalidWireFrame(
         "Invalid start of frame. Expected 0x%02X, but was 0x%02X".format(WireFrame.MARKER_BYTE, actualMarker))
 
+object PayloadSizeExceeded : InvalidWireFrame("payload size exceeds the limit ($MAX_PAYLOAD_SIZE bytes)")
 
 // Missing bytes errors
 

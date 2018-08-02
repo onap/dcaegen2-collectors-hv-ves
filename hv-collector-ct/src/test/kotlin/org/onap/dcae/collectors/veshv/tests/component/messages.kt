@@ -20,8 +20,12 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import com.google.protobuf.ByteString
+import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
+import org.onap.dcae.collectors.veshv.domain.*
+import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder.Companion.MAX_PAYLOAD_SIZE
+import org.onap.ves.HVRanMeasFieldsV5
 import org.onap.ves.VesEventV5.VesEvent
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
@@ -29,7 +33,7 @@ import java.util.*
 
 val allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT
 
-fun vesMessage(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()) = allocator.buffer().run {
+fun vesMessage(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()): ByteBuf = allocator.buffer().run {
     writeByte(0xFF) // always 0xFF
     writeByte(0x01)   // version
     writeByte(0x01)   // content type = GPB
@@ -40,7 +44,7 @@ fun vesMessage(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toS
 }
 
 
-fun invalidVesMessage() = allocator.buffer().run {
+fun invalidVesMessage(): ByteBuf = allocator.buffer().run {
     writeByte(0xFF) // always 0xFF
     writeByte(0x01)   // version
     writeByte(0x01)   // content type = GPB
@@ -51,17 +55,32 @@ fun invalidVesMessage() = allocator.buffer().run {
 
 }
 
-fun garbageFrame() = allocator.buffer().run {
+fun garbageFrame(): ByteBuf = allocator.buffer().run {
     writeBytes("the meaning of life is &@)(*_!".toByteArray())
 }
 
-fun invalidWireFrame() = allocator.buffer().run {
+fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
     writeByte(0xFF)
     writeByte(0x01)   // version
     writeByte(0x01)   // content type = GPB
 }
 
-fun vesEvent(domain: Domain = Domain.HVRANMEAS, id: String = UUID.randomUUID().toString()) =
+fun vesMessageWithTooBigPayload(domain: Domain = Domain.OTHER, id: String = UUID.randomUUID().toString()): ByteBuf = allocator.buffer().run {
+    writeByte(0xFF) // always 0xFF
+    writeByte(0x01)   // version
+    writeByte(0x01)   // content type = GPB
+
+    val gpb = vesEvent(
+            domain,
+            id,
+            ByteString.copyFrom(ByteArray(MAX_PAYLOAD_SIZE))
+    ).toByteString().asReadOnlyByteBuffer()
+
+    writeInt(gpb.limit())  // ves event size in bytes
+    writeBytes(gpb)  // ves event as GPB bytes
+}
+
+fun vesEvent(domain: Domain = Domain.HVRANMEAS, id: String = UUID.randomUUID().toString(), hvRanMeasFields: ByteString = ByteString.EMPTY) =
         VesEvent.newBuilder()
                 .setCommonEventHeader(
                         CommonEventHeader.getDefaultInstance().toBuilder()
@@ -76,5 +95,5 @@ fun vesEvent(domain: Domain = Domain.HVRANMEAS, id: String = UUID.randomUUID().t
                                 .setStartEpochMicrosec(120034455)
                                 .setLastEpochMicrosec(120034459)
                                 .setSequence(1))
-                .setHvRanMeasFields(ByteString.EMPTY)
+                .setHvRanMeasFields(hvRanMeasFields)
                 .build()

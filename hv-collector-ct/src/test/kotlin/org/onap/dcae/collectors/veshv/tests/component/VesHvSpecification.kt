@@ -57,9 +57,11 @@ object VesHvSpecification : Spek({
             val validMessage = vesMessage(Domain.HVRANMEAS)
             val msgWithInvalidDomain = vesMessage(Domain.OTHER)
             val msgWithInvalidFrame = invalidWireFrame()
+            val msgWithTooBigPayload = vesMessageWithTooBigPayload(Domain.HVRANMEAS)
             val expectedRefCnt = 0
 
-            val handledEvents = sut.handleConnection(sink, validMessage, msgWithInvalidDomain, msgWithInvalidFrame)
+            val handledEvents = sut.handleConnection(
+                    sink, validMessage, msgWithInvalidDomain, msgWithInvalidFrame, msgWithTooBigPayload)
 
             assertThat(handledEvents).hasSize(1)
 
@@ -71,6 +73,9 @@ object VesHvSpecification : Spek({
                     .isEqualTo(expectedRefCnt)
             assertThat(msgWithInvalidFrame.refCnt())
                     .describedAs("message with invalid frame should be released")
+                    .isEqualTo(expectedRefCnt)
+            assertThat(msgWithTooBigPayload.refCnt())
+                    .describedAs("message with payload exceeding 1MiB should be released")
                     .isEqualTo(expectedRefCnt)
 
         }
@@ -146,6 +151,22 @@ object VesHvSpecification : Spek({
             val msg = messages[0]
             assertThat(msg.topic).describedAs("routed message topic").isEqualTo(HVRANMEAS_TOPIC)
             assertThat(msg.message.header.eventId).describedAs("routed message eventId").isEqualTo("second")
+        }
+    }
+
+    describe("request validation") {
+        it("should reject message with payload greater than 1 MiB and all subsequent messages") {
+            val sink = StoringSink()
+            val sut = Sut(sink)
+            sut.configurationProvider.updateConfiguration(basicConfiguration)
+
+            val handledMessages = sut.handleConnection(sink,
+                    vesMessage(Domain.HVRANMEAS, "first"),
+                    vesMessageWithTooBigPayload(Domain.HVRANMEAS, "second"),
+                    vesMessage(Domain.HVRANMEAS, "third"))
+
+            assertThat(handledMessages).hasSize(1)
+            assertThat(handledMessages.first().message.header.eventId).isEqualTo("first")
         }
     }
 })
