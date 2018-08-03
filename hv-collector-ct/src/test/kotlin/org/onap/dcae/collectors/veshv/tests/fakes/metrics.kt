@@ -34,5 +34,4 @@ class FakeMetrics: Metrics {
 
     override fun notifyMessageSent(topic: String) {
     }
-
 }

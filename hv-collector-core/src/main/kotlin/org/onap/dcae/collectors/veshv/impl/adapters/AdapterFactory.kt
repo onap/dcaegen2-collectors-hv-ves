@@ -36,11 +36,8 @@ object AdapterFactory {
 
     fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
             ConsulConfigurationProvider(
-                    configurationProviderParams.configurationUrl,
                     httpAdapter(),
-                    configurationProviderParams.firstRequestDelay,
-                    configurationProviderParams.requestInterval
-            )
+                    configurationProviderParams)
 
     fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
 }
