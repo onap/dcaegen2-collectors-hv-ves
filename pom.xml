@@ -82,11 +82,11 @@
 
         <!-- Docker -->
         <skipDocker>false</skipDocker>
+        <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>${project.groupId}.${project.artifactId}</docker-image.name>
         <docker.http_proxy></docker.http_proxy>
-        <docker.https_proxy></docker.https_proxy>
     </properties>
 
 
@@ -406,7 +406,7 @@
                             <executions>
                                 <execution>
                                     <id>docker-build-image</id>
-                                    <phase>deploy</phase>
+                                    <phase>package</phase>
                                     <goals>
                                         <goal>build</goal>
                                     </goals>
@@ -425,25 +425,33 @@
                                 <images>
                                     <image>
                                         <alias>${project.artifactId}</alias>
-                                        <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}
+                                        <name>${docker-image.namespace}/${docker-image.name}
                                         </name>
-                                        <tags>
-                                            <tag>${project.version}-SNAPSHOT-${maven.build.timestamp}Z</tag>
-                                            <tag>${project.version}</tag>
-                                            <tag>latest</tag>
-                                        </tags>
+                                        <registry>${docker-image.registry}</registry>
                                         <build>
                                             <!--
                                             <args>
                                                 <http_proxy>${docker.http_proxy}</http_proxy>
-                                                <https_proxy>${docker.https_proxy}</https_proxy>
+                                                <https_proxy>${docker.http_proxy}</https_proxy>
                                             </args>
                                             -->
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
+                                            <tags>
+                                                <tag>${project.version}-SNAPSHOT-${maven.build.timestamp}Z</tag>
+                                                <tag>${project.version}</tag>
+                                                <tag>latest</tag>
+                                            </tags>
                                         </build>
                                     </image>
                                 </images>
                             </configuration>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>io.fabric8</groupId>
+                                    <artifactId>run-java-sh</artifactId>
+                                    <version>1.2.2</version>
+                                </dependency>
+                            </dependencies>
                         </plugin>
                     </plugins>
                 </pluginManagement>
