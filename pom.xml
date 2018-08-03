@@ -446,10 +446,12 @@
                                         <alias>${project.artifactId}</alias>
                                         <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}</name>
                                         <build>
+                                            <!--
                                             <args>
                                                 <http_proxy>${docker.http_proxy}</http_proxy>
                                                 <https_proxy>${docker.https_proxy}</https_proxy>
                                             </args>
+                                            -->
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
                                         </build>
                                     </image>
