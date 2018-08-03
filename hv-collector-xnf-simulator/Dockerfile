@@ -1,4 +1,4 @@
-FROM openjdk:10-jre-slim
+FROM openjdk:8-jre-slim
 
 LABEL copyright="Copyright (C) 2018 NOKIA"
 LABEL license.name="The Apache Software License, Version 2.0"

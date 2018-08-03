@@ -375,11 +375,6 @@
         </profile>
         <profile>
             <id>docker</id>
-            <activation>
-                <property>
-                    <name>!skipDocker</name>
-                </property>
-            </activation>
             <properties>
                 <os.detected.name>linux</os.detected.name>
                 <os.detected.arch>x86_64</os.detected.arch>
@@ -426,7 +421,7 @@
                             <executions>
                                 <execution>
                                     <id>docker-build-image</id>
-                                    <phase>deploy</phase>
+                                    <phase>package</phase>
                                     <goals>
                                         <goal>build</goal>
                                     </goals>
