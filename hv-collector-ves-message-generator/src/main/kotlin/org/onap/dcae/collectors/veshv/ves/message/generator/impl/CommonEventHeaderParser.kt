@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.messages
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import com.google.protobuf.ByteString
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader

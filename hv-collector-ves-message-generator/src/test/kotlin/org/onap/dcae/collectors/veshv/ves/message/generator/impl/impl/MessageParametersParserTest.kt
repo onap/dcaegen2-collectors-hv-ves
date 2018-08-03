@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.messages
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
@@ -26,8 +26,9 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.utils.messages.MessageParametersParser.ParsingException
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageParametersParserImpl.ParsingException
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageParametersParserImpl
 
 private const val EXPECTED_MESSAGES_AMOUNT = 25000L
 
@@ -37,7 +38,7 @@ private const val EXPECTED_MESSAGES_AMOUNT = 25000L
  */
 object MessageParametersParserTest : Spek({
     describe("Messages parameters parser") {
-        val messageParametersParser = MessageParametersParser()
+        val messageParametersParser = MessageParametersParserImpl()
 
         given("parameters json array") {
             on("valid parameters json") {
