@@ -73,7 +73,7 @@
         <skipAnalysis>true</skipAnalysis>
 
         <!-- Docker -->
-        <skipDocker>true</skipDocker> <!-- TODO: unskip docker -->
+        <skipDocker>false</skipDocker>
         <onap.nexus.dockerregistry.daily>nexus3.onap.org:10003</onap.nexus.dockerregistry.daily>
         <onap.nexus.dockerregistry.release>nexus3.onap.org:10002</onap.nexus.dockerregistry.release>
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
@@ -388,19 +388,50 @@
                 <pluginManagement>
                     <plugins>
                         <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-dependency-plugin</artifactId>
+                            <version>3.1.1</version>
+                            <executions>
+                                <execution>
+                                    <id>docker-copy-internal-deps</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>copy-dependencies</goal>
+                                    </goals>
+                                    <configuration>
+                                        <outputDirectory>${project.build.directory}/libs/internal</outputDirectory>
+                                        <includeGroupIds>${project.parent.groupId}</includeGroupIds>
+                                        <includeScope>runtime</includeScope>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>docker-copy-external-deps</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>copy-dependencies</goal>
+                                    </goals>
+                                    <configuration>
+                                        <outputDirectory>${project.build.directory}/libs/external</outputDirectory>
+                                        <excludeGroupIds>${project.parent.groupId}</excludeGroupIds>
+                                        <includeScope>runtime</includeScope>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
                             <groupId>io.fabric8</groupId>
                             <artifactId>docker-maven-plugin</artifactId>
                             <version>0.26.0</version>
                             <executions>
                                 <execution>
-                                    <id>build-docker-image</id>
-                                    <phase>pre-integration-test</phase>
+                                    <id>docker-build-image</id>
+                                    <phase>deploy</phase>
                                     <goals>
                                         <goal>build</goal>
                                     </goals>
                                 </execution>
                                 <execution>
-                                    <id>push-docker-image</id>
+                                    <id>docker-push-image</id>
                                     <phase>deploy</phase>
                                     <goals>
                                         <goal>push</goal>
@@ -424,37 +455,6 @@
                                     </image>
                                 </images>
                             </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-dependency-plugin</artifactId>
-                            <version>3.1.1</version>
-                            <executions>
-                                <execution>
-                                    <id>copy-internal-deps</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>copy-dependencies</goal>
-                                    </goals>
-                                    <configuration>
-                                        <outputDirectory>${project.build.directory}/libs/internal</outputDirectory>
-                                        <includeGroupIds>${project.parent.groupId}</includeGroupIds>
-                                        <includeScope>runtime</includeScope>
-                                    </configuration>
-                                </execution>
-                                <execution>
-                                    <id>copy-external-deps</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>copy-dependencies</goal>
-                                    </goals>
-                                    <configuration>
-                                        <outputDirectory>${project.build.directory}/libs/external</outputDirectory>
-                                        <excludeGroupIds>${project.parent.groupId}</excludeGroupIds>
-                                        <includeScope>runtime</includeScope>
-                                    </configuration>
-                                </execution>
-                            </executions>
                         </plugin>
                     </plugins>
                 </pluginManagement>
