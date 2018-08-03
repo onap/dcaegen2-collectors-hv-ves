@@ -21,7 +21,6 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -29,7 +28,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.mockito.Mockito
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Mono
-import reactor.ipc.netty.http.client.HttpClient
 import reactor.test.StepVerifier
 import java.time.Duration
 import java.util.*

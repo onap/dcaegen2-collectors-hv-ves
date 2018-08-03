@@ -27,13 +27,9 @@ import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.forNumber
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.ipc.netty.http.client.HttpClientException
-import reactor.retry.Retry
-import reactor.retry.retryExponentialBackoff
 import java.io.StringReader
 import java.time.Duration
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 import javax.json.Json
 import javax.json.JsonObject

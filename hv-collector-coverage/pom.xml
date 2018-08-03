@@ -97,12 +97,17 @@
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-xnf-simulator</artifactId>
+            <artifactId>hv-collector-dcae-app-simulator</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-dcae-app-simulator</artifactId>
+            <artifactId>hv-collector-ves-message-generator</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-xnf-simulator</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

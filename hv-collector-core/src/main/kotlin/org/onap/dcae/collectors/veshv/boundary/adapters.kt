@@ -21,7 +21,6 @@ package org.onap.dcae.collectors.veshv.boundary
 
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
-import org.onap.dcae.collectors.veshv.model.VesMessage
 import reactor.core.publisher.Flux
 
 interface Sink {
