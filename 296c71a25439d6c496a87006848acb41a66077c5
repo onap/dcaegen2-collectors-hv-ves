@@ -16,6 +16,24 @@
       "revId": "296c71a25439d6c496a87006848acb41a66077c5",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9904a97f",
+        "filename": "INFO.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2018-08-06T13:50:03Z",
+      "side": 1,
+      "message": "This list per LF identifies all repositories the committer listed below have access to hence prh also being listed. When we grow per repo level committers, I assume this file will list only current repository.",
+      "parentUuid": "1a76adc5_6d04797e",
+      "revId": "296c71a25439d6c496a87006848acb41a66077c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
