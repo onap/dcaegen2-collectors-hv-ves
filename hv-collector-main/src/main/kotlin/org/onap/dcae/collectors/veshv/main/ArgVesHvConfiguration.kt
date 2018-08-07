@@ -35,6 +35,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_FIRST_REQUEST_DELAY
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_REQUEST_INTERVAL
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.DUMMY_MODE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.IDLE_TIMEOUT_SEC
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.PRIVATE_KEY_FILE
@@ -44,6 +45,7 @@ import java.time.Duration
 
 internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList = listOf(
+            HEALTH_CHECK_API_PORT,
             LISTEN_PORT,
             CONSUL_CONFIG_URL,
             CONSUL_FIRST_REQUEST_DELAY,
@@ -59,12 +61,17 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
     override fun getConfiguration(cmdLine: CommandLine): Option<ServerConfiguration> =
             ForOption extensions {
                 binding {
+                    val healthCheckApiPort = cmdLine.intValue(
+                            HEALTH_CHECK_API_PORT,
+                            DefaultValues.HEALTH_CHECK_API_PORT
+                    )
                     val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                     val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
                     val dummyMode = cmdLine.hasOption(DUMMY_MODE)
                     val security = createSecurityConfiguration(cmdLine)
                     val configurationProviderParams = createConfigurationProviderParams(cmdLine).bind()
                     ServerConfiguration(
+                            healthCheckApiPort = healthCheckApiPort,
                             listenPort = listenPort,
                             configurationProviderParams = configurationProviderParams,
                             securityConfiguration = security,
@@ -77,9 +84,14 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
             ForOption extensions {
                 binding {
                     val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL).bind()
-                    val firstRequestDelay = cmdLine.longValue(CONSUL_FIRST_REQUEST_DELAY, DefaultValues.CONSUL_FIRST_REQUEST_DELAY)
-                    val requestInterval = cmdLine.longValue(CONSUL_REQUEST_INTERVAL, DefaultValues.CONSUL_REQUEST_INTERVAL)
-
+                    val firstRequestDelay = cmdLine.longValue(
+                            CONSUL_FIRST_REQUEST_DELAY,
+                            DefaultValues.CONSUL_FIRST_REQUEST_DELAY
+                    )
+                    val requestInterval = cmdLine.longValue(
+                            CONSUL_REQUEST_INTERVAL,
+                            DefaultValues.CONSUL_REQUEST_INTERVAL
+                    )
                     ConfigurationProviderParams(
                             configUrl,
                             Duration.ofSeconds(firstRequestDelay),
@@ -103,6 +115,7 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
     }
 
     internal object DefaultValues {
+        const val HEALTH_CHECK_API_PORT = 6060
         const val CONSUL_FIRST_REQUEST_DELAY = 10L
         const val CONSUL_REQUEST_INTERVAL = 5L
         const val PRIVATE_KEY_FILE = "/etc/ves-hv/server.key"

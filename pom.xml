@@ -44,11 +44,12 @@
         <module>hv-collector-ct</module>
         <module>hv-collector-dcae-app-simulator</module>
         <module>hv-collector-domain</module>
+        <module>hv-collector-health-check</module>
         <module>hv-collector-main</module>
+        <module>hv-collector-test-utils</module>
         <module>hv-collector-utils</module>
         <module>hv-collector-ves-message-generator</module>
         <module>hv-collector-xnf-simulator</module>
-        <module>hv-collector-test-utils</module>
     </modules>
 
     <properties>

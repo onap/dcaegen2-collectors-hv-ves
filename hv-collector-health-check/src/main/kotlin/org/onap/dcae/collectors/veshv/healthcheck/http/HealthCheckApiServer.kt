@@ -17,19 +17,33 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.healthcheck.http
 
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import java.time.Duration
+import arrow.effects.IO
+import ratpack.handling.Chain
+import ratpack.http.Status
+import ratpack.server.RatpackServer
+import ratpack.server.ServerConfig
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since August 2018
  */
-data class ServerConfiguration(
-        val healthCheckApiPort: Int,
-        val listenPort: Int,
-        val configurationProviderParams: ConfigurationProviderParams,
-        val securityConfiguration: SecurityConfiguration,
-        val idleTimeout: Duration,
-        val dummyMode: Boolean = false)
+class HealthCheckApiServer {
+
+    fun start(port: Int): IO<RatpackServer> = IO {
+        RatpackServer
+                .start {
+                    it
+                            .serverConfig(ServerConfig.embedded().port(port).development(false))
+                            .handlers(this::configureHandlers)
+                }
+    }
+
+    private fun configureHandlers(chain: Chain) {
+        chain
+                .get("healthcheck") { ctx ->
+                    ctx.response.status(Status.OK).send()
+                }
+    }
+}

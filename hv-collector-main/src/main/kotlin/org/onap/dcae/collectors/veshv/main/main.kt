@@ -23,6 +23,7 @@ import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.boundary.ServerHandle
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
+import org.onap.dcae.collectors.veshv.healthcheck.http.HealthCheckApiServer
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
@@ -36,6 +37,7 @@ private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainK
 fun main(args: Array<String>) =
         ArgVesHvConfiguration().parse(args)
                 .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
+                .map(::startHealthCheckApiServer)
                 .map(::createServer)
                 .map {
                     it.start()
@@ -50,7 +52,6 @@ fun main(args: Array<String>) =
                         { logger.info("Gentle shutdown") }
                 )
 
-
 private fun createServer(config: ServerConfiguration): Server {
     val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
     val collectorProvider = CollectorFactory(
@@ -62,7 +63,13 @@ private fun createServer(config: ServerConfiguration): Server {
     return ServerFactory.createNettyTcpServer(config, collectorProvider)
 }
 
-private fun logServerStarted(handle: ServerHandle): ServerHandle {
-    logger.info("HighVolume VES Collector is up and listening on ${handle.host}:${handle.port}")
-    return handle
+private fun logServerStarted(handle: ServerHandle): ServerHandle = handle.also {
+    logger.info("HighVolume VES Collector is up and listening on ${it.host}:${it.port}")
+}
+
+private fun startHealthCheckApiServer(config: ServerConfiguration): ServerConfiguration = config.apply {
+    HealthCheckApiServer()
+            .start(healthCheckApiPort)
+            .unsafeRunSync()
+            .also { logger.info("Health check api server started on port ${it.bindPort}") }
 }

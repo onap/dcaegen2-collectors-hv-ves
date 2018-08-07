@@ -60,6 +60,9 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
     protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption, default: String): String =
             optionValue(cmdLineOpt).getOrElse { default }
 
+    protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption, default: Int): Int =
+            intValue(cmdLineOpt).getOrElse { default }
+
     protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption): Option<Int> =
             optionValue(cmdLineOpt).map(String::toInt)
 

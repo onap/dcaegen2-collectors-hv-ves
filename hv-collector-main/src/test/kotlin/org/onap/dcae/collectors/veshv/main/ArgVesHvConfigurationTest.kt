@@ -40,6 +40,7 @@ import java.time.Duration
  */
 object ArgVesHvConfigurationTest : Spek({
     lateinit var cut: ArgVesHvConfiguration
+    val healthCheckApiPort = "6070"
     val configurationUrl = "http://test-address/test"
     val firstRequestDelay = "10"
     val requestInterval = "5"
@@ -58,6 +59,7 @@ object ArgVesHvConfigurationTest : Spek({
 
             beforeEachTest {
                 result = cut.parseExpectingSuccess("--ssl-disable",
+                        "--health-check-api-port", healthCheckApiPort,
                         "--listen-port", listenPort,
                         "--config-url", configurationUrl,
                         "--first-request-delay", firstRequestDelay,
@@ -67,7 +69,11 @@ object ArgVesHvConfigurationTest : Spek({
                         "--trust-cert-file", trustCert.toFile().absolutePath)
             }
 
-            it("should set proper port") {
+            it("should set proper health check api port") {
+                assertThat(result.healthCheckApiPort).isEqualTo(healthCheckApiPort.toInt())
+            }
+
+            it("should set proper listen port") {
                 assertThat(result.listenPort).isEqualTo(listenPort.toInt())
             }
 
