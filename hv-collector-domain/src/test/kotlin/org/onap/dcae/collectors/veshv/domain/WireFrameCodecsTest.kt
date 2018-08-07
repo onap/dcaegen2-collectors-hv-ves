@@ -203,7 +203,7 @@ object WireFrameCodecsTest : Spek({
                 assertBufferIntact(buff)
             }
 
-            it("should decode payload message leaving rest unread") {
+            it("should decode payload message leaving http unread") {
                 val buff = Unpooled.buffer()
                         .writeBytes(encodeSampleFrame())
                         .writeByte(0xAA)

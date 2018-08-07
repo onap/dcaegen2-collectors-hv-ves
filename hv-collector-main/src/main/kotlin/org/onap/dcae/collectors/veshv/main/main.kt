@@ -23,6 +23,7 @@ import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.boundary.ServerHandle
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
+import org.onap.dcae.collectors.veshv.healthcheck.http.HealthCheckApiServer
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
@@ -41,6 +42,8 @@ fun main(args: Array<String>) =
                     it.start()
                             .map(::logServerStarted)
                             .flatMap(ServerHandle::await)
+                            .also { startHealthCheckApiServer() }
+
                 }
                 .unsafeRunEitherSync(
                         { ex ->
@@ -49,7 +52,6 @@ fun main(args: Array<String>) =
                         },
                         { logger.info("Gentle shutdown") }
                 )
-
 
 private fun createServer(config: ServerConfiguration): Server {
     val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
@@ -62,7 +64,11 @@ private fun createServer(config: ServerConfiguration): Server {
     return ServerFactory.createNettyTcpServer(config, collectorProvider)
 }
 
-private fun logServerStarted(handle: ServerHandle): ServerHandle {
-    logger.info("HighVolume VES Collector is up and listening on ${handle.host}:${handle.port}")
-    return handle
+private fun logServerStarted(handle: ServerHandle): ServerHandle = handle.also {
+    logger.info("HighVolume VES Collector is up and listening on ${it.host}:${it.port}")
 }
+
+private fun startHealthCheckApiServer() = HealthCheckApiServer()
+        .start()
+        .unsafeRunSync()
+        .also { logger.info("Health check api server started on port ${it.bindPort}") }

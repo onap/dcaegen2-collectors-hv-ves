@@ -243,7 +243,7 @@ internal object WireChunkDecoderTest : Spek({
         }
 
 
-        given("1st input containing 1st frame + part of 2nd frame and 2nd input containing rest of 2nd frame") {
+        given("1st input containing 1st frame + part of 2nd frame and 2nd input containing http of 2nd frame") {
             val frame1 = encoder.encode(PayloadWireFrameMessage(samplePayload))
             val frame2 = encoder.encode(PayloadWireFrameMessage(anotherPayload))
 
@@ -267,7 +267,7 @@ internal object WireChunkDecoderTest : Spek({
             }
         }
 
-        given("1st input containing part of 1st frame and 2nd input containing rest of 1st + 2nd frame") {
+        given("1st input containing part of 1st frame and 2nd input containing http of 1st + 2nd frame") {
             val frame1 = encoder.encode(PayloadWireFrameMessage(samplePayload))
             val frame2 = encoder.encode(PayloadWireFrameMessage(anotherPayload))
 
