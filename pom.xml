@@ -49,6 +49,7 @@
         <module>hv-collector-ves-message-generator</module>
         <module>hv-collector-xnf-simulator</module>
         <module>hv-collector-test-utils</module>
+        <module>hv-collector-health-check</module>
     </modules>
 
     <properties>

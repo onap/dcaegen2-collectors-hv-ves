@@ -34,6 +34,7 @@ services:
 #      context: hv-collector-main
 #      dockerfile: Dockerfile
     ports:
+      - "6060:6060"
       - "6061:6061/tcp"
     command: ["--listen-port", "6061","--config-url", "http://consul:8500/v1/kv/veshv-config"]
     depends_on:
