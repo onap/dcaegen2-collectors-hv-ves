@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_9d880ce9",
+        "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-08T09:32:19Z",
+      "side": 1,
+      "message": "Move `.also` part to main stream\n\n```kotlin\n    .also { startHealthCheckApiServer() }\n    .map {\n        it.start()\n        .map(::logServerStarted)\n        .flatMap(ServerHandle::await)\n    }\n```",
+      "revId": "75831f82e1bbd6f82cb836d766db276de7e667e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7d83b0cc",
+        "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-08T09:32:19Z",
+      "side": 1,
+      "message": "Enable option to configure HealthcheckServer port from command line and pass it there",
+      "revId": "75831f82e1bbd6f82cb836d766db276de7e667e1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
