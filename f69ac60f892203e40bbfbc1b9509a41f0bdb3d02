@@ -71,6 +71,23 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_f8334ef4",
+        "filename": "hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/api/HealthCheckApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-08-08T11:05:34Z",
+      "side": 1,
+      "message": "Remove unused imports.",
+      "revId": "f69ac60f892203e40bbfbc1b9509a41f0bdb3d02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_dd68c4f7",
         "filename": "hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/api/HealthCheckApiServer.kt",
         "patchSetId": 2
