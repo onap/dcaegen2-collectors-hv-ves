@@ -24,7 +24,6 @@ import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import reactor.ipc.netty.http.client.HttpClient
-import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -35,9 +34,7 @@ object AdapterFactory {
     fun loggingSink(): SinkProvider = LoggingSinkProvider()
 
     fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
-            ConsulConfigurationProvider(
-                    httpAdapter(),
-                    configurationProviderParams)
+            ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
 
     fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
 }

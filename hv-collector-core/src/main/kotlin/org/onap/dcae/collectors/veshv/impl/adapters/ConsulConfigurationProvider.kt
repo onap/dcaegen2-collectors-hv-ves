@@ -20,11 +20,12 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.forNumber
-import org.slf4j.LoggerFactory
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.retry.Jitter
@@ -45,16 +46,20 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                                            private val url: String,
                                            private val firstRequestDelay: Duration,
                                            private val requestInterval: Duration,
-                                           retrySpec: Retry<Any>
+                                           retrySpec: Retry<Any>,
+                                           private val healthStateProvider: HealthStateProvider =
+                                                   HealthStateProvider.INSTANCE
 ) : ConfigurationProvider {
 
     private val lastConfigurationHash: AtomicReference<Int> = AtomicReference(0)
     private val retry = retrySpec
             .doOnRetry {
                 logger.warn("Could not get fresh configuration", it.exception())
+                markUnhealthy()
             }
 
-    constructor(http: HttpAdapter, params: ConfigurationProviderParams) : this(
+    constructor(http: HttpAdapter,
+                params: ConfigurationProviderParams) : this(
             http,
             params.configurationUrl,
             params.firstRequestDelay,
@@ -62,7 +67,8 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
             Retry.any<Any>()
                     .retryMax(MAX_RETRIES)
                     .fixedBackoff(params.requestInterval.dividedBy(BACKOFF_INTERVAL_FACTOR))
-                    .jitter(Jitter.random()))
+                    .jitter(Jitter.random())
+    )
 
     override fun invoke(): Flux<CollectorConfiguration> =
             Flux.interval(firstRequestDelay, requestInterval)
@@ -72,6 +78,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                     .flatMap(::filterDifferentValues)
                     .map(::decodeConfiguration)
                     .map(::createCollectorConfiguration)
+                    .doOnNext { markHealthy() }
                     .retryWhen(retry)
 
     private fun askForConfig(): Mono<String> = http.get(url)
@@ -117,6 +124,10 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                 }.build()
         )
     }
+
+    private fun markHealthy() = healthStateProvider.changeState(HealthState.HEALTHY)
+
+    private fun markUnhealthy() = healthStateProvider.changeState(HealthState.UNHEALTHY)
 
     companion object {
         private const val MAX_RETRIES = 5

@@ -17,21 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.http
+package org.onap.dcae.collectors.veshv.healthcheck.api
 
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import ratpack.handling.Chain
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class HealthCheckApiServer {
+class HealthCheckApiServer(private val healthStateProvider: HealthStateProvider) {
+
+    private val healthState: AtomicReference<HealthState> = AtomicReference(HealthState.UNHEALTHY)
 
     fun start(port: Int = DEFAULT_HEALTH_CHECK_API_PORT): IO<RatpackServer> = IO {
+        healthStateProvider().subscribe { healthState.set(it) }
         RatpackServer
                 .start {
                     it
@@ -43,7 +47,7 @@ class HealthCheckApiServer {
     private fun configureHandlers(chain: Chain) {
         chain
                 .get("healthcheck") { ctx ->
-                    ctx.response.status(STATUS_OK).send()
+                    ctx.response.status(STATUS_OK).send(healthState.toString())
                 }
     }
 
