@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_58c1227f",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-08T12:08:22Z",
+      "side": 1,
+      "message": "It\u0027s used in other constructor that way. But in this class it\u0027s easier (more readable) to call these parameters directly than using something like `params.url` everywhere",
+      "parentUuid": "1a76adc5_58da8279",
+      "revId": "f69ac60f892203e40bbfbc1b9509a41f0bdb3d02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_1da71c51",
         "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
         "patchSetId": 2
