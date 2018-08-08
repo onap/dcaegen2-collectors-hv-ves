@@ -17,25 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
+package org.onap.dcae.collectors.veshv.healthcheck.api
 
-import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
-import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
-import reactor.ipc.netty.http.client.HttpClient
+import org.onap.dcae.collectors.veshv.healthcheck.impl.HealthStateProviderImpl
+import reactor.core.publisher.Flux
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since August 2018
  */
-object AdapterFactory {
-    fun kafkaSink(): SinkProvider = KafkaSinkProvider()
-    fun loggingSink(): SinkProvider = LoggingSinkProvider()
+interface HealthStateProvider {
 
-    fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
-            ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
+    operator fun invoke(): Flux<HealthState>
+    fun changeState(healthState: HealthState)
 
-    fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
+    companion object {
+        val INSTANCE: HealthStateProvider by lazy {
+            HealthStateProviderImpl()
+        }
+    }
 }
-

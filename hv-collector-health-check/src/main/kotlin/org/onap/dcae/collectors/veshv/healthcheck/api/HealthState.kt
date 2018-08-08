@@ -17,25 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
-
-import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
-import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
-import reactor.ipc.netty.http.client.HttpClient
+package org.onap.dcae.collectors.veshv.healthcheck.api
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since August 2018
  */
-object AdapterFactory {
-    fun kafkaSink(): SinkProvider = KafkaSinkProvider()
-    fun loggingSink(): SinkProvider = LoggingSinkProvider()
-
-    fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
-            ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
-
-    fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
+enum class HealthState(val message: String, val responseCode: Int) {
+    HEALTHY("Healthy", 200),
+    WAITING_FOR_CONSUL_CONFIGURATION("Waiting for consul configuration", 503),
+    CONSUL_CONFIGURATION_NOT_FOUND("Consul configuration not found", 503)
 }
-

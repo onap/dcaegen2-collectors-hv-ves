@@ -17,39 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.http
+package org.onap.dcae.collectors.veshv.healthcheck.impl
 
-import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import ratpack.handling.Chain
-import ratpack.server.RatpackServer
-import ratpack.server.ServerConfig
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import reactor.core.publisher.Flux
+import reactor.core.publisher.FluxProcessor
+import reactor.core.publisher.UnicastProcessor
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class HealthCheckApiServer {
+internal class HealthStateProviderImpl : HealthStateProvider {
 
-    fun start(port: Int = DEFAULT_HEALTH_CHECK_API_PORT): IO<RatpackServer> = IO {
-        RatpackServer
-                .start {
-                    it
-                            .serverConfig(ServerConfig.embedded().port(port).development(false))
-                            .handlers(this::configureHandlers)
-                }
-    }
+    private val healthStateStream: FluxProcessor<HealthState, HealthState> = UnicastProcessor.create()
 
-    private fun configureHandlers(chain: Chain) {
-        chain
-                .get("healthcheck") { ctx ->
-                    ctx.response.status(STATUS_OK).send()
-                }
-    }
+    override fun invoke(): Flux<HealthState> = healthStateStream
 
-    companion object {
-        const val DEFAULT_HEALTH_CHECK_API_PORT = 6060
-        private const val STATUS_OK = 200
-        private val logger = Logger(HealthCheckApiServer::class)
-    }
+    override fun changeState(healthState: HealthState): Unit = healthStateStream.onNext(healthState)
 }

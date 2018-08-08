@@ -23,13 +23,15 @@ import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.boundary.ServerHandle
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
-import org.onap.dcae.collectors.veshv.healthcheck.http.HealthCheckApiServer
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthCheckApiServer
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import ratpack.server.RatpackServer
 
 private val logger = Logger("org.onap.dcae.collectors.veshv.main")
 private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
@@ -43,7 +45,6 @@ fun main(args: Array<String>) =
                             .map(::logServerStarted)
                             .flatMap(ServerHandle::await)
                             .also { startHealthCheckApiServer() }
-
                 }
                 .unsafeRunEitherSync(
                         { ex ->
@@ -68,7 +69,8 @@ private fun logServerStarted(handle: ServerHandle): ServerHandle = handle.also {
     logger.info("HighVolume VES Collector is up and listening on ${it.host}:${it.port}")
 }
 
-private fun startHealthCheckApiServer() = HealthCheckApiServer()
-        .start()
-        .unsafeRunSync()
-        .also { logger.info("Health check api server started on port ${it.bindPort}") }
+private fun startHealthCheckApiServer(): RatpackServer =
+        HealthCheckApiServer(HealthStateProvider.INSTANCE)
+                .start()
+                .unsafeRunSync()
+                .also { logger.info("Health check api server started on port ${it.bindPort}") }
