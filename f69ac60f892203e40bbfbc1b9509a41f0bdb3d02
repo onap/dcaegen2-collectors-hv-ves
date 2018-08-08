@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_1da71c51",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-08T10:15:47Z",
+      "side": 1,
+      "message": "Let\u0027s not change this state in constructor there is no need for it",
+      "revId": "f69ac60f892203e40bbfbc1b9509a41f0bdb3d02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3d7778d6",
+        "filename": "hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/api/HealthCheckApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-08T10:15:47Z",
+      "side": 1,
+      "message": "Can we write tests for this class?",
+      "revId": "f69ac60f892203e40bbfbc1b9509a41f0bdb3d02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dd68c4f7",
+        "filename": "hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/api/HealthCheckApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-08T10:15:47Z",
+      "side": 1,
+      "message": "Container should be UNHEALTHY at start up",
+      "revId": "f69ac60f892203e40bbfbc1b9509a41f0bdb3d02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
