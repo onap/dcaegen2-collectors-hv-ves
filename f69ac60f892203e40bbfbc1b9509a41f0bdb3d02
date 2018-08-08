@@ -141,6 +141,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_589362a3",
+        "filename": "hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/api/HealthCheckApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-08T11:49:27Z",
+      "side": 1,
+      "message": "HealthCheckApiServer should have no idea about consul and should not decide about container healthiness",
+      "parentUuid": "1a76adc5_583e02ba",
+      "revId": "f69ac60f892203e40bbfbc1b9509a41f0bdb3d02",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_3d5e9846",
         "filename": "hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/impl/HealthStateProviderImpl.kt",
         "patchSetId": 2
