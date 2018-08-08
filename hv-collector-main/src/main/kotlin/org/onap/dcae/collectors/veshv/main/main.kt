@@ -23,7 +23,8 @@ import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.boundary.ServerHandle
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
-import org.onap.dcae.collectors.veshv.healthcheck.http.HealthCheckApiServer
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthCheckApiServer
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
@@ -68,7 +69,7 @@ private fun logServerStarted(handle: ServerHandle): ServerHandle = handle.also {
 }
 
 private fun startHealthCheckApiServer(config: ServerConfiguration): ServerConfiguration = config.apply {
-    HealthCheckApiServer()
+    HealthCheckApiServer(HealthStateProvider.INSTANCE)
             .start(healthCheckApiPort)
             .unsafeRunSync()
             .also { logger.info("Health check api server started on port ${it.bindPort}") }

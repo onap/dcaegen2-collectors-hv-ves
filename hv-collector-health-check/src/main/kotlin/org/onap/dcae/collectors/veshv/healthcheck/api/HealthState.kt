@@ -17,33 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.http
+package org.onap.dcae.collectors.veshv.healthcheck.api
 
-import arrow.effects.IO
-import ratpack.handling.Chain
-import ratpack.http.Status
-import ratpack.server.RatpackServer
-import ratpack.server.ServerConfig
+import org.onap.dcae.collectors.veshv.utils.http.Status.Companion.OK
+import org.onap.dcae.collectors.veshv.utils.http.Status.Companion.SERVICE_UNAVAILABLE
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class HealthCheckApiServer {
-
-    fun start(port: Int): IO<RatpackServer> = IO {
-        RatpackServer
-                .start {
-                    it
-                            .serverConfig(ServerConfig.embedded().port(port).development(false))
-                            .handlers(this::configureHandlers)
-                }
-    }
-
-    private fun configureHandlers(chain: Chain) {
-        chain
-                .get("healthcheck") { ctx ->
-                    ctx.response.status(Status.OK).send()
-                }
-    }
+enum class HealthState(val message: String, val responseCode: Int) {
+    HEALTHY("Healthy", OK),
+    STARTING("Collector is starting", SERVICE_UNAVAILABLE),
+    WAITING_FOR_CONSUL_CONFIGURATION("Waiting for consul configuration", SERVICE_UNAVAILABLE),
+    CONSUL_CONFIGURATION_NOT_FOUND("Consul configuration not found", SERVICE_UNAVAILABLE)
 }

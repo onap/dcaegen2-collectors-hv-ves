@@ -23,15 +23,25 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.tests.fakes.*
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
+import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_HVRANMEAS_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.HVRANMEAS_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
+import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
+import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithDifferentRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithoutRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
 import org.onap.dcae.collectors.veshv.tests.utils.endOfTransmissionWireMessage
 import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
-import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
 import org.onap.dcae.collectors.veshv.tests.utils.invalidWireFrame
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
 import org.onap.dcae.collectors.veshv.tests.utils.vesMessageWithTooBigPayload
+import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
+import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
+import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Flux
+import reactor.test.StepVerifier
 import java.time.Duration
 
 /**
@@ -340,6 +350,35 @@ object VesHvSpecification : Spek({
             assertThat(secondTopicMessagesCount)
                     .describedAs("amount of messages routed to second topic")
                     .isEqualTo(0)
+        }
+
+        it("should mark the application healthy on configuration update") {
+            val healthStateProvider = HealthStateProvider.INSTANCE.apply { changeState(HealthState.STARTING) }
+
+            StoringSink()
+                    .let { Sut(it) }
+                    .run { configurationProvider.updateConfiguration(basicConfiguration) }
+
+            StepVerifier
+                    .create(healthStateProvider().take(2))
+                    .expectNext(HealthState.STARTING)
+                    .expectNext(HealthState.HEALTHY)
+                    .verifyComplete()
+        }
+
+        it("should mark the application unhealthy when failed to acquire configuration") {
+            val healthStateProvider = HealthStateProvider.INSTANCE.apply { changeState(HealthState.STARTING) }
+
+            StoringSink()
+                    .let { Sut(it) }
+                    .apply { configurationProvider.shouldThrowExceptionOnConfigUpdate(true) }
+                    .run { configurationProvider.updateConfiguration(basicConfiguration) }
+
+            StepVerifier
+                    .create(healthStateProvider().take(2))
+                    .expectNext(HealthState.STARTING)
+                    .expectNext(HealthState.CONSUL_CONFIGURATION_NOT_FOUND)
+                    .verifyComplete()
         }
     }
 
