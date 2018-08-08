@@ -28,6 +28,7 @@ import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
+import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthStateProvider
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import reactor.core.publisher.Flux
@@ -39,10 +40,11 @@ import java.time.Duration
  */
 class Sut(sink: Sink = StoringSink()) {
     val configurationProvider = FakeConfigurationProvider()
+    val healthStateProvider = FakeHealthStateProvider()
 
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
     private val metrics = FakeMetrics()
-    private val collectorFactory = CollectorFactory(configurationProvider, SinkProvider.just(sink), metrics)
+    private val collectorFactory = CollectorFactory(configurationProvider, SinkProvider.just(sink), metrics, healthStateProvider)
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector

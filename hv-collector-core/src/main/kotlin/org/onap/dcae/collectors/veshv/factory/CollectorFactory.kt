@@ -25,6 +25,8 @@ import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
@@ -39,19 +41,20 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class CollectorFactory(val configuration: ConfigurationProvider,
                        private val sinkProvider: SinkProvider,
-                       private val metrics: Metrics) {
+                       private val metrics: Metrics,
+                       private val healthStateProvider: HealthStateProvider = HealthStateProvider.INSTANCE) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
         val collector: AtomicReference<Collector> = AtomicReference()
         configuration()
                 .map(this::createVesHvCollector)
-                .doOnNext { logger.info("Using updated configuration for new connections") }
+                .doOnNext {
+                    logger.info("Using updated configuration for new connections")
+                    healthStateProvider.changeState(HealthState.HEALTHY)
+                }
                 .doOnError {
-                    logger.error("Shutting down", it)
-                    // TODO: create Health class
-                    // It should monitor all incidents and expose the results for the
-                    // container health check mechanism
-                    System.exit(ERROR_CODE)
+                    logger.error("Failed to acquire configuration from consul")
+                    healthStateProvider.changeState(HealthState.CONSUL_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(collector::set)
         return collector::get
@@ -67,7 +70,6 @@ class CollectorFactory(val configuration: ConfigurationProvider,
     }
 
     companion object {
-        private const val ERROR_CODE = 3
         private val logger = Logger(CollectorFactory::class)
     }
 }

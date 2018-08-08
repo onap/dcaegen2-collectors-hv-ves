@@ -25,6 +25,7 @@ import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.FluxProcessor
 import reactor.core.publisher.UnicastProcessor
+import reactor.retry.RetryExhaustedException
 
 
 const val HVRANMEAS_TOPIC = "ves_hvRanMeas"
@@ -83,10 +84,19 @@ val configurationWithoutRouting: CollectorConfiguration = CollectorConfiguration
 )
 
 class FakeConfigurationProvider : ConfigurationProvider {
+    private var shouldThrowException = false
     private val configStream: FluxProcessor<CollectorConfiguration, CollectorConfiguration> = UnicastProcessor.create()
 
-    fun updateConfiguration(collectorConfiguration: CollectorConfiguration) {
-        configStream.onNext(collectorConfiguration)
+    fun updateConfiguration(collectorConfiguration: CollectorConfiguration) =
+            if (shouldThrowException) {
+                configStream.onError(RetryExhaustedException("I'm so tired"))
+            } else {
+                configStream.onNext(collectorConfiguration)
+            }
+
+
+    fun shouldThrowExceptionOnConfigUpdate(shouldThrowException: Boolean) {
+        this.shouldThrowException = shouldThrowException
     }
 
     override fun invoke() = configStream
