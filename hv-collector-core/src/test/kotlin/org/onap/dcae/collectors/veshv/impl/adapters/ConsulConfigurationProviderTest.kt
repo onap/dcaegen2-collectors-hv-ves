@@ -23,9 +23,12 @@ import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import org.mockito.Mockito
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
@@ -40,62 +43,72 @@ import kotlin.test.assertEquals
  */
 internal object ConsulConfigurationProviderTest : Spek({
 
-    val httpAdapterMock: HttpAdapter = mock()
+    describe("Consul configuration provider") {
+        val httpAdapterMock: HttpAdapter = mock()
+
+        given("valid resource url") {
+            val validUrl = "http://valid-url/"
+            val consulConfigProvider = constructConsulConfigProvider(validUrl, httpAdapterMock)
+
+            on("call to consul") {
+                whenever(httpAdapterMock.get(eq(validUrl), Mockito.anyMap()))
+                        .thenReturn(Mono.just(constructConsulResponse()))
+
+                it("should use received configuration") {
+
+                    StepVerifier.create(consulConfigProvider().take(1))
+                            .consumeNextWith {
+
+                                assertEquals("kafka:9093", it.kafkaBootstrapServers)
+
+                                val route1 = it.routing.routes[0]
+                                assertEquals(Domain.FAULT, route1.domain)
+                                assertEquals("test-topic-1", route1.targetTopic)
+
+                                val route2 = it.routing.routes[1]
+                                assertEquals(Domain.HEARTBEAT, route2.domain)
+                                assertEquals("test-topic-2", route2.targetTopic)
+
+                            }.verifyComplete()
+                }
+            }
+
+        }
+        given("invalid resource url") {
+            val invalidUrl = "http://invalid-url/"
+            val consulConfigProvider = constructConsulConfigProvider(invalidUrl, httpAdapterMock)
+
+            on("call to consul") {
+                whenever(httpAdapterMock.get(eq(invalidUrl), Mockito.anyMap()))
+                        .thenReturn(Mono.error(RuntimeException("Test exception")))
+
+                it("should interrupt the flux") {
+
+                    StepVerifier.create(consulConfigProvider())
+                            .verifyErrorMessage("Test exception")
+                }
+            }
+        }
+    }
+
+})
+
+private fun constructConsulConfigProvider(url: String, httpAdapter: HttpAdapter): ConsulConfigurationProvider {
+
     val firstRequestDelay = Duration.ofMillis(1)
     val requestInterval = Duration.ofMillis(1)
     val retry = Retry.onlyIf<Any> { it.iteration() < 2 }.fixedBackoff(Duration.ofNanos(1))
 
-    given("valid resource url") {
+    return ConsulConfigurationProvider(
+            httpAdapter,
+            url,
+            firstRequestDelay,
+            requestInterval,
+            HealthStateProvider.INSTANCE,
+            retry
+    )
+}
 
-        val validUrl = "http://valid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(
-                httpAdapterMock,
-                validUrl,
-                firstRequestDelay,
-                requestInterval,
-                retry)
-
-        whenever(httpAdapterMock.get(eq(validUrl), Mockito.anyMap()))
-                .thenReturn(Mono.just(constructConsulResponse()))
-
-        it("should use received configuration") {
-
-            StepVerifier.create(consulConfigProvider().take(1))
-                    .consumeNextWith {
-
-                        assertEquals("kafka:9093", it.kafkaBootstrapServers)
-
-                        val route1 = it.routing.routes[0]
-                        assertEquals(Domain.FAULT, route1.domain)
-                        assertEquals("test-topic-1", route1.targetTopic)
-
-                        val route2 = it.routing.routes[1]
-                        assertEquals(Domain.HEARTBEAT, route2.domain)
-                        assertEquals("test-topic-2", route2.targetTopic)
-
-                    }.verifyComplete()
-        }
-    }
-    given("invalid resource url") {
-
-        val invalidUrl = "http://invalid-url/"
-        val consulConfigProvider = ConsulConfigurationProvider(
-                httpAdapterMock,
-                invalidUrl,
-                firstRequestDelay,
-                requestInterval,
-                retry)
-
-        whenever(httpAdapterMock.get(eq(invalidUrl), Mockito.anyMap()))
-                .thenReturn(Mono.error(RuntimeException("Test exception")))
-
-        it("should interrupt the flux") {
-
-            StepVerifier.create(consulConfigProvider())
-                    .verifyErrorMessage("Test exception")
-        }
-    }
-})
 
 fun constructConsulResponse(): String {
 
