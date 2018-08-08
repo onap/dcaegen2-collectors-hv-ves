@@ -26,6 +26,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.mockito.Mockito
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
@@ -53,6 +54,7 @@ internal object ConsulConfigurationProviderTest : Spek({
                 validUrl,
                 firstRequestDelay,
                 requestInterval,
+                HealthStateProvider.INSTANCE,
                 retry)
 
         whenever(httpAdapterMock.get(eq(validUrl), Mockito.anyMap()))
@@ -84,6 +86,7 @@ internal object ConsulConfigurationProviderTest : Spek({
                 invalidUrl,
                 firstRequestDelay,
                 requestInterval,
+                HealthStateProvider.INSTANCE,
                 retry)
 
         whenever(httpAdapterMock.get(eq(invalidUrl), Mockito.anyMap()))

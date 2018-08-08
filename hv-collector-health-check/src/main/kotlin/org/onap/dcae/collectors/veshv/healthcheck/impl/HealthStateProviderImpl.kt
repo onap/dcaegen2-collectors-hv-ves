@@ -17,25 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
+package org.onap.dcae.collectors.veshv.healthcheck.impl
 
-import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
-import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
-import reactor.ipc.netty.http.client.HttpClient
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import reactor.core.publisher.Flux
+import reactor.core.publisher.FluxProcessor
+import reactor.core.publisher.UnicastProcessor
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since August 2018
  */
-object AdapterFactory {
-    fun kafkaSink(): SinkProvider = KafkaSinkProvider()
-    fun loggingSink(): SinkProvider = LoggingSinkProvider()
+internal class HealthStateProviderImpl : HealthStateProvider {
 
-    fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
-            ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
+    private val healthStateStream: FluxProcessor<HealthState, HealthState> = UnicastProcessor.create()
 
-    fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
+    override fun invoke(): Flux<HealthState> = healthStateStream
+
+    override fun changeState(healthState: HealthState) = healthStateStream.onNext(healthState)
 }
-
