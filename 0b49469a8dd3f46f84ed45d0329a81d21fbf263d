@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_fd4d7b73",
+        "filename": "hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProviderTest.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-09T06:36:23Z",
+      "side": 1,
+      "message": "Please write unit test for new functionality (changing health state) in \"invalid url\" part. \nAdditionaly add similar assertions for health change in VesHvSpecification (CT) in \"configuration update\" part.\nProbably new testcase will be needed there - checking for being healthy can be done in existing ones, however unhealthy status will require new one.",
+      "revId": "0b49469a8dd3f46f84ed45d0329a81d21fbf263d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
