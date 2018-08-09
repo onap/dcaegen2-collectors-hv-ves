@@ -7,6 +7,7 @@ LABEL maintainer="Nokia Wroclaw ONAP Team"
 
 RUN apt-get update \
         && apt-get install -y --no-install-recommends curl  \
+        && apt-get install -y --no-install-recommends netcat  \
         && apt-get clean
 
 WORKDIR /opt/ves-hv-collector
