@@ -19,7 +19,7 @@
   ~ ============LICENSE_END=========================================================
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,6 +29,13 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+
+    <parent>
+        <groupId>org.onap.oparent</groupId>
+        <artifactId>oparent</artifactId>
+        <version>0.1.1</version>
+        <relativePath/>
+    </parent>
 
     <groupId>org.onap.dcaegen2.collectors.veshv</groupId>
     <artifactId>ves-hv-collector</artifactId>
@@ -68,15 +75,13 @@
         <junit-platform.version>1.2.0-RC1</junit-platform.version>
         <junit-jupiter.version>5.2.0-RC1</junit-jupiter.version>
         <spek.version>1.1.5</spek.version>
-        <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
-        <failIfMissingUnitTests>true</failIfMissingUnitTests>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <failIfMissingUnitTests>false</failIfMissingUnitTests>
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
         <skipAnalysis>true</skipAnalysis>
 
         <!-- Docker -->
         <skipDocker>false</skipDocker>
-        <onap.nexus.dockerregistry.daily>nexus3.onap.org:10003</onap.nexus.dockerregistry.daily>
-        <onap.nexus.dockerregistry.release>nexus3.onap.org:10002</onap.nexus.dockerregistry.release>
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
@@ -246,8 +251,67 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.1</version>
+                    <executions>
+                        <execution>
+                            <id>default-prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-prepare-agent-integration</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <excludes>
+                            <!-- Exclude Protobuf-generated classes -->
+                            <exclude>org/onap/ves/*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.onap.oparent</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <!-- To override oparent configuration different id must be used
+                             We need to override it to include .kt files in check. -->
+                        <id>onap-license-internal</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <configLocation>onap-checkstyle/check-license.xml</configLocation>
+                            <includeResources>false</includeResources>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <includeTestResources>false</includeTestResources>
+                            <includes>**\/*.kt</includes>
+                            <consoleOutput>true</consoleOutput>
+                            <!--<failOnViolation>false</failOnViolation>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -261,36 +325,10 @@
         <profile>
             <id>analysis</id>
             <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.1</version>
-                        <executions>
-                            <execution>
-                                <id>default-prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>default-prepare-agent-integration</id>
-                                <goals>
-                                    <goal>prepare-agent-integration</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <excludes>
-                                <!-- Exclute Protobuf-generated classes -->
-                                <exclude>org/onap/ves/*</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
@@ -303,10 +341,10 @@
                                 <configuration>
                                     <target name="detekt" unless="${skipAnalysis}">
                                         <java taskname="detekt" dir="${basedir}"
-                                                fork="true"
-                                                failonerror="true"
-                                                classname="io.gitlab.arturbosch.detekt.cli.Main"
-                                                classpathref="maven.plugin.classpath">
+                                              fork="true"
+                                              failonerror="true"
+                                              classname="io.gitlab.arturbosch.detekt.cli.Main"
+                                              classpathref="maven.plugin.classpath">
                                             <arg value="--input"/>
                                             <arg value="${basedir}/src/main/kotlin"/>
                                             <arg value="--config-resource"/>
@@ -339,36 +377,6 @@
                                 <version>${project.version}</version>
                             </dependency>
                         </dependencies>
-                    </plugin>
-
-                    <plugin>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.onap.oparent</groupId>
-                                <artifactId>checkstyle</artifactId>
-                                <version>1.1.1</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>onap-license</id>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                                <phase>process-sources</phase>
-                                <configuration>
-                                    <configLocation>onap-checkstyle/check-license.xml</configLocation>
-                                    <includeResources>false</includeResources>
-                                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                                    <includeTestResources>false</includeTestResources>
-                                    <includes>**\/*.kt</includes>
-                                    <consoleOutput>true</consoleOutput>
-                                    <!--<failOnViolation>false</failOnViolation>-->
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
