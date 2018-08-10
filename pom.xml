@@ -30,6 +30,13 @@
         </license>
     </licenses>
 
+    <parent>
+        <groupId>org.onap.oparent</groupId>
+        <artifactId>oparent</artifactId>
+        <version>0.1.1</version>
+        <relativePath/>
+    </parent>
+
     <groupId>org.onap.dcaegen2.collectors.veshv</groupId>
     <artifactId>ves-hv-collector</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -68,20 +75,18 @@
         <junit-platform.version>1.2.0-RC1</junit-platform.version>
         <junit-jupiter.version>5.2.0-RC1</junit-jupiter.version>
         <spek.version>1.1.5</spek.version>
-        <maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
-        <failIfMissingUnitTests>true</failIfMissingUnitTests>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <failIfMissingUnitTests>false</failIfMissingUnitTests>
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
         <skipAnalysis>true</skipAnalysis>
 
         <!-- Docker -->
         <skipDocker>false</skipDocker>
-        <onap.nexus.dockerregistry.daily>nexus3.onap.org:10003</onap.nexus.dockerregistry.daily>
-        <onap.nexus.dockerregistry.release>nexus3.onap.org:10002</onap.nexus.dockerregistry.release>
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
-        <docker.http_proxy> </docker.http_proxy>
-        <docker.https_proxy> </docker.https_proxy>
+        <docker.http_proxy></docker.http_proxy>
+        <docker.https_proxy></docker.https_proxy>
     </properties>
 
 
@@ -196,36 +201,14 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <groupId>org.apache.maven.plugins</groupId>
                     <version>${maven-surefire-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>default-test</id>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                            <configuration>
-                                <failIfNoTests>${failIfMissingUnitTests}</failIfNoTests>
-                                <forkCount>1</forkCount>
-                                <includes>
-                                    <include>**/*Test.*</include>
-                                </includes>
-                                <!--<argLine>&#45;&#45;add-modules org.junit.jupiter.api,reactor.test,assertj.core</argLine>-->
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>component-tests</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                            <configuration>
-                                <failIfNoTests>${failIfMissingComponentTests}</failIfNoTests>
-                                <forkCount>1</forkCount>
-                                <includes>
-                                    <include>**/*Specification.*</include>
-                                </includes>
-                            </configuration>
-                        </execution>
-                    </executions>
+                    <configuration>
+                        <failIfNoTests>${failIfMissingUnitTests}</failIfNoTests>
+                        <forkCount>1</forkCount>
+                        <includes>
+                            <include>**/*Test.*</include>
+                        </includes>
+                        <!--<argLine>&#45;&#45;add-modules org.junit.jupiter.api,reactor.test,assertj.core</argLine>-->
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.commons</groupId>
@@ -246,8 +229,146 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.22.0</version>
+                    <configuration>
+                        <failIfNoTests>${failIfMissingComponentTests}</failIfNoTests>
+                        <forkCount>1</forkCount>
+                        <includes>
+                            <include>**/*Specification.*</include>
+                        </includes>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.commons</groupId>
+                            <artifactId>commons-lang3</artifactId>
+                            <version>3.7</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-surefire-provider</artifactId>
+                            <version>${junit-platform.version}</version>
+                            <scope>runtime</scope>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.jetbrains.spek</groupId>
+                            <artifactId>spek-junit-platform-engine</artifactId>
+                            <version>${spek.version}</version>
+                            <scope>runtime</scope>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <!--<plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.1</version>
+                    <executions>
+                        <execution>
+                            <id>default-prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>default-prepare-agent-integration</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <excludes>
+                            &lt;!&ndash; Exclude Protobuf-generated classes &ndash;&gt;
+                            <exclude>org/onap/ves/*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>-->
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.17</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.onap.oparent</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <!-- To override oparent configuration different id must be used
+                             We need to override it to include .kt files in check. -->
+                        <id>check-license-kotlin</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <configLocation>onap-checkstyle/check-license.xml</configLocation>
+                            <includeResources>false</includeResources>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <includeTestResources>false</includeTestResources>
+                            <includes>**\/*.kt</includes>
+                            <consoleOutput>true</consoleOutput>
+                            <!--<failOnViolation>false</failOnViolation>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <!-- This can be run separately with mvn antrun:run@detekt -->
+                        <id>detekt</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="detekt" unless="${skipAnalysis}">
+                                <java taskname="detekt" dir="${basedir}"
+                                        fork="true"
+                                        failonerror="true"
+                                        classname="io.gitlab.arturbosch.detekt.cli.Main"
+                                        classpathref="maven.plugin.classpath">
+                                    <arg value="--input"/>
+                                    <arg value="${basedir}/src/main/kotlin"/>
+                                    <arg value="--config-resource"/>
+                                    <arg value="onap-detekt-config.yml"/>
+                                    <arg value="--filters"/>
+                                    <arg value=".*/target/.*,.*/resources/.*"/>
+                                    <arg value="--output"/>
+                                    <arg value="${basedir}/target/reports"/>
+                                    <arg value="--output-name"/>
+                                    <arg value="detekt-report"/>
+                                    <arg value="--baseline"/>
+                                    <arg value="${basedir}/target/reports/baseline.xml"/>
+                                </java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.gitlab.arturbosch.detekt</groupId>
+                        <artifactId>detekt-cli</artifactId>
+                        <version>1.0.0.RC7</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>hv-collector-analysis</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -258,121 +379,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>analysis</id>
-            <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.1</version>
-                        <executions>
-                            <execution>
-                                <id>default-prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>default-prepare-agent-integration</id>
-                                <goals>
-                                    <goal>prepare-agent-integration</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <excludes>
-                                <!-- Exclute Protobuf-generated classes -->
-                                <exclude>org/onap/ves/*</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.8</version>
-                        <executions>
-                            <execution>
-                                <!-- This can be run separately with mvn antrun:run@detekt -->
-                                <id>detekt</id>
-                                <phase>verify</phase>
-                                <configuration>
-                                    <target name="detekt" unless="${skipAnalysis}">
-                                        <java taskname="detekt" dir="${basedir}"
-                                                fork="true"
-                                                failonerror="true"
-                                                classname="io.gitlab.arturbosch.detekt.cli.Main"
-                                                classpathref="maven.plugin.classpath">
-                                            <arg value="--input"/>
-                                            <arg value="${basedir}/src/main/kotlin"/>
-                                            <arg value="--config-resource"/>
-                                            <arg value="onap-detekt-config.yml"/>
-                                            <arg value="--filters"/>
-                                            <arg value=".*/target/.*,.*/resources/.*"/>
-                                            <arg value="--output"/>
-                                            <arg value="${basedir}/target/reports"/>
-                                            <arg value="--output-name"/>
-                                            <arg value="detekt-report"/>
-                                            <arg value="--baseline"/>
-                                            <arg value="${basedir}/target/reports/baseline.xml"/>
-                                        </java>
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>io.gitlab.arturbosch.detekt</groupId>
-                                <artifactId>detekt-cli</artifactId>
-                                <version>1.0.0.RC7</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>${project.groupId}</groupId>
-                                <artifactId>hv-collector-analysis</artifactId>
-                                <version>${project.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-
-                    <plugin>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.onap.oparent</groupId>
-                                <artifactId>checkstyle</artifactId>
-                                <version>1.1.1</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>onap-license</id>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                                <phase>process-sources</phase>
-                                <configuration>
-                                    <configLocation>onap-checkstyle/check-license.xml</configLocation>
-                                    <includeResources>false</includeResources>
-                                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                                    <includeTestResources>false</includeTestResources>
-                                    <includes>**\/*.kt</includes>
-                                    <consoleOutput>true</consoleOutput>
-                                    <!--<failOnViolation>false</failOnViolation>-->
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>docker</id>
             <activation>
@@ -445,7 +451,8 @@
                                 <images>
                                     <image>
                                         <alias>${project.artifactId}</alias>
-                                        <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}</name>
+                                        <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}
+                                        </name>
                                         <build>
                                             <!--
                                             <args>
@@ -465,7 +472,7 @@
         </profile>
     </profiles>
 
-    <reporting>
+<!--    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -479,7 +486,7 @@
                 </reportSets>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting>-->
 
     <pluginRepositories>
         <pluginRepository>
