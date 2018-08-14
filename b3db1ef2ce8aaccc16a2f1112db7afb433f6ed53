@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_1d4aa580",
+        "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-14T12:42:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_7d9f1960",
+      "revId": "b3db1ef2ce8aaccc16a2f1112db7afb433f6ed53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_bdce1182",
         "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2018-08-14T11:18:32Z",
       "side": 1,
       "message": "Wouldn\u0027t it be better to extract these classes to separate files, or at least all 3 classes to one separate file?",
+      "revId": "b3db1ef2ce8aaccc16a2f1112db7afb433f6ed53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bd5e1144",
+        "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-14T12:42:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_bdce1182",
       "revId": "b3db1ef2ce8aaccc16a2f1112db7afb433f6ed53",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
