@@ -17,38 +17,38 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.api
+package org.onap.dcae.collectors.veshv.healthcheck.factory
 
 import arrow.effects.IO
-import ratpack.handling.Chain
-import ratpack.server.RatpackServer
-import ratpack.server.ServerConfig
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
+import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import reactor.core.publisher.Mono
+import reactor.ipc.netty.http.server.HttpServer
+import reactor.ipc.netty.http.server.HttpServerRequest
+import reactor.ipc.netty.http.server.HttpServerResponse
 import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class HealthCheckApiServer(private val healthStateProvider: HealthStateProvider) {
+class HealthCheckApiServer(private val healthStateProvider: HealthStateProvider, private val port: Int) {
 
     private val healthState: AtomicReference<HealthState> = AtomicReference(HealthState.STARTING)
 
-    fun start(port: Int): IO<RatpackServer> = IO {
+    fun start(): IO<ServerHandle> = IO {
         healthStateProvider().subscribe(healthState::set)
-        RatpackServer
-                .start {
-                    it
-                            .serverConfig(ServerConfig.embedded().port(port).development(false))
-                            .handlers(this::configureHandlers)
-                }
+        val ctx = HttpServer.create(port).startRouter { routes ->
+            routes.get("/healthcheck", ::healthCheckHandler)
+        }
+        NettyServerHandle(ctx)
     }
 
-    private fun configureHandlers(chain: Chain) {
-        chain
-                .get("healthcheck") { ctx ->
-                    healthState.get().run {
-                        ctx.response.status(responseCode).send(message)
-                    }
-                }
-    }
+    private fun healthCheckHandler(req: HttpServerRequest, resp: HttpServerResponse) =
+            healthState.get().run {
+                resp.status(responseCode).sendString(Mono.just(message))
+            }
+
 }
