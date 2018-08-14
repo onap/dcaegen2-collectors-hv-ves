@@ -17,23 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.impl
+package org.onap.dcae.collectors.veshv.healthcheck.api
 
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import reactor.core.publisher.Flux
-import reactor.core.publisher.FluxProcessor
-import reactor.core.publisher.UnicastProcessor
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-internal class HealthStateProviderImpl : HealthStateProvider {
-
-    private val healthStateStream: FluxProcessor<HealthState, HealthState> = UnicastProcessor.create()
-
-    override fun invoke(): Flux<HealthState> = healthStateStream
-
-    override fun changeState(healthState: HealthState) = healthStateStream.onNext(healthState)
+enum class HealthDescription(val message: String, val status: HealthStatus) {
+    HEALTHY("Healthy", HealthStatus.UP),
+    STARTING("Collector is starting", HealthStatus.OUT_OF_SERVICE),
+    RETRYING_FOR_CONSUL_CONFIGURATION("Consul configuration not available. Retrying.", HealthStatus.OUT_OF_SERVICE),
+    CONSUL_CONFIGURATION_NOT_FOUND("Consul configuration not found", HealthStatus.DOWN)
 }

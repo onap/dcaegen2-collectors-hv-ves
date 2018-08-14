@@ -19,14 +19,18 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
+import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.monad
+import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.boundary.Server
-import org.onap.dcae.collectors.veshv.boundary.ServerHandle
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthCheckApiServer
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
@@ -38,12 +42,12 @@ private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainK
 fun main(args: Array<String>) =
         ArgVesHvConfiguration().parse(args)
                 .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-                .map(::startHealthCheckApiServer)
-                .map(::createServer)
-                .map {
-                    it.start()
-                            .map(::logServerStarted)
-                            .flatMap(ServerHandle::await)
+                .map { config ->
+                    IO.monad().binding {
+                        HealthCheckServer.start(config).bind()
+                        VesServer.start(config).bind()
+                                .await().bind()
+                    }.fix()
                 }
                 .unsafeRunEitherSync(
                         { ex ->
@@ -53,24 +57,40 @@ fun main(args: Array<String>) =
                         { logger.info("Gentle shutdown") }
                 )
 
-private fun createServer(config: ServerConfiguration): Server {
-    val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
-    val collectorProvider = CollectorFactory(
-            AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
-            sink,
-            MicrometerMetrics()
-    ).createVesHvCollectorProvider()
+abstract class ServerStarter {
+    fun start(config: ServerConfiguration): IO<ServerHandle> =
+            startServer(config)
+                    .map { logger.info(serverStartedMessage(it)); it }
 
-    return ServerFactory.createNettyTcpServer(config, collectorProvider)
+    protected abstract fun startServer(config: ServerConfiguration): IO<ServerHandle>
+    protected abstract fun serverStartedMessage(handle: ServerHandle): String
 }
 
-private fun logServerStarted(handle: ServerHandle): ServerHandle = handle.also {
-    logger.info("HighVolume VES Collector is up and listening on ${it.host}:${it.port}")
+object VesServer : ServerStarter() {
+    override fun startServer(config: ServerConfiguration): IO<ServerHandle> = createVesServer(config).start()
+
+    private fun createVesServer(config: ServerConfiguration): Server {
+        val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
+        val collectorProvider = CollectorFactory(
+                AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
+                sink,
+                MicrometerMetrics()
+        ).createVesHvCollectorProvider()
+
+        return ServerFactory.createNettyTcpServer(config, collectorProvider)
+    }
+
+    override fun serverStartedMessage(handle: ServerHandle) =
+            "HighVolume VES Collector is up and listening on ${handle.host}:${handle.port}"
 }
 
-private fun startHealthCheckApiServer(config: ServerConfiguration): ServerConfiguration = config.apply {
-    HealthCheckApiServer(HealthStateProvider.INSTANCE)
-            .start(healthCheckApiPort)
-            .unsafeRunSync()
-            .also { logger.info("Health check api server started on port ${it.bindPort}") }
+object HealthCheckServer : ServerStarter() {
+    override fun startServer(config: ServerConfiguration) = createHealthCheckServer(config).start()
+
+    private fun createHealthCheckServer(config: ServerConfiguration) =
+            HealthCheckApiServer(HealthState.INSTANCE, config.healthCheckApiPort)
+
+    override fun serverStartedMessage(handle: ServerHandle) =
+            "Health check server is up and listening on ${handle.host}:${handle.port}"
+
 }

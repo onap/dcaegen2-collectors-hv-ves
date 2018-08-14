@@ -80,8 +80,8 @@
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>ves-hv-collector/${project.artifactId}</docker-image.name>
-        <docker.http_proxy> </docker.http_proxy>
-        <docker.https_proxy> </docker.https_proxy>
+        <docker.http_proxy></docker.http_proxy>
+        <docker.https_proxy></docker.https_proxy>
     </properties>
 
 
@@ -116,6 +116,7 @@
                     <version>${kotlin.version}</version>
                     <configuration>
                         <jvmTarget>1.8</jvmTarget>
+                        <experimentalCoroutines>enable</experimentalCoroutines>
                     </configuration>
                     <executions>
                         <execution>
@@ -261,9 +262,9 @@
         <profile>
             <id>analysis</id>
             <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <build>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
@@ -445,7 +446,8 @@
                                 <images>
                                     <image>
                                         <alias>${project.artifactId}</alias>
-                                        <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}</name>
+                                        <name>${docker-image.registry}/${docker-image.namespace}/${docker-image.name}
+                                        </name>
                                         <build>
                                             <!--
                                             <args>
