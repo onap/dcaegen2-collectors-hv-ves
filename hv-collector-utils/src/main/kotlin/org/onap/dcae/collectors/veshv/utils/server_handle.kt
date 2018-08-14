@@ -17,21 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.boundary
+package org.onap.dcae.collectors.veshv.utils
 
 import arrow.effects.IO
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.ByteBufAllocator
-import org.onap.dcae.collectors.veshv.utils.ServerHandle
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import reactor.ipc.netty.tcp.BlockingNettyContext
 
-interface Collector {
-    fun handleConnection(alloc: ByteBufAllocator, dataStream: Flux<ByteBuf>): Mono<Void>
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since August 2018
+ */
+abstract class ServerHandle(val host: String, val port: Int) {
+    abstract fun shutdown(): IO<Unit>
+    abstract fun await(): IO<Unit>
 }
 
-typealias CollectorProvider = () -> Collector
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since August 2018
+ */
+class NettyServerHandle(private val ctx: BlockingNettyContext) : ServerHandle(ctx.host, ctx.port) {
+    override fun shutdown() = IO {
+        ctx.shutdown()
+    }
 
-interface Server {
-    fun start(): IO<ServerHandle>
+    override fun await() = IO<Unit> {
+        ctx.context.channel().closeFuture().sync()
+    }
 }
