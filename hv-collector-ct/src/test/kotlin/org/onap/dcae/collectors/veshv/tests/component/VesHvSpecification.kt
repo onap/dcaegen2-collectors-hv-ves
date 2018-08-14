@@ -24,7 +24,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_HVRANMEAS_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.HVRANMEAS_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
@@ -351,7 +351,7 @@ object VesHvSpecification : Spek({
             it("should mark the application healthy") {
                 assertThat(sut.healthStateProvider.currentHealth)
                         .describedAs("application health state")
-                        .isEqualTo(HealthState.HEALTHY)
+                        .isEqualTo(HealthDescription.HEALTHY)
             }
         }
 
@@ -363,7 +363,7 @@ object VesHvSpecification : Spek({
             it("should mark the application unhealthy ") {
                 assertThat(sut.healthStateProvider.currentHealth)
                         .describedAs("application health state")
-                        .isEqualTo(HealthState.CONSUL_CONFIGURATION_NOT_FOUND)
+                        .isEqualTo(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
             }
         }
     }

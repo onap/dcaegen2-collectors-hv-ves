@@ -19,13 +19,12 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import org.onap.dcae.collectors.veshv.boundary.Server
-import org.onap.dcae.collectors.veshv.boundary.ServerHandle
-import org.onap.dcae.collectors.veshv.factory.CollectorFactory
-import org.onap.dcae.collectors.veshv.factory.ServerFactory
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthCheckApiServer
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
-import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
+import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.monad
+import arrow.typeclasses.binding
+import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
+import org.onap.dcae.collectors.veshv.main.servers.VesServer
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
@@ -38,13 +37,7 @@ private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainK
 fun main(args: Array<String>) =
         ArgVesHvConfiguration().parse(args)
                 .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-                .map(::startHealthCheckApiServer)
-                .map(::createServer)
-                .map {
-                    it.start()
-                            .map(::logServerStarted)
-                            .flatMap(ServerHandle::await)
-                }
+                .map(::startAndAwaitServers)
                 .unsafeRunEitherSync(
                         { ex ->
                             logger.error("Failed to start a server", ex)
@@ -53,24 +46,9 @@ fun main(args: Array<String>) =
                         { logger.info("Gentle shutdown") }
                 )
 
-private fun createServer(config: ServerConfiguration): Server {
-    val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
-    val collectorProvider = CollectorFactory(
-            AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
-            sink,
-            MicrometerMetrics()
-    ).createVesHvCollectorProvider()
-
-    return ServerFactory.createNettyTcpServer(config, collectorProvider)
-}
-
-private fun logServerStarted(handle: ServerHandle): ServerHandle = handle.also {
-    logger.info("HighVolume VES Collector is up and listening on ${it.host}:${it.port}")
-}
-
-private fun startHealthCheckApiServer(config: ServerConfiguration): ServerConfiguration = config.apply {
-    HealthCheckApiServer(HealthStateProvider.INSTANCE)
-            .start(healthCheckApiPort)
-            .unsafeRunSync()
-            .also { logger.info("Health check api server started on port ${it.bindPort}") }
-}
+private fun startAndAwaitServers(config: ServerConfiguration) =
+        IO.monad().binding {
+            HealthCheckServer.start(config).bind()
+            VesServer.start(config).bind()
+                    .await().bind()
+        }.fix()

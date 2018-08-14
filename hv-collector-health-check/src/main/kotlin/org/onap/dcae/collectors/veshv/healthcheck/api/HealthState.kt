@@ -19,16 +19,21 @@
  */
 package org.onap.dcae.collectors.veshv.healthcheck.api
 
-import org.onap.dcae.collectors.veshv.utils.http.Status.Companion.OK
-import org.onap.dcae.collectors.veshv.utils.http.Status.Companion.SERVICE_UNAVAILABLE
+import org.onap.dcae.collectors.veshv.healthcheck.impl.HealthStateImpl
+import reactor.core.publisher.Flux
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-enum class HealthState(val message: String, val responseCode: Int) {
-    HEALTHY("Healthy", OK),
-    STARTING("Collector is starting", SERVICE_UNAVAILABLE),
-    WAITING_FOR_CONSUL_CONFIGURATION("Waiting for consul configuration", SERVICE_UNAVAILABLE),
-    CONSUL_CONFIGURATION_NOT_FOUND("Consul configuration not found", SERVICE_UNAVAILABLE)
+interface HealthState {
+
+    operator fun invoke(): Flux<HealthDescription>
+    fun changeState(healthDescription: HealthDescription)
+
+    companion object {
+        val INSTANCE: HealthState by lazy {
+            HealthStateImpl()
+        }
+    }
 }

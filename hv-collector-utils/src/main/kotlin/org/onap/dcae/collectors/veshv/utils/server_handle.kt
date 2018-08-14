@@ -17,15 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.http
+package org.onap.dcae.collectors.veshv.utils
+
+import arrow.effects.IO
+import reactor.ipc.netty.tcp.BlockingNettyContext
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class Status {
-    companion object {
-        const val OK = 200
-        const val SERVICE_UNAVAILABLE = 503
+abstract class ServerHandle(val host: String, val port: Int) {
+    abstract fun shutdown(): IO<Unit>
+    abstract fun await(): IO<Unit>
+}
+
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since August 2018
+ */
+class NettyServerHandle(private val ctx: BlockingNettyContext) : ServerHandle(ctx.host, ctx.port) {
+    override fun shutdown() = IO {
+        ctx.shutdown()
+    }
+
+    override fun await() = IO<Unit> {
+        ctx.context.channel().closeFuture().sync()
     }
 }
