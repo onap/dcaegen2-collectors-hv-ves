@@ -20,8 +20,8 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -46,7 +46,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                                            private val url: String,
                                            private val firstRequestDelay: Duration,
                                            private val requestInterval: Duration,
-                                           private val healthStateProvider: HealthStateProvider,
+                                           private val healthState: HealthState,
                                            retrySpec: Retry<Any>
 
 ) : ConfigurationProvider {
@@ -55,7 +55,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
     private val retry = retrySpec
             .doOnRetry {
                 logger.warn("Could not get fresh configuration", it.exception())
-                healthStateProvider.changeState(HealthState.WAITING_FOR_CONSUL_CONFIGURATION)
+                healthState.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
             }
 
     constructor(http: HttpAdapter,
@@ -64,7 +64,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
             params.configurationUrl,
             params.firstRequestDelay,
             params.requestInterval,
-            HealthStateProvider.INSTANCE,
+            HealthState.INSTANCE,
             Retry.any<Any>()
                     .retryMax(MAX_RETRIES)
                     .fixedBackoff(params.requestInterval.dividedBy(BACKOFF_INTERVAL_FACTOR))
