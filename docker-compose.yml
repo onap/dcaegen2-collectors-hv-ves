@@ -1,6 +1,5 @@
-version: "2"
+version: "3.4"
 services:
-
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
@@ -29,14 +28,22 @@ services:
       command: ["-server", "-bootstrap", "-ui-dir", "/ui"]
 
   ves-hv-collector:
-    image: onap/ves-hv-collector
+    image: nexus3.onap.org:10003/onap/ves-hv-collector:latest
 #    build:
 #      context: hv-collector-main
 #      dockerfile: Dockerfile
     ports:
       - "6060:6060"
       - "6061:6061/tcp"
-    command: ["--listen-port", "6061","--config-url", "http://consul:8500/v1/kv/veshv-config"]
+    command: ["--listen-port", "6061",
+              "--health-check-api-port", "6060",
+              "--config-url", "http://consul:8500/v1/kv/veshv-config"]
+    healthcheck:
+      test: curl -f http://localhost:6060/health/ready || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 20s
     depends_on:
       - kafka
       - consul
@@ -44,7 +51,7 @@ services:
       - ./ssl/:/etc/ves-hv/
 
   xnf-simulator:
-    image: onap/ves-hv-collector-xnf-simulator
+    image: nexus3.onap.org:10003/onap/ves-hv-collector-xnf-simulator
 #    build:
 #      context: hv-collector-xnf-simulator
 #      dockerfile: Dockerfile
@@ -57,7 +64,7 @@ services:
       - ./ssl/:/etc/ves-hv/
 
   dcae-app-simulator:
-    image: onap/ves-hv-collector-dcae-simulator
+    image: nexus3.onap.org:10003/onap/ves-hv-collector-dcae-simulator
 #    build:
 #      context: hv-collector-dcae-app-simulator
 #      dockerfile: Dockerfile
