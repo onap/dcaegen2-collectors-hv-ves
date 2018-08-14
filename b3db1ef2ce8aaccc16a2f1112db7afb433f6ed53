@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_7d9f1960",
+        "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-08-14T11:18:32Z",
+      "side": 1,
+      "message": "I think extracting that lambda to a method would make the code cleaner",
+      "revId": "b3db1ef2ce8aaccc16a2f1112db7afb433f6ed53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bdce1182",
+        "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-08-14T11:18:32Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be better to extract these classes to separate files, or at least all 3 classes to one separate file?",
+      "revId": "b3db1ef2ce8aaccc16a2f1112db7afb433f6ed53",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
