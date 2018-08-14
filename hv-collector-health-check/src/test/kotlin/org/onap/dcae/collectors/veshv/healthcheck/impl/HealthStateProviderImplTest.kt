@@ -21,10 +21,9 @@ package org.onap.dcae.collectors.veshv.healthcheck.impl
 
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import reactor.test.StepVerifier
 
 /**
@@ -33,20 +32,20 @@ import reactor.test.StepVerifier
  */
 object HealthStateProviderImplTest : Spek({
     describe("Health state provider") {
-            val healthStateProviderImpl = HealthStateProviderImpl()
+            val healthStateProviderImpl = HealthStateImpl()
             on("health state update") {
-                healthStateProviderImpl.changeState(HealthState.HEALTHY)
-                healthStateProviderImpl.changeState(HealthState.WAITING_FOR_CONSUL_CONFIGURATION)
-                healthStateProviderImpl.changeState(HealthState.WAITING_FOR_CONSUL_CONFIGURATION)
-                healthStateProviderImpl.changeState(HealthState.CONSUL_CONFIGURATION_NOT_FOUND)
+                healthStateProviderImpl.changeState(HealthDescription.HEALTHY)
+                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
+                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
+                healthStateProviderImpl.changeState(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
 
                 it("should push new health state to the subscriber") {
                     StepVerifier
                             .create(healthStateProviderImpl().take(4))
-                            .expectNext(HealthState.HEALTHY)
-                            .expectNext(HealthState.WAITING_FOR_CONSUL_CONFIGURATION)
-                            .expectNext(HealthState.WAITING_FOR_CONSUL_CONFIGURATION)
-                            .expectNext(HealthState.CONSUL_CONFIGURATION_NOT_FOUND)
+                            .expectNext(HealthDescription.HEALTHY)
+                            .expectNext(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
+                            .expectNext(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
+                            .expectNext(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
                             .verifyComplete()
                 }
             }

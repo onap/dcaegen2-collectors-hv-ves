@@ -17,23 +17,26 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.api
+package org.onap.dcae.collectors.veshv.main.servers
 
-import org.onap.dcae.collectors.veshv.healthcheck.impl.HealthStateProviderImpl
-import reactor.core.publisher.Flux
+import arrow.effects.IO
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-interface HealthStateProvider {
+abstract class ServerStarter {
+    fun start(config: ServerConfiguration): IO<ServerHandle> =
+            startServer(config)
+                    .map { logger.info(serverStartedMessage(it)); it }
 
-    operator fun invoke(): Flux<HealthState>
-    fun changeState(healthState: HealthState)
+    protected abstract fun startServer(config: ServerConfiguration): IO<ServerHandle>
+    protected abstract fun serverStartedMessage(handle: ServerHandle): String
 
     companion object {
-        val INSTANCE: HealthStateProvider by lazy {
-            HealthStateProviderImpl()
-        }
+        private val logger = Logger(ServerStarter::class)
     }
 }

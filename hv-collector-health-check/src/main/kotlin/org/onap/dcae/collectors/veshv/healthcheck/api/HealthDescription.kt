@@ -19,36 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.healthcheck.api
 
-import arrow.effects.IO
-import ratpack.handling.Chain
-import ratpack.server.RatpackServer
-import ratpack.server.ServerConfig
-import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class HealthCheckApiServer(private val healthStateProvider: HealthStateProvider) {
-
-    private val healthState: AtomicReference<HealthState> = AtomicReference(HealthState.STARTING)
-
-    fun start(port: Int): IO<RatpackServer> = IO {
-        healthStateProvider().subscribe(healthState::set)
-        RatpackServer
-                .start {
-                    it
-                            .serverConfig(ServerConfig.embedded().port(port).development(false))
-                            .handlers(this::configureHandlers)
-                }
-    }
-
-    private fun configureHandlers(chain: Chain) {
-        chain
-                .get("healthcheck") { ctx ->
-                    healthState.get().run {
-                        ctx.response.status(responseCode).send(message)
-                    }
-                }
-    }
+enum class HealthDescription(val message: String, val status: HealthStatus) {
+    HEALTHY("Healthy", HealthStatus.UP),
+    STARTING("Collector is starting", HealthStatus.OUT_OF_SERVICE),
+    RETRYING_FOR_CONSUL_CONFIGURATION("Consul configuration not available. Retrying.", HealthStatus.OUT_OF_SERVICE),
+    CONSUL_CONFIGURATION_NOT_FOUND("Consul configuration not found", HealthStatus.DOWN)
 }

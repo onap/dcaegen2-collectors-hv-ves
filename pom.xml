@@ -87,6 +87,7 @@
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>${project.groupId}.${project.artifactId}</docker-image.name>
         <docker.http_proxy></docker.http_proxy>
+
     </properties>
 
 
@@ -121,6 +122,7 @@
                     <version>${kotlin.version}</version>
                     <configuration>
                         <jvmTarget>1.8</jvmTarget>
+                        <experimentalCoroutines>enable</experimentalCoroutines>
                     </configuration>
                     <executions>
                         <execution>

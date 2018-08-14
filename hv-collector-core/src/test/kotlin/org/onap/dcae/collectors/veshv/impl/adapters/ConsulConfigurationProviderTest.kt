@@ -28,8 +28,8 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.mockito.Mockito
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
@@ -47,7 +47,7 @@ internal object ConsulConfigurationProviderTest : Spek({
     describe("Consul configuration provider") {
 
         val httpAdapterMock: HttpAdapter = mock()
-        val healthStateProvider = HealthStateProvider.INSTANCE
+        val healthStateProvider = HealthState.INSTANCE
 
         given("valid resource url") {
             val validUrl = "http://valid-url/"
@@ -98,7 +98,7 @@ internal object ConsulConfigurationProviderTest : Spek({
                 it("should update the health state"){
                     StepVerifier.create(healthStateProvider().take(iterationCount))
                             .expectNextCount(iterationCount - 1)
-                            .expectNext(HealthState.WAITING_FOR_CONSUL_CONFIGURATION)
+                            .expectNext(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
                             .verifyComplete()
                 }
             }
@@ -109,7 +109,7 @@ internal object ConsulConfigurationProviderTest : Spek({
 
 private fun constructConsulConfigProvider(url: String,
                                           httpAdapter: HttpAdapter,
-                                          healthStateProvider: HealthStateProvider,
+                                          healthState: HealthState,
                                           iterationCount: Long = 1
 ): ConsulConfigurationProvider {
 
@@ -122,7 +122,7 @@ private fun constructConsulConfigProvider(url: String,
             url,
             firstRequestDelay,
             requestInterval,
-            healthStateProvider,
+            healthState,
             retry
     )
 }

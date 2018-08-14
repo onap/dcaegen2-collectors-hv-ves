@@ -17,23 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.impl
+package org.onap.dcae.collectors.veshv.main.servers
 
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import reactor.core.publisher.Flux
-import reactor.core.publisher.FluxProcessor
-import reactor.core.publisher.UnicastProcessor
+import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-internal class HealthStateProviderImpl : HealthStateProvider {
+object HealthCheckServer : ServerStarter() {
+    override fun startServer(config: ServerConfiguration) = createHealthCheckServer(config).start()
 
-    private val healthStateStream: FluxProcessor<HealthState, HealthState> = UnicastProcessor.create()
+    private fun createHealthCheckServer(config: ServerConfiguration) =
+            HealthCheckApiServer(HealthState.INSTANCE, config.healthCheckApiPort)
 
-    override fun invoke(): Flux<HealthState> = healthStateStream
-
-    override fun changeState(healthState: HealthState) = healthStateStream.onNext(healthState)
+    override fun serverStartedMessage(handle: ServerHandle) =
+            "Health check server is up and listening on ${handle.host}:${handle.port}"
 }

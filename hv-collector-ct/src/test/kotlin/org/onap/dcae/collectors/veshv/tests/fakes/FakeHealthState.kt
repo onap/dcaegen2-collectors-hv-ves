@@ -17,15 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.http
+package org.onap.dcae.collectors.veshv.tests.fakes
 
-/**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since August 2018
- */
-class Status {
-    companion object {
-        const val OK = 200
-        const val SERVICE_UNAVAILABLE = 503
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import reactor.core.publisher.Flux
+
+class FakeHealthState : HealthState {
+
+    lateinit var currentHealth: HealthDescription
+
+    override fun changeState(healthDescription: HealthDescription) {
+        currentHealth = healthDescription
+    }
+
+    override fun invoke(): Flux<HealthDescription> {
+        throw NotImplementedError()
     }
 }
