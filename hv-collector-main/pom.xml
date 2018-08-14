@@ -99,10 +99,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.ratpack</groupId>
-            <artifactId>ratpack-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.arrow-kt</groupId>
             <artifactId>arrow-core</artifactId>
         </dependency>

@@ -17,15 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.http
+package org.onap.dcae.collectors.veshv.healthcheck.impl
+
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
+import reactor.core.publisher.Flux
+import reactor.core.publisher.FluxProcessor
+import reactor.core.publisher.UnicastProcessor
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class Status {
-    companion object {
-        const val OK = 200
-        const val SERVICE_UNAVAILABLE = 503
-    }
+internal class HealthStateImpl : HealthState {
+
+    private val healthDescriptionStream: FluxProcessor<HealthDescription, HealthDescription> = UnicastProcessor.create()
+
+    override fun invoke(): Flux<HealthDescription> = healthDescriptionStream
+
+    override fun changeState(healthDescription: HealthDescription) = healthDescriptionStream.onNext(healthDescription)
 }
