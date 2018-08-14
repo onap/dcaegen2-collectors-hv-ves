@@ -17,23 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.api
+package org.onap.dcae.collectors.veshv.utils
 
-import org.onap.dcae.collectors.veshv.healthcheck.impl.HealthStateProviderImpl
-import reactor.core.publisher.Flux
+import arrow.effects.IO
+import reactor.ipc.netty.tcp.BlockingNettyContext
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-interface HealthStateProvider {
+abstract class ServerHandle(val host: String, val port: Int) {
+    abstract fun shutdown(): IO<Unit>
+    abstract fun await(): IO<Unit>
+}
 
-    operator fun invoke(): Flux<HealthState>
-    fun changeState(healthState: HealthState)
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since August 2018
+ */
+class NettyServerHandle(private val ctx: BlockingNettyContext) : ServerHandle(ctx.host, ctx.port) {
+    override fun shutdown() = IO {
+        ctx.shutdown()
+    }
 
-    companion object {
-        val INSTANCE: HealthStateProvider by lazy {
-            HealthStateProviderImpl()
-        }
+    override fun await() = IO<Unit> {
+        ctx.context.channel().closeFuture().sync()
     }
 }

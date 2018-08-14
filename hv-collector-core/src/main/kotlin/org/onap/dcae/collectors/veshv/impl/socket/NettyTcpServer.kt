@@ -24,15 +24,15 @@ import arrow.effects.IO
 import io.netty.handler.ssl.SslContext
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
-import org.onap.dcae.collectors.veshv.boundary.ServerHandle
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
 import reactor.ipc.netty.NettyInbound
 import reactor.ipc.netty.NettyOutbound
 import reactor.ipc.netty.options.ServerOptions
-import reactor.ipc.netty.tcp.BlockingNettyContext
 import reactor.ipc.netty.tcp.TcpServer
 import java.time.Duration
 import java.util.function.BiFunction
@@ -92,16 +92,6 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
             logger.info("Connection from ${remoteAddress()} has been closed")
         }
         return this
-    }
-
-    private class NettyServerHandle(val ctx: BlockingNettyContext) : ServerHandle(ctx.host, ctx.port) {
-        override fun shutdown() = IO {
-            ctx.shutdown()
-        }
-
-        override fun await() = IO<Unit> {
-            ctx.context.channel().closeFuture().sync()
-        }
     }
 
     companion object {
