@@ -82,6 +82,7 @@
 
         <!-- Docker -->
         <skipDocker>false</skipDocker>
+        <skipDockerPush>true</skipDockerPush>
         <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
@@ -420,6 +421,7 @@
                                 </execution>
                             </executions>
                             <configuration>
+                                <skipPush>${skipDockerPush}</skipPush>
                                 <verbose>true</verbose>
                                 <imagePullPolicy>IfNotPresent</imagePullPolicy>
                                 <images>
