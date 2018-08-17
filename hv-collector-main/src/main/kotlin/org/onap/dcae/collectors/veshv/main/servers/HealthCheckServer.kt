@@ -17,21 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.tests.fakes
+package org.onap.dcae.collectors.veshv.main.servers
 
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
-import reactor.core.publisher.Flux
+import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
 
-class FakeHealthStateProvider : HealthStateProvider {
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since August 2018
+ */
+object HealthCheckServer : ServerStarter() {
+    override fun startServer(config: ServerConfiguration) = createHealthCheckServer(config).start()
 
-    lateinit var currentHealth: HealthState
+    private fun createHealthCheckServer(config: ServerConfiguration) =
+            HealthCheckApiServer(HealthState.INSTANCE, config.healthCheckApiPort)
 
-    override fun changeState(healthState: HealthState) {
-        currentHealth = healthState
-    }
-
-    override fun invoke(): Flux<HealthState> {
-        throw NotImplementedError()
-    }
+    override fun serverStartedMessage(handle: ServerHandle) =
+            "Health check server is up and listening on ${handle.host}:${handle.port}"
 }

@@ -19,21 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.healthcheck.api
 
-import org.onap.dcae.collectors.veshv.healthcheck.impl.HealthStateProviderImpl
-import reactor.core.publisher.Flux
+import org.onap.dcae.collectors.veshv.utils.http.Status.Companion.OK
+import org.onap.dcae.collectors.veshv.utils.http.Status.Companion.SERVICE_UNAVAILABLE
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-interface HealthStateProvider {
-
-    operator fun invoke(): Flux<HealthState>
-    fun changeState(healthState: HealthState)
-
-    companion object {
-        val INSTANCE: HealthStateProvider by lazy {
-            HealthStateProviderImpl()
-        }
-    }
+enum class HealthStatus(val httpResponseStatus: Int) {
+    UP(OK),
+    DOWN(SERVICE_UNAVAILABLE),
+    OUT_OF_SERVICE(SERVICE_UNAVAILABLE),
+    UNKNOWN(SERVICE_UNAVAILABLE)
 }

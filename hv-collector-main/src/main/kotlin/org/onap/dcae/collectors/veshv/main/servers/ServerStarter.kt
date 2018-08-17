@@ -17,23 +17,26 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.impl
+package org.onap.dcae.collectors.veshv.main.servers
 
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import reactor.core.publisher.Flux
-import reactor.core.publisher.FluxProcessor
-import reactor.core.publisher.UnicastProcessor
+import arrow.effects.IO
+import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-internal class HealthStateProviderImpl : HealthStateProvider {
+abstract class ServerStarter {
+    fun start(config: ServerConfiguration): IO<ServerHandle> =
+            startServer(config)
+                    .map { logger.info(serverStartedMessage(it)); it }
 
-    private val healthStateStream: FluxProcessor<HealthState, HealthState> = UnicastProcessor.create()
+    protected abstract fun startServer(config: ServerConfiguration): IO<ServerHandle>
+    protected abstract fun serverStartedMessage(handle: ServerHandle): String
 
-    override fun invoke(): Flux<HealthState> = healthStateStream
-
-    override fun changeState(healthState: HealthState) = healthStateStream.onNext(healthState)
+    companion object {
+        private val logger = Logger(ServerStarter::class)
+    }
 }

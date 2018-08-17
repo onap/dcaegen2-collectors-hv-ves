@@ -25,8 +25,8 @@ import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthStateProvider
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicReference
 class CollectorFactory(val configuration: ConfigurationProvider,
                        private val sinkProvider: SinkProvider,
                        private val metrics: Metrics,
-                       private val healthStateProvider: HealthStateProvider = HealthStateProvider.INSTANCE) {
+                       private val healthState: HealthState = HealthState.INSTANCE) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
         val collector: AtomicReference<Collector> = AtomicReference()
@@ -50,11 +50,11 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                 .map(this::createVesHvCollector)
                 .doOnNext {
                     logger.info("Using updated configuration for new connections")
-                    healthStateProvider.changeState(HealthState.HEALTHY)
+                    healthState.changeState(HealthDescription.HEALTHY)
                 }
                 .doOnError {
                     logger.error("Failed to acquire configuration from consul")
-                    healthStateProvider.changeState(HealthState.CONSUL_CONFIGURATION_NOT_FOUND)
+                    healthState.changeState(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(collector::set)
         return collector::get
