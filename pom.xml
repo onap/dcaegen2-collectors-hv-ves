@@ -60,10 +60,11 @@
     </modules>
 
     <properties>
-        <kotlin.version>1.2.60</kotlin.version>
-        <arrow.version>0.7.2</arrow.version>
+        <kotlin.version>1.2.61</kotlin.version>
+        <arrow.version>0.7.3</arrow.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
+        <jacoco.version>0.8.1</jacoco.version>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.5.1</protobuf.version>
