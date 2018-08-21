@@ -42,7 +42,6 @@
 
     <properties>
         <skipAnalysis>false</skipAnalysis>
-        <docker-image.name>ves-hv-collector</docker-image.name>
     </properties>
 
     <build>
