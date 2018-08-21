@@ -142,7 +142,7 @@ object MessageGeneratorImplTest : Spek({
                                 assertThat(it.isValid()).isFalse()
                                 assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVRANMEAS)
-                                assertThat(it.version).isNotEqualTo(PayloadWireFrameMessage.SUPPORTED_VERSION)
+                                assertThat(it.versionMajor).isNotEqualTo(PayloadWireFrameMessage.SUPPORTED_VERSION_MINOR)
                             }
                             .verifyComplete()
                 }

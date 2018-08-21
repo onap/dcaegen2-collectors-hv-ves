@@ -71,6 +71,7 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                     PayloadWireFrameMessage(
                             payload,
                             UNSUPPORTED_VERSION,
+                            UNSUPPORTED_VERSION,
                             PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                             payload.size())
                 }
