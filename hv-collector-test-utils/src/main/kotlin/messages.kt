@@ -24,6 +24,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.RESERVED_BYTE_COUNT
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import java.util.UUID.randomUUID
 
@@ -31,9 +32,11 @@ import java.util.UUID.randomUUID
 val allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT
 
 private fun ByteBuf.writeValidWireFrameHeaders() {
-    writeByte(0xFF) // always 0xFF
-    writeByte(0x01)   // version
-    writeByte(0x01)   // content type = GPB
+    writeByte(0xFF)          // always 0xFF
+    writeByte(0x01)          // major version
+    writeByte(0x00)          // minor version
+    writeZero(RESERVED_BYTE_COUNT)  // reserved
+    writeByte(0x01)          // content type = GPB
 }
 
 fun vesWireFrameMessage(domain: Domain = Domain.OTHER,

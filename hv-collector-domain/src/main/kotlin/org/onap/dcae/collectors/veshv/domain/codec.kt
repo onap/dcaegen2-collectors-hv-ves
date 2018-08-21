@@ -25,6 +25,7 @@ import arrow.core.Right
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
+import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.RESERVED_BYTE_COUNT
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -36,7 +37,9 @@ class WireFrameEncoder(private val allocator: ByteBufAllocator) {
         val bb = allocator.buffer(PayloadWireFrameMessage.HEADER_SIZE + frame.payload.size())
 
         bb.writeByte(PayloadWireFrameMessage.MARKER_BYTE.toInt())
-        bb.writeByte(frame.version.toInt())
+        bb.writeByte(frame.versionMajor.toInt())
+        bb.writeByte(frame.versionMinor.toInt())
+        bb.writeZero(RESERVED_BYTE_COUNT)
         bb.writeByte(frame.payloadTypeRaw.toInt())
         bb.writeInt(frame.payloadSize)
         frame.payload.writeTo(bb)
@@ -92,9 +95,10 @@ class WireFrameDecoder {
     }
 
     private fun parsePayloadFrame(byteBuf: ByteBuf): Either<WireFrameDecodingError, PayloadWireFrameMessage> {
-        val version = byteBuf.readUnsignedByte()
+        val versionMajor = byteBuf.readUnsignedByte()
+        val versionMinor = byteBuf.readUnsignedByte()
+        byteBuf.skipBytes(RESERVED_BYTE_COUNT) // reserved
         val payloadTypeRaw = byteBuf.readUnsignedByte()
-
         val payloadSize = byteBuf.readInt()
 
         if (payloadSize > MAX_PAYLOAD_SIZE) {
@@ -109,7 +113,7 @@ class WireFrameDecoder {
 
         val payload = ByteData.readFrom(byteBuf, payloadSize)
 
-        return Right(PayloadWireFrameMessage(payload, version, payloadTypeRaw, payloadSize))
+        return Right(PayloadWireFrameMessage(payload, versionMajor, versionMinor, payloadTypeRaw, payloadSize))
 
     }
 }
