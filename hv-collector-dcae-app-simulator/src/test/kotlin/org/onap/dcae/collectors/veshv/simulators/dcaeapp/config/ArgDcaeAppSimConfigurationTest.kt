@@ -29,7 +29,7 @@ import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 
 
-internal class ArgDcaeAppSimulatorConfigurationTest : Spek({
+internal class ArgDcaeAppSimConfigurationTest : Spek({
 
     lateinit var cut: ArgDcaeAppSimConfiguration
     val listenPort = "1234"
