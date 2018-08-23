@@ -64,7 +64,7 @@
         <arrow.version>0.7.3</arrow.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
-        <jacoco.version>0.8.1</jacoco.version>
+        <jacoco.version>0.8.2</jacoco.version>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.5.1</protobuf.version>
@@ -464,19 +464,6 @@
     </profiles>
 
     <pluginRepositories>
-        <pluginRepository>
-            <id>40_openecomp-release</id>
-            <name>40_openecomp-release</name>
-            <url>https://nexus.onap.org/content/repositories/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-
         <pluginRepository>
             <id>arturbosch-code-analysis</id>
             <name>arturbosch-code-analysis (for detekt)</name>

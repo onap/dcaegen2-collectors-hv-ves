@@ -53,11 +53,21 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>default-report</id>
-                        <phase>package</phase>
+                        <id>jacoco-aggregate-report</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <!-- Exclute Protobuf-generated classes -->
+                                <exclude>org/onap/ves/*</exclude>
+                            </excludes>
+                            <dataFileIncludes>
+                                <dataFileInclude>**/jacoco-ut.exec</dataFileInclude>
+                                <dataFileInclude>**/jacoco-it.exec</dataFileInclude>
+                            </dataFileIncludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -77,12 +87,7 @@
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-main</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-utils</artifactId>
+            <artifactId>hv-collector-dcae-app-simulator</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
@@ -92,7 +97,17 @@
         </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-dcae-app-simulator</artifactId>
+            <artifactId>hv-collector-health-check</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-main</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
