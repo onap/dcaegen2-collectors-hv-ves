@@ -65,6 +65,7 @@
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.2</jacoco.version>
+        <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.5.1</protobuf.version>
