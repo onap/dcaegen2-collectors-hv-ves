@@ -31,7 +31,7 @@ import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.R
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class WireFrameEncoder(private val allocator: ByteBufAllocator) {
+class WireFrameEncoder(private val allocator: ByteBufAllocator = ByteBufAllocator.DEFAULT) {
 
     fun encode(frame: PayloadWireFrameMessage): ByteBuf {
         val bb = allocator.buffer(PayloadWireFrameMessage.HEADER_SIZE + frame.payload.size())
