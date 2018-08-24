@@ -20,7 +20,10 @@
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
+import arrow.core.Left
+import arrow.core.Right
 import arrow.effects.IO
+import reactor.core.publisher.Mono
 import kotlin.system.exitProcess
 
 /**
@@ -47,3 +50,8 @@ fun Either<IO<Unit>, IO<Unit>>.unsafeRunEitherSync(onError: (Throwable) -> ExitC
 
 
 fun IO<Any>.void() = map { Unit }
+
+
+fun <T> Mono<T>.asIo() = IO.async<T> { proc ->
+    subscribe({ proc(Right(it)) }, { proc(Left(it)) })
+}
