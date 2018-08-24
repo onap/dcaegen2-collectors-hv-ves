@@ -19,7 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote
 
+import arrow.core.Try
+import arrow.effects.FluxK
 import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.monad
+import arrow.typeclasses.binding
+import com.sun.org.apache.xpath.internal.operations.Bool
+import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerStateProvider
@@ -33,20 +40,86 @@ import ratpack.handling.Chain
 import ratpack.handling.Context
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
-import reactor.core.publisher.Mono
+import java.io.InputStream
 import javax.json.Json
+import org.onap.dcae.collectors.veshv.utils.arrow.asIo
+
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since August 2018
+ */
+class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
+                       private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE,
+                       private val messageGenerator: MessageGenerator = MessageGenerator.INSTANCE) {
+    private lateinit var consumerState: ConsumerStateProvider
+
+    fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))
+
+    fun listenToTopics(topics: Set<String>) = Try {
+        logger.info("Received new configuration. Creating consumer for topics: $topics")
+        consumerState = consumerFactory.createConsumerForTopics(topics)
+    }.toEither()
+
+    fun resetState() = consumerState.reset()
+
+    fun state() = consumerState.currentState()
+
+    fun validate(input: InputStream): IO<Boolean> =
+            IO.monad().binding {
+                val expectations = Json.createReader(input).readArray()
+                val messageParams = messageParametersParser.parse(expectations)
+                val expectedEvents = generateEvents(messageParams).bind()
+                val actualEvents = decodeConsumedEvents()
+                if (shouldValidatePayloads(messageParams)) {
+                    expectedEvents == actualEvents
+                } else {
+                    validateHeaders(actualEvents, expectedEvents)
+                }
+            }.fix()
+
+    private fun extractTopics(topicsString: String): Set<String> =
+            topicsString.substringAfter("=")
+                    .split(",")
+                    .toSet()
+
+    private fun shouldValidatePayloads(parameters: List<MessageParameters>) =
+            parameters.all { it.messageType == FIXED_PAYLOAD }
+
+
+    private fun validateHeaders(actual: List<VesEvent>, expected: List<VesEvent>): Boolean {
+        val consumedHeaders = actual.map { it.commonEventHeader }
+        val generatedHeaders = expected.map { it.commonEventHeader }
+        return generatedHeaders == consumedHeaders
+    }
+
+
+    private fun generateEvents(parameters: List<MessageParameters>): IO<List<VesEvent>> =
+            messageGenerator.createMessageFlux(parameters)
+                    .map(PayloadWireFrameMessage::payload)
+                    .map(ByteData::unsafeAsArray)
+                    .map(VesEvent::parseFrom)
+                    .collectList()
+                    .asIo()
+
+    private fun decodeConsumedEvents(): List<VesEvent> = consumerState
+            .currentState()
+            .consumedMessages
+            .map(VesEvent::parseFrom)
+
+    companion object {
+        private val logger = Logger(DcaeAppSimulator::class)
+    }
+}
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class ApiServer(private val consumerFactory: ConsumerFactory,
-                private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {
+class ApiServer(private val simulator: DcaeAppSimulator) {
 
-    private lateinit var consumerState: ConsumerStateProvider
 
     fun start(port: Int, kafkaTopics: Set<String>): IO<RatpackServer> = IO {
-        consumerState = consumerFactory.createConsumerForTopics(kafkaTopics)
+        simulator.listenToTopics(kafkaTopics) // check if it's eager
         RatpackServer.start { server ->
             server.serverConfig(ServerConfig.embedded().port(port))
                     .handlers(this::setupHandlers)
@@ -56,19 +129,19 @@ class ApiServer(private val consumerFactory: ConsumerFactory,
     private fun setupHandlers(chain: Chain) {
         chain
                 .put("configuration/topics") { ctx ->
-                    ctx.request.body.then { it ->
-                        val topics = extractTopics(it.text)
-                        logger.info("Received new configuration. Creating consumer for topics: $topics")
-                        consumerState = consumerFactory.createConsumerForTopics(topics)
-                        ctx.response
-                                .status(STATUS_OK)
+                    ctx.request.body.then { body ->
+                        simulator.listenToTopics(body.text)
+                                .fold(
+                                        { ctx.response.status(STATUS_INTERNAL_SERVER_ERROR) },
+                                        { ctx.response.status(STATUS_OK) }
+                                )
                                 .send()
                     }
 
                 }
                 .delete("messages") { ctx ->
                     ctx.response.contentType(CONTENT_TEXT)
-                    consumerState.reset()
+                    simulator.resetState()
                             .unsafeRunAsync {
                                 it.fold(
                                         { ctx.response.status(STATUS_INTERNAL_SERVER_ERROR) },
@@ -77,84 +150,33 @@ class ApiServer(private val consumerFactory: ConsumerFactory,
                             }
                 }
                 .get("messages/all/count") { ctx ->
-                    val state = consumerState.currentState()
                     ctx.response
                             .contentType(CONTENT_TEXT)
-                            .send(state.messagesCount.toString())
+                            .send(simulator.state().messagesCount.toString())
                 }
                 .post("messages/all/validate") { ctx ->
-                    ctx.request.body
-                            .map { Json.createReader(it.inputStream).readArray() }
-                            .map { messageParametersParser.parse(it) }
-                            .map { generateEvents(ctx, it) }
-                            .then { (generatedEvents, shouldValidatePayloads) ->
-                                generatedEvents
-                                        .doOnSuccess { sendResponse(ctx, it, shouldValidatePayloads) }
-                                        .block()
-                            }
+                    ctx.request.body.then { body ->
+                        simulator.validate(body.inputStream)
+                                .unsafeRunAsync { validationResult ->
+                                    val status = validationResult.fold(
+                                            { err ->
+                                                logger.warn("Error occurred when validating messages", err)
+                                                STATUS_INTERNAL_SERVER_ERROR
+                                            },
+                                            { isValid ->
+                                                if (isValid) STATUS_OK
+                                                else STATUS_BAD_REQUEST
+                                            }
+                                    )
+                                    ctx.response.status(status).send()
+                                }
+
+                    }
                 }
                 .get("healthcheck") { ctx ->
                     ctx.response.status(STATUS_OK).send()
                 }
     }
-
-    private fun generateEvents(ctx: Context, parameters: List<MessageParameters>):
-            Pair<Mono<List<VesEvent>>, Boolean> = Pair(
-
-            doGenerateEvents(parameters).doOnError {
-                logger.error("Error occurred when generating messages: $it")
-                ctx.response
-                        .status(STATUS_INTERNAL_SERVER_ERROR)
-                        .send()
-            },
-            parameters.all { it.messageType == FIXED_PAYLOAD }
-    )
-
-    private fun doGenerateEvents(parameters: List<MessageParameters>): Mono<List<VesEvent>> = MessageGenerator.INSTANCE
-            .createMessageFlux(parameters)
-            .map(PayloadWireFrameMessage::payload)
-            .map { decode(it.unsafeAsArray()) }
-            .collectList()
-
-
-    private fun decode(bytes: ByteArray): VesEvent = VesEvent.parseFrom(bytes)
-
-
-    private fun sendResponse(ctx: Context,
-                             generatedEvents: List<VesEvent>,
-                             shouldValidatePayloads: Boolean) =
-            resolveResponseStatusCode(
-                    generated = generatedEvents,
-                    consumed = decodeConsumedEvents(),
-                    validatePayloads = shouldValidatePayloads
-            ).let { ctx.response.status(it).send() }
-
-
-    private fun decodeConsumedEvents(): List<VesEvent> = consumerState
-            .currentState()
-            .consumedMessages
-            .map(::decode)
-
-
-    private fun resolveResponseStatusCode(generated: List<VesEvent>,
-                                          consumed: List<VesEvent>,
-                                          validatePayloads: Boolean): Int =
-            if (validatePayloads) {
-                if (generated == consumed) STATUS_OK else STATUS_BAD_REQUEST
-            } else {
-                validateHeaders(consumed, generated)
-            }
-
-    private fun validateHeaders(consumed: List<VesEvent>, generated: List<VesEvent>): Int {
-        val consumedHeaders = consumed.map { it.commonEventHeader }
-        val generatedHeaders = generated.map { it.commonEventHeader }
-        return if (generatedHeaders == consumedHeaders) STATUS_OK else STATUS_BAD_REQUEST
-    }
-
-    private fun extractTopics(it: String): Set<String> =
-            it.substringAfter("=")
-                    .split(",")
-                    .toSet()
 
     companion object {
         private val logger = Logger(ApiServer::class)

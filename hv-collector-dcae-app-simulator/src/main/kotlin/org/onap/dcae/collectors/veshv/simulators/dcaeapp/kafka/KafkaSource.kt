@@ -25,7 +25,6 @@ import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOptions
-import java.util.*
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -43,18 +42,22 @@ class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
         private val logger = Logger(KafkaSource::class)
 
         fun create(bootstrapServers: String, topics: Set<String>): KafkaSource {
-            val props = HashMap<String, Any>()
-            props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
-            props[ConsumerConfig.CLIENT_ID_CONFIG] = "hv-collector-dcae-app-simulator"
-            props[ConsumerConfig.GROUP_ID_CONFIG] = "hv-collector-simulators"
-            props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java
-            props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java
-            props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
-            val receiverOptions = ReceiverOptions.create<ByteArray, ByteArray>(props)
+            return KafkaSource(KafkaReceiver.create(createReceiverOptions(bootstrapServers, topics)))
+        }
+
+        fun createReceiverOptions(bootstrapServers: String, topics: Set<String>): ReceiverOptions<ByteArray, ByteArray>? {
+            val props = mapOf<String, Any>(
+                    ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
+                    ConsumerConfig.CLIENT_ID_CONFIG to "hv-collector-dcae-app-simulator",
+                    ConsumerConfig.GROUP_ID_CONFIG to "hv-collector-simulators",
+                    ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
+                    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
+                    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest"
+            )
+            return ReceiverOptions.create<ByteArray, ByteArray>(props)
                     .addAssignListener { partitions -> logger.debug { "Partitions assigned $partitions" } }
                     .addRevokeListener { partitions -> logger.debug { "Partitions revoked $partitions" } }
                     .subscription(topics)
-            return KafkaSource(KafkaReceiver.create(receiverOptions))
         }
     }
 }
