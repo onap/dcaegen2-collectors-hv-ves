@@ -40,7 +40,7 @@ import kotlin.test.fail
  */
 object WireFrameCodecsTest : Spek({
     val payloadAsString = "coffeebabe"
-    val encoder = WireFrameEncoder(UnpooledByteBufAllocator.DEFAULT)
+    val encoder = WireFrameEncoder()
     val decoder = WireFrameDecoder()
 
     fun createSampleFrame() =

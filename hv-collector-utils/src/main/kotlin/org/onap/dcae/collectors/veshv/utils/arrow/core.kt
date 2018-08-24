@@ -20,12 +20,15 @@
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
+import arrow.core.Option
 import arrow.core.identity
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since July 2018
  */
 
-
 fun <A> Either<A, A>.flatten() = fold(::identity, ::identity)
+
+fun <A> AtomicReference<A>.getOption() = Option.fromNullable(get())
