@@ -442,7 +442,7 @@
                                             -->
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
                                             <tags>
-                                                <tag>${project.version}-SNAPSHOT-${maven.build.timestamp}Z</tag>
+                                                <tag>${project.version}-${maven.build.timestamp}Z</tag>
                                                 <tag>${project.version}</tag>
                                                 <tag>latest</tag>
                                             </tags>
@@ -552,6 +552,11 @@
             <dependency>
                 <groupId>io.arrow-kt</groupId>
                 <artifactId>arrow-effects</artifactId>
+                <version>${arrow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.arrow-kt</groupId>
+                <artifactId>arrow-effects-reactor</artifactId>
                 <version>${arrow.version}</version>
             </dependency>
             <dependency>

@@ -20,10 +20,11 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.ArgDcaeAppSimConfiguration
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.config.DcaeAppSimConfiguration
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.kafka.ConsumerFactory
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.remote.ApiServer
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppSimConfiguration
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.ApiServer
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.arrow.void
@@ -50,7 +51,7 @@ fun main(args: Array<String>) =
 
 
 private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
-    return ApiServer(ConsumerFactory(config.kafkaBootstrapServers))
+    return ApiServer(DcaeAppSimulator(ConsumerFactory(config.kafkaBootstrapServers)))
             .start(config.apiPort, config.kafkaTopics)
             .void()
 }
