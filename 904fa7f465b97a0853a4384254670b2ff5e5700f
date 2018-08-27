@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_f70d4a38",
+        "filename": "hv-collector-coverage/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-27T12:47:38Z",
+      "side": 1,
+      "message": "This plugin is not defined in parent pom so we need to define version here",
+      "revId": "904fa7f465b97a0853a4384254670b2ff5e5700f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
