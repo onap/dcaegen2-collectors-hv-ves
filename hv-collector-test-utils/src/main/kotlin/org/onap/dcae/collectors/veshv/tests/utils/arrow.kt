@@ -17,22 +17,46 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.arrow
+package org.onap.dcae.collectors.veshv.tests.utils
 
 import arrow.core.Either
-import arrow.core.Option
 import arrow.core.identity
-import java.util.concurrent.atomic.AtomicReference
+import org.assertj.core.api.AbstractAssert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.ObjectAssert
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since July 2018
+ * @since September 2018
  */
+class EitherAssert<A, B>(actual: Either<A, B>)
+    : AbstractAssert<EitherAssert<A, B>, Either<A, B>>(actual, EitherAssert::class.java) {
 
-fun <A> Either<A, A>.flatten() = fold(::identity, ::identity)
+    fun isLeft(): EitherAssert<A, B> {
+        isNotNull()
+        isInstanceOf(Either.Left::class.java)
+        return myself
+    }
 
-fun <B> Either<Throwable, B>.rightOrThrow() = fold({ throw it }, ::identity)
+    fun left(): ObjectAssert<A> {
+        isLeft()
+        val left =  actual.fold(
+                ::identity,
+                { throw AssertionError("should be left") })
+        return assertThat(left)
+    }
 
-fun <A, B> Either<A, B>.rightOrThrow(mapper: (A) -> Throwable) = fold({ throw mapper(it) }, ::identity)
+    fun isRight(): EitherAssert<A, B> {
+        isNotNull()
+        isInstanceOf(Either.Right::class.java)
+        return myself
+    }
 
-fun <A> AtomicReference<A>.getOption() = Option.fromNullable(get())
+    fun right(): ObjectAssert<B> {
+        isRight()
+        val right =  actual.fold(
+                { throw AssertionError("should be right") },
+                ::identity)
+        return assertThat(right)
+    }
+}
