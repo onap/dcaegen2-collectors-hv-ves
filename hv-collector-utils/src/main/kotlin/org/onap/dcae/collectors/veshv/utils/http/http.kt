@@ -19,13 +19,46 @@
  */
 package org.onap.dcae.collectors.veshv.utils.http
 
+import arrow.typeclasses.Show
+
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class Status {
-    companion object {
-        const val OK = 200
-        const val SERVICE_UNAVAILABLE = 503
+object Http {
+    /**
+     * HTTP Status codes
+     */
+    enum class Status(val number: Int) {
+        OK(STATUS_OK),
+        BAD_REQUEST(STATUS_BAD_REQUEST),
+        NOT_FOUND(STATUS_NOT_FOUND),
+        INTERNAL_SERVER_ERROR(STATUS_INTERNAL_SERVER_ERROR),
+        SERVICE_UNAVAILABLE(STATUS_SERVICE_UNAVAILABLE)
     }
+
+    const val STATUS_OK = 200
+    const val STATUS_BAD_REQUEST = 400
+    const val STATUS_NOT_FOUND = 404
+    const val STATUS_INTERNAL_SERVER_ERROR = 500
+    const val STATUS_SERVICE_UNAVAILABLE = 503
+
+
+    /**
+     * Mime types
+     */
+    enum class ContentType(val value: String) {
+        JSON(CONTENT_TYPE_JSON)
+    }
+
+    const val CONTENT_TYPE_JSON = "application/json"
+
+
+    /**
+     * Response
+     */
+    data class Response(val status: Status, val content: Content<Any>)
+    data class Content<T>(val type: ContentType, val value: T, val serializer: Show<T> = Show.any())
 }
+
+
