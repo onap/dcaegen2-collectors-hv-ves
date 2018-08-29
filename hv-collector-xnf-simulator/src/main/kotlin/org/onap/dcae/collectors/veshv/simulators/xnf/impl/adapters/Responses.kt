@@ -17,17 +17,35 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.api
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.Status
+import org.onap.dcae.collectors.veshv.utils.http.Content
+import org.onap.dcae.collectors.veshv.utils.http.ContentType
 import org.onap.dcae.collectors.veshv.utils.http.HttpStatus
+import org.onap.dcae.collectors.veshv.utils.http.Response
+import java.util.*
+import javax.json.Json
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since September 2018
  */
-enum class HealthStatus(val httpResponseStatus: HttpStatus) {
-    UP(HttpStatus.OK),
-    DOWN(HttpStatus.SERVICE_UNAVAILABLE),
-    OUT_OF_SERVICE(HttpStatus.SERVICE_UNAVAILABLE),
-    UNKNOWN(HttpStatus.SERVICE_UNAVAILABLE)
+object Responses {
+
+    fun acceptedResponse(id: UUID): Response {
+        return Response(
+                HttpStatus.ACCEPTED,
+                Content(ContentType.TEXT, id)
+        )
+    }
+
+    fun statusResponse(status: Status): Response {
+        return Response(HttpStatus.OK,
+                Content(ContentType.JSON,
+                        Json.createObjectBuilder()
+                                .add("status", status.toString())
+                                .add("message", status.message)
+                                .build()))
+    }
 }

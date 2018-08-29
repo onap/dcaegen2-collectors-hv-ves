@@ -65,7 +65,7 @@
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.2</jacoco.version>
-        <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
+        <jacoco.minimum.coverage>67</jacoco.minimum.coverage>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.5.1</protobuf.version>
@@ -445,6 +445,7 @@
                                                 <https_proxy>${docker.http_proxy}</https_proxy>
                                             </args>
                                             -->
+                                            
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
                                             <tags>
                                                 <tag>${project.version}-${maven.build.timestamp}Z</tag>
@@ -523,6 +524,11 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-reflect</artifactId>
                 <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-coroutines-core</artifactId>
+                <version>0.25.0</version>
             </dependency>
             <dependency>
                 <groupId>io.arrow-kt</groupId>

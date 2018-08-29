@@ -19,98 +19,40 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
+import arrow.core.Either
+import arrow.core.Some
+import arrow.core.Try
+import arrow.core.fix
+import arrow.core.flatMap
+import arrow.core.monad
 import arrow.effects.IO
-import io.netty.handler.ssl.ClientAuth
-import io.netty.handler.ssl.SslContext
-import io.netty.handler.ssl.SslContextBuilder
-import io.netty.handler.ssl.SslProvider
-import org.onap.dcae.collectors.veshv.domain.EndOfTransmissionMessage
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.SimulatorConfiguration
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.reactivestreams.Publisher
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.core.publisher.ReplayProcessor
-import reactor.ipc.netty.NettyOutbound
-import reactor.ipc.netty.tcp.TcpClient
-
+import arrow.typeclasses.binding
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
+import java.io.InputStream
+import javax.json.Json
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since June 2018
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since August 2018
  */
-internal class XnfSimulator(private val configuration: SimulatorConfiguration) {
+class XnfSimulator(
+        private val vesClient: VesHvClient,
+        private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE,
+        private val messageGenerator: MessageGenerator = MessageGenerator.INSTANCE) {
 
-    private val client: TcpClient = TcpClient.builder()
-            .options { opts ->
-                opts.host(configuration.vesHost)
-                        .port(configuration.vesPort)
-                        .sslContext(createSslContext(configuration.security))
-            }
-            .build()
+    fun startSimulation(messageParameters: InputStream): Either<ParsingError, IO<Unit>> =
+            Either.monad<ParsingError>().binding {
+                val json = parseJsonArray(messageParameters).bind()
+                val parsed = messageParametersParser.parse(json).bind()
+                val generatedMessages = messageGenerator.createMessageFlux(parsed)
+                vesClient.sendIo(generatedMessages)
+            }.fix()
 
-    fun sendIo(messages: Flux<PayloadWireFrameMessage>) = IO<Unit> {
-        sendRx(messages).block()
-    }
-
-    fun sendRx(messages: Flux<PayloadWireFrameMessage>): Mono<Void> {
-        val complete = ReplayProcessor.create<Void>(1)
-        client
-                .newHandler { _, output -> handler(complete, messages, output) }
-                .doOnError {
-                    logger.info("Failed to connect to VesHvCollector on " +
-                            "${configuration.vesHost}:${configuration.vesPort}")
-                }
-                .subscribe {
-                    logger.info("Connected to VesHvCollector on " +
-                            "${configuration.vesHost}:${configuration.vesPort}")
-                }
-        return complete.then()
-    }
-
-    private fun handler(complete: ReplayProcessor<Void>,
-                        messages: Flux<PayloadWireFrameMessage>,
-                        nettyOutbound: NettyOutbound): Publisher<Void> {
-
-        val allocator = nettyOutbound.alloc()
-        val encoder = WireFrameEncoder(allocator)
-        val frames = messages
-                .map(encoder::encode)
-                .window(MAX_BATCH_SIZE)
-
-        return nettyOutbound
-                .logConnectionClosed()
-                .options { it.flushOnBoundary() }
-                .sendGroups(frames)
-                .send(Mono.just(allocator.buffer().writeByte(eotMessageByte.toInt())))
-                .then {
-                    logger.info("Messages have been sent")
-                    complete.onComplete()
-                }
-                .then()
-    }
-
-    private fun createSslContext(config: SecurityConfiguration): SslContext =
-            SslContextBuilder.forClient()
-                    .keyManager(config.cert.toFile(), config.privateKey.toFile())
-                    .trustManager(config.trustedCert.toFile())
-                    .sslProvider(SslProvider.OPENSSL)
-                    .clientAuth(ClientAuth.REQUIRE)
-                    .build()
-
-    private fun NettyOutbound.logConnectionClosed(): NettyOutbound {
-        context().onClose {
-            logger.info { "Connection to ${context().address()} has been closed" }
-        }
-        return this
-    }
-
-    companion object {
-        private val logger = Logger(XnfSimulator::class)
-        private const val MAX_BATCH_SIZE = 128
-        private const val eotMessageByte = EndOfTransmissionMessage.MARKER_BYTE
-    }
+    private fun parseJsonArray(jsonStream: InputStream) =
+            Try {
+                Json.createReader(jsonStream).readArray()
+            }.toEither().mapLeft { ParsingError("failed to parse JSON", Some(it)) }
 }
