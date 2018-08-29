@@ -19,9 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
-import org.onap.dcae.collectors.veshv.simulators.xnf.config.ArgXnfSimulatorConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.HttpServer
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.ArgXnfSimulatorConfiguration
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.HttpServer
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.arrow.void
@@ -39,7 +39,7 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
 fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
         .map {config ->
-            XnfSimulator(config)
+            VesHvClient(config)
                     .let { HttpServer(it) }
                     .start(config.listenPort)
                     .void()

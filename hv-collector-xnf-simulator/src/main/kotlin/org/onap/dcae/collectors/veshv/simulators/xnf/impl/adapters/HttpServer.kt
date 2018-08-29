@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -35,7 +35,7 @@ import javax.json.Json
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal class HttpServer(private val vesClient: XnfSimulator,
+internal class HttpServer(private val vesClient: VesHvClient,
                           private val messageParametersParser: MessageParametersParser = INSTANCE) {
 
     fun start(port: Int): IO<RatpackServer> = IO {
