@@ -28,7 +28,7 @@ services:
       command: ["-server", "-bootstrap", "-ui-dir", "/ui"]
 
   ves-hv-collector:
-    image: nexus3.onap.org:10003/onap/ves-hv-collector:latest
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:latest
 #    build:
 #      context: hv-collector-main
 #      dockerfile: Dockerfile
@@ -51,7 +51,7 @@ services:
       - ./ssl/:/etc/ves-hv/
 
   xnf-simulator:
-    image: nexus3.onap.org:10003/onap/ves-hv-collector-xnf-simulator
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator
 #    build:
 #      context: hv-collector-xnf-simulator
 #      dockerfile: Dockerfile
@@ -64,7 +64,7 @@ services:
       - ./ssl/:/etc/ves-hv/
 
   dcae-app-simulator:
-    image: nexus3.onap.org:10003/onap/ves-hv-collector-dcae-simulator
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator
 #    build:
 #      context: hv-collector-dcae-app-simulator
 #      dockerfile: Dockerfile

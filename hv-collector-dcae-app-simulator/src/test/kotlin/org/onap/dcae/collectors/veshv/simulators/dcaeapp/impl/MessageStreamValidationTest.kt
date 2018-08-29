@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 import arrow.core.Either
 import arrow.core.Left
 import arrow.core.None
+import arrow.core.Right
 import arrow.core.Some
 import arrow.effects.IO
 import javax.json.stream.JsonParsingException
@@ -67,7 +68,7 @@ internal class MessageStreamValidationTest : Spek({
     }
 
     fun givenParsedMessageParameters(vararg params: MessageParameters) {
-        whenever(messageParametersParser.parse(any())).thenReturn(params.toList())
+        whenever(messageParametersParser.parse(any())).thenReturn(Right(params.toList()))
     }
 
     describe("validate") {

@@ -19,9 +19,12 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
+import arrow.core.Option
+import arrow.core.Try
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
 import javax.json.JsonArray
 
 /**
@@ -32,8 +35,8 @@ internal class MessageParametersParserImpl(
         private val commonEventHeaderParser: CommonEventHeaderParser = CommonEventHeaderParser()
 ) : MessageParametersParser {
 
-    override fun parse(request: JsonArray): List<MessageParameters> =
-            try {
+    override fun parse(request: JsonArray) =
+            Try {
                 request
                         .map { it.asJsonObject() }
                         .map {
@@ -41,13 +44,13 @@ internal class MessageParametersParserImpl(
                                     .parse(it.getJsonObject("commonEventHeader"))
                             val messageType = MessageType.valueOf(it.getString("messageType"))
                             val messagesAmount = it.getJsonNumber("messagesAmount")?.longValue()
-                                    ?: throw ParsingException("\"messagesAmount\" could not be parsed from message.",
-                                            NullPointerException())
+                                    ?: throw NullPointerException("\"messagesAmount\" could not be parsed from message.")
                             MessageParameters(commonEventHeader, messageType, messagesAmount)
                         }
-            } catch (e: Exception) {
-                throw ParsingException("Parsing request body failed", e)
+            }.toEither().mapLeft { ex ->
+                ParsingError(
+                        ex.message ?: "Unable to parse message parameters",
+                        Option.fromNullable(ex))
             }
 
-    internal class ParsingException(message: String, cause: Exception) : Exception(message, cause)
 }
