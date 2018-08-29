@@ -24,11 +24,10 @@ import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppS
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.MessageStreamValidation
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.ApiServer
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.DcaeAppApiServer
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
-import org.onap.dcae.collectors.veshv.utils.arrow.void
+import org.onap.dcae.collectors.veshv.utils.arrow.unit
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
@@ -52,7 +51,7 @@ fun main(args: Array<String>) =
 
 
 private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
-    return ApiServer(DcaeAppSimulator(ConsumerFactory(config.kafkaBootstrapServers)))
+    return DcaeAppApiServer(DcaeAppSimulator(ConsumerFactory(config.kafkaBootstrapServers)))
             .start(config.apiPort, config.kafkaTopics)
-            .void()
+            .unit()
 }

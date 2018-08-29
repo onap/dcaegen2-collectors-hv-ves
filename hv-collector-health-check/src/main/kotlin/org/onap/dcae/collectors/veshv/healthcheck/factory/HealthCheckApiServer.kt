@@ -51,7 +51,7 @@ class HealthCheckApiServer(private val healthState: HealthState, private val por
 
     private fun readinessHandler(req: HttpServerRequest, resp: HttpServerResponse) =
             healthDescription.get().run {
-                resp.status(status.httpResponseStatus).sendString(Flux.just(status.toString(), "\n", message))
+                resp.status(status.httpResponseStatus.number).sendString(Flux.just(status.toString(), "\n", message))
             }
 
     private fun livenessHandler(req: HttpServerRequest, resp: HttpServerResponse) =

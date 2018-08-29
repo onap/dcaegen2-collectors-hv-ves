@@ -17,17 +17,39 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.api
+package org.onap.dcae.collectors.veshv.tests.utils
 
-import org.onap.dcae.collectors.veshv.utils.http.HttpStatus
+import arrow.core.Either
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since September 2018
  */
-enum class HealthStatus(val httpResponseStatus: HttpStatus) {
-    UP(HttpStatus.OK),
-    DOWN(HttpStatus.SERVICE_UNAVAILABLE),
-    OUT_OF_SERVICE(HttpStatus.SERVICE_UNAVAILABLE),
-    UNKNOWN(HttpStatus.SERVICE_UNAVAILABLE)
+
+private val logger = Logger("org.onap.dcae.collectors.veshv.tests.utils")
+
+object Assertions : org.assertj.core.api.Assertions() {
+    fun <A,B> assertThat(actual: Either<A, B>) = EitherAssert(actual)
+}
+
+
+fun waitUntilSucceeds(action: () -> Unit) = waitUntilSucceeds(50, Duration.ofMillis(10), action)
+
+fun waitUntilSucceeds(retries: Int, sleepTime: Duration, action: () -> Unit) {
+    var tryNum = 0
+    while (tryNum <= retries) {
+        tryNum++
+        try {
+            logger.debug("Try number $tryNum")
+            action()
+            break
+        } catch (ex: Throwable) {
+            if (tryNum >= retries)
+                throw ex
+            else
+                Thread.sleep(sleepTime.toMillis())
+        }
+    }
 }

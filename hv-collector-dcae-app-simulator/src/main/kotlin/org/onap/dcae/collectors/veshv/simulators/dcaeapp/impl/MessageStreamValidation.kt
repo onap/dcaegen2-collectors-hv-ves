@@ -54,10 +54,14 @@ class MessageStreamValidation(
         val expectations = Json.createReader(input).readArray()
         val messageParams = messageParametersParser.parse(expectations)
 
-        if (messageParams.isEmpty())
-            throw IllegalArgumentException("Message param list cannot be empty")
-
-        return messageParams
+        return messageParams.fold(
+                { throw IllegalArgumentException("Parsing error: " + it.message) },
+                {
+                    if (it.isEmpty())
+                        throw IllegalArgumentException("Message param list cannot be empty")
+                    it
+                }
+        )
     }
 
     private fun shouldValidatePayloads(parameters: List<MessageParameters>) =

@@ -20,13 +20,12 @@
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.assertj.core.api.Assertions.fail
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageParametersParserImpl.ParsingException
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
 import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageParametersParserImpl
 
@@ -45,18 +44,20 @@ object MessageParametersParserTest : Spek({
                 it("should parse MessagesParameters object successfully") {
                     val result = messageParametersParser.parse(validMessagesParametesJson())
 
-                    assertThat(result).isNotNull
-                    assertThat(result).hasSize(2)
-                    val firstMessage = result.first()
-                    assertThat(firstMessage.messageType).isEqualTo(MessageType.VALID)
-                    assertThat(firstMessage.amount).isEqualTo(EXPECTED_MESSAGES_AMOUNT)
+                    result.fold({ fail("should have succeeded") }) { rightResult ->
+                        assertThat(rightResult).hasSize(2)
+                        val firstMessage = rightResult.first()
+                        assertThat(firstMessage.messageType).isEqualTo(MessageType.VALID)
+                        assertThat(firstMessage.amount).isEqualTo(EXPECTED_MESSAGES_AMOUNT)
+
+                    }
                 }
             }
+
             on("invalid parameters json") {
                 it("should throw exception") {
-                    assertThatExceptionOfType(ParsingException::class.java).isThrownBy {
-                        messageParametersParser.parse(invalidMessagesParametesJson())
-                    }
+                    val result = messageParametersParser.parse(invalidMessagesParametesJson())
+                    assertThat(result.isLeft()).describedAs("is left").isTrue()
                 }
             }
         }
