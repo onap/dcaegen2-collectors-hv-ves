@@ -19,27 +19,25 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
 
-import arrow.core.Left
-import arrow.core.Right
 import arrow.effects.IO
 import arrow.effects.fix
 import arrow.effects.monad
 import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import ratpack.exec.Promise
+import org.onap.dcae.collectors.veshv.utils.http.bodyIo
+import org.onap.dcae.collectors.veshv.utils.http.sendOrError
+import org.onap.dcae.collectors.veshv.utils.http.sendStatusOrError
+import org.onap.dcae.collectors.veshv.utils.http.Http
 import ratpack.handling.Chain
-import ratpack.handling.Context
-import ratpack.http.Response
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
+import javax.json.Json
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
 class ApiServer(private val simulator: DcaeAppSimulator) {
-
 
     fun start(port: Int, kafkaTopics: Set<String>): IO<RatpackServer> =
             simulator.listenToTopics(kafkaTopics).map {
@@ -64,7 +62,7 @@ class ApiServer(private val simulator: DcaeAppSimulator) {
                 }
                 .get("messages/all/count") { ctx ->
                     simulator.state().fold(
-                            { ctx.response.status(STATUS_NOT_FOUND) },
+                            { ctx.response.status(Http.STATUS_NOT_FOUND) },
                             {
                                 ctx.response
                                         .contentType(CONTENT_TEXT)
@@ -72,58 +70,36 @@ class ApiServer(private val simulator: DcaeAppSimulator) {
                             })
                 }
                 .post("messages/all/validate") { ctx ->
-                    val responseStatus = IO.monad().binding {
+                    val response = IO.monad().binding {
                         val body = ctx.bodyIo().bind()
                         val isValid = simulator.validate(body.inputStream).bind()
                         if (isValid)
-                            STATUS_OK
+                            Http.Response(
+                                    Http.Status.OK,
+                                    Http.Body(
+                                            Http.ContentType.JSON,
+                                            Json.createObjectBuilder()
+                                                    .add("response", "valid")
+                                                    .build()))
                         else
-                            STATUS_BAD_REQUEST
+                            Http.Response(
+                                    Http.Status.BAD_REQUEST,
+                                    Http.Body(
+                                            Http.ContentType.JSON,
+                                            Json.createObjectBuilder()
+                                                    .add("response", "invalid")
+                                                    .add("error", "validation failed")
+                                                    .build()))
                     }.fix()
 
-                    ctx.response.sendStatusOrError(responseStatus)
+                    ctx.response.sendStatusOrError(response)
                 }
                 .get("healthcheck") { ctx ->
-                    ctx.response.status(STATUS_OK).send()
+                    ctx.response.status(Http.STATUS_OK).send()
                 }
-    }
-
-    private fun Context.bodyIo() = request.body.asIo()
-
-    private fun <T> Promise<T>.asIo(): IO<T> = IO.async { emitResult ->
-        onError {
-            emitResult(Left(it))
-        }.then { result ->
-            emitResult(Right(result))
-        }
-    }
-
-    private fun Response.sendOrError(responseStatus: IO<Unit>) {
-        sendStatusOrError(responseStatus.map { STATUS_OK })
-    }
-
-    private fun Response.sendStatusOrError(responseStatus: IO<Int>) {
-        responseStatus.unsafeRunAsync { cb ->
-            cb.fold(
-                    { err ->
-                        logger.warn("Error occurred. Sending HTTP$STATUS_INTERNAL_SERVER_ERROR.", err)
-                        status(ApiServer.STATUS_INTERNAL_SERVER_ERROR)
-                                .send(CONTENT_TEXT, err.message)
-                    },
-                    {
-                        status(it).send()
-                    }
-            )
-        }
     }
 
     companion object {
-        private val logger = Logger(ApiServer::class)
         private const val CONTENT_TEXT = "text/plain"
-
-        private const val STATUS_OK = 200
-        private const val STATUS_BAD_REQUEST = 400
-        private const val STATUS_NOT_FOUND = 404
-        private const val STATUS_INTERNAL_SERVER_ERROR = 500
     }
 }

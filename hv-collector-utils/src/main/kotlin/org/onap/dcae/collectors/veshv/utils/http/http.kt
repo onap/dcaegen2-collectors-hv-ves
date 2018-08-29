@@ -17,16 +17,48 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.config
+package org.onap.dcae.collectors.veshv.utils.http
 
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import arrow.typeclasses.Show
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since June 2018
+ * @since August 2018
  */
-internal data class SimulatorConfiguration(
-        val listenPort: Int,
-        val vesHost: String,
-        val vesPort: Int,
-        val security: SecurityConfiguration)
+object Http {
+    /**
+     * HTTP Status codes
+     */
+    enum class Status(val number: Int) {
+        OK(STATUS_OK),
+        BAD_REQUEST(STATUS_BAD_REQUEST),
+        NOT_FOUND(STATUS_NOT_FOUND),
+        INTERNAL_SERVER_ERROR(STATUS_INTERNAL_SERVER_ERROR),
+        SERVICE_UNAVAILABLE(STATUS_SERVICE_UNAVAILABLE)
+    }
+
+    const val STATUS_OK = 200
+    const val STATUS_BAD_REQUEST = 400
+    const val STATUS_NOT_FOUND = 404
+    const val STATUS_INTERNAL_SERVER_ERROR = 500
+    const val STATUS_SERVICE_UNAVAILABLE = 503
+
+
+    /**
+     * Mime types
+     */
+    enum class ContentType(val value: String) {
+        JSON(CONTENT_TYPE_JSON)
+    }
+
+    const val CONTENT_TYPE_JSON = "application/json"
+
+
+    /**
+     * Response
+     */
+    data class Response(val status: Status, val body: Body)
+    data class Body(val contentType: ContentType, val content: Any)
+}
+
+

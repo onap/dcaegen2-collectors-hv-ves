@@ -17,15 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.http
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
+
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since August 2018
+ * @since June 2018
  */
-class Status {
-    companion object {
-        const val OK = 200
-        const val SERVICE_UNAVAILABLE = 503
-    }
-}
+data class SimulatorConfiguration(
+        val listenPort: Int,
+        val vesHost: String,
+        val vesPort: Int,
+        val security: SecurityConfiguration)
