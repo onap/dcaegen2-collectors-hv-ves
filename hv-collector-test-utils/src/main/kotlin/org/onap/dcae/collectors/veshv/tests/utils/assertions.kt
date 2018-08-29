@@ -17,17 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.api
+package org.onap.dcae.collectors.veshv.tests.utils
 
-import org.onap.dcae.collectors.veshv.utils.http.HttpStatus
+import arrow.core.Either
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since September 2018
  */
-enum class HealthStatus(val httpResponseStatus: HttpStatus) {
-    UP(HttpStatus.OK),
-    DOWN(HttpStatus.SERVICE_UNAVAILABLE),
-    OUT_OF_SERVICE(HttpStatus.SERVICE_UNAVAILABLE),
-    UNKNOWN(HttpStatus.SERVICE_UNAVAILABLE)
+
+object Assertions : org.assertj.core.api.Assertions() {
+
+    fun <A,B> assertThat(actual: Either<A, B>) = EitherAssert(actual)
 }

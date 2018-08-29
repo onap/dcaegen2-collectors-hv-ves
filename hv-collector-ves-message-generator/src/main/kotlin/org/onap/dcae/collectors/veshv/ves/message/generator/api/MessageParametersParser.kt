@@ -19,11 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
+import arrow.core.Either
+import arrow.core.Option
 import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageParametersParserImpl
 import javax.json.JsonArray
 
 interface MessageParametersParser {
-    fun parse(request: JsonArray): List<MessageParameters>
+    fun parse(request: JsonArray): Either<ParsingError, List<MessageParameters>>
 
     companion object {
         val INSTANCE: MessageParametersParser by lazy {
@@ -31,3 +33,5 @@ interface MessageParametersParser {
         }
     }
 }
+
+data class ParsingError(val message: String, val cause: Option<Throwable>)
