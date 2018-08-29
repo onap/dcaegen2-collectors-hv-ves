@@ -31,4 +31,6 @@ import java.util.concurrent.atomic.AtomicReference
 
 fun <A> Either<A, A>.flatten() = fold(::identity, ::identity)
 
+fun <A> Either<Throwable, A>.rightOrThrow() = fold({ throw it }, ::identity)
+
 fun <A> AtomicReference<A>.getOption() = Option.fromNullable(get())

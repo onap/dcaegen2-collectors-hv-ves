@@ -149,7 +149,7 @@ object PerformanceSpecification : Spek({
 
             val outputDigest = digest.digest()
 
-            assertThat(actualTotalSize).isEqualTo(numberOfBuffers * singleBufferSize)
+            assertThat(actualTotalSize!!).isEqualTo(numberOfBuffers * singleBufferSize)
             assertThat(outputDigest).isEqualTo(inputDigest)
 
         }
