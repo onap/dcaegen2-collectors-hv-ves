@@ -17,9 +17,16 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
+import arrow.core.Either
 import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.monadError
+import arrow.typeclasses.bindingCatch
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
+import org.onap.dcae.collectors.veshv.utils.arrow.asIo
+import org.onap.dcae.collectors.veshv.utils.arrow.sendOrError
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
@@ -35,8 +42,7 @@ import javax.json.Json
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal class HttpServer(private val vesClient: XnfSimulator,
-                          private val messageParametersParser: MessageParametersParser = INSTANCE) {
+internal class HttpServer(private val xnfSimulator: XnfSimulator) {
 
     fun start(port: Int): IO<RatpackServer> = IO {
         RatpackServer.start { server ->
@@ -48,30 +54,46 @@ internal class HttpServer(private val vesClient: XnfSimulator,
     private fun configureHandlers(chain: Chain) {
         chain
                 .post("simulator/sync") { ctx ->
-                    ctx.request.body
-                            .map { Json.createReader(it.inputStream).readArray() }
-                            .map { messageParametersParser.parse(it) }
-                            .map { MessageGenerator.INSTANCE.createMessageFlux(it) }
-                            .map { vesClient.sendIo(it) }
-                            .map { it.unsafeRunSync() }
-                            .onError { handleException(it, ctx) }
-                            .then { sendAcceptedResponse(ctx) }
+                    val simulation = IO.monadError().bindingCatch {
+                        val body = ctx.request.body.asIo().bind()
+                        val simulationStartResult = xnfSimulator.startSimulation(body.inputStream)
+                        when(simulationStartResult) {
+                            is Either.Left ->
+                                throw simulationStartResult.a
+                            is Either.Right ->
+                                simulationStartResult.b.bind()
+                        }
+                    }.fix()
+                    ctx.response.sendOrError(simulation)
                 }
                 .post("simulator/async") { ctx ->
-                    ctx.request.body
-                            .map { Json.createReader(it.inputStream).readArray() }
-                            .map { messageParametersParser.parse(it) }
-                            .map { MessageGenerator.INSTANCE.createMessageFlux(it) }
-                            .map { vesClient.sendRx(it) }
-                            .map { it.subscribeOn(Schedulers.elastic()).subscribe() }
-                            .onError { handleException(it, ctx) }
-                            .then { sendAcceptedResponse(ctx) }
+                    ctx.request.body.then { body ->
+                        xnfSimulator.startSimulation(body.inputStream).fold(
+                                { error ->
+                                    handleException(error, ctx)
+                                },
+                                { simulationIo ->
+                                    startAsynchronousSimulation(simulationIo)
+                                    sendAcceptedResponse(ctx)
+                                }
+                        )
+                    }
                 }
                 .get("healthcheck") { ctx ->
                     ctx.response.status(STATUS_OK).send()
                 }
     }
 
+    fun startAsynchronousSimulation(simulationIo: IO<Unit>) {
+        simulationIo.unsafeRunAsync { cb ->
+            cb.fold(
+                    { logger.warn("Error", it) },
+                    { logger.info("Finished sending messages") }
+            )
+        }
+    }
+
+    // TODO: Move these two to ratpack utils
     private fun sendAcceptedResponse(ctx: Context) {
         ctx.response
                 .status(STATUS_OK)

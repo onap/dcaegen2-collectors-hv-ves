@@ -17,17 +17,45 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.healthcheck.api
+package org.onap.dcae.collectors.veshv.utils.arrow
 
+import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.utils.http.Http
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import ratpack.exec.Promise
+import ratpack.handling.Context
+import ratpack.http.Response
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-enum class HealthStatus(val httpResponseStatus: Http.Status) {
-    UP(Http.Status.OK),
-    DOWN(Http.Status.SERVICE_UNAVAILABLE),
-    OUT_OF_SERVICE(Http.Status.SERVICE_UNAVAILABLE),
-    UNKNOWN(Http.Status.SERVICE_UNAVAILABLE)
+
+private val logger = Logger("org.onap.dcae.collectors.veshv.utils.arrow.ratpack")
+
+fun <T> Promise<T>.asIo(): IO<T> = arrow.effects.IO.async { cb ->
+    then { result ->
+        cb(arrow.core.Right(result))
+    }
+}
+
+fun Context.bodyIo() = request.body.asIo()
+
+fun Response.sendOrError(responseStatus: IO<Unit>) {
+    sendStatusOrError(responseStatus.map { Http.Status.OK })
+}
+
+fun Response.sendStatusOrError(responseStatus: IO<Http.Status>) {
+    responseStatus.unsafeRunAsync { cb ->
+        cb.fold(
+                { err ->
+                    logger.warn("Error occurred. Sending .", err)
+                    status(Http.STATUS_INTERNAL_SERVER_ERROR)
+                            .send("text/plain", err.message)
+                },
+                {
+                    status(it.number).send()
+                }
+        )
+    }
 }
