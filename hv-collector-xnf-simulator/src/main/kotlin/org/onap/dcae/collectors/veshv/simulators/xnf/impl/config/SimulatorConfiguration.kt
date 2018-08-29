@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.config
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 
@@ -25,7 +25,7 @@ import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-internal data class SimulatorConfiguration(
+data class SimulatorConfiguration(
         val listenPort: Int,
         val vesHost: String,
         val vesPort: Int,

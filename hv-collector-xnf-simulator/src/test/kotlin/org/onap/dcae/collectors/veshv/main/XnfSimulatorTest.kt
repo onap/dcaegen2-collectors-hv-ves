@@ -17,31 +17,38 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl
+package org.onap.dcae.collectors.veshv.main
 
-import arrow.core.Either
-import arrow.core.Try
-import arrow.effects.IO
+import com.nhaarman.mockito_kotlin.mock
+import org.assertj.core.api.Assertions.fail
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
-import java.io.InputStream
-import javax.json.Json
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since September 2018
  */
-class XnfSimulator(
-        private val vesClient: VesHvClient,
-        private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE,
-        private val messageGenerator: MessageGenerator = MessageGenerator.INSTANCE) {
+internal class XnfSimulatorTest : Spek({
+    lateinit var cut: XnfSimulator
+    lateinit var vesClient: VesHvClient
+    lateinit var messageParametersParser: MessageParametersParser
+    lateinit var messageGenerator: MessageGenerator
 
-    fun startSimulation(messageParameters: InputStream): Either<Throwable, IO<Unit>> =
-            Try {
-                val json = Json.createReader(messageParameters).readArray()
-                val parsed = messageParametersParser.parse(json)
-                val generatedMessages = messageGenerator.createMessageFlux(parsed)
-                vesClient.sendIo(generatedMessages)
-            }.toEither()
-}
+    beforeEachTest {
+        vesClient = mock()
+        messageParametersParser = mock()
+        messageGenerator = mock()
+        cut = XnfSimulator(vesClient, messageParametersParser, messageGenerator)
+    }
+
+    describe("startSimulation") {
+        it("should fail ") {
+            fail("epicly")
+        }
+    }
+})

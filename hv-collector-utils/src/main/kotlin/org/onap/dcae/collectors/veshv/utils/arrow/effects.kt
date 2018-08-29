@@ -50,10 +50,14 @@ fun Either<IO<Unit>, IO<Unit>>.unsafeRunEitherSync(onError: (Throwable) -> ExitC
         flatten().attempt().unsafeRunSync().fold({ onError(it).io().unsafeRunSync() }, { onSuccess() })
 
 
-fun IO<Any>.void() = map { Unit }
+fun IO<Any>.unit() = map { Unit }
 
-fun <T> Mono<T>.asIo() = IO.async<T> { proc ->
-    subscribe({ proc(Right(it)) }, { proc(Left(it)) })
+fun <T> Mono<T>.asIo() = IO.async<T> { callback ->
+    subscribe({
+        callback(Right(it))
+    }, {
+        callback(Left(it))
+    })
 }
 
 fun <T> Flux<IO<T>>.evaluateIo(): Flux<T> =
