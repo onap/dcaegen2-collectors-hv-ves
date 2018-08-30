@@ -37,6 +37,42 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_5d98cbbf",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
+      "side": 1,
+      "message": "Yeah, Option is nicer here",
+      "parentUuid": "1a76adc5_e3cee22d",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fdf0b7ff",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_c36086a7",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_434d563d",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
         "patchSetId": 8
@@ -63,6 +99,24 @@
         "id": 2683
       },
       "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_434d563d",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3d8b8f69",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
       "side": 1,
       "message": "Done",
       "parentUuid": "1a76adc5_434d563d",
@@ -142,6 +196,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_1de57337",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/ApiServer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_836b6ef0",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_e33342a9",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/ApiServer.kt",
         "patchSetId": 8
@@ -171,6 +243,24 @@
       "side": 1,
       "message": "In the other MR I\u0027ve already started to extract enum for this. Let\u0027s fix it there.",
       "parentUuid": "1a76adc5_e33342a9",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_7ddca773",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/ApiServer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_c31ac67c",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -281,6 +371,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_3d8e2fd1",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/ConsumerTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_a671d8a9",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_63941243",
         "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
         "patchSetId": 8
@@ -310,6 +418,24 @@
       "side": 1,
       "message": "Generally I agree. But using this style in class-level unit tests yields some problems:\n* As you\u0027ve written - it requires us to do more work.\n* Having clean tests is very nice but it is more important in acceptance tests on component+ level. Class-scoped unit tests should be clean and easy to read but for developers. In other words: using suggested convention is very beneficial when writing executable specifications but not so much when writing unit tests.\n* It makes it very hard to use mocking. Mocks are statefull so each scenario should use fresh mocks. We can use Mockito.clearInvocations() but it is ugly, too. \"beforeEachTest\" is invoked before test blocks (that is \"is\" lambdas). So stubbing in \"given\" will yield exception.\n\nMy recommendation: let\u0027s leave it as is.",
       "parentUuid": "1a76adc5_63941243",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dd2e1b43",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
+      "side": 1,
+      "message": "I agree to leave it as is because of mocking problems. \n\nMy reasoning behind writing it in more specification-manner was that this class holds a lot of \"main\" logic for this module/component and with CSIT tests in place this module probably won\u0027t be given components tests :)\n\nI can see that with patch set 10 part of the logic was delegated, so it makes even more sense to leave it :)",
+      "parentUuid": "1a76adc5_e6da704b",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -380,6 +506,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "1a76adc5_a3854a08",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_dd393ba5",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-08-30T09:14:46Z",
+      "side": 1,
+      "message": "These calls can now be inlined :)",
+      "parentUuid": "1a76adc5_d2f04a69",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
