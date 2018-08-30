@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_e3cee22d",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "The problem is rather with AtomicReference being empty than with the ConsumerStateProvider. I can use Option so we can be more explicit here.",
+      "parentUuid": "1a76adc5_c36086a7",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_434d563d",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2018-08-29T12:47:07Z",
       "side": 1,
       "message": "We could extract Params parsing and validating to separate method\n```\nval messageParams \u003d extractMessageParameters(input)\nval expectedEvents \u003d generateEvents(messageParams).bind()\nval actualEvents \u003d decodeConsumedEvents()\n```",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_03a8be1e",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_434d563d",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_c365e61e",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/ApiServer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "Do you know how to do it? It looks like after refactor (move to another package) git lost the track of the history.",
+      "parentUuid": "1a76adc5_036afe80",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_c32e4643",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/ApiServer.kt",
         "patchSetId": 8
@@ -64,6 +118,24 @@
       "writtenOn": "2018-08-29T12:47:07Z",
       "side": 1,
       "message": "`asIo` method is nice and generic, however as it\u0027s used in this class twice in the same way, we could instead extend Context class\n```\n\nprivate fun Context.bodyIO() \u003d IO.async\u003cTypedData\u003e { cb -\u003e\n    request.body.then { result -\u003e\n        cb(Right(result))\n    }\n}\n```\nAlso tbh `cb` naming is not clear for me - is it `callback` abbreviation?",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_836b6ef0",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/ApiServer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "1. OK\n2. Exactly - quite straightforward, isn\u0027t it? Still better than \"k\" in Arrow definition :) :\n```\nfun \u003cA\u003e async(k: Proc\u003cA\u003e): IO\u003cA\u003e \u003d ...\n```",
+      "parentUuid": "1a76adc5_c32e4643",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_c31ac67c",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/ApiServer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "In the other MR I\u0027ve already started to extract enum for this. Let\u0027s fix it there.",
+      "parentUuid": "1a76adc5_e33342a9",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_6325f207",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/KafkaSource.kt",
         "patchSetId": 8
@@ -98,6 +188,24 @@
       "writtenOn": "2018-08-29T12:47:07Z",
       "side": 1,
       "message": "unused import",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a3154a4a",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/KafkaSource.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_6325f207",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -155,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_a671d8a9",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/ConsumerTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "1. OK\n2. Before should remain. Changing the order of tests can change the state (and fail the tests). Consumer is by definition a stateful class so we cannot do it. Or we can but it will be counter-intuitive for Spek newbies.",
+      "parentUuid": "1a76adc5_03ef5eea",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_63941243",
         "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
         "patchSetId": 8
@@ -166,6 +292,24 @@
       "writtenOn": "2018-08-29T12:47:07Z",
       "side": 1,
       "message": "We can avoid using these comments in whole file with Spek DSL:\n```\ndescribe(\"DcaeAppSimulator\") {\n    describe(\"configuration change\") {\n        given(\"empty topics set\")\n           val topics \u003d emptySet()\n           on(\"listenOnTopics\")\n               cut.listenOnTopics(topics)\n               it(\"should fail\") { assert }\n\n        given(\"set of topics with any empty string\")\n           val topics \u003d setOf(\"hvMeas\", \" \", \"faults\")\n           on(\"listenOnTopics\")\n               cut.listenOnTopics(topics)\n               it(\"should fail\") { assert }\n\n        given(\"valid set of topics\") {\n           val topics \u003d setOf(\"hvMeas\", \"faults\")\n           val topicsString \u003d topics.joinToString(\",\")\n\n           on(\"listenOnTopics called with set\")\n               cut.listenOnTopics(topics)\n               it(\"should subscribe to given topics\") { assert }\n           on(\"listenOnTopics called with comma separeted topics list\")\n               cut.listenOnTopics(topicsString)\n               it(\"should subscribe to given topics\") { assert }\n        }\n... etc.\n```\nIt may be little more effort with nesting, but I think readability is greatly enhanced and it does look then as specification :)",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_e6da704b",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "Generally I agree. But using this style in class-level unit tests yields some problems:\n* As you\u0027ve written - it requires us to do more work.\n* Having clean tests is very nice but it is more important in acceptance tests on component+ level. Class-scoped unit tests should be clean and easy to read but for developers. In other words: using suggested convention is very beneficial when writing executable specifications but not so much when writing unit tests.\n* It makes it very hard to use mocking. Mocks are statefull so each scenario should use fresh mocks. We can use Mockito.clearInvocations() but it is ugly, too. \"beforeEachTest\" is invoked before test blocks (that is \"is\" lambdas). So stubbing in \"given\" will yield exception.\n\nMy recommendation: let\u0027s leave it as is.",
+      "parentUuid": "1a76adc5_63941243",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -189,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_f2f54657",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_c38ac61a",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_a3854a08",
         "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
         "patchSetId": 8
@@ -206,6 +368,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_d2f04a69",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_a3854a08",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_43a556a0",
         "filename": "pom.xml",
         "patchSetId": 8
@@ -217,6 +397,24 @@
       "writtenOn": "2018-08-29T12:47:07Z",
       "side": 1,
       "message": "Let\u0027s add little explanation to commit message",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_92e652af",
+        "filename": "pom.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-30T06:44:43Z",
+      "side": 1,
+      "message": "It was opposed to be done quietly here :P",
+      "parentUuid": "1a76adc5_43a556a0",
       "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
