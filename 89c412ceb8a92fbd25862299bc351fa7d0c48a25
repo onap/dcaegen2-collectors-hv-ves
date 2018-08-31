@@ -530,6 +530,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_7615a13e",
+        "filename": "hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulatorTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-08-31T10:14:57Z",
+      "side": 1,
+      "message": "Yes it can be but from the readability point of view I find it more appropriate to be left inside \"given\" section.",
+      "parentUuid": "1a76adc5_dd393ba5",
+      "revId": "89c412ceb8a92fbd25862299bc351fa7d0c48a25",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_43a556a0",
         "filename": "pom.xml",
         "patchSetId": 8
