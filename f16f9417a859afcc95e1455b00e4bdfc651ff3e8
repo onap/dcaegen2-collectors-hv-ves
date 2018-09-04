@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_4ab7913a",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/CommandLineOption.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3987
+      },
+      "writtenOn": "2018-09-04T08:50:06Z",
+      "side": 1,
+      "message": "DEFAULT_ENV_PREFIX -\u003e Should that be \"VES\" or \"VESHV\"/\"HVVES\"?\nWe`re looking at HV-VES here, not plain VES..",
+      "revId": "f16f9417a859afcc95e1455b00e4bdfc651ff3e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
