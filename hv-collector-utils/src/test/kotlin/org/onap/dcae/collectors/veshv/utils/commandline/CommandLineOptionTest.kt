@@ -17,52 +17,46 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.arrow
+package org.onap.dcae.collectors.veshv.utils.commandline
 
-import arrow.core.None
-import arrow.core.Some
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.api.dsl.xdescribe
-import java.util.concurrent.atomic.AtomicReference
-
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
- * @since August 2018
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since September 2018
  */
-internal class CoreKtTest: Spek({
-    describe("AtomicReference.getOption") {
-        given("empty atomic reference") {
-            val atomicReference = AtomicReference<String>()
+class CommandLineOptionTest : Spek({
+    describe("command line options enum") {
+        describe("environment variables") {
+            given("sample option and prefix") {
+                val opt = CommandLineOption.KAFKA_SERVERS
+                val prefix = "CONFIG"
 
-            on("getOption") {
-                val result = atomicReference.getOption()
+                on("calling environmentVariableName") {
+                    val result = opt.environmentVariableName(prefix)
 
-                it("should be None") {
-                    assertThat(result).isEqualTo(None)
+                    it("should return prefixed upper snake cased long option name") {
+                        assertThat(result).isEqualTo("CONFIG_KAFKA_BOOTSTRAP_SERVERS")
+                    }
+                }
+            }
+
+            given("sample option without prefix") {
+                val opt = CommandLineOption.DUMMY_MODE
+
+                on("calling environmentVariableName") {
+                    val result = opt.environmentVariableName()
+
+                    it("should return prefixed upper snake cased long option name") {
+                        assertThat(result).isEqualTo("VES_DUMMY")
+                    }
                 }
             }
         }
-        given("non-empty atomic reference") {
-            val initialValue = "reksio"
-            val atomicReference = AtomicReference(initialValue)
-
-            on("getOption") {
-                val result = atomicReference.getOption()
-
-                it("should be Some($initialValue)") {
-                    assertThat(result).isEqualTo(Some(initialValue))
-                }
-            }
-        }
-    }
-
-    xdescribe("Option.fromNullablesChain") {
-
     }
 })

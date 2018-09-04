@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.utils.commandline
 
 import org.apache.commons.cli.Option
 
+const val DEFAULT_ENV_PREFIX = "VES"
 
 enum class CommandLineOption(val option: Option) {
     HEALTH_CHECK_API_PORT(Option.builder("H")
@@ -117,5 +118,10 @@ enum class CommandLineOption(val option: Option) {
             .longOpt("dummy")
             .desc("If present will start in dummy mode (dummy external services)")
             .build()
-    ),
+    );
+
+    fun environmentVariableName(prefix: String = DEFAULT_ENV_PREFIX): String =
+            option.longOpt.toUpperCase().replace('-', '_').let { mainPart ->
+                "${prefix}_${mainPart}"
+            }
 }
