@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_0a3439fa",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/arrow/core.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-04T11:23:13Z",
+      "side": 1,
+      "message": "The purpose of using provider functions is to support lazy evaluation. First argument will always be evaluated so it can be passed eagerly. There is no benefit (besides having more coherent api) in introducing this change.",
+      "parentUuid": "1a76adc5_8ab28992",
+      "revId": "f0c2de5fc6d107b58951fd6021e4b0ffd057a5a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_6a492db6",
         "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/CommandLineOption.kt",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2018-09-04T11:08:44Z",
       "side": 1,
       "message": "Let\u0027s put it in companion object - we can also use `lazy` for initialization as ENVS are not prime in the configuration resolution and there might be environment where we\u0027ll never use this variable",
+      "revId": "f0c2de5fc6d107b58951fd6021e4b0ffd057a5a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4a56b12b",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/CommandLineOption.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-04T11:23:13Z",
+      "side": 1,
+      "message": "OK for moving to companion\nNOK for using lazy - no real benefit",
+      "parentUuid": "1a76adc5_6a492db6",
       "revId": "f0c2de5fc6d107b58951fd6021e4b0ffd057a5a4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
