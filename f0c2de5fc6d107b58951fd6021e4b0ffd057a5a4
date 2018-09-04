@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_8ab28992",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/arrow/core.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-04T11:08:44Z",
+      "side": 1,
+      "message": "We could simplify it to use only varargs, this would also `standarize` parameters (\n``` fromNullablesChain({a}, {b}, {c})  ```\ninstead of\n``` fromNullablesChain(a, {b}, {c})    ```\n)",
+      "revId": "f0c2de5fc6d107b58951fd6021e4b0ffd057a5a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_6a492db6",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/CommandLineOption.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-04T11:08:44Z",
+      "side": 1,
+      "message": "Let\u0027s put it in companion object - we can also use `lazy` for initialization as ENVS are not prime in the configuration resolution and there might be environment where we\u0027ll never use this variable",
+      "revId": "f0c2de5fc6d107b58951fd6021e4b0ffd057a5a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
