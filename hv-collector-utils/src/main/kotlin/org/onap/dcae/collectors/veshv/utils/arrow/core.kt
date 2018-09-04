@@ -20,8 +20,12 @@
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
+import arrow.core.None
 import arrow.core.Option
+import arrow.core.Some
 import arrow.core.identity
+import arrow.syntax.collections.firstOption
+import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -32,3 +36,11 @@ import java.util.concurrent.atomic.AtomicReference
 fun <A> Either<A, A>.flatten() = fold(::identity, ::identity)
 
 fun <A> AtomicReference<A>.getOption() = Option.fromNullable(get())
+
+fun <A> Option.Companion.fromNullablesChain(firstValue: A?, vararg nextValues: () -> A?): Option<A> =
+        if (firstValue != null)
+            Option.just(firstValue)
+        else nextValues.asSequence()
+                .map { it() }
+                .filter { it != null }
+                .firstOption()

@@ -117,5 +117,14 @@ enum class CommandLineOption(val option: Option) {
             .longOpt("dummy")
             .desc("If present will start in dummy mode (dummy external services)")
             .build()
-    ),
+    );
+
+    fun environmentVariableName(prefix: String = DEFAULT_ENV_PREFIX): String =
+            option.longOpt.toUpperCase().replace('-', '_').let { mainPart ->
+                "${prefix}_${mainPart}"
+            }
+
+    companion object {
+        private const val DEFAULT_ENV_PREFIX = "VESHV"
+    }
 }

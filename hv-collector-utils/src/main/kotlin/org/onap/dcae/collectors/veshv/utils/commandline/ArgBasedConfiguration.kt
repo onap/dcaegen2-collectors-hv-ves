@@ -27,6 +27,7 @@ import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.Options
+import org.onap.dcae.collectors.veshv.utils.arrow.fromNullablesChain
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -77,6 +78,7 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
 
     protected fun stringPathToPath(path: String): Path = Paths.get(File(path).toURI())
 
-    private fun CommandLine.optionValue(cmdLineOpt: CommandLineOption): Option<String> =
-            Option.fromNullable(getOptionValue(cmdLineOpt.option.opt))
+    private fun CommandLine.optionValue(cmdLineOpt: CommandLineOption) = Option.fromNullablesChain(
+            getOptionValue(cmdLineOpt.option.opt),
+            { System.getenv(cmdLineOpt.environmentVariableName()) })
 }

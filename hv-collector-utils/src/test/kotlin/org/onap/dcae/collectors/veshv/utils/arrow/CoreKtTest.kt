@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.None
+import arrow.core.Option
 import arrow.core.Some
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -27,6 +28,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.jetbrains.spek.api.dsl.xdescribe
 import java.util.concurrent.atomic.AtomicReference
 
 
@@ -34,7 +36,7 @@ import java.util.concurrent.atomic.AtomicReference
  * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
  * @since August 2018
  */
-internal class CoreKtTest: Spek({
+internal class CoreKtTest : Spek({
     describe("AtomicReference.getOption") {
         given("empty atomic reference") {
             val atomicReference = AtomicReference<String>()
@@ -56,6 +58,83 @@ internal class CoreKtTest: Spek({
 
                 it("should be Some($initialValue)") {
                     assertThat(result).isEqualTo(Some(initialValue))
+                }
+            }
+        }
+    }
+
+    describe("Option.fromNullablesChain") {
+        given("one non-null element") {
+            val just = "some text"
+            on("calling factory") {
+                val result = Option.fromNullablesChain(just)
+
+                it("should return Some($just)") {
+                    assertThat(result).isEqualTo(Some(just))
+                }
+            }
+        }
+
+        given("one null element") {
+            val just: String? = null
+            on("calling factory") {
+                val result = Option.fromNullablesChain(just)
+
+                it("should return None") {
+                    assertThat(result).isEqualTo(None)
+                }
+            }
+        }
+
+        given("first non-null element") {
+            val first = "some text"
+            val second: String? = null
+            var secondAskedForValue = false
+            on("calling factory") {
+                val result = Option.fromNullablesChain(first, { secondAskedForValue = true; second })
+
+                it("should return Some($first)") {
+                    assertThat(result).isEqualTo(Some(first))
+                }
+
+                it("should have not called second provider (should be lazy)") {
+                    assertThat(secondAskedForValue).isFalse()
+                }
+            }
+        }
+
+        given("two non-null elements") {
+            val first = "some text"
+            val second = "another text"
+            on("calling factory") {
+                val result = Option.fromNullablesChain(first, { second })
+
+                it("should return Some($first)") {
+                    assertThat(result).isEqualTo(Some(first))
+                }
+            }
+        }
+
+        given("two null elements") {
+            val first: String? = null
+            val second: String? = null
+            on("calling factory") {
+                val result = Option.fromNullablesChain(first, { second })
+
+                it("should return None") {
+                    assertThat(result).isEqualTo(None)
+                }
+            }
+        }
+
+        given("second non-null element") {
+            val first: String? = null
+            val second = "another text"
+            on("calling factory") {
+                val result = Option.fromNullablesChain(first, { second })
+
+                it("should return Some($second)") {
+                    assertThat(result).isEqualTo(Some(second))
                 }
             }
         }
