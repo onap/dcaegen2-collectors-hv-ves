@@ -1,0 +1,9 @@
+{
+  "kafkaBootstrapServers": "message-router-kafka:9092",
+  "routing": [
+    {
+      "fromDomain": "HVMEAS",
+      "toTopic": "test-topic-1"
+    }
+  ]
+}
