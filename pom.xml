@@ -46,6 +46,7 @@
 
     <modules>
         <module>hv-collector-analysis</module>
+        <module>hv-collector-bootstrap</module>
         <module>hv-collector-core</module>
         <module>hv-collector-coverage</module>
         <module>hv-collector-ct</module>
