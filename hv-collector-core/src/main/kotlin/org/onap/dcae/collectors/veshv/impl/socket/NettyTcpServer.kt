@@ -70,21 +70,33 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                 .receive()
                 .retain()
 
-        return collectorProvider()
-                .handleConnection(nettyInbound.context().channel().alloc(), dataStream)
+        return collectorProvider().fold(
+                {
+                    logger.info { "Collector not ready. Closing connection from ${nettyInbound.remoteAddress()}..." }
+                    nettyInbound.disconnectClient()
+                    Mono.empty()
+                },
+                { it.handleConnection(nettyInbound.context().channel().alloc(), dataStream) })
+
     }
 
     private fun NettyInbound.configureIdleTimeout(timeout: Duration): NettyInbound {
         onReadIdle(timeout.toMillis()) {
-            logger.info { "Idle timeout of ${timeout.seconds} s reached. Disconnecting..." }
-            context().channel().close().addListener {
-                if (it.isSuccess)
-                    logger.debug { "Client disconnected because of idle timeout" }
-                else
-                    logger.warn("Channel close failed", it.cause())
+            logger.info {
+                "Idle timeout of ${timeout.seconds} s reached. Closing connection from ${remoteAddress()}..."
             }
+            disconnectClient()
         }
         return this
+    }
+
+    private fun NettyInbound.disconnectClient() {
+        context().channel().close().addListener {
+            if (it.isSuccess)
+                logger.debug { "Channel (${remoteAddress()}) closed successfully." }
+            else
+                logger.warn("Channel close failed", it.cause())
+        }
     }
 
     private fun NettyInbound.logConnectionClosed(): NettyInbound {
