@@ -32,6 +32,7 @@ import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.VesHvCollector
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.util.concurrent.atomic.AtomicReference
 
@@ -57,7 +58,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                     healthState.changeState(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(collector::set)
-        return collector::get
+        return collector::getOption
     }
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
