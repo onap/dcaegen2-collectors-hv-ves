@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import arrow.core.Option
 import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
@@ -30,7 +31,7 @@ interface Collector {
     fun handleConnection(alloc: ByteBufAllocator, dataStream: Flux<ByteBuf>): Mono<Void>
 }
 
-typealias CollectorProvider = () -> Collector
+typealias CollectorProvider = () -> Option<Collector>
 
 interface Server {
     fun start(): IO<ServerHandle>

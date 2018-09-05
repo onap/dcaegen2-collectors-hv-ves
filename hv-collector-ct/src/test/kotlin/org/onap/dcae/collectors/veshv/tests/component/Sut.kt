@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.tests.component
 
+import arrow.core.getOrElse
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.UnpooledByteBufAllocator
@@ -48,7 +49,7 @@ class Sut(sink: Sink = StoringSink()) {
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
-        get() = collectorProvider()
+        get() = collectorProvider().getOrElse{ throw IllegalStateException("Collector not available.") }
 }
 
 fun Sut.handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
