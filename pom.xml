@@ -57,6 +57,7 @@
         <module>hv-collector-utils</module>
         <module>hv-collector-ves-message-generator</module>
         <module>hv-collector-xnf-simulator</module>
+        <module>hv-collector-bootstrap</module>
     </modules>
 
     <properties>
