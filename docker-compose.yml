@@ -4,6 +4,8 @@ services:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+    depends_on:
+      - bootstrap
 
   kafka:
     image: wurstmeister/kafka
@@ -17,6 +19,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
+      - bootstrap
       - zookeeper
 
   consul:
@@ -26,6 +29,8 @@ services:
       environment:
         - CONSUL_BIND_INTERFACE=eth0
       command: ["-server", "-bootstrap", "-ui-dir", "/ui"]
+      depends_on:
+        - bootstrap
 
   ves-hv-collector:
     image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:latest
@@ -45,6 +50,7 @@ services:
       retries: 3
       start_period: 20s
     depends_on:
+      - bootstrap
       - kafka
       - consul
     volumes:
@@ -59,6 +65,7 @@ services:
       - "6062:6062/tcp"
     command: ["--listen-port", "6062", "--ves-host", "ves-hv-collector", "--ves-port", "6061"]
     depends_on:
+      - bootstrap
       - ves-hv-collector
     volumes:
       - ./ssl/:/etc/ves-hv/
@@ -72,4 +79,11 @@ services:
       - "6063:6063/tcp"
     command: ["--listen-port", "6063", "--kafka-bootstrap-servers", "kafka:9092", "--kafka-topics", "ves_hvRanMeas"]
     depends_on:
+      - bootstrap
       - kafka
+
+  bootstrap:
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-bootstrap
+    #    build:
+    #      context: hv-collector-bootstrap
+    #      dockerfile: Dockerfile
