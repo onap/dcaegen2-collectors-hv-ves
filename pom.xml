@@ -363,6 +363,19 @@
 
     <profiles>
         <profile>
+            <id>behind-proxy</id>
+            <activation>
+                <property>
+                    <name>docker.http_proxy</name>
+                </property>
+            </activation>
+            <properties>
+                <docker.buildArg.http_proxy>${docker.http_proxy}</docker.buildArg.http_proxy>
+                <docker.buildArg.https_proxy>${docker.http_proxy}</docker.buildArg.https_proxy>
+            </properties>
+        </profile>
+
+        <profile>
             <id>docker</id>
             <activation>
                 <property>
@@ -439,12 +452,6 @@
                                         </name>
                                         <registry>${docker-image.registry}</registry>
                                         <build>
-                                            <!--
-                                            <args>
-                                                <http_proxy>${docker.http_proxy}</http_proxy>
-                                                <https_proxy>${docker.http_proxy}</https_proxy>
-                                            </args>
-                                            -->
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
                                             <tags>
                                                 <tag>${project.version}-${maven.build.timestamp}Z</tag>
