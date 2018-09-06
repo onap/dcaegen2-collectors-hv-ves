@@ -17,19 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl
+package org.onap.dcae.collectors.veshv.domain
 
-import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
-import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventV5
 
-internal object MessageValidator {
-
-    fun isValid(message: VesMessage): Boolean {
-        return allMandatoryFieldsArePresent(message.header)
-    }
-
-    private fun allMandatoryFieldsArePresent(header: CommonEventHeader) =
-            headerRequiredFieldDescriptors
-                    .all { fieldDescriptor -> header.hasField(fieldDescriptor) }
-}
+val headerRequiredFieldDescriptors = listOf(
+        "version",
+        "eventName",
+        "domain",
+        "eventId",
+        "sourceName",
+        "reportingEntityName",
+        "priority",
+        "startEpochMicrosec",
+        "lastEpochMicrosec",
+        "sequence")
+        .map { fieldName -> VesEventV5.VesEvent.CommonEventHeader.getDescriptor().findFieldByName(fieldName) }
