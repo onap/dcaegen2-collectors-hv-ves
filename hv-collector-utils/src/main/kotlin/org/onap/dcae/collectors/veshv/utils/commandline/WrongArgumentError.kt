@@ -19,16 +19,20 @@
  */
 package org.onap.dcae.collectors.veshv.utils.commandline
 
+import arrow.core.Option
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 
 
 data class WrongArgumentError(
         val message: String,
-        private val options: Options,
-        val cause: Throwable? = null) {
+        val cause: Throwable? = null,
+        val cmdLineOptionsList: List<CommandLineOption>) {
 
-    constructor(par: Throwable, options: Options) : this(par.message ?: "", options, par)
+    constructor(par: Throwable, cmdLineOptionsList: List<CommandLineOption>) :
+            this(par.message ?: "",
+                    par,
+                    cmdLineOptionsList)
 
     fun printMessage() {
         println(message)
@@ -36,7 +40,28 @@ data class WrongArgumentError(
 
     fun printHelp(programName: String) {
         val formatter = HelpFormatter()
-        formatter.printHelp(programName, options)
+        val footer = "All parameters can be specified as environment variables using upper-snake-case full " +
+                "name with prefix `VESHV_`."
+
+        formatter.printHelp(
+                programName,
+                generateRequiredParametersNote(),
+                getOptions(),
+                footer)
     }
+
+    private fun getOptions(): Options = cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
+
+    private fun generateRequiredParametersNote(): String {
+        val requiredParams = Option.fromNullable(cmdLineOptionsList.filter { it.required }
+                .takeUnless { it.isEmpty() })
+        return requiredParams.fold(
+                { "" },
+                { it.map {commandLineOption -> commandLineOption.option.opt }
+                        .joinToString(prefix = "Required parameters: ", separator = ", ")
+                }
+        )
+    }
+
 }
 

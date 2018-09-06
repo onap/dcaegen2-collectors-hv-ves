@@ -20,12 +20,9 @@
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
-import arrow.core.None
 import arrow.core.Option
-import arrow.core.Some
 import arrow.core.identity
 import arrow.syntax.collections.firstOption
-import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 /**
