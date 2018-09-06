@@ -60,7 +60,7 @@
                         </goals>
                         <configuration>
                             <excludes>
-                                <!-- Exclute Protobuf-generated classes -->
+                                <!-- Exclude Protobuf-generated classes -->
                                 <exclude>org/onap/ves/*</exclude>
                             </excludes>
                             <dataFileIncludes>
@@ -84,6 +84,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skip>${skipTests}</skip>
                     <executable>${project.basedir}/check-coverage.sh</executable>
                     <workingDirectory>${project.basedir}</workingDirectory>
                     <arguments>
