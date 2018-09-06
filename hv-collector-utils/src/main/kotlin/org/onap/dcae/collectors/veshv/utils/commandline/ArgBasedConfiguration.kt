@@ -42,13 +42,14 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
         }
         return parseResult
                 .toEither()
-                .mapLeft { ex -> WrongArgumentError(ex, commandLineOptions) }
+                .mapLeft { ex -> WrongArgumentError(ex, commandLineOptions, cmdLineOptionsList) }
                 .map(this::getConfiguration)
                 .flatMap {
                     it.toEither {
                         WrongArgumentError(
-                                "Unexpected error when parsing command line arguments",
-                                commandLineOptions)
+                                message = "Unexpected error when parsing command line arguments",
+                                options = commandLineOptions,
+                                cmdLineOptionsList = cmdLineOptionsList)
                     }
                 }
     }

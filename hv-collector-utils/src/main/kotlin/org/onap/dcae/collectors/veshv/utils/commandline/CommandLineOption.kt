@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.utils.commandline
 import org.apache.commons.cli.Option
 
 
-enum class CommandLineOption(val option: Option) {
+enum class CommandLineOption(val option: Option, val required: Boolean = false) {
     HEALTH_CHECK_API_PORT(Option.builder("H")
             .longOpt("health-check-api-port")
             .hasArg()
@@ -31,17 +31,17 @@ enum class CommandLineOption(val option: Option) {
     ),
     LISTEN_PORT(Option.builder("p")
             .longOpt("listen-port")
-            .required()
             .hasArg()
             .desc("Listen port")
-            .build()
+            .build(),
+            required = true
     ),
     CONSUL_CONFIG_URL(Option.builder("c")
             .longOpt("config-url")
-            .required()
             .hasArg()
             .desc("URL of ves configuration on consul")
-            .build()
+            .build(),
+            required = true
     ),
     CONSUL_FIRST_REQUEST_DELAY(Option.builder("d")
             .longOpt("first-request-delay")
@@ -57,31 +57,31 @@ enum class CommandLineOption(val option: Option) {
     ),
     VES_HV_PORT(Option.builder("v")
             .longOpt("ves-port")
-            .required()
             .hasArg()
             .desc("VesHvCollector port")
-            .build()
+            .build(),
+            required = true
     ),
     VES_HV_HOST(Option.builder("h")
             .longOpt("ves-host")
-            .required()
             .hasArg()
             .desc("VesHvCollector host")
-            .build()
+            .build(),
+            required = true
     ),
     KAFKA_SERVERS(Option.builder("s")
             .longOpt("kafka-bootstrap-servers")
-            .required()
             .hasArg()
             .desc("Comma-separated Kafka bootstrap servers in <host>:<port> format")
-            .build()
+            .build(),
+            required = true
     ),
     KAFKA_TOPICS(Option.builder("f")
             .longOpt("kafka-topics")
-            .required()
             .hasArg()
             .desc("Comma-separated Kafka topics")
-            .build()
+            .build(),
+            required = true
     ),
     SSL_DISABLE(Option.builder("l")
             .longOpt("ssl-disable")

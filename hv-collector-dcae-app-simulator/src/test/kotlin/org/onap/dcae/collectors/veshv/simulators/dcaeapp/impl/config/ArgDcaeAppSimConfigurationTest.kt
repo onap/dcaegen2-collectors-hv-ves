@@ -115,7 +115,7 @@ internal class ArgDcaeAppSimConfigurationTest : Spek({
             given("listen port is missing") {
                 it("should throw exception") {
                     assertThat(cut.parseExpectingFailure(
-                            "-p", kafkaTopics,
+                            "-p", listenPort,
                             "-s", kafkaBootstrapServers
                     )).isInstanceOf(WrongArgumentError::class.java)
                 }
