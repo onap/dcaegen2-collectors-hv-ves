@@ -31,14 +31,12 @@ enum class CommandLineOption(val option: Option) {
     ),
     LISTEN_PORT(Option.builder("p")
             .longOpt("listen-port")
-            .required()
             .hasArg()
             .desc("Listen port")
             .build()
     ),
     CONSUL_CONFIG_URL(Option.builder("c")
             .longOpt("config-url")
-            .required()
             .hasArg()
             .desc("URL of ves configuration on consul")
             .build()
@@ -57,28 +55,24 @@ enum class CommandLineOption(val option: Option) {
     ),
     VES_HV_PORT(Option.builder("v")
             .longOpt("ves-port")
-            .required()
             .hasArg()
             .desc("VesHvCollector port")
             .build()
     ),
     VES_HV_HOST(Option.builder("h")
             .longOpt("ves-host")
-            .required()
             .hasArg()
             .desc("VesHvCollector host")
             .build()
     ),
     KAFKA_SERVERS(Option.builder("s")
             .longOpt("kafka-bootstrap-servers")
-            .required()
             .hasArg()
             .desc("Comma-separated Kafka bootstrap servers in <host>:<port> format")
             .build()
     ),
     KAFKA_TOPICS(Option.builder("f")
             .longOpt("kafka-topics")
-            .required()
             .hasArg()
             .desc("Comma-separated Kafka topics")
             .build()
