@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_363f1289",
+        "filename": "docker-compose.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-06T08:07:44Z",
+      "side": 1,
+      "message": "zookeeper, kafka, consul should not depend on HV-VES bootstrap. Our simulators probably also",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f673da7d",
+        "filename": "hv-collector-bootstrap/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-06T08:07:44Z",
+      "side": 1,
+      "message": "As java is not expected, let\u0027s change it to small shell-only linux",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_565baef5",
+        "filename": "hv-collector-bootstrap/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-06T08:07:44Z",
+      "side": 1,
+      "message": "No need to install curl",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d64fbe32",
+        "filename": "hv-collector-bootstrap/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-06T08:07:44Z",
+      "side": 1,
+      "message": "If this container will consist only of shell script then we don\u0027t need dep-plugin",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9665c6b6",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-06T08:07:44Z",
+      "side": 1,
+      "message": "Let\u0027s preserve alphabetical order",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
