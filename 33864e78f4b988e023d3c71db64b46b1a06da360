@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_bb90ebed",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-06T06:45:44Z",
+      "side": 1,
+      "message": "I\u0027d log it on WARN level",
+      "revId": "33864e78f4b988e023d3c71db64b46b1a06da360",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5bb99777",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-06T06:45:44Z",
+      "side": 1,
+      "message": "Will Mono.empty() returned from handler close the connection? If so, maybe we can skip this call.",
+      "revId": "33864e78f4b988e023d3c71db64b46b1a06da360",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1baf9f2b",
+        "filename": "hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/Sut.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-06T06:45:44Z",
+      "side": 1,
+      "message": "Use more specific IllegalStateException.",
+      "revId": "33864e78f4b988e023d3c71db64b46b1a06da360",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
