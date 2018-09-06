@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_d6fd7eb2",
+        "filename": "docker-compose.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-06T08:15:28Z",
+      "side": 1,
+      "message": "The even can\u0027t - how do you create topic in Kafka when there is no Kafka?\n\nBtw. - we will be using DMaaP BC API (as opposed to native Kafka API). So changes in this file can be dropped. As another task we can integrate DMaaP here and in CSIT (see https://jira.onap.org/browse/DCAEGEN2-663)",
+      "parentUuid": "1a76adc5_363f1289",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_f673da7d",
         "filename": "hv-collector-bootstrap/Dockerfile",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_963386aa",
+        "filename": "hv-collector-bootstrap/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-06T08:15:28Z",
+      "side": 1,
+      "message": "Alpine would be perfect here. Maybe byrnedo/alpine-curl ?",
+      "parentUuid": "1a76adc5_f673da7d",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_565baef5",
         "filename": "hv-collector-bootstrap/Dockerfile",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2018-09-06T08:07:44Z",
       "side": 1,
       "message": "No need to install curl",
+      "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3624f25e",
+        "filename": "hv-collector-bootstrap/Dockerfile",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-06T08:15:28Z",
+      "side": 1,
+      "message": "It might actually be needed to call DMaaP BC Rest API.",
+      "parentUuid": "1a76adc5_565baef5",
       "revId": "ff7149334f61fd9033f516bec90dc7d2f82c64bb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
