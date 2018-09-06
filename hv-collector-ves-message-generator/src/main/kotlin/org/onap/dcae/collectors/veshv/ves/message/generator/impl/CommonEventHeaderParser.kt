@@ -19,11 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
-import com.google.protobuf.ByteString
+import com.google.protobuf.util.JsonFormat
+import org.onap.ves.VesEventV5
 import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Priority
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.newBuilder
 import javax.json.JsonObject
 
 /**
@@ -31,22 +29,12 @@ import javax.json.JsonObject
  * @since July 2018
  */
 class CommonEventHeaderParser {
-    fun parse(json: JsonObject): CommonEventHeader = newBuilder()
-            .setVersion(json.getString("version"))
-            .setDomain(Domain.valueOf(json.getString("domain")))
-            .setSequence(json.getInt("sequence"))
-            .setPriority(Priority.forNumber(json.getInt("priority")))
-            .setEventId(json.getString("version"))
-            .setEventName(json.getString("version"))
-            .setEventType(json.getString("version"))
-            .setStartEpochMicrosec(json.getJsonNumber("startEpochMicrosec").longValue())
-            .setLastEpochMicrosec(json.getJsonNumber("lastEpochMicrosec").longValue())
-            .setNfNamingCode(json.getString("nfNamingCode"))
-            .setNfcNamingCode(json.getString("nfcNamingCode"))
-            .setReportingEntityId(json.getString("reportingEntityId"))
-            .setReportingEntityName(ByteString.copyFromUtf8(json.getString("reportingEntityName")))
-            .setSourceId(ByteString.copyFromUtf8(json.getString("sourceId")))
-            .setSourceName(json.getString("sourceName"))
-            .build()
+    fun parse(json: JsonObject): CommonEventHeader {
+        val commonEventHeader = VesEventV5.VesEvent.CommonEventHeader.newBuilder()
+        JsonFormat.parser().merge(
+                json.toString(),
+                commonEventHeader)
+        return commonEventHeader.build()
+    }
 
 }
