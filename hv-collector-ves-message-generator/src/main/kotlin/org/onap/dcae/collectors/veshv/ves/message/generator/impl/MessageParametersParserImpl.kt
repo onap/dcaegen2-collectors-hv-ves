@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import arrow.core.Option
 import arrow.core.Try
+import arrow.core.identity
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
@@ -42,6 +43,7 @@ internal class MessageParametersParserImpl(
                         .map {
                             val commonEventHeader = commonEventHeaderParser
                                     .parse(it.getJsonObject("commonEventHeader"))
+                                    .fold({ throw IllegalStateException("Invalid common header") }, ::identity)
                             val messageType = MessageType.valueOf(it.getString("messageType"))
                             val messagesAmount = it.getJsonNumber("messagesAmount")?.longValue()
                                     ?: throw NullPointerException("\"messagesAmount\" could not be parsed from message.")
