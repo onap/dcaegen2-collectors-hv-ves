@@ -18,8 +18,7 @@
   ~ limitations under the License.
   ~ ============LICENSE_END=========================================================
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +32,7 @@
     <parent>
         <groupId>org.onap.oparent</groupId>
         <artifactId>oparent</artifactId>
-        <version>0.1.1</version>
+        <version>1.2.0</version>
         <relativePath/>
     </parent>
 
@@ -89,7 +88,7 @@
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>${project.groupId}.${project.artifactId}</docker-image.name>
-        <docker.http_proxy></docker.http_proxy>
+        <docker.http_proxy/>
 
     </properties>
 
@@ -316,11 +315,7 @@
                         </goals>
                         <configuration>
                             <target name="detekt" unless="${skipAnalysis}">
-                                <java taskname="detekt" dir="${basedir}"
-                                        fork="true"
-                                        failonerror="true"
-                                        classname="io.gitlab.arturbosch.detekt.cli.Main"
-                                        classpathref="maven.plugin.classpath">
+                                <java taskname="detekt" dir="${basedir}" fork="true" failonerror="true" classname="io.gitlab.arturbosch.detekt.cli.Main" classpathref="maven.plugin.classpath">
                                     <arg value="--input"/>
                                     <arg value="${basedir}/src/main/kotlin"/>
                                     <arg value="--config-resource"/>
@@ -514,7 +509,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>25.0-jre</version>
+
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
@@ -690,5 +685,3 @@
         </dependencies>
     </dependencyManagement>
 </project>
-
-
