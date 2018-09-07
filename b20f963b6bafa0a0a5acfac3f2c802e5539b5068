@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_e970d873",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/CommandLineOption.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-07T05:58:57Z",
+      "side": 0,
+      "message": "It would be nice if we could add some note to description that those parameters are required.\n\nMaybe we could somehow configure HelpFormatter to print this info? We could also add info that there is possibility to configure it with env variables using `VESHV_` prefix with  upper-snake-case",
+      "revId": "b20f963b6bafa0a0a5acfac3f2c802e5539b5068",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
