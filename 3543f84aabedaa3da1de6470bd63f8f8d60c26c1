@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_8dd4c7bd",
+        "filename": "hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/CommonEventHeaderParser.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T14:35:45Z",
+      "side": 1,
+      "message": "I think it would be good to introduce a static import here to shorten this to \"CommonEventHeader.newBuilder()\"",
+      "revId": "3543f84aabedaa3da1de6470bd63f8f8d60c26c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0de0b794",
+        "filename": "hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/CommonEventHeaderParser.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T14:35:45Z",
+      "side": 1,
+      "message": "You can make this function an expression like this:\n\nfun parse(json: JsonObject): CommonEventHeader \u003d CommonEventHeader.newBuilder()\n            .also { JsonFormat.parser().merge(json.toString(), it) }\n            .build()",
+      "revId": "3543f84aabedaa3da1de6470bd63f8f8d60c26c1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
