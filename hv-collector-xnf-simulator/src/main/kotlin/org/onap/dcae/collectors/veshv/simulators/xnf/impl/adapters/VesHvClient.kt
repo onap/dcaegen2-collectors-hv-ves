@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
+import arrow.core.Option
 import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
@@ -48,7 +49,7 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
             .options { opts ->
                 opts.host(configuration.vesHost)
                         .port(configuration.vesPort)
-                        .sslContext(createSslContext(configuration.security))
+                        .sslContext(createSslContext(configuration.security).orNull())
             }
             .build()
 
@@ -92,13 +93,19 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
                 .then()
     }
 
-    private fun createSslContext(config: SecurityConfiguration): SslContext =
-            SslContextBuilder.forClient()
-                    .keyManager(config.cert.toFile(), config.privateKey.toFile())
-                    .trustManager(config.trustedCert.toFile())
-                    .sslProvider(SslProvider.OPENSSL)
-                    .clientAuth(ClientAuth.REQUIRE)
-                    .build()
+    private fun createSslContext(config: SecurityConfiguration): Option<SslContext> =
+            if (config.sslDisable) {
+                Option.empty()
+            } else {
+                Option.just(
+                        SslContextBuilder.forClient()
+                                .keyManager(config.cert.toFile(), config.privateKey.toFile())
+                                .trustManager(config.trustedCert.toFile())
+                                .sslProvider(SslProvider.OPENSSL)
+                                .clientAuth(ClientAuth.REQUIRE)
+                                .build()
+                )
+            }
 
     private fun NettyOutbound.logConnectionClosed(): NettyOutbound {
         context().onClose {
