@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_2d749366",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentError.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T13:47:38Z",
+      "side": 1,
+      "message": "You can get rid of the brackets and return statement since this is a one-liner",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2d225352",
+        "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T13:47:38Z",
+      "side": 1,
+      "message": "You don\u0027t  have to explicitly specify variable type here",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_0dfe77ae",
+        "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T13:47:38Z",
+      "side": 1,
+      "message": "Start the sentence lower-case to align to the convention",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4d1f8f08",
+        "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T13:47:38Z",
+      "side": 1,
+      "message": "Same as in above test case",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_cd339fa9",
+        "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T13:47:38Z",
+      "side": 1,
+      "message": "Same as in above test case",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_4de6af16",
+        "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-10T13:47:38Z",
+      "side": 1,
+      "message": "You can write this function more compactly like this:\n\nfun prepareOptionsPattern(requiredOptions: List\u003cString\u003e): Pattern \u003d Option\n        .fromNullable(requiredOptions.takeUnless { requiredOptions.isEmpty() })\n        .fold(\n                { \"\" },\n                { it.joinToString(prefix \u003d \"Required parameters: \", separator \u003d \", \") }\n        )\n        .let { Pattern.compile(it) }",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
