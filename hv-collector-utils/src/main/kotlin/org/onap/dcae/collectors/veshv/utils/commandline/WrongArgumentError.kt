@@ -45,22 +45,27 @@ data class WrongArgumentError(
 
         formatter.printHelp(
                 programName,
-                generateRequiredParametersNote(),
+                generateRequiredParametersNote(cmdLineOptionsList),
                 getOptions(),
                 footer)
     }
 
-    private fun getOptions(): Options = cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
+    private fun getOptions(): Options {
+        return cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
+    }
 
-    private fun generateRequiredParametersNote(): String {
-        val requiredParams = Option.fromNullable(cmdLineOptionsList.filter { it.required }
-                .takeUnless { it.isEmpty() })
-        return requiredParams.fold(
-                { "" },
-                { it.map {commandLineOption -> commandLineOption.option.opt }
-                        .joinToString(prefix = "Required parameters: ", separator = ", ")
-                }
-        )
+    companion object {
+        fun generateRequiredParametersNote(cmdLineOptionsList: List<CommandLineOption>): String {
+            val requiredParams = Option.fromNullable(cmdLineOptionsList.filter { it.required }
+                    .takeUnless { it.isEmpty() })
+            return requiredParams.fold(
+                    { "" },
+                    {
+                        it.map { commandLineOption -> commandLineOption.option.opt }
+                                .joinToString(prefix = "Required parameters: ", separator = ", ")
+                    }
+            )
+        }
     }
 
 }

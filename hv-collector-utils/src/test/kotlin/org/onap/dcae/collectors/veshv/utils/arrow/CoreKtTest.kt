@@ -28,7 +28,6 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.api.dsl.xdescribe
 import java.util.concurrent.atomic.AtomicReference
 
 
