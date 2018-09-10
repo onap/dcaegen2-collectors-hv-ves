@@ -36,19 +36,19 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
     abstract val cmdLineOptionsList: List<CommandLineOption>
 
     fun parse(args: Array<out String>): Either<WrongArgumentError, T> {
-        val commandLineOptions = cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
         val parseResult = Try {
+            val commandLineOptions = cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
             parser.parse(commandLineOptions, args)
         }
         return parseResult
                 .toEither()
-                .mapLeft { ex -> WrongArgumentError(ex, commandLineOptions) }
+                .mapLeft { ex -> WrongArgumentError(ex, cmdLineOptionsList) }
                 .map(this::getConfiguration)
                 .flatMap {
                     it.toEither {
                         WrongArgumentError(
-                                "Unexpected error when parsing command line arguments",
-                                commandLineOptions)
+                                message = "Unexpected error when parsing command line arguments",
+                                cmdLineOptionsList = cmdLineOptionsList)
                     }
                 }
     }
