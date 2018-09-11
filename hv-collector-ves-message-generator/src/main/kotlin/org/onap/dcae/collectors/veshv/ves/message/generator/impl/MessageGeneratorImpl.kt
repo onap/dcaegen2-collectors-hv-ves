@@ -31,10 +31,9 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVA
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_WIRE_FRAME
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.TOO_BIG_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
-import org.onap.ves.HVRanMeasFieldsV5.HVRanMeasFields.HVRanMeasPayload
-import org.onap.ves.VesEventV5.VesEvent
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+import org.onap.ves.VesEventOuterClass.VesEvent
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
+
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.nio.charset.Charset
@@ -79,10 +78,6 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                     PayloadWireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
-    private fun vesEvent(commonEventHeader: CommonEventHeader, hvRanMeasPayload: HVRanMeasPayload): ByteArray {
-        return vesEvent(commonEventHeader, hvRanMeasPayload.toByteString())
-    }
-
     private fun vesEvent(commonEventHeader: CommonEventHeader, hvRanMeasPayload: ByteString): ByteArray {
         return createVesEvent(commonEventHeader, hvRanMeasPayload).toByteArray()
     }
@@ -90,7 +85,7 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
     private fun createVesEvent(commonEventHeader: CommonEventHeader, payload: ByteString): VesEvent =
             VesEvent.newBuilder()
                     .setCommonEventHeader(commonEventHeader)
-                    .setHvRanMeasFields(payload)
+                    .setHvMeasFields(payload)
                     .build()
 
     private fun oversizedPayload() =

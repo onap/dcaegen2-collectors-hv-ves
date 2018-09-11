@@ -20,24 +20,27 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.routing
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+
 import reactor.core.publisher.FluxProcessor
 import reactor.core.publisher.UnicastProcessor
 import reactor.retry.RetryExhaustedException
 
 
-const val HVRANMEAS_TOPIC = "ves_hvRanMeas"
+const val HVMEAS_TOPIC = "ves_hvRanMeas"
 const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "ves_hvMeasForVfScaling"
-const val ALTERNATE_HVRANMEAS_TOPIC = "ves_alternateHvRanMeas"
+const val ALTERNATE_HVMEAS_TOPIC = "ves_alternateHvRanMeas"
 
 val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(Domain.HVRANMEAS)
-                toTopic(HVRANMEAS_TOPIC)
+                fromDomain(HVMEAS.name)
+                toTopic(HVMEAS_TOPIC)
                 withFixedPartitioning()
             }
         }.build()
@@ -47,17 +50,17 @@ val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfigu
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(Domain.HVRANMEAS)
-                toTopic(HVRANMEAS_TOPIC)
+                fromDomain(HVMEAS.name)
+                toTopic(HVMEAS_TOPIC)
                 withFixedPartitioning()
             }
             defineRoute {
-                fromDomain(Domain.HEARTBEAT)
-                toTopic(HVRANMEAS_TOPIC)
+                fromDomain(HEARTBEAT.name)
+                toTopic(HVMEAS_TOPIC)
                 withFixedPartitioning()
             }
             defineRoute {
-                fromDomain(Domain.MEASUREMENTS_FOR_VF_SCALING)
+                fromDomain(MEASUREMENT.name)
                 toTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
                 withFixedPartitioning()
             }
@@ -69,8 +72,8 @@ val configurationWithDifferentRouting: CollectorConfiguration = CollectorConfigu
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(Domain.HVRANMEAS)
-                toTopic(ALTERNATE_HVRANMEAS_TOPIC)
+                fromDomain(HVMEAS.name)
+                toTopic(ALTERNATE_HVMEAS_TOPIC)
                 withFixedPartitioning()
             }
         }.build()

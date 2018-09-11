@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 import arrow.core.Option
 import com.google.protobuf.util.JsonFormat
 import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
-import org.onap.ves.VesEventV5.VesEvent.*
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import javax.json.JsonObject
 
 /**
