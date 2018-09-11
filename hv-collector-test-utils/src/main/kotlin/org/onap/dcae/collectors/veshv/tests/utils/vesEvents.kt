@@ -23,25 +23,27 @@ package org.onap.dcae.collectors.veshv.tests.utils
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.ves.VesEventV5
+import org.onap.ves.VesEventOuterClass
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
 import java.util.UUID.randomUUID
 
-fun vesEvent(domain: VesEventV5.VesEvent.CommonEventHeader.Domain = VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS,
+fun vesEvent(domain: String = "HVMEAS",
              id: String = randomUUID().toString(),
              hvRanMeasFields: ByteString = ByteString.EMPTY
-): VesEventV5.VesEvent = vesEvent(commonHeader(domain, id), hvRanMeasFields)
+): VesEventOuterClass.VesEvent = vesEvent(commonHeader(domain, id), hvRanMeasFields)
 
-fun vesEvent(commonEventHeader: VesEventV5.VesEvent.CommonEventHeader,
-             hvRanMeasFields: ByteString = ByteString.EMPTY): VesEventV5.VesEvent =
-        VesEventV5.VesEvent.newBuilder()
+fun vesEvent(commonEventHeader: CommonEventHeader,
+             hvRanMeasFields: ByteString = ByteString.EMPTY): VesEventOuterClass.VesEvent =
+        VesEventOuterClass.VesEvent.newBuilder()
                 .setCommonEventHeader(commonEventHeader)
-                .setHvRanMeasFields(hvRanMeasFields)
+                .setHvMeasFields(hvRanMeasFields)
                 .build()
 
-fun commonHeader(domain: VesEventV5.VesEvent.CommonEventHeader.Domain = VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS,
+fun commonHeader(domain: String = "HVMEAS",
                  id: String = randomUUID().toString(),
-                 priority: VesEventV5.VesEvent.CommonEventHeader.Priority = VesEventV5.VesEvent.CommonEventHeader.Priority.NORMAL): VesEventV5.VesEvent.CommonEventHeader =
-        VesEventV5.VesEvent.CommonEventHeader.newBuilder()
+                 priority: Priority = Priority.NORMAL): CommonEventHeader =
+        CommonEventHeader.newBuilder()
                 .setVersion("sample-version")
                 .setDomain(domain)
                 .setSequence(1)
@@ -53,13 +55,16 @@ fun commonHeader(domain: VesEventV5.VesEvent.CommonEventHeader.Domain = VesEvent
                 .setLastEpochMicrosec(120034455)
                 .setNfNamingCode("sample-nf-naming-code")
                 .setNfcNamingCode("sample-nfc-naming-code")
-                .setReportingEntityId("sample-reporting-entity-id")
-                .setReportingEntityName(ByteString.copyFromUtf8("sample-reporting-entity-name"))
+                .setNfVendorName("vendor-name")
+                .setReportingEntityId(ByteString.copyFromUtf8("sample-reporting-entity-id"))
+                .setReportingEntityName("sample-reporting-entity-name")
                 .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
                 .setSourceName("sample-source-name")
+                .setTimeZoneOffset("+1")
+                .setVesEventListenerVersion("another-version")
                 .build()
 
-fun vesEventBytes(commonHeader: VesEventV5.VesEvent.CommonEventHeader, byteString: ByteString = ByteString.EMPTY): ByteData =
+fun vesEventBytes(commonHeader: CommonEventHeader, byteString: ByteString = ByteString.EMPTY): ByteData =
         vesEvent(commonHeader, byteString).toByteData()
 
 fun MessageLite.toByteData(): ByteData = ByteData(toByteArray())

@@ -28,10 +28,10 @@ import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Priority
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.getDefaultInstance
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.newBuilder
+
+import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
+import org.onap.ves.VesEventOuterClass.CommonEventHeader.getDefaultInstance
+import org.onap.ves.VesEventOuterClass.CommonEventHeader.newBuilder
 
 internal object MessageValidatorTest : Spek({
 
@@ -46,8 +46,9 @@ internal object MessageValidatorTest : Spek({
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isTrue()
             }
 
-            Domain.values()
-                    .filter { (it != Domain.UNRECOGNIZED && it != Domain.DOMAIN_UNDEFINED) }
+            "FAULT, HEARTBEAT, MEASUREMENT, MOBILE_FLOW, OTHER, PNFREGISTRATION," +
+            "SIP_SIGNALING,STATE_CHANGE, SYSLOG, THRESHOLD_CROSSING_ALERT, VOICE_QUALITY, HVMEAS"
+                    .split(",")
                     .forEach { domain ->
                         it("should accept message with $domain domain") {
                             val header = commonHeader(domain)
@@ -65,26 +66,8 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-
-        val domainTestCases = mapOf(
-                Domain.DOMAIN_UNDEFINED to false,
-                Domain.FAULT to true
-        )
-
-        domainTestCases.forEach { value, expectedResult ->
-            on("ves hv message including header with domain $value") {
-                val commonEventHeader = commonHeader(value)
-                val vesMessage = VesMessage(commonEventHeader, vesEventBytes(commonEventHeader))
-
-                it("should resolve validation result") {
-                    assertThat(cut.isValid(vesMessage)).describedAs("message validation results")
-                            .isEqualTo(expectedResult)
-                }
-            }
-        }
-
         val priorityTestCases = mapOf(
-                Priority.PRIORITY_UNDEFINED to false,
+                Priority.PRIORITY_NOT_PROVIDED to false,
                 Priority.HIGH to true
         )
 

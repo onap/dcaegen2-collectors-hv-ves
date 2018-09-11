@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>

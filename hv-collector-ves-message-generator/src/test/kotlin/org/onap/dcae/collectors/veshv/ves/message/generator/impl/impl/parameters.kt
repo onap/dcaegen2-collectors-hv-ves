@@ -21,73 +21,81 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
 
 import javax.json.Json
 
-private const val validMessageParameters = "[\n" +
-        "  {\n" +
-        "    \"commonEventHeader\": {\n" +
-        "      \"version\": \"sample-version\",\n" +
-        "      \"domain\": \"HVRANMEAS\",\n" +
-        "      \"sequence\": 1,\n" +
-        "      \"priority\": 1,\n" +
-        "      \"eventId\": \"sample-event-id\",\n" +
-        "      \"eventName\": \"sample-event-name\",\n" +
-        "      \"eventType\": \"sample-event-type\",\n" +
-        "      \"startEpochMicrosec\": 120034455,\n" +
-        "      \"lastEpochMicrosec\": 120034455,\n" +
-        "      \"nfNamingCode\": \"sample-nf-naming-code\",\n" +
-        "      \"nfcNamingCode\": \"sample-nfc-naming-code\",\n" +
-        "      \"reportingEntityId\": \"sample-reporting-entity-id\",\n" +
-        "      \"reportingEntityName\": \"sample-reporting-entity-name\",\n" +
-        "      \"sourceId\": \"sample-source-id\",\n" +
-        "      \"sourceName\": \"sample-source-name\"\n" +
-        "    },\n" +
-        "    \"messageType\": \"VALID\",\n" +
-        "    \"messagesAmount\": 25000\n" +
-        "  },\n" +
-        "  {\n" +
-        "    \"commonEventHeader\": {\n" +
-        "      \"version\": \"sample-version\",\n" +
-        "      \"domain\": \"HVRANMEAS\",\n" +
-        "      \"sequence\": 1,\n" +
-        "      \"priority\": 1,\n" +
-        "      \"eventId\": \"sample-event-id\",\n" +
-        "      \"eventName\": \"sample-event-name\",\n" +
-        "      \"eventType\": \"sample-event-type\",\n" +
-        "      \"startEpochMicrosec\": 120034455,\n" +
-        "      \"lastEpochMicrosec\": 120034455,\n" +
-        "      \"nfNamingCode\": \"sample-nf-naming-code\",\n" +
-        "      \"nfcNamingCode\": \"sample-nfc-naming-code\",\n" +
-        "      \"reportingEntityId\": \"sample-reporting-entity-id\",\n" +
-        "      \"reportingEntityName\": \"sample-reporting-entity-name\",\n" +
-        "      \"sourceId\": \"sample-source-id\",\n" +
-        "      \"sourceName\": \"sample-source-name\"\n" +
-        "    },\n" +
-        "    \"messageType\": \"TOO_BIG_PAYLOAD\",\n" +
-        "    \"messagesAmount\": 100\n" +
-        "  }\n" +
-        "]"
+private const val validMessageParameters =
+"""[
+        {
+          "commonEventHeader": {
+            "version": "sample-version",
+            "domain": "HVMEAS",
+            "sequence": 1,
+            "priority": 1,
+            "eventId": "sample-event-id",
+            "eventName": "sample-event-name",
+            "eventType": "sample-event-type",
+            "startEpochMicrosec": 120034455,
+            "lastEpochMicrosec": 120034455,
+            "nfNamingCode": "sample-nf-naming-code",
+            "nfcNamingCode": "sample-nfc-naming-code",
+            "reportingEntityId": "sample-reporting-entity-id",
+            "reportingEntityName": "sample-reporting-entity-name",
+            "sourceId": "sample-source-id",
+            "sourceName": "sample-source-name",
+            "vesEventListenerVersion": "another-version"
+          },
+          "messageType": "VALID",
+          "messagesAmount": 25000
+        },
+        {
+          "commonEventHeader": {
+            "version": "sample-version",
+            "domain": "HVMEAS",
+            "sequence": 1,
+            "priority": 1,
+            "eventId": "sample-event-id",
+            "eventName": "sample-event-name",
+            "eventType": "sample-event-type",
+            "startEpochMicrosec": 120034455,
+            "lastEpochMicrosec": 120034455,
+            "nfNamingCode": "sample-nf-naming-code",
+            "nfcNamingCode": "sample-nfc-naming-code",
+            "reportingEntityId": "sample-reporting-entity-id",
+            "reportingEntityName": "sample-reporting-entity-name",
+            "sourceId": "sample-source-id",
+            "sourceName": "sample-source-name",
+            "vesEventListenerVersion": "another-version"
+          },
+          "messageType": "TOO_BIG_PAYLOAD",
+          "messagesAmount": 100
+        }
+        ]
+"""
 
-private const val invalidMessageParameters = "[\n" +
-        "  {\n" +
-        "    \"commonEventHeader\": {\n" +
-        "      \"version\": \"sample-version\",\n" +
-        "      \"domain\": \"HVRANMEAS\",\n" +
-        "      \"sequence\": 1,\n" +
-        "      \"priority\": 1,\n" +
-        "      \"eventId\": \"sample-event-id\",\n" +
-        "      \"eventName\": \"sample-event-name\",\n" +
-        "      \"eventType\": \"sample-event-type\",\n" +
-        "      \"startEpochMicrosec\": 120034455,\n" +
-        "      \"lastEpochMicrosec\": 120034455,\n" +
-        "      \"nfNamingCode\": \"sample-nf-naming-code\",\n" +
-        "      \"nfcNamingCode\": \"sample-nfc-naming-code\",\n" +
-        "      \"reportingEntityId\": \"sample-reporting-entity-id\",\n" +
-        "      \"reportingEntityName\": \"sample-reporting-entity-name\",\n" +
-        "      \"sourceId\": \"sample-source-id\",\n" +
-        "      \"sourceName\": \"sample-source-name\"\n" +
-        "    },\n" +
-        "    \"messagesAmount\": 3\n" +
-        "  }\n" +
-        "]"
+private const val invalidMessageParameters =
+"""
+    [
+        {
+          "commonEventHeader": {
+            "version": "sample-version",
+            "domain": "HVMEAS",
+            "sequence": 1,
+            "priority": 1,
+            "eventId": "sample-event-id",
+            "eventName": "sample-event-name",
+            "eventType": "sample-event-type",
+            "startEpochMicrosec": 120034455,
+            "lastEpochMicrosec": 120034455,
+            "nfNamingCode": "sample-nf-naming-code",
+            "nfcNamingCode": "sample-nfc-naming-code",
+            "reportingEntityId": "sample-reporting-entity-id",
+            "reportingEntityName": "sample-reporting-entity-name",
+            "sourceId": "sample-source-id",
+            "sourceName": "sample-source-name",
+            "vesEventListenerVersion": "another-version"
+          },
+          "messagesAmount": 3
+        }
+        ]
+"""
 
 fun validMessagesParametesJson() = Json
         .createReader(validMessageParameters.reader())

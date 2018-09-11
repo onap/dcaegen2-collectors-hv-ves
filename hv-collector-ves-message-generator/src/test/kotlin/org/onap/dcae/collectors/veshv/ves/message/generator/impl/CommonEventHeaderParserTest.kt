@@ -28,7 +28,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
-import org.onap.ves.VesEventV5
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import java.io.ByteArrayInputStream
 import javax.json.Json
 import kotlin.test.fail
@@ -40,7 +40,7 @@ class CommonEventHeaderParserTest : Spek({
 
         given("valid header in JSON format") {
             val commonEventHeader = commonHeader(
-                    domain = VesEventV5.VesEvent.CommonEventHeader.Domain.STATE_CHANGE,
+                    domain = "STATE_CHANGE",
                     id = "sample-event-id")
             val json = JsonFormat.printer().print(commonEventHeader).byteInputStream()
 
@@ -75,7 +75,7 @@ class CommonEventHeaderParserTest : Spek({
     }
 })
 
-fun assertFailed(result: Option<VesEventV5.VesEvent.CommonEventHeader>) =
+fun assertFailed(result: Option<CommonEventHeader>) =
         result.fold({}, { fail() })
 
 fun jsonObject(json: ByteArrayInputStream) = Json.createReader(json).readObject()

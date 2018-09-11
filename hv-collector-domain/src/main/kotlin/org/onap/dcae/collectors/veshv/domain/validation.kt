@@ -19,17 +19,18 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-import org.onap.ves.VesEventV5
+import org.onap.ves.VesEventOuterClass
 
 val headerRequiredFieldDescriptors = listOf(
         "version",
-        "eventName",
         "domain",
-        "eventId",
-        "sourceName",
-        "reportingEntityName",
+        "sequence",
         "priority",
-        "startEpochMicrosec",
+        "eventId",
+        "eventName",
         "lastEpochMicrosec",
-        "sequence")
-        .map { fieldName -> VesEventV5.VesEvent.CommonEventHeader.getDescriptor().findFieldByName(fieldName) }
+        "startEpochMicrosec",
+        "reportingEntityName",
+        "sourceName",
+        "vesEventListenerVersion")
+        .map { fieldName -> VesEventOuterClass.CommonEventHeader.getDescriptor().findFieldByName(fieldName) }

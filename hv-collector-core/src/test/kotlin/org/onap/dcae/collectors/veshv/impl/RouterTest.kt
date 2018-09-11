@@ -31,7 +31,7 @@ import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -42,13 +42,13 @@ object RouterTest : Spek({
         val config = routing {
 
             defineRoute {
-                fromDomain(Domain.HVRANMEAS)
+                fromDomain("HVMEAS")
                 toTopic("ves_rtpm")
                 withFixedPartitioning(2)
             }
 
             defineRoute {
-                fromDomain(Domain.SYSLOG)
+                fromDomain("SYSLOG")
                 toTopic("ves_trace")
                 withFixedPartitioning()
             }
@@ -56,7 +56,7 @@ object RouterTest : Spek({
         val cut = Router(config)
 
         on("message with existing route (rtpm)") {
-            val message = VesMessage(commonHeader(Domain.HVRANMEAS), ByteData.EMPTY)
+            val message = VesMessage(commonHeader("HVMEAS"), ByteData.EMPTY)
             val result = cut.findDestination(message)
 
             it("should have route available") {
@@ -77,7 +77,7 @@ object RouterTest : Spek({
         }
 
         on("message with existing route (trace)") {
-            val message = VesMessage(commonHeader(Domain.SYSLOG), ByteData.EMPTY)
+            val message = VesMessage(commonHeader("SYSLOG"), ByteData.EMPTY)
             val result = cut.findDestination(message)
 
             it("should have route available") {
@@ -98,7 +98,7 @@ object RouterTest : Spek({
         }
 
         on("message with unknown route") {
-            val message = VesMessage(commonHeader(Domain.HEARTBEAT), ByteData.EMPTY)
+            val message = VesMessage(commonHeader("HEARTBEAT"), ByteData.EMPTY)
             val result = cut.findDestination(message)
 
             it("should not have route available") {
