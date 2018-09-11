@@ -30,7 +30,7 @@ import org.jetbrains.spek.api.dsl.on
 import org.mockito.Mockito
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
 import reactor.test.StepVerifier
@@ -62,14 +62,14 @@ internal object ConsulConfigurationProviderTest : Spek({
                     StepVerifier.create(consulConfigProvider().take(1))
                             .consumeNextWith {
 
-                                assertEquals("kafka:9093", it.kafkaBootstrapServers)
+                                assertEquals("message-router-kafka:9093", it.kafkaBootstrapServers)
 
                                 val route1 = it.routing.routes[0]
-                                assertEquals(Domain.FAULT, route1.domain)
+                                assertEquals("FAULT", route1.domain)
                                 assertEquals("test-topic-1", route1.targetTopic)
 
                                 val route2 = it.routing.routes[1]
-                                assertEquals(Domain.HEARTBEAT, route2.domain)
+                                assertEquals("HEARTBEAT", route2.domain)
                                 assertEquals("test-topic-2", route2.targetTopic)
 
                             }.verifyComplete()
@@ -131,14 +131,14 @@ private fun constructConsulConfigProvider(url: String,
 fun constructConsulResponse(): String {
 
     val config = """{
-    "dmaap.kafkaBootstrapServers": "kafka:9093",
+    "dmaap.kafkaBootstrapServers": "message-router-kafka:9093",
     "collector.routing": [
             {
-                "fromDomain": 1,
+                "fromDomain": "FAULT",
                 "toTopic": "test-topic-1"
             },
             {
-                "fromDomain": 2,
+                "fromDomain": "HEARTBEAT",
                 "toTopic": "test-topic-2"
             }
     ]

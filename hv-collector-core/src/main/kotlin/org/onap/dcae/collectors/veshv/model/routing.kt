@@ -20,8 +20,7 @@
 package org.onap.dcae.collectors.veshv.model
 
 import arrow.core.Option
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 data class Routing(val routes: List<Route>) {
 
@@ -29,7 +28,7 @@ data class Routing(val routes: List<Route>) {
             Option.fromNullable(routes.find { it.applies(commonHeader) })
 }
 
-data class Route(val domain: Domain, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int) {
+data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int) {
 
     fun applies(commonHeader: CommonEventHeader) = commonHeader.domain == domain
 
@@ -63,11 +62,11 @@ class RoutingBuilder {
 
 class RouteBuilder {
 
-    private lateinit var domain: Domain
+    private lateinit var domain: String
     private lateinit var targetTopic: String
     private lateinit var partitioning: (CommonEventHeader) -> Int
 
-    fun fromDomain(domain: Domain) {
+    fun fromDomain(domain: String) {
         this.domain = domain
     }
 

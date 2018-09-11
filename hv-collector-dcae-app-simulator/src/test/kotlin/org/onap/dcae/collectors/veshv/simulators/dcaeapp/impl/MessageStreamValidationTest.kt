@@ -20,17 +20,10 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
 import arrow.core.Either
-import arrow.core.Left
-import arrow.core.None
 import arrow.core.Right
-import arrow.core.Some
-import arrow.effects.IO
-import javax.json.stream.JsonParsingException
 import com.google.protobuf.ByteString
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
@@ -38,19 +31,15 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.mockito.ArgumentMatchers.anyList
-import org.mockito.ArgumentMatchers.anySet
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
-import org.onap.ves.VesEventV5.VesEvent
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
-import java.util.concurrent.ConcurrentLinkedQueue
-import javax.json.Json
-import javax.json.JsonArray
-import javax.json.JsonValue
+import javax.json.stream.JsonParsingException
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -216,7 +205,7 @@ private fun vesEvent(eventId: String = DUMMY_EVENT_ID, payload: String = DUMMY_P
     return VesEvent.newBuilder()
             .setCommonEventHeader(CommonEventHeader.newBuilder()
                     .setEventId(eventId))
-            .setHvRanMeasFields(ByteString.copyFrom(payload.toByteArray()))
+            .setHvMeasFields(ByteString.copyFrom(payload.toByteArray()))
             .build()
 }
 
