@@ -23,7 +23,7 @@ import arrow.core.Try
 import arrow.core.Option
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.ves.VesEventV5.VesEvent
+import org.onap.ves.VesEventOuterClass.VesEvent
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
