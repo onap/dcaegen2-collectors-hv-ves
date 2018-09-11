@@ -26,10 +26,10 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -41,7 +41,7 @@ internal object VesDecoderTest : Spek({
         val cut = VesDecoder()
 
         on("ves hv message bytes") {
-            val commonHeader = commonHeader(Domain.HEARTBEAT)
+            val commonHeader = commonHeader(HEARTBEAT)
             val rawMessageBytes = vesEventBytes(commonHeader, ByteString.copyFromUtf8("highvolume measurements"))
 
             it("should decode only header and pass it on along with raw message") {

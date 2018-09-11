@@ -25,7 +25,10 @@ import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
 import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.RESERVED_BYTE_COUNT
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
+
 import java.util.UUID.randomUUID
 
 
@@ -39,7 +42,7 @@ private fun ByteBuf.writeValidWireFrameHeaders() {
     writeByte(0x01)          // content type = GPB
 }
 
-fun vesWireFrameMessage(domain: Domain = Domain.OTHER,
+fun vesWireFrameMessage(domain: VesEventDomain = OTHER,
                         id: String = randomUUID().toString()): ByteBuf =
         allocator.buffer().run {
             writeValidWireFrameHeaders()
@@ -70,7 +73,7 @@ fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
     writeByte(0x01)   // content type = GPB
 }
 
-fun vesMessageWithTooBigPayload(domain: Domain = Domain.DOMAIN_UNDEFINED): ByteBuf =
+fun vesMessageWithTooBigPayload(domain: VesEventDomain = HVMEAS): ByteBuf =
         allocator.buffer().run {
             writeValidWireFrameHeaders()
 

@@ -28,9 +28,11 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.mockito.Mockito
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.FAULT
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain
+
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
 import reactor.test.StepVerifier
@@ -62,14 +64,14 @@ internal object ConsulConfigurationProviderTest : Spek({
                     StepVerifier.create(consulConfigProvider().take(1))
                             .consumeNextWith {
 
-                                assertEquals("kafka:9093", it.kafkaBootstrapServers)
+                                assertEquals("$kafkaAddress:9093", it.kafkaBootstrapServers)
 
                                 val route1 = it.routing.routes[0]
-                                assertEquals(Domain.FAULT, route1.domain)
+                                assertEquals(FAULT.name, route1.domain)
                                 assertEquals("test-topic-1", route1.targetTopic)
 
                                 val route2 = it.routing.routes[1]
-                                assertEquals(Domain.HEARTBEAT, route2.domain)
+                                assertEquals(HEARTBEAT.name, route2.domain)
                                 assertEquals("test-topic-2", route2.targetTopic)
 
                             }.verifyComplete()
@@ -95,7 +97,7 @@ internal object ConsulConfigurationProviderTest : Spek({
                             .verifyErrorMessage("Test exception")
                 }
 
-                it("should update the health state"){
+                it("should update the health state") {
                     StepVerifier.create(healthStateProvider().take(iterationCount))
                             .expectNextCount(iterationCount - 1)
                             .expectNext(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
@@ -128,17 +130,19 @@ private fun constructConsulConfigProvider(url: String,
 }
 
 
+val kafkaAddress = "message-router-kafka"
+
 fun constructConsulResponse(): String {
 
     val config = """{
-    "dmaap.kafkaBootstrapServers": "kafka:9093",
+    "dmaap.kafkaBootstrapServers": "$kafkaAddress:9093",
     "collector.routing": [
             {
-                "fromDomain": 1,
+                "fromDomain": "FAULT",
                 "toTopic": "test-topic-1"
             },
             {
-                "fromDomain": 2,
+                "fromDomain": "HEARTBEAT",
                 "toTopic": "test-topic-2"
             }
     ]

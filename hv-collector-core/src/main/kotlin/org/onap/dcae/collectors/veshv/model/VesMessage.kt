@@ -21,7 +21,7 @@ package org.onap.dcae.collectors.veshv.model
 
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.impl.MessageValidator
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>

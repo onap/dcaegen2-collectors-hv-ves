@@ -21,7 +21,7 @@ package org.onap.dcae.collectors.veshv.impl
 
 import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
 import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 internal object MessageValidator {
 

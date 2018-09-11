@@ -36,8 +36,8 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.mockito.ArgumentMatchers.anySet
 import org.mockito.Mockito
-import org.onap.ves.VesEventV5.VesEvent
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.VesEvent
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
@@ -179,6 +179,6 @@ private fun vesEvent(eventId: String = DUMMY_EVENT_ID, payload: String = DUMMY_P
     return VesEvent.newBuilder()
             .setCommonEventHeader(CommonEventHeader.newBuilder()
                     .setEventId(eventId))
-            .setHvRanMeasFields(ByteString.copyFrom(payload.toByteArray()))
+            .setHvMeasFields(ByteString.copyFrom(payload.toByteArray()))
             .build()
 }
