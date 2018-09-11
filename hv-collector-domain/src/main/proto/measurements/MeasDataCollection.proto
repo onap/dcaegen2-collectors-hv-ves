@@ -1,0 +1,104 @@
+/*
+ * ============LICENSE_START=======================================================
+ * dcaegen2-collectors-veshv
+ * ================================================================================
+ * Copyright (C) 2018 NOKIA
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+syntax = "proto3";
+package measDataCollection;
+
+// Definition for RTPM, structure aligned with 3GPP PM format optimized for RTPM delivery pre-standard TS 28.550 V1.2.2 (2018-08).
+// Some field details are taken from 3GPP TS 32.436 V15.0.0 (2018-06) ASN.1 file.
+// Note (2018-08): work is in progress for 3GPP TS 28.550 to specify PM streaming format. Changes will be made, if needed, to align with final version.
+// Differences/additions to 3GPP TS 28.550 are marked with "%%".
+
+message MeasDataCollection                  // top-level message 
+{
+    MeasHeader measHeader = 1;
+    repeated MeasData measData = 2;         // %%: use a single instance for RTPM
+    MeasFooter measFooter = 3;
+}
+
+message MeasHeader
+{
+    string streamFormatVersion = 1;
+    string senderName = 2;
+    string senderType = 3;
+    string vendorName = 4;
+    string collectionBeginTime = 5;         // in ASN.1 GeneralizedTime format (subset of ISO 8601 basic format)
+}
+
+message MeasData
+{
+    string measuredEntityId = 1;            // DN as per 3GPP TS 32.300
+    string measuredEntityUserName = 2;      // network function User Name
+    string measuredEntitySoftwareVersion = 3;
+    uint32 granularityPeriod = 4;           // in seconds, %% moved from MeasInfo (single reporting period per event)
+    repeated string measObjInstIdList = 5;  // %%: optional, monitored object LDNs as per 3GPP TS 32.300 and 3GPP TS 32.432
+    repeated MeasInfo measInfo = 6; 
+}
+
+
+message MeasInfo
+{
+    oneof MeasInfoId {                      // measurement group identifier
+        uint32 iMeasInfoId = 1;             // identifier as integer (%%: more compact)
+        string measInfoId = 2;              // identifier as string (more generic)
+    }
+
+    oneof MeasTypes {                       // measurement identifiers associated with the measurement results
+        IMeasTypes iMeasTypes = 3;          // identifiers as integers (%%: more compact)
+        SMeasTypes measTypes = 4;           // identifiers as strings (more generic)
+    }
+    // Needed only because GPB does not support repeated fields directly inside 'oneof'
+    message IMeasTypes { repeated uint32 iMeasType = 1; }
+    message SMeasTypes { repeated string measType = 1; }
+
+    string jobIdList = 5;
+    repeated MeasValue measValues = 6;      // performance measurements grouped by measurement groups
+}
+
+message MeasValue
+{
+    oneof MeasObjInstId {                   // monitored object LDN as per 3GPP TS 32.300 and 3GPP TS 32.432
+        string measObjInstId = 1;           // LDN itself
+        uint32 measObjInstIdListIdx = 2;    // %%: index into measObjInstIdList
+    }
+    repeated MeasResult measResults = 3;
+    bool suspectFlag = 4;
+    repeated nameValue measObjAddlFlds = 5; // %%: optional per-object data
+}
+
+message MeasResult
+{
+    uint32 p = 1;                           // Optional index in the MeasTypes array
+    oneof xValue {
+        sint64 iValue = 2;
+        double rValue = 3;
+        bool isNull = 4;
+    }
+}
+
+message MeasFooter
+{
+    string timestamp = 1;                   // in ASN.1 GeneralizedTime format, a better name would be "collectionEndTime"
+}
+
+message nameValue                           // %%: vendor-defined name-value pair
+{
+    string name = 1;
+    string value = 2;
+} 

@@ -30,7 +30,7 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
-import org.onap.ves.VesEventV5
+import org.onap.ves.VesEventOuterClass
 import java.io.InputStream
 import javax.json.Json
 
@@ -68,22 +68,22 @@ class MessageStreamValidation(
             parameters.all { it.messageType == MessageType.FIXED_PAYLOAD }
 
 
-    private fun validateHeaders(actual: List<VesEventV5.VesEvent>, expected: List<VesEventV5.VesEvent>): Boolean {
+    private fun validateHeaders(actual: List<VesEventOuterClass.VesEvent>, expected: List<VesEventOuterClass.VesEvent>): Boolean {
         val consumedHeaders = actual.map { it.commonEventHeader }
         val generatedHeaders = expected.map { it.commonEventHeader }
         return generatedHeaders == consumedHeaders
     }
 
 
-    private fun generateEvents(parameters: List<MessageParameters>): IO<List<VesEventV5.VesEvent>> =
+    private fun generateEvents(parameters: List<MessageParameters>): IO<List<VesEventOuterClass.VesEvent>> =
             messageGenerator.createMessageFlux(parameters)
                     .map(PayloadWireFrameMessage::payload)
                     .map(ByteData::unsafeAsArray)
-                    .map(VesEventV5.VesEvent::parseFrom)
+                    .map(VesEventOuterClass.VesEvent::parseFrom)
                     .collectList()
                     .asIo()
 
     private fun decodeConsumedEvents(consumedMessages: List<ByteArray>) =
-            consumedMessages.map(VesEventV5.VesEvent::parseFrom)
+            consumedMessages.map(VesEventOuterClass.VesEvent::parseFrom)
 
 }

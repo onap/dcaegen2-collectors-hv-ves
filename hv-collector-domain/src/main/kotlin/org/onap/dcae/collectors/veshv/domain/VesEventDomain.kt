@@ -17,14 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.api
+package org.onap.dcae.collectors.veshv.domain
 
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
-
-/**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since June 2018
- */
-data class MessageParameters(val commonEventHeader: CommonEventHeader,
-                             val messageType: MessageType,
-                             val amount: Long = -1)
+enum class VesEventDomain {
+    FAULT,
+    HEARTBEAT,
+    MEASUREMENT,
+    MOBILE_FLOW,
+    OTHER,
+    PNFREGISTRATION,
+    SIP_SIGNALING,
+    STATE_CHANGE,
+    SYSLOG,
+    THRESHOLD_CROSSING_ALERT,
+    VOICE_QUALITY,
+    HVMEAS
+}
