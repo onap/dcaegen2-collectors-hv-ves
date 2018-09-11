@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_25c6e79a",
+        "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-11T06:04:11Z",
+      "side": 1,
+      "message": "I believe you meant \"at least\"",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_2d225352",
         "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
         "patchSetId": 1
@@ -81,6 +98,23 @@
       "writtenOn": "2018-09-10T13:47:38Z",
       "side": 1,
       "message": "Same as in above test case",
+      "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_05b96b14",
+        "filename": "hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/commandline/WrongArgumentErrorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-11T06:04:11Z",
+      "side": 1,
+      "message": "I would assert it with `\"\"` explicitly there, there is no point in pattern matching - it can only give us problem in the future. Same goes with first testcase - we can write expected string explicitly",
       "revId": "003f26bc5336cd3ad3922aca92860eb3d7495106",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
