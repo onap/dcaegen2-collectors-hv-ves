@@ -131,8 +131,8 @@ private fun constructConsulConfigProvider(url: String,
 fun constructConsulResponse(): String {
 
     val config = """{
-    "kafkaBootstrapServers": "kafka:9093",
-    "routing": [
+    "dmaap.kafkaBootstrapServers": "kafka:9093",
+    "collector.routing": [
             {
                 "fromDomain": 1,
                 "toTopic": "test-topic-1"
