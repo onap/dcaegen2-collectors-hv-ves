@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_c3a7d409",
+        "filename": "hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-14T12:27:06Z",
+      "side": 1,
+      "message": "Extract this string to a constant",
+      "revId": "1e4bfc33f737f5c7c46b0f1fb112f26978baacef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_23b80829",
+        "filename": "hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/RouterTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-14T12:27:06Z",
+      "side": 1,
+      "message": "I think those domain strings should be defined in separate file as constants, since they are used in multiple files",
+      "revId": "1e4bfc33f737f5c7c46b0f1fb112f26978baacef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_a37bb879",
+        "filename": "hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProviderTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-14T12:27:06Z",
+      "side": 1,
+      "message": "Extract this to a constant and use it also in \"constructConsulResponse\" function",
+      "revId": "1e4bfc33f737f5c7c46b0f1fb112f26978baacef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_03f06cfc",
+        "filename": "hv-collector-ves-message-generator/src/test/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/impl/MessageGeneratorImplTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-14T12:27:06Z",
+      "side": 1,
+      "message": "You can skip curly braces and \"return\" statement here and in \"extractCommonEventHeader\" function",
+      "revId": "1e4bfc33f737f5c7c46b0f1fb112f26978baacef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
