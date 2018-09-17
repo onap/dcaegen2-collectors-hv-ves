@@ -74,7 +74,8 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
             optionValue(cmdLineOpt)
 
     protected fun CommandLine.hasOption(cmdLineOpt: CommandLineOption): Boolean =
-            this.hasOption(cmdLineOpt.option.opt)
+            this.hasOption(cmdLineOpt.option.opt) ||
+                    System.getenv(cmdLineOpt.environmentVariableName()) != null
 
     protected fun stringPathToPath(path: String): Path = Paths.get(File(path).toURI())
 
