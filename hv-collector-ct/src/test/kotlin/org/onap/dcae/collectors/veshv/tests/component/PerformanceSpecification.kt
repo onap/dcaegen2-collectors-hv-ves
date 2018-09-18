@@ -29,6 +29,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
@@ -36,7 +37,6 @@ import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.HVRANMEAS
 import reactor.core.publisher.Flux
 import reactor.math.sum
 import java.security.MessageDigest
@@ -62,7 +62,7 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofMinutes((1 + (runs / 2)).toLong())
 
             val params = MessageParameters(
-                    commonEventHeader = commonHeader(HVRANMEAS),
+                    commonEventHeader = commonHeader(HVMEAS),
                     messageType = VALID,
                     amount = numMessages
             )
@@ -92,7 +92,7 @@ object PerformanceSpecification : Spek({
             val timeout = Duration.ofSeconds(30)
 
             val params = MessageParameters(
-                    commonEventHeader = commonHeader(HVRANMEAS),
+                    commonEventHeader = commonHeader(HVMEAS),
                     messageType = VALID,
                     amount = numMessages
             )

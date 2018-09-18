@@ -23,7 +23,7 @@ import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.core.publisher.Flux
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord

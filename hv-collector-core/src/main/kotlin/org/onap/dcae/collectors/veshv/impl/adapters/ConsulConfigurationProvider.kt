@@ -25,7 +25,6 @@ import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.ves.VesEventV5.VesEvent.CommonEventHeader.Domain.forNumber
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.retry.Jitter
@@ -116,7 +115,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                     for (route in routing) {
                         val routeObj = route.asJsonObject()
                         defineRoute {
-                            fromDomain(forNumber(routeObj.getInt("fromDomain")))
+                            fromDomain(routeObj.getString("fromDomain"))
                             toTopic(routeObj.getString("toTopic"))
                             withFixedPartitioning()
                         }

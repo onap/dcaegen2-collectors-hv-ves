@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.domain
 import arrow.core.Either
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
-import io.netty.buffer.UnpooledByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
 import org.jetbrains.spek.api.Spek
