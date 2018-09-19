@@ -59,7 +59,7 @@
     </modules>
 
     <properties>
-        <kotlin.version>1.2.61</kotlin.version>
+        <kotlin.version>1.2.70</kotlin.version>
         <arrow.version>0.7.3</arrow.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
@@ -586,7 +586,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Bismuth-SR10</version>
+                <version>Bismuth-SR11</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
