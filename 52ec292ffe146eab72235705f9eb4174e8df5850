@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_4cae7a2f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-19T07:06:37Z",
+      "side": 1,
+      "message": "Please also add a comment what have been done (after an empty line)",
+      "revId": "52ec292ffe146eab72235705f9eb4174e8df5850",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_2cb3fe98",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-19T07:06:37Z",
+      "side": 1,
+      "message": "Add also a link to the HV-VES landing page on ONAP Wiki",
+      "revId": "52ec292ffe146eab72235705f9eb4174e8df5850",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_ccc28ae8",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-19T07:06:37Z",
+      "side": 1,
+      "message": "Is it a windows line end? If so please change it to Linux.",
+      "revId": "52ec292ffe146eab72235705f9eb4174e8df5850",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
