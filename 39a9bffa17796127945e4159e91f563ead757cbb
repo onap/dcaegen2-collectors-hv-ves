@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_2a0e74e5",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-20T12:45:40Z",
+      "side": 1,
+      "message": "Use lambda version of the logger method",
+      "revId": "39a9bffa17796127945e4159e91f563ead757cbb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
