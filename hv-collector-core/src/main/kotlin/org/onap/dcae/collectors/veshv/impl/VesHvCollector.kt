@@ -33,7 +33,6 @@ import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.SynchronousSink
@@ -58,7 +57,7 @@ internal class VesHvCollector(
                         .transform(::decodePayload)
                         .filter(VesMessage::isValid)
                         .transform(::routeMessage)
-                        .doOnTerminate { releaseBuffersMemory(wireDecoder) }
+                        .doFinally { releaseBuffersMemory(wireDecoder) }
                         .onErrorResume(::handleErrors)
                         .then()
             }
