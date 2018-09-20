@@ -19,16 +19,24 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
-import arrow.core.ForOption
 import arrow.core.Option
 import arrow.core.fix
-import arrow.instances.extensions
+import arrow.core.monad
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_FILE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.SSL_DISABLE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_FILE
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_HOST
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.intValue
+import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
 
 
 /**
@@ -41,42 +49,22 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
             VES_HV_HOST,
             LISTEN_PORT,
             SSL_DISABLE,
-            PRIVATE_KEY_FILE,
-            CERT_FILE,
-            TRUST_CERT_FILE
-    )
+            KEY_STORE_FILE,
+            KEY_STORE_PASSWORD,
+            TRUST_STORE_FILE,
+            TRUST_STORE_PASSWORD)
 
     override fun getConfiguration(cmdLine: CommandLine): Option<SimulatorConfiguration> =
-            ForOption extensions {
-                binding {
-                    val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
-                    val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
-                    val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
+            Option.monad().binding {
+                val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
+                val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
+                val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
 
-                    SimulatorConfiguration(
-                            listenPort,
-                            vesHost,
-                            vesPort,
-                            parseSecurityConfig(cmdLine))
-                }.fix()
-            }
+                SimulatorConfiguration(
+                        listenPort,
+                        vesHost,
+                        vesPort,
+                        createSecurityConfiguration(cmdLine).bind())
+            }.fix()
 
-    private fun parseSecurityConfig(cmdLine: CommandLine): SecurityConfiguration {
-        val sslDisable = cmdLine.hasOption(SSL_DISABLE)
-        val pkFile = cmdLine.stringValue(PRIVATE_KEY_FILE, DefaultValues.PRIVATE_KEY_FILE)
-        val certFile = cmdLine.stringValue(CERT_FILE, DefaultValues.CERT_FILE)
-        val trustCertFile = cmdLine.stringValue(TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
-
-        return SecurityConfiguration(
-                sslDisable = sslDisable,
-                privateKey = stringPathToPath(pkFile),
-                cert = stringPathToPath(certFile),
-                trustedCert = stringPathToPath(trustCertFile))
-    }
-
-    internal object DefaultValues {
-        const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
-        const val CERT_FILE = "/etc/ves-hv/client.crt"
-        const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
-    }
 }

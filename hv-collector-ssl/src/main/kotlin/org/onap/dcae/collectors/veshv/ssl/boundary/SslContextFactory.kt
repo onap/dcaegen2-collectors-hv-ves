@@ -17,29 +17,40 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.socket
+package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import arrow.core.Option
 import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
-import io.netty.handler.ssl.SslProvider
+import org.onap.dcae.collectors.veshv.domain.JdkKeys
+import org.onap.dcae.collectors.veshv.domain.OpenSslKeys
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 
-
-internal open class SslContextFactory {
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since September 2018
+ */
+abstract class SslContextFactory {
     fun createSslContext(secConfig: SecurityConfiguration): Option<SslContext> =
             if (secConfig.sslDisable) {
                 Option.empty()
             } else {
-                Option.just(createSslContextWithConfiguredCerts(secConfig)
-                        .sslProvider(SslProvider.OPENSSL)
-                        .clientAuth(ClientAuth.REQUIRE)
-                        .build())
+                createSslContextWithConfiguredCerts(secConfig)
+                        .map { builder ->
+                            builder.clientAuth(ClientAuth.REQUIRE)
+                                    .build()
+                        }
             }
 
-    protected open fun createSslContextWithConfiguredCerts(secConfig: SecurityConfiguration): SslContextBuilder =
-            SslContextBuilder.forServer(secConfig.cert.toFile(), secConfig.privateKey.toFile())
-                    .trustManager(secConfig.trustedCert.toFile())
+    protected open fun createSslContextWithConfiguredCerts(secConfig: SecurityConfiguration): Option<SslContextBuilder> =
+            secConfig.keys.map { keys ->
+                when (keys) {
+                    is JdkKeys -> jdkContext(keys)
+                    is OpenSslKeys -> openSslContext(keys)
+                }
+            }
 
+    protected abstract fun openSslContext(openSslKeys: OpenSslKeys): SslContextBuilder
+    protected abstract fun jdkContext(jdkKeys: JdkKeys): SslContextBuilder
 }

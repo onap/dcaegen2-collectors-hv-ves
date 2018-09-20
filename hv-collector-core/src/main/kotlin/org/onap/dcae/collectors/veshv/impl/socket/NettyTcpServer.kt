@@ -25,6 +25,7 @@ import io.netty.handler.ssl.SslContext
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.ssl.boundary.ServerSslContextFactory
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -43,7 +44,7 @@ import java.util.function.BiFunction
  * @since May 2018
  */
 internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
-                              private val sslContextFactory: SslContextFactory,
+                              private val sslContextFactory: ServerSslContextFactory,
                               private val collectorProvider: CollectorProvider) : Server {
 
     override fun start(): IO<ServerHandle> = IO {

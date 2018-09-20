@@ -19,20 +19,20 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
+import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.main.ArgVesHvConfiguration.DefaultValues
+import org.onap.dcae.collectors.veshv.domain.JdkKeys
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
-import java.nio.file.Paths
 import java.time.Duration
+import kotlin.test.assertNotNull
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -45,9 +45,8 @@ object ArgVesHvConfigurationTest : Spek({
     val firstRequestDelay = "10"
     val requestInterval = "5"
     val listenPort = "6969"
-    val pk = Paths.get("/", "etc", "ves", "pk.pem")
-    val cert = Paths.get("/", "etc", "ssl", "certs", "ca-bundle.crt")
-    val trustCert = Paths.get("/", "etc", "ves", "trusted.crt")
+    val keyStorePassword = "kspass"
+    val trustStorePassword = "tspass"
 
     beforeEachTest {
         cut = ArgVesHvConfiguration()
@@ -58,15 +57,17 @@ object ArgVesHvConfigurationTest : Spek({
             lateinit var result: ServerConfiguration
 
             beforeEachTest {
-                result = cut.parseExpectingSuccess("--ssl-disable",
+                result = cut.parseExpectingSuccess(
                         "--health-check-api-port", healthCheckApiPort,
                         "--listen-port", listenPort,
                         "--config-url", configurationUrl,
                         "--first-request-delay", firstRequestDelay,
                         "--request-interval", requestInterval,
-                        "--private-key-file", pk.toFile().absolutePath,
-                        "--cert-file", cert.toFile().absolutePath,
-                        "--trust-cert-file", trustCert.toFile().absolutePath)
+                        "--key-store", "/tmp/keys.p12",
+                        "--trust-store", "/tmp/trust.p12",
+                        "--key-store-password", keyStorePassword,
+                        "--trust-store-password", trustStorePassword
+                )
             }
 
             it("should set proper health check api port") {
@@ -93,69 +94,13 @@ object ArgVesHvConfigurationTest : Spek({
             }
 
             it("should set proper security configuration") {
-                assertThat(result.securityConfiguration).isEqualTo(
-                        SecurityConfiguration(sslDisable = true, privateKey = pk, cert = cert, trustedCert = trustCert)
-                )
-            }
-        }
+                assertThat(result.securityConfiguration.sslDisable).isFalse()
 
-        given("some parameters are present in the short form") {
-            lateinit var result: ServerConfiguration
-
-            beforeEachTest {
-                result = cut.parseExpectingSuccess(
-                        "-p", listenPort, "-c", configurationUrl, "-d", firstRequestDelay
-                )
-            }
-
-            it("should set proper port") {
-                assertThat(result.listenPort).isEqualTo(listenPort.toInt())
-            }
-
-            it("should set proper first consul request delay") {
-                assertThat(result.configurationProviderParams.firstRequestDelay)
-                        .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
-            }
-
-            it("should set proper config url") {
-                assertThat(result.configurationProviderParams.configurationUrl)
-                        .isEqualTo(configurationUrl)
-            }
-        }
-
-        given("all optional parameters are absent") {
-            lateinit var result: ServerConfiguration
-
-            beforeEachTest {
-                result = cut.parseExpectingSuccess(
-                        "--listen-port", listenPort, "--config-url", configurationUrl
-                )
-            }
-
-            it("should set default first consul request delay") {
-                assertThat(result.configurationProviderParams.firstRequestDelay)
-                        .isEqualTo(Duration.ofSeconds(DefaultValues.CONSUL_FIRST_REQUEST_DELAY))
-            }
-
-            it("should set default consul request interval") {
-                assertThat(result.configurationProviderParams.requestInterval)
-                        .isEqualTo(Duration.ofSeconds(DefaultValues.CONSUL_REQUEST_INTERVAL))
-            }
-
-            on("security config") {
-                val securityConfiguration = result.securityConfiguration
-
-                it("should set default trust cert file") {
-                    assertThat(securityConfiguration.trustedCert.toString()).isEqualTo(DefaultValues.TRUST_CERT_FILE)
-                }
-
-                it("should set default server cert file") {
-                    assertThat(securityConfiguration.cert.toString()).isEqualTo(DefaultValues.CERT_FILE)
-                }
-
-                it("should set default private key file") {
-                    assertThat(securityConfiguration.privateKey.toString()).isEqualTo(DefaultValues.PRIVATE_KEY_FILE)
-                }
+                val keys = result.securityConfiguration.keys.orNull() as JdkKeys
+                assertNotNull(keys.keyStore)
+                assertNotNull(keys.trustStore)
+                assertThat(keys.keyStorePassword).isEqualTo(keyStorePassword.toCharArray())
+                assertThat(keys.trustStorePassword).isEqualTo(trustStorePassword.toCharArray())
             }
         }
 
@@ -166,10 +111,7 @@ object ArgVesHvConfigurationTest : Spek({
                             "--config-url", configurationUrl,
                             "--ssl-disable",
                             "--first-request-delay", firstRequestDelay,
-                            "--request-interval", requestInterval,
-                            "--private-key-file", pk.toFile().absolutePath,
-                            "--cert-file", cert.toFile().absolutePath,
-                            "--trust-cert-file", trustCert.toFile().absolutePath)
+                            "--request-interval", requestInterval)
                     ).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
@@ -179,10 +121,7 @@ object ArgVesHvConfigurationTest : Spek({
                             "--listen-port", listenPort,
                             "--ssl-disable",
                             "--first-request-delay", firstRequestDelay,
-                            "--request-interval", requestInterval,
-                            "--private-key-file", pk.toFile().absolutePath,
-                            "--cert-file", cert.toFile().absolutePath,
-                            "--trust-cert-file", trustCert.toFile().absolutePath)
+                            "--request-interval", requestInterval)
                     ).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
