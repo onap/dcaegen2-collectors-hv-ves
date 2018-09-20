@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
+import arrow.core.Option
+import java.io.InputStream
 import java.nio.file.Path
 
 /**
@@ -27,6 +29,22 @@ import java.nio.file.Path
  */
 data class SecurityConfiguration(
         val sslDisable: Boolean = false,
-        val privateKey: Path,
-        val cert: Path,
-        val trustedCert: Path)
+        val keys: Option<SslKeys>)
+
+sealed class SslKeys
+
+data class OpenSslKeys(val privateKey: Path,
+                       val cert: Path,
+                       val trustedCert: Path) : SslKeys()
+
+data class JdkKeys(val keyStore: StreamProvider,
+                   val keyStorePassword: CharArray,
+                   val trustStore: StreamProvider,
+                   val trustStorePassword: CharArray) : SslKeys() {
+    fun forgetPasswords() {
+        keyStorePassword.fill('x')
+        trustStorePassword.fill('x')
+    }
+}
+
+typealias StreamProvider = () -> InputStream

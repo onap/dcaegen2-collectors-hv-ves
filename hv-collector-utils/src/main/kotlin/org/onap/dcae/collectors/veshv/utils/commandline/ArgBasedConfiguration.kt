@@ -55,31 +55,5 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
 
     protected abstract fun getConfiguration(cmdLine: CommandLine): Option<T>
 
-    protected fun CommandLine.longValue(cmdLineOpt: CommandLineOption, default: Long): Long =
-            longValue(cmdLineOpt).getOrElse { default }
-
-    protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption, default: String): String =
-            optionValue(cmdLineOpt).getOrElse { default }
-
-    protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption, default: Int): Int =
-            intValue(cmdLineOpt).getOrElse { default }
-
-    protected fun CommandLine.intValue(cmdLineOpt: CommandLineOption): Option<Int> =
-            optionValue(cmdLineOpt).map(String::toInt)
-
-    private fun CommandLine.longValue(cmdLineOpt: CommandLineOption): Option<Long> =
-            optionValue(cmdLineOpt).map(String::toLong)
-
-    protected fun CommandLine.stringValue(cmdLineOpt: CommandLineOption): Option<String> =
-            optionValue(cmdLineOpt)
-
-    protected fun CommandLine.hasOption(cmdLineOpt: CommandLineOption): Boolean =
-            this.hasOption(cmdLineOpt.option.opt) ||
-                    System.getenv(cmdLineOpt.environmentVariableName()) != null
-
     protected fun stringPathToPath(path: String): Path = Paths.get(File(path).toURI())
-
-    private fun CommandLine.optionValue(cmdLineOpt: CommandLineOption) = Option.fromNullablesChain(
-            getOptionValue(cmdLineOpt.option.opt),
-            { System.getenv(cmdLineOpt.environmentVariableName()) })
 }

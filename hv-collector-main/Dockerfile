@@ -6,8 +6,7 @@ LABEL license.url="http://www.apache.org/licenses/LICENSE-2.0"
 LABEL maintainer="Nokia Wroclaw ONAP Team"
 
 RUN apt-get update \
-        && apt-get install -y --no-install-recommends curl  \
-        && apt-get install -y --no-install-recommends netcat  \
+        && apt-get install -y --no-install-recommends curl netcat \
         && apt-get clean
 
 WORKDIR /opt/ves-hv-collector
