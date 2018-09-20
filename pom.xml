@@ -586,7 +586,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Bismuth-SR11</version>
+                <version>Bismuth-SR10</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
