@@ -19,13 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
-import arrow.core.ForOption
+import arrow.core.None
 import arrow.core.Option
+import arrow.core.Right
+import arrow.core.Some
 import arrow.core.fix
-import arrow.instances.extensions
+import arrow.core.monad
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
+import org.onap.dcae.collectors.veshv.domain.JdkKeys
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
@@ -41,42 +44,57 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
             VES_HV_HOST,
             LISTEN_PORT,
             SSL_DISABLE,
-            PRIVATE_KEY_FILE,
-            CERT_FILE,
-            TRUST_CERT_FILE
-    )
+            KEY_STORE_FILE,
+            KEY_STORE_PASSWORD,
+            TRUST_STORE_FILE,
+            TRUST_STORE_PASSWORD)
 
     override fun getConfiguration(cmdLine: CommandLine): Option<SimulatorConfiguration> =
-            ForOption extensions {
-                binding {
-                    val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
-                    val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
-                    val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
+            Option.monad().binding {
+                val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
+                val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
+                val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
 
-                    SimulatorConfiguration(
-                            listenPort,
-                            vesHost,
-                            vesPort,
-                            parseSecurityConfig(cmdLine))
-                }.fix()
-            }
+                SimulatorConfiguration(
+                        listenPort,
+                        vesHost,
+                        vesPort,
+                        createSecurityConfiguration(cmdLine).bind())
+            }.fix()
 
-    private fun parseSecurityConfig(cmdLine: CommandLine): SecurityConfiguration {
+
+    private fun createSecurityConfiguration(cmdLine: CommandLine): Option<SecurityConfiguration> {
         val sslDisable = cmdLine.hasOption(SSL_DISABLE)
-        val pkFile = cmdLine.stringValue(PRIVATE_KEY_FILE, DefaultValues.PRIVATE_KEY_FILE)
-        val certFile = cmdLine.stringValue(CERT_FILE, DefaultValues.CERT_FILE)
-        val trustCertFile = cmdLine.stringValue(TRUST_CERT_FILE, DefaultValues.TRUST_CERT_FILE)
 
-        return SecurityConfiguration(
-                sslDisable = sslDisable,
-                privateKey = stringPathToPath(pkFile),
-                cert = stringPathToPath(certFile),
-                trustedCert = stringPathToPath(trustCertFile))
+        return if (sslDisable) {
+            Some(SecurityConfiguration(
+                    sslDisable = sslDisable,
+                    keys = None
+            ))
+        } else {
+            Option.monad().binding {
+                val ksFile = cmdLine.stringValue(KEY_STORE_FILE, DefaultValues.KEY_STORE_FILE)
+                val ksPass = cmdLine.stringValue(KEY_STORE_PASSWORD).bind()
+                val tsFile = cmdLine.stringValue(TRUST_STORE_FILE, DefaultValues.TRUST_STORE_FILE)
+                val tsPass = cmdLine.stringValue(TRUST_STORE_PASSWORD).bind()
+
+                val keys = JdkKeys(
+                        keyStore = streamFromFile(ksFile),
+                        keyStorePassword = ksPass.toCharArray(),
+                        trustStore = streamFromFile(tsFile),
+                        trustStorePassword = tsPass.toCharArray()
+                )
+
+                SecurityConfiguration(
+                        sslDisable = sslDisable,
+                        keys = Some(Right(keys))
+                )
+            }.fix()
+        }
     }
 
     internal object DefaultValues {
-        const val PRIVATE_KEY_FILE = "/etc/ves-hv/client.key"
-        const val CERT_FILE = "/etc/ves-hv/client.crt"
-        const val TRUST_CERT_FILE = "/etc/ves-hv/trust.crt"
+        const val KEY_STORE_FILE = "/etc/ves-hv/client.p12"
+        const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
     }
 }
