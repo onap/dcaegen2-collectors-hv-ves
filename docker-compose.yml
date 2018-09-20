@@ -39,7 +39,9 @@ services:
                  "-cp", "*:", "org.onap.dcae.collectors.veshv.main.MainKt"]
     command: ["--listen-port", "6061",
               "--health-check-api-port", "6060",
-              "--config-url", "http://consul:8500/v1/kv/veshv-config"]
+              "--config-url", "http://consul:8500/v1/kv/veshv-config",
+              "--key-store-password", "onaponap",
+              "--trust-store-password", "onaponap"]
     healthcheck:
       test: curl -f http://localhost:6060/health/ready || exit 1
       interval: 10s
@@ -59,7 +61,11 @@ services:
 #      dockerfile: Dockerfile
     ports:
       - "6062:6062/tcp"
-    command: ["--listen-port", "6062", "--ves-host", "ves-hv-collector", "--ves-port", "6061"]
+    command: ["--listen-port", "6062",
+              "--ves-host", "ves-hv-collector",
+              "--ves-port", "6061",
+              "--key-store-password", "onaponap",
+              "--trust-store-password", "onaponap"]
     depends_on:
       - ves-hv-collector
     volumes:
@@ -72,6 +78,8 @@ services:
 #      dockerfile: Dockerfile
     ports:
       - "6063:6063/tcp"
-    command: ["--listen-port", "6063", "--kafka-bootstrap-servers", "kafka:9092", "--kafka-topics", "ves_hvRanMeas"]
+    command: ["--listen-port", "6063",
+              "--kafka-bootstrap-servers", "kafka:9092",
+              "--kafka-topics", "ves_hvRanMeas"]
     depends_on:
       - kafka
