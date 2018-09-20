@@ -1,4 +1,5 @@
 FILE=sample
+PASSWD=onap
 CA_PASSWD=onap
 SUBJ=/C=PL/ST=DL/L=Wroclaw/O=Nokia/OU=MANO
 CA=trust
@@ -16,6 +17,11 @@ create-public-key: $(FILE).pub
 
 create-sign-request: $(FILE).csr
 
+create-key-store: $(FILE).ks.pkcs12
+
+create-trust-store: $(CA).crt
+	openssl pkcs12 -export -in $(CA).crt -out $(CA).pkcs12 -nokeys -passout pass:$(PASSWD)
+
 $(CA).crt:
 	openssl req -new -x509 -keyout $(CA).key -out $(CA).crt -days 365 -passout pass:$(CA_PASSWD) -subj "$(SUBJ)"
 
@@ -31,3 +37,5 @@ $(FILE).csr: $(FILE).key
 $(FILE).crt: $(CA).crt $(FILE).csr
 	openssl x509 -req -days 360 -in $(FILE).csr -CA $(CA).crt -CAkey $(CA).key -out $(FILE).crt -CAcreateserial -passin pass:$(CA_PASSWD)
 
+$(FILE).ks.pkcs12: $(FILE).key $(FILE).crt
+	openssl pkcs12 -export -in $(FILE).crt -inkey $(FILE).key -out $(FILE).ks.pkcs12 -passout pass:$(PASSWD)

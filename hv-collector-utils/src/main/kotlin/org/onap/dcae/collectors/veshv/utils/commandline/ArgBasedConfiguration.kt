@@ -82,4 +82,6 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
     private fun CommandLine.optionValue(cmdLineOpt: CommandLineOption) = Option.fromNullablesChain(
             getOptionValue(cmdLineOpt.option.opt),
             { System.getenv(cmdLineOpt.environmentVariableName()) })
+
+    protected fun streamFromFile(file: String) = { File(file).inputStream() }
 }

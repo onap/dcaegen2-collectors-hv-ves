@@ -7,6 +7,14 @@ make FILE=client
 make FILE=server
 ```
 
+or (to generate PKCS12 key and trust stores):
+
+```shell
+make create-key-store FILE=client
+make create-key-store FILE=server
+make create-trust-store
+```
+
 Will generate CA certificate and signed client and server certificates.
 
 More "low-level" usage:
