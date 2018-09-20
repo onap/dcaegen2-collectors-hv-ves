@@ -1,10 +1,28 @@
 # Generating SSL certificates
 
+## Java keytool
+
+```
+./gen-certs.sh
+```
+
+## OpenSSL (currently might not work)
+
+> Add `-f Makefile-openssl` to each command
+
 Typical usage:
 
 ```shell
 make FILE=client
 make FILE=server
+```
+
+or (to generate PKCS12 key and trust stores):
+
+```shell
+make create-key-store FILE=client
+make create-key-store FILE=server
+make create-trust-store
 ```
 
 Will generate CA certificate and signed client and server certificates.
