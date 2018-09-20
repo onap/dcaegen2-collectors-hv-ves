@@ -30,6 +30,7 @@ import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Mono
+import reactor.ipc.netty.ByteBufFlux
 import reactor.ipc.netty.NettyInbound
 import reactor.ipc.netty.NettyOutbound
 import reactor.ipc.netty.options.ServerOptions
@@ -61,23 +62,24 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
         opts.port(serverConfig.listenPort)
     }
 
-    private fun handleConnection(nettyInbound: NettyInbound): Mono<Void> {
-        logger.info("Handling connection from ${nettyInbound.remoteAddress()}")
+    private fun handleConnection(nettyInbound: NettyInbound): Mono<Void> =
+            collectorProvider().fold(
+                    {
+                        logger.warn { "Collector not ready. Closing connection from ${nettyInbound.remoteAddress()}..." }
+                        Mono.empty()
+                    },
+                    {
+                        logger.info { "Handling connection from ${nettyInbound.remoteAddress()}" }
+                        it.handleConnection(nettyInbound.context().channel().alloc(), createDataStream(nettyInbound))
+                    }
+            )
 
-        val dataStream = nettyInbound
-                .configureIdleTimeout(serverConfig.idleTimeout)
-                .logConnectionClosed()
-                .receive()
-                .retain()
 
-        return collectorProvider().fold(
-                {
-                    logger.warn { "Collector not ready. Closing connection from ${nettyInbound.remoteAddress()}..." }
-                    Mono.empty()
-                },
-                { it.handleConnection(nettyInbound.context().channel().alloc(), dataStream) })
-
-    }
+    fun createDataStream(nettyInbound: NettyInbound): ByteBufFlux = nettyInbound
+            .configureIdleTimeout(serverConfig.idleTimeout)
+            .logConnectionClosed()
+            .receive()
+            .retain()
 
     private fun NettyInbound.configureIdleTimeout(timeout: Duration): NettyInbound {
         onReadIdle(timeout.toMillis()) {
