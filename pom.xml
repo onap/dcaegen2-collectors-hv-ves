@@ -52,6 +52,7 @@
         <module>hv-collector-domain</module>
         <module>hv-collector-health-check</module>
         <module>hv-collector-main</module>
+        <module>hv-collector-ssl</module>
         <module>hv-collector-test-utils</module>
         <module>hv-collector-utils</module>
         <module>hv-collector-ves-message-generator</module>
@@ -586,14 +587,15 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Bismuth-SR10</version>
+                <!-- remember to update netty-tcnative version -->
+                <version>Bismuth-SR11</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative-boringssl-static</artifactId>
-                <version>2.0.8.Final</version>
+                <version>2.0.15.Final</version>
                 <classifier>${os.detected.classifier}</classifier>
             </dependency>
             <dependency>
