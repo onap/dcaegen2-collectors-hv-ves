@@ -24,8 +24,7 @@ import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import io.netty.handler.ssl.SslProvider
-import org.onap.dcae.collectors.veshv.domain.EndOfTransmissionMessage
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.SimulatorConfiguration
@@ -53,10 +52,10 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
             }
             .build()
 
-    fun sendIo(messages: Flux<PayloadWireFrameMessage>) =
+    fun sendIo(messages: Flux<WireFrameMessage>) =
             sendRx(messages).then(Mono.just(Unit)).asIo()
 
-    private fun sendRx(messages: Flux<PayloadWireFrameMessage>): Mono<Void> {
+    private fun sendRx(messages: Flux<WireFrameMessage>): Mono<Void> {
         val complete = ReplayProcessor.create<Void>(1)
         client
                 .newHandler { _, output -> handler(complete, messages, output) }
@@ -72,7 +71,7 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
     }
 
     private fun handler(complete: ReplayProcessor<Void>,
-                        messages: Flux<PayloadWireFrameMessage>,
+                        messages: Flux<WireFrameMessage>,
                         nettyOutbound: NettyOutbound): Publisher<Void> {
 
         val allocator = nettyOutbound.alloc()
@@ -85,7 +84,6 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
                 .logConnectionClosed()
                 .options { it.flushOnBoundary() }
                 .sendGroups(frames)
-                .send(Mono.just(allocator.buffer().writeByte(eotMessageByte.toInt())))
                 .then {
                     logger.info("Messages have been sent")
                     complete.onComplete()
@@ -117,6 +115,5 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
     companion object {
         private val logger = Logger(VesHvClient::class)
         private const val MAX_BATCH_SIZE = 128
-        private const val eotMessageByte = EndOfTransmissionMessage.MARKER_BYTE
     }
 }

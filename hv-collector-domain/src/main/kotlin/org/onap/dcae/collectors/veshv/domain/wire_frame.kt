@@ -20,10 +20,8 @@
 package org.onap.dcae.collectors.veshv.domain
 
 
-sealed class WireFrameMessage
-
 /**
- * Wire frame structure is presented bellow. All fields are in network byte order (big-endian).
+ * Wire frame structure is presented bellow using ASN.1 notation. All fields are in network byte order (big-endian).
  *
  * ```
  * -- Precedes every HV-VES message
@@ -31,21 +29,22 @@ sealed class WireFrameMessage
  *   magic           INTEGER (0..255),         – always 0xFF, identifies extended header usage
  *   versionMajor    INTEGER (0..255),         – major interface v, forward incompatible with previous major v
  *   versionMinor    INTEGER (0..255),         – minor interface v, forward compatible with previous minor v
- *   reserved        BIT STRING (SIZE (16)),   – reserved for future use
- *   messageType     INTEGER (0..255),         – message payload type: 0x00=undefined, 0x01=protobuf
- *   messageLength   INTEGER (0..4294967295)   – message payload length
+ *   reserved        OCTET STRING (SIZE (3)),  – reserved for future use
+ *   payloadId       INTEGER (0..255),         – message payload type: 0x00=undefined, 0x01=protobuf
+ *   payloadLength   INTEGER (0..4294967295)   – message payload length
+ *   payload         OCTET STRING              – length as per payloadLength
  * }
  * ```
  *
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class PayloadWireFrameMessage(val payload: ByteData,
-                                   val versionMajor: Short,
-                                   val versionMinor: Short,
-                                   val payloadTypeRaw: Short,
-                                   val payloadSize: Int
-) : WireFrameMessage() {
+data class WireFrameMessage(val payload: ByteData,
+                            val versionMajor: Short,
+                            val versionMinor: Short,
+                            val payloadType: Short,
+                            val payloadSize: Int
+) {
     constructor(payload: ByteArray) : this(
             ByteData(payload),
             SUPPORTED_VERSION_MAJOR,
@@ -55,7 +54,7 @@ data class PayloadWireFrameMessage(val payload: ByteData,
 
     fun isValid(): Boolean =
             versionMajor == SUPPORTED_VERSION_MAJOR
-                    && PayloadContentType.isValidHexValue(payloadTypeRaw)
+                    && PayloadContentType.isValidHexValue(payloadType)
                     && payload.size() == payloadSize
 
     companion object {
@@ -74,24 +73,3 @@ data class PayloadWireFrameMessage(val payload: ByteData,
         const val MAX_PAYLOAD_SIZE = 1024 * 1024
     }
 }
-
-
-/**
- * This message type should be used by client to indicate that he has finished sending data to collector.
- *
- * Wire frame structure is presented bellow. All fields are in network byte order (big-endian).
- *
- * ```
- * -- Sent by the HV-VES data provider, prior to closing the connection to the HV-VES destination
- * Eot ::= SEQUENCE {
- *   magic           INTEGER (0..255),           – always 0xAA
- * }
- * ```
- *
- * @since July 2018
- */
-
-object EndOfTransmissionMessage : WireFrameMessage() {
-    const val MARKER_BYTE: Short = 0xAA
-}
-

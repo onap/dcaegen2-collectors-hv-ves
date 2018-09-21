@@ -39,7 +39,7 @@ fun vesEvent(commonEventHeader: CommonEventHeader,
              hvRanMeasFields: ByteString = ByteString.EMPTY): VesEventOuterClass.VesEvent =
         VesEventOuterClass.VesEvent.newBuilder()
                 .setCommonEventHeader(commonEventHeader)
-                .setHvMeasFields(hvRanMeasFields)
+                .setEventFields(hvRanMeasFields)
                 .build()
 
 fun commonHeader(domain: VesEventDomain = HVMEAS,

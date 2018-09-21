@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 import com.google.protobuf.ByteString
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.PayloadContentType
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
@@ -44,11 +44,11 @@ import java.nio.charset.Charset
  */
 class MessageGeneratorImpl internal constructor(private val payloadGenerator: PayloadGenerator) : MessageGenerator {
 
-    override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<PayloadWireFrameMessage> = Flux
+    override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<WireFrameMessage> = Flux
             .fromIterable(messageParameters)
             .flatMap { createMessageFlux(it) }
 
-    private fun createMessageFlux(parameters: MessageParameters): Flux<PayloadWireFrameMessage> =
+    private fun createMessageFlux(parameters: MessageParameters): Flux<WireFrameMessage> =
             Mono.fromCallable { createMessage(parameters.commonEventHeader, parameters.messageType) }
                     .let {
                         if (parameters.amount < 0)
@@ -57,17 +57,17 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                             it.repeat(parameters.amount)
                     }
 
-    private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): PayloadWireFrameMessage =
+    private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): WireFrameMessage =
             when (messageType) {
                 VALID ->
-                    PayloadWireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
+                    WireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
                 TOO_BIG_PAYLOAD ->
-                    PayloadWireFrameMessage(vesEvent(commonEventHeader, oversizedPayload()))
+                    WireFrameMessage(vesEvent(commonEventHeader, oversizedPayload()))
                 FIXED_PAYLOAD ->
-                    PayloadWireFrameMessage(vesEvent(commonEventHeader, fixedPayload()))
+                    WireFrameMessage(vesEvent(commonEventHeader, fixedPayload()))
                 INVALID_WIRE_FRAME -> {
                     val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
-                    PayloadWireFrameMessage(
+                    WireFrameMessage(
                             payload,
                             UNSUPPORTED_VERSION,
                             UNSUPPORTED_VERSION,
@@ -75,7 +75,7 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                             payload.size())
                 }
                 INVALID_GPB_DATA ->
-                    PayloadWireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
+                    WireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
     private fun vesEvent(commonEventHeader: CommonEventHeader, hvRanMeasPayload: ByteString): ByteArray {
@@ -85,11 +85,11 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
     private fun createVesEvent(commonEventHeader: CommonEventHeader, payload: ByteString): VesEvent =
             VesEvent.newBuilder()
                     .setCommonEventHeader(commonEventHeader)
-                    .setHvMeasFields(payload)
+                    .setEventFields(payload)
                     .build()
 
     private fun oversizedPayload() =
-            payloadGenerator.generateRawPayload(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE + 1)
+            payloadGenerator.generateRawPayload(WireFrameMessage.MAX_PAYLOAD_SIZE + 1)
 
     private fun fixedPayload() =
             payloadGenerator.generateRawPayload(MessageGenerator.FIXED_PAYLOAD_SIZE)

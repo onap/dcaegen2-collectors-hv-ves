@@ -28,7 +28,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.MAX_PAYLOAD_SIZE
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -42,8 +42,7 @@ object WireFrameCodecsTest : Spek({
     val encoder = WireFrameEncoder()
     val decoder = WireFrameDecoder()
 
-    fun createSampleFrame() =
-            PayloadWireFrameMessage(payloadAsString.toByteArray(Charset.defaultCharset()))
+    fun createSampleFrame() = WireFrameMessage(payloadAsString.toByteArray(Charset.defaultCharset()))
 
     fun encodeSampleFrame() =
             createSampleFrame().let {
@@ -53,11 +52,11 @@ object WireFrameCodecsTest : Spek({
     describe("Wire Frame invariants") {
 
         given("input with unsupported major version") {
-            val input = PayloadWireFrameMessage(
+            val input = WireFrameMessage(
                     payload = ByteData.EMPTY,
                     versionMajor = 100,
                     versionMinor = 0,
-                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = 0)
 
             it("should fail validation") {
@@ -66,11 +65,11 @@ object WireFrameCodecsTest : Spek({
         }
 
         given("input with unsupported minor version") {
-            val input = PayloadWireFrameMessage(
+            val input = WireFrameMessage(
                     payload = ByteData.EMPTY,
                     versionMajor = 1,
                     versionMinor = 6,
-                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = 0)
 
             it("should pass validation") {
@@ -79,11 +78,11 @@ object WireFrameCodecsTest : Spek({
         }
 
         given("input with unsupported payload type") {
-            val input = PayloadWireFrameMessage(
+            val input = WireFrameMessage(
                     payload = ByteData.EMPTY,
                     versionMajor = 1,
                     versionMinor = 0,
-                    payloadTypeRaw = 0x69,
+                    payloadType = 0x69,
                     payloadSize = 0)
 
             it("should fail validation") {
@@ -92,11 +91,11 @@ object WireFrameCodecsTest : Spek({
         }
 
         given("input with too small payload size") {
-            val input = PayloadWireFrameMessage(
+            val input = WireFrameMessage(
                     payload = ByteData(byteArrayOf(1, 2, 3)),
                     versionMajor = 1,
                     versionMinor = 0,
-                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = 1)
 
             it("should fail validation") {
@@ -105,11 +104,11 @@ object WireFrameCodecsTest : Spek({
         }
 
         given("input with too big payload size") {
-            val input = PayloadWireFrameMessage(
+            val input = WireFrameMessage(
                     payload = ByteData(byteArrayOf(1, 2, 3)),
                     versionMajor = 1,
                     versionMinor = 0,
-                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = 8)
 
             it("should fail validation") {
@@ -119,11 +118,11 @@ object WireFrameCodecsTest : Spek({
 
         given("valid input") {
             val payload = byteArrayOf(6, 9, 8, 6)
-            val input = PayloadWireFrameMessage(
+            val input = WireFrameMessage(
                     payload = ByteData(payload),
                     versionMajor = 1,
                     versionMinor = 0,
-                    payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                     payloadSize = payload.size)
 
             it("should pass validation") {
@@ -139,14 +138,18 @@ object WireFrameCodecsTest : Spek({
         describe("encode-decode methods' compatibility") {
             val frame = createSampleFrame()
             val encoded = encodeSampleFrame()
-            val decoded = decoder.decodeFirst(encoded).getPayloadMessageOrFail()
+            val decoded = decoder.decodeFirst(encoded).getMessageOrFail()
 
-            it("should decode version") {
+            it("should decode major version") {
                 assertThat(decoded.versionMajor).isEqualTo(frame.versionMajor)
             }
 
+            it("should decode minor version") {
+                assertThat(decoded.versionMinor).isEqualTo(frame.versionMinor)
+            }
+
             it("should decode payload type") {
-                assertThat(decoded.payloadTypeRaw).isEqualTo(frame.payloadTypeRaw)
+                assertThat(decoded.payloadType).isEqualTo(frame.payloadType)
             }
 
             it("should decode payload size") {
@@ -170,14 +173,7 @@ object WireFrameCodecsTest : Spek({
                 assertBufferIntact(buff)
             }
 
-            it("should return end-of-transmission message when given end-of-transmission marker byte") {
-                val buff = Unpooled.buffer()
-                        .writeByte(0xAA)
-
-                assertIsEndOfTransmissionMessage(decoder.decodeFirst(buff))
-            }
-
-            it("should return error when given any single byte other than end-of-transmission marker byte") {
+            it("should return error when given any single byte other than marker byte") {
                 val buff = Unpooled.buffer()
                         .writeByte(0xEE)
 
@@ -194,21 +190,13 @@ object WireFrameCodecsTest : Spek({
                 assertBufferIntact(buff)
             }
 
-            it("should return error when length looks ok but first byte is not 0xFF or 0xAA") {
+            it("should return error when length looks ok but first byte is not 0xFF") {
                 val buff = Unpooled.buffer()
                         .writeByte(0x69)
                         .writeBytes("some garbage".toByteArray())
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(InvalidWireFrameMarker::class.java) }
                 assertBufferIntact(buff)
-            }
-
-            it("should return end-of-transmission message when length looks ok and first byte is 0xAA") {
-                val buff = Unpooled.buffer()
-                        .writeByte(0xAA)
-                        .writeBytes("some garbage".toByteArray())
-
-                assertIsEndOfTransmissionMessage(decoder.decodeFirst(buff))
             }
 
             it("should return error when payload doesn't fit") {
@@ -223,8 +211,8 @@ object WireFrameCodecsTest : Spek({
             it("should decode payload message leaving rest unread") {
                 val buff = Unpooled.buffer()
                         .writeBytes(encodeSampleFrame())
-                        .writeByte(0xAA)
-                val decoded = decoder.decodeFirst(buff).getPayloadMessageOrFail()
+                        .writeByte(0xAB)
+                val decoded = decoder.decodeFirst(buff).getMessageOrFail()
 
                 assertThat(decoded.isValid()).describedAs("should be valid").isTrue()
                 assertThat(buff.readableBytes()).isEqualTo(1)
@@ -236,11 +224,11 @@ object WireFrameCodecsTest : Spek({
             it("should decode successfully when payload size is equal 1 MiB") {
 
                 val payload = ByteArray(MAX_PAYLOAD_SIZE)
-                val input = PayloadWireFrameMessage(
+                val input = WireFrameMessage(
                         payload = ByteData(payload),
                         versionMajor = 1,
                         versionMinor = 0,
-                        payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                        payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                         payloadSize = payload.size)
 
 
@@ -250,11 +238,11 @@ object WireFrameCodecsTest : Spek({
             it("should return error when payload exceeds 1 MiB") {
 
                 val payload = ByteArray(MAX_PAYLOAD_SIZE + 1)
-                val input = PayloadWireFrameMessage(
+                val input = WireFrameMessage(
                         payload = ByteData(payload),
                         versionMajor = 1,
                         versionMinor = 0,
-                        payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                        payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                         payloadSize = payload.size)
                 val buff = encoder.encode(input)
 
@@ -266,11 +254,11 @@ object WireFrameCodecsTest : Spek({
             it("should validate only first message") {
 
                 val payload = ByteArray(MAX_PAYLOAD_SIZE)
-                val input = PayloadWireFrameMessage(
+                val input = WireFrameMessage(
                         payload = ByteData(payload),
                         versionMajor = 1,
                         versionMinor = 0,
-                        payloadTypeRaw = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                        payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                         payloadSize = payload.size)
 
 
@@ -289,21 +277,6 @@ private fun <A, B> Either<A, B>.assertFailedWithError(assertj: (ObjectAssert<A>)
     fold({ assertj(assertThat(it)) }, { fail("Error expected") })
 }
 
-private fun Either<WireFrameDecodingError, WireFrameMessage>.getPayloadMessageOrFail(): PayloadWireFrameMessage =
-        fold({ fail(it.message) }, { it.castToPayloadMsgOrFail() })
+private fun Either<WireFrameDecodingError, WireFrameMessage>.getMessageOrFail(): WireFrameMessage =
+        fold({ fail(it.message) }, { it })
 
-private fun WireFrameMessage.castToPayloadMsgOrFail(): PayloadWireFrameMessage =
-        this as? PayloadWireFrameMessage
-                ?: fail("Decoded message had unexpected type, expecting: PayloadWireFrameMessage, but was: ${this.javaClass}")
-
-
-private fun assertIsEndOfTransmissionMessage(decoded: Either<WireFrameDecodingError, WireFrameMessage>) {
-    decoded.getEndOfTransmissionMessageOrFail()
-}
-
-private fun Either<WireFrameDecodingError, WireFrameMessage>.getEndOfTransmissionMessageOrFail(): EndOfTransmissionMessage =
-        fold({ fail(it.message) }, { it.castToEndOfTransmissionMessageOrFail() })
-
-private fun WireFrameMessage.castToEndOfTransmissionMessageOrFail(): EndOfTransmissionMessage =
-        this as? EndOfTransmissionMessage
-                ?: fail("Decoded message had unexpected type, expecting: EndOfTransmissionMessage, but was: ${this.javaClass}")

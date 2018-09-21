@@ -31,7 +31,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.mockito.ArgumentMatchers.anyList
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
@@ -89,7 +89,7 @@ internal class MessageStreamValidationTest : Spek({
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val event = vesEvent()
-                val generatedWireProtocolFrame = PayloadWireFrameMessage(event.toByteArray())
+                val generatedWireProtocolFrame = WireFrameMessage(event.toByteArray())
                 val receivedMessageBytes = event.toByteArray()
 
                 givenParsedMessageParameters(MessageParameters(event.commonEventHeader, MessageType.VALID, 1))
@@ -107,7 +107,7 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent(payload = "payload A")
                 val receivedEvent = vesEvent(payload = "payload B")
-                val generatedWireProtocolFrame = PayloadWireFrameMessage(generatedEvent.toByteArray())
+                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
                 givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.VALID, 1))
@@ -125,7 +125,7 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent()
                 val receivedEvent = vesEvent(eventId = "bbb")
-                val generatedWireProtocolFrame = PayloadWireFrameMessage(generatedEvent.toByteArray())
+                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
                 givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.VALID, 1))
@@ -144,7 +144,7 @@ internal class MessageStreamValidationTest : Spek({
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val event = vesEvent()
-                val generatedWireProtocolFrame = PayloadWireFrameMessage(event.toByteArray())
+                val generatedWireProtocolFrame = WireFrameMessage(event.toByteArray())
                 val receivedMessageBytes = event.toByteArray()
 
                 givenParsedMessageParameters(MessageParameters(event.commonEventHeader, MessageType.FIXED_PAYLOAD, 1))
@@ -162,7 +162,7 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent(payload = "payload A")
                 val receivedEvent = vesEvent(payload = "payload B")
-                val generatedWireProtocolFrame = PayloadWireFrameMessage(generatedEvent.toByteArray())
+                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
                 givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.FIXED_PAYLOAD, 1))
@@ -180,7 +180,7 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent()
                 val receivedEvent = vesEvent("bbb")
-                val generatedWireProtocolFrame = PayloadWireFrameMessage(generatedEvent.toByteArray())
+                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
                 givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.FIXED_PAYLOAD, 1))
@@ -205,7 +205,7 @@ private fun vesEvent(eventId: String = DUMMY_EVENT_ID, payload: String = DUMMY_P
     return VesEvent.newBuilder()
             .setCommonEventHeader(CommonEventHeader.newBuilder()
                     .setEventId(eventId))
-            .setHvMeasFields(ByteString.copyFrom(payload.toByteArray()))
+            .setEventFields(ByteString.copyFrom(payload.toByteArray()))
             .build()
 }
 

@@ -23,8 +23,8 @@ import com.google.protobuf.ByteString
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.MAX_PAYLOAD_SIZE
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage.Companion.RESERVED_BYTE_COUNT
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.MAX_PAYLOAD_SIZE
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.RESERVED_BYTE_COUNT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
@@ -52,9 +52,6 @@ fun vesWireFrameMessage(domain: VesEventDomain = OTHER,
             writeBytes(gpb)  // ves event as GPB bytes
         }
 
-fun endOfTransmissionWireMessage(): ByteBuf =
-        allocator.buffer().writeByte(0xAA)
-
 fun wireFrameMessageWithInvalidPayload(): ByteBuf = allocator.buffer().run {
     writeValidWireFrameHeaders()
 
@@ -69,8 +66,8 @@ fun garbageFrame(): ByteBuf = allocator.buffer().run {
 
 fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
     writeByte(0xFF)
-    writeByte(0x01)   // version
-    writeByte(0x01)   // content type = GPB
+    writeByte(0x01)   // version major
+    writeByte(0x01)   // version minor
 }
 
 fun vesMessageWithTooBigPayload(domain: VesEventDomain = HVMEAS): ByteBuf =

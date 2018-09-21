@@ -179,6 +179,6 @@ private fun vesEvent(eventId: String = DUMMY_EVENT_ID, payload: String = DUMMY_P
     return VesEvent.newBuilder()
             .setCommonEventHeader(CommonEventHeader.newBuilder()
                     .setEventId(eventId))
-            .setHvMeasFields(ByteString.copyFrom(payload.toByteArray()))
+            .setEventFields(ByteString.copyFrom(payload.toByteArray()))
             .build()
 }

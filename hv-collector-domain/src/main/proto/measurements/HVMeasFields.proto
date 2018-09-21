@@ -24,20 +24,14 @@ import "MeasDataCollection.proto";          // for 3GPP PM format
 message HVMeasFields
 {
     string hvMeasFieldsVersion = 1;
-    measDataCollection.MeasDataCollection measDataCollection = 2;
-    // From 3GPP TS 28.550
+    MeasDataCollection measDataCollection = 2;
+    // Based on 3GPP TS 28.550
     // Informative: mapping between similar header fields (format may be different)
-    // 3GPP MeasStreamHeader   ONAP/VES CommonEventHeader
+    // 3GPP MeasHeader         ONAP/VES CommonEventHeader
     // senderName              sourceName
     // senderType              nfNamingCode + nfcNamingCode
     // vendorName              nfVendorName
     // collectionBeginTime     startEpochMicrosec
     // timestamp               lastEpochMicrosec
-    repeated HashMap eventAddlFlds = 3;     // optional per-event data
-}
-
-message HashMap
-{
-    string name = 1;
-    string value = 2;
+    map<string, string> eventAddlFlds = 3;     // optional per-event data (name/value HashMap)
 }
