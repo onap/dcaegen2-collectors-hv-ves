@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_b36758b7",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/codec.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-09-21T12:32:16Z",
+      "side": 1,
+      "message": "You can use build int kotlin function extension to reformat this a bit:\nfun encode(frame: WireFrameMessage): ByteBuf \u003d allocator\n            .buffer(WireFrameMessage.HEADER_SIZE + frame.payload.size())\n            .also {\n                it.writeByte(WireFrameMessage.MARKER_BYTE.toInt())\n                it.writeByte(frame.versionMajor.toInt())\n                it.writeByte(frame.versionMinor.toInt())\n                it.writeZero(RESERVED_BYTE_COUNT)\n                it.writeByte(frame.payloadType.toInt())\n                it.writeInt(frame.payloadSize)\n                frame.payload.writeTo(it)\n            }",
+      "revId": "bfcf2a14995dfcd4db9e65107a51e69cfda8a8ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
