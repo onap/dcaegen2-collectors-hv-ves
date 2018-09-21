@@ -21,54 +21,55 @@ syntax = "proto3";
 package org.onap.ves;
 
 message VesEvent {
-    CommonEventHeader commonEventHeader = 1; // required
+    CommonEventHeader commonEventHeader=1;  // required
 
-    oneof eventFields // required, payload
-    {
-        // each new high-volume domain can add an entry for its own GPB message
-        // the field can be opaque (bytes) to allow decoding the payload in a separate step
-        bytes hvMeasFields = 2; // for domain==HVMEAS, GPB message: HVMeasFields
-    }
+    bytes eventFields=2;                    // required, payload
+    // this field contains a domain-specific GPB message
+    // the field being opaque (bytes), the decoding of the payload occurs in a separate step
+    // the name of the GPB message for domain XYZ is XYZFields
+    // e.g. for domain==HVMEAS, the GPB message is HVMEASFields
 }
 
 // VES CommonEventHeader adapted to GPB (Google Protocol Buffers)
-// Aligned with VES 7.0.1 schema, and extending to hvMeas Domain
+// Aligned with VES 7.0.1 schema, and extending to hvMeas Domain.
 
-message CommonEventHeader {
-    string version = 1;               // required, "version of the gpb common event header"
-    string domain = 2;                // required, "the eventing domain associated with the event", allowed values:
-                                      // FAULT, HEARTBEAT, MEASUREMENT, MOBILE_FLOW, OTHER, PNFREGISTRATION, SIP_SIGNALING,
-                                      // STATE_CHANGE, SYSLOG, THRESHOLD_CROSSING_ALERT, VOICE_QUALITY, HVMEAS
+message CommonEventHeader
+{
+    string version = 1;                     // required, "version of the gpb common event header"
+    string domain = 2;                      // required, "the eventing domain associated with the event", allowed values:
+    // FAULT, HEARTBEAT, MEASUREMENT, MOBILE_FLOW, OTHER, PNFREGISTRATION, SIP_SIGNALING,
+    // STATE_CHANGE, SYSLOG, THRESHOLD_CROSSING_ALERT, VOICE_QUALITY, HVMEAS
 
-    uint32 sequence = 3;              // required, "ordering of events communicated by an event source instance or 0 if not needed"
+    uint32 sequence = 3;                    // required, "ordering of events communicated by an event source instance or 0 if not needed"
 
-    enum Priority {
+    enum Priority
+    {
         PRIORITY_NOT_PROVIDED = 0;
         HIGH = 1;
         MEDIUM = 2;
         NORMAL = 3;
         LOW = 4;
     }
-    Priority priority = 4;            // required, "processing priority"
+    Priority priority = 4;                  // required, "processing priority"
 
-    string eventId = 5;               // required, "event key that is unique to the event source"
-    string eventName = 6;             // required, "unique event name"
-    string eventType = 7;             // "for example - guest05,  platform"
+    string eventId = 5;                     // required, "event key that is unique to the event source"
+    string eventName = 6;                   // required, "unique event name"
+    string eventType = 7;                   // "for example - guest05,  platform"
 
-    uint64 lastEpochMicrosec = 8;     // required, "the latest unix time aka epoch time associated with the event from any component--as microseconds elapsed since 1 Jan 1970 not including leap seconds"
-    uint64 startEpochMicrosec = 9;    // required, "the earliest unix time aka epoch time associated with the event from any component--as microseconds elapsed since 1 Jan 1970 not including leap seconds"
+    uint64 lastEpochMicrosec = 8;           // required, "the latest unix time aka epoch time associated with the event from any component--as microseconds elapsed since 1 Jan 1970 not including leap seconds"
+    uint64 startEpochMicrosec = 9;          // required, "the earliest unix time aka epoch time associated with the event from any component--as microseconds elapsed since 1 Jan 1970 not including leap seconds"
 
-    string nfNamingCode = 10;         // "4 character network function type, aligned with vnf naming standards"
-    string nfcNamingCode = 11;        // "3 character network function component type, aligned with vfc naming standards"
-    string nfVendorName = 12;         // " Vendor Name providing the nf "
+    string nfNamingCode = 10;               // "4 character network function type, aligned with vnf naming standards"
+    string nfcNamingCode = 11;              // "3 character network function component type, aligned with vfc naming standards"
+    string nfVendorName = 12;               // " Vendor Name providing the nf "
 
-    bytes reportingEntityId = 13;     // "UUID identifying the entity reporting the event, for example an OAM VM; must be populated by the ATT enrichment process"
-    string reportingEntityName = 14;  // required, "name of the entity reporting the event, for example, an EMS name; may be the same as sourceName should match A&AI entry"
-    bytes sourceId = 15;              // "UUID identifying the entity experiencing the event issue; must be populated by the ATT enrichment process"
-    string sourceName = 16;           // required, "name of the entity experiencing the event issued use A&AI entry"
-    string timeZoneOffset = 17;       // "Offset to GMT to indicate local time zone for the device"
-    string vesEventListenerVersion = 18; // required, "Version of the VesEvent Listener"
+    bytes reportingEntityId = 13;           // "UUID identifying the entity reporting the event, for example an OAM VM; must be populated by the ATT enrichment process"
+    string reportingEntityName = 14;        // required, "name of the entity reporting the event, for example, an EMS name; may be the same as sourceName should match A&AI entry"
+    bytes sourceId = 15;                    // "UUID identifying the entity experiencing the event issue; must be populated by the ATT enrichment process"
+    string sourceName = 16;                 // required, "name of the entity experiencing the event issued use A&AI entry"
+    string timeZoneOffset = 17;             // "Offset to GMT to indicate local time zone for the device"
+    string vesEventListenerVersion = 18;    // required, "Version of the VesEvent Listener"
 
-    reserved "InternalHeaderFields";  // "enrichment fields for internal VES Event Listener service use only, not supplied by event sources"
+    reserved "InternalHeaderFields";        // "enrichment fields for internal VES Event Listener service use only, not supplied by event sources"
     reserved 100;
 }

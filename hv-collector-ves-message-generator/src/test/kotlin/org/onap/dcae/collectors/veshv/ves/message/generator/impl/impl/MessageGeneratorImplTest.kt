@@ -29,7 +29,7 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.FAULT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
@@ -87,7 +87,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.name)
                             }
                             .verifyComplete()
@@ -105,7 +105,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isGreaterThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isGreaterThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVMEAS.name)
                             }
                             .verifyComplete()
@@ -122,7 +122,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                                 assertThatExceptionOfType(InvalidProtocolBufferException::class.java)
                                         .isThrownBy { extractCommonEventHeader(it.payload) }
                             }
@@ -140,9 +140,9 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isFalse()
-                                assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVMEAS.name)
-                                assertThat(it.versionMajor).isNotEqualTo(PayloadWireFrameMessage.SUPPORTED_VERSION_MINOR)
+                                assertThat(it.versionMajor).isNotEqualTo(WireFrameMessage.SUPPORTED_VERSION_MINOR)
                             }
                             .verifyComplete()
                 }
@@ -158,7 +158,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                                 assertThat(extractHvRanMeasFields(it.payload).size()).isEqualTo(MessageGenerator.FIXED_PAYLOAD_SIZE)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.name)
                             }
@@ -177,17 +177,17 @@ object MessageGeneratorImplTest : Spek({
                 generator.createMessageFlux(messageParameters)
                         .test()
                         .assertNext {
-                            assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                            assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                             assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVMEAS.name)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .assertNext {
-                            assertThat(it.payloadSize).isGreaterThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                            assertThat(it.payloadSize).isGreaterThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                             assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.name)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .assertNext {
-                            assertThat(it.payloadSize).isLessThan(PayloadWireFrameMessage.MAX_PAYLOAD_SIZE)
+                            assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                             assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HEARTBEAT.name)
                         }
                         .expectNextCount(singleFluxSize - 1)
@@ -202,5 +202,5 @@ fun extractCommonEventHeader(bytes: ByteData): CommonEventHeader =
 
 
 fun extractHvRanMeasFields(bytes: ByteData): ByteString =
-        VesEvent.parseFrom(bytes.unsafeAsArray()).hvMeasFields
+        VesEvent.parseFrom(bytes.unsafeAsArray()).eventFields
 

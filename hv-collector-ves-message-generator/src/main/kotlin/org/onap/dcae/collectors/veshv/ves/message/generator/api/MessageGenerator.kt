@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageGeneratorImpl
 import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
 import reactor.core.publisher.Flux
@@ -29,7 +29,7 @@ import reactor.core.publisher.Flux
  * @since June 2018
  */
 interface MessageGenerator {
-    fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<PayloadWireFrameMessage>
+    fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<WireFrameMessage>
 
     companion object {
         val INSTANCE: MessageGenerator by lazy {
