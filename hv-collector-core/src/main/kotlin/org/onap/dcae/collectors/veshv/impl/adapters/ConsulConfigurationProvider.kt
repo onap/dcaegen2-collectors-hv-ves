@@ -31,7 +31,6 @@ import reactor.retry.Jitter
 import reactor.retry.Retry
 import java.io.StringReader
 import java.time.Duration
-import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 import javax.json.Json
 import javax.json.JsonObject
@@ -72,41 +71,31 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
 
     override fun invoke(): Flux<CollectorConfiguration> =
             Flux.interval(firstRequestDelay, requestInterval)
-                    .flatMap { askForConfig() }
-                    .map(::parseJsonResponse)
-                    .map(::extractEncodedConfiguration)
+                    .concatMap { askForConfig() }
                     .flatMap(::filterDifferentValues)
-                    .map(::decodeConfiguration)
+                    .map(::parseJsonResponse)
                     .map(::createCollectorConfiguration)
                     .retryWhen(retry)
 
     private fun askForConfig(): Mono<String> = http.get(url)
 
-    private fun parseJsonResponse(responseString: String): JsonObject =
-            Json.createReader(StringReader(responseString)).readArray().first().asJsonObject()
-
-    private fun extractEncodedConfiguration(response: JsonObject): String =
-            response.getString("Value")
-
-    private fun filterDifferentValues(base64Value: String): Mono<String> {
-        val newHash = hashOf(base64Value)
-        return if (newHash == lastConfigurationHash.get()) {
-            Mono.empty()
-        } else {
-            lastConfigurationHash.set(newHash)
-            Mono.just(base64Value)
-        }
-    }
+    private fun filterDifferentValues(configurationString: String) =
+            hashOf(configurationString).let {
+                if (it == lastConfigurationHash.get()) {
+                    Mono.empty()
+                } else {
+                    lastConfigurationHash.set(it)
+                    Mono.just(configurationString)
+                }
+            }
 
     private fun hashOf(str: String) = str.hashCode()
 
-    private fun decodeConfiguration(encodedConfiguration: String): JsonObject {
-        val decodedValue = String(Base64.getDecoder().decode(encodedConfiguration))
-        logger.info("Obtained new configuration from consul:\n$decodedValue")
-        return Json.createReader(StringReader(decodedValue)).readObject()
-    }
+    private fun parseJsonResponse(responseString: String): JsonObject =
+            Json.createReader(StringReader(responseString)).readObject()
 
     private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration {
+        logger.info { "Obtained new configuration from consul:\n${configuration}" }
         val routing = configuration.getJsonArray("collector.routing")
 
         return CollectorConfiguration(
