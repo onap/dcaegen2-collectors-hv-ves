@@ -132,9 +132,8 @@ private fun constructConsulConfigProvider(url: String,
 
 const val kafkaAddress = "message-router-kafka"
 
-fun constructConsulResponse(): String {
-
-    val config = """{
+fun constructConsulResponse(): String =
+    """{
     "dmaap.kafkaBootstrapServers": "$kafkaAddress:9093",
     "collector.routing": [
             {
@@ -147,18 +146,3 @@ fun constructConsulResponse(): String {
             }
     ]
     }"""
-
-    val encodedValue = String(Base64.getEncoder().encode(config.toByteArray()))
-
-    return """[
-        {
-            "CreateIndex": 100,
-            "ModifyIndex": 200,
-            "LockIndex": 200,
-            "Key": "zip",
-            "Flags": 0,
-            "Value": "$encodedValue",
-            "Session": "adf4238a-882b-9ddc-4a9d-5b6758e4159e"
-        }
-    ]"""
-}
