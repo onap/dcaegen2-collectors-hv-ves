@@ -23,7 +23,6 @@ import arrow.core.Either
 import arrow.core.Some
 import arrow.core.Try
 import arrow.core.fix
-import arrow.core.flatMap
 import arrow.core.monad
 import arrow.effects.IO
 import arrow.typeclasses.binding

@@ -27,8 +27,6 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.domain.InvalidWireFrame
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecodingError
 import org.onap.dcae.collectors.veshv.domain.MissingWireFrameBytes
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
-import org.onap.dcae.collectors.veshv.domain.EndOfTransmissionMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.SynchronousSink
@@ -76,15 +74,9 @@ internal class WireChunkDecoder(
     }
 
     private fun onSuccess(next: SynchronousSink<WireFrameMessage>): (WireFrameMessage) -> IO<Unit> = { frame ->
-        when (frame) {
-            is PayloadWireFrameMessage -> IO {
-                logDecodedWireMessage(frame)
-                next.next(frame)
-            }
-            is EndOfTransmissionMessage -> IO {
-                logEndOfTransmissionWireMessage()
-                next.next(frame)
-            }
+        IO {
+            logDecodedWireMessage(frame)
+            next.next(frame)
         }
     }
 
@@ -92,12 +84,8 @@ internal class WireChunkDecoder(
         logger.trace { "Got message with total size of ${wire.readableBytes()} B" }
     }
 
-    private fun logDecodedWireMessage(wire: PayloadWireFrameMessage) {
+    private fun logDecodedWireMessage(wire: WireFrameMessage) {
         logger.trace { "Wire payload size: ${wire.payloadSize} B" }
-    }
-
-    private fun logEndOfTransmissionWireMessage() {
-        logger.trace { "Received end-of-transmission message" }
     }
 
     private fun logEndOfData() {

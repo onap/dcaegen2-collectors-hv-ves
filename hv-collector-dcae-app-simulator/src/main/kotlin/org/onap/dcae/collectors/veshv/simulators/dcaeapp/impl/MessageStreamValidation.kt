@@ -24,7 +24,7 @@ import arrow.effects.fix
 import arrow.effects.monadError
 import arrow.typeclasses.bindingCatch
 import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.utils.arrow.asIo
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
@@ -77,7 +77,7 @@ class MessageStreamValidation(
 
     private fun generateEvents(parameters: List<MessageParameters>): IO<List<VesEventOuterClass.VesEvent>> =
             messageGenerator.createMessageFlux(parameters)
-                    .map(PayloadWireFrameMessage::payload)
+                    .map(WireFrameMessage::payload)
                     .map(ByteData::unsafeAsArray)
                     .map(VesEventOuterClass.VesEvent::parseFrom)
                     .collectList()

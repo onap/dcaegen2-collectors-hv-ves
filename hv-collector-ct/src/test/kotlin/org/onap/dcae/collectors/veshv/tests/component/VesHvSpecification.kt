@@ -37,7 +37,6 @@ import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithDifferentRouting
 import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithoutRouting
 import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
-import org.onap.dcae.collectors.veshv.tests.utils.endOfTransmissionWireMessage
 import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
 import org.onap.dcae.collectors.veshv.tests.utils.invalidWireFrame
 import org.onap.dcae.collectors.veshv.tests.utils.vesMessageWithTooBigPayload
@@ -66,30 +65,6 @@ object VesHvSpecification : Spek({
                     .describedAs("should send all events")
                     .hasSize(2)
         }
-
-        it("should not handle messages received from client after end-of-transmission message") {
-            val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesWireFrameMessage(HVMEAS)
-            val anotherValidMessage = vesWireFrameMessage(HVMEAS)
-            val endOfTransmissionMessage = endOfTransmissionWireMessage()
-
-            val handledEvents = sut.handleConnection(sink,
-                    validMessage,
-                    endOfTransmissionMessage,
-                    anotherValidMessage
-            )
-
-            assertThat(handledEvents).hasSize(1)
-            assertThat(validMessage.refCnt())
-                    .describedAs("first message should be released")
-                    .isEqualTo(0)
-            assertThat(endOfTransmissionMessage.refCnt())
-                    .describedAs("end-of-transmission message should be released")
-                    .isEqualTo(0)
-            assertThat(anotherValidMessage.refCnt())
-                    .describedAs("second (not handled) message should not be released")
-                    .isEqualTo(1)
-        }
     }
 
     describe("Memory management") {
@@ -113,26 +88,6 @@ object VesHvSpecification : Spek({
                     .isEqualTo(expectedRefCnt)
             assertThat(msgWithTooBigPayload.refCnt())
                     .describedAs("message with payload exceeding 1MiB should be released")
-                    .isEqualTo(expectedRefCnt)
-        }
-
-        it("should release memory for end-of-transmission message") {
-            val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesWireFrameMessage(HVMEAS)
-            val endOfTransmissionMessage = endOfTransmissionWireMessage()
-            val expectedRefCnt = 0
-
-            val handledEvents = sut.handleConnection(sink,
-                    validMessage,
-                    endOfTransmissionMessage
-            )
-
-            assertThat(handledEvents).hasSize(1)
-            assertThat(validMessage.refCnt())
-                    .describedAs("handled message should be released")
-                    .isEqualTo(expectedRefCnt)
-            assertThat(endOfTransmissionMessage.refCnt())
-                    .describedAs("end-of-transmission message should be released")
                     .isEqualTo(expectedRefCnt)
         }
 

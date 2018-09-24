@@ -30,7 +30,7 @@ import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.domain.PayloadWireFrameMessage
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
 import org.onap.dcae.collectors.veshv.tests.utils.Assertions.assertThat
@@ -98,7 +98,7 @@ internal class XnfSimulatorTest : Spek({
             // given
             val json = "[true]".byteInputStream()
             val messageParams = listOf<MessageParameters>()
-            val generatedMessages = Flux.empty<PayloadWireFrameMessage>()
+            val generatedMessages = Flux.empty<WireFrameMessage>()
             val sendingIo = IO {}
             whenever(messageParametersParser.parse(any())).thenReturn(Right(messageParams))
             whenever(messageGenerator.createMessageFlux(messageParams)).thenReturn(generatedMessages)
