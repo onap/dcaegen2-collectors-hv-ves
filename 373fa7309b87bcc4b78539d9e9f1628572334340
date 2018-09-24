@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+Code-Review+2: Przemyslaw Wasala <przemyslaw.wasala@nokia.com>
+Submitted-by: Przemyslaw Wasala <przemyslaw.wasala@nokia.com>
+Submitted-at: Mon, 24 Sep 2018 09:05:43 +0000
+Reviewed-on: https://gerrit.onap.org/r/67613
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
