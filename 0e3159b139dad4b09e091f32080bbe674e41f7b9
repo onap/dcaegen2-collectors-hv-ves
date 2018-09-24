@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_ed1e490d",
+        "filename": "hv-collector-ssl/src/main/kotlin/org/onap/dcae/collectors/veshv/ssl/impl/SslFactories.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-09-24T11:11:45Z",
+      "side": 1,
+      "message": "This function could be private",
+      "revId": "0e3159b139dad4b09e091f32080bbe674e41f7b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
