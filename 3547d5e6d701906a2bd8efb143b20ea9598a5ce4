@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_a2faa041",
+        "filename": "hv-collector-xnf-simulator/src/main/resources/logback.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-09-24T11:58:53Z",
+      "side": 1,
+      "message": "Change loglevel back",
+      "revId": "3547d5e6d701906a2bd8efb143b20ea9598a5ce4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
