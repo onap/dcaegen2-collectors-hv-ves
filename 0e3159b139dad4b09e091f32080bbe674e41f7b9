@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a76adc5_4d2add2d",
+        "filename": "hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/ArgVesHvConfiguration.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-09-24T11:24:38Z",
+      "side": 1,
+      "message": "Let\u0027s extract this function to hv-ves-ssl.SecConfFactory and reuse it in ArgXnfSimulatorConfiguration",
+      "revId": "0e3159b139dad4b09e091f32080bbe674e41f7b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_ed1e490d",
         "filename": "hv-collector-ssl/src/main/kotlin/org/onap/dcae/collectors/veshv/ssl/impl/SslFactories.kt",
         "patchSetId": 6
