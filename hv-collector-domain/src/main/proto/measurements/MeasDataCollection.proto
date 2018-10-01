@@ -25,32 +25,28 @@ package org.onap.ves;
 // Note (2018-09): work is in progress for 3GPP TS 28.550. Changes will be made, if needed, to align with final version.
 // Differences/additions to 3GPP TS 28.550 are marked with "%%".
 
-message MeasDataCollection                  // top-level message
+message MeasDataCollection                  // top-level message 
 {
     // %% Combined messageFileHeader, measData (single instance), messageFileFooter (not needed: timestamp = collectionBeginTime + granularityPeriod).
     string formatVersion = 1;
-    string senderName = 2;
-    string senderType = 3;
-    string vendorName = 4;
-    string collectionBeginTime = 5;         // in ASN.1 GeneralizedTime format (subset of ISO 8601 basic format)
-    uint32 granularityPeriod = 6;           // duration in seconds, %% moved from MeasInfo (single reporting period per event)
-    string measuredEntityUserName = 7;      // network function user definable name ("userLabel") defined for the measured entity in 3GPP TS 28.622
-    string measuredEntityDn = 8;            // DN as per 3GPP TS 32.300
-    string measuredEntitySoftwareVersion = 9;
-    repeated string measObjInstIdList = 10; // %%: optional, monitored object LDNs as per 3GPP TS 32.300 and 3GPP TS 32.432
-    repeated MeasInfo measInfo = 11;
+    uint32 granularityPeriod = 2;           // duration in seconds, %% moved from MeasInfo (single reporting period per event)
+    string measuredEntityUserName = 3;      // network function user definable name ("userLabel") defined for the measured entity in 3GPP TS 28.622
+    string measuredEntityDn = 4;            // DN as per 3GPP TS 32.300
+    string measuredEntitySoftwareVersion = 5;
+    repeated string measObjInstIdList = 6; // %%: optional, monitored object LDNs as per 3GPP TS 32.300 and 3GPP TS 32.432
+    repeated MeasInfo measInfo = 7; 
 }
 
 message MeasInfo
 {
     oneof MeasInfoId {                      // measurement group identifier
-                                            uint32 iMeasInfoId = 1;             // identifier as integer (%%: more compact)
-                                            string measInfoId = 2;              // identifier as string (more generic)
+        uint32 iMeasInfoId = 1;             // identifier as integer (%%: more compact)
+        string measInfoId = 2;              // identifier as string (more generic)
     }
 
     oneof MeasTypes {                       // measurement identifiers associated with the measurement results
-                                            IMeasTypes iMeasTypes = 3;          // identifiers as integers (%%: more compact)
-                                            SMeasTypes measTypes = 4;           // identifiers as strings (more generic)
+        IMeasTypes iMeasTypes = 3;          // identifiers as integers (%%: more compact)
+        SMeasTypes measTypes = 4;           // identifiers as strings (more generic)
     }
     // Needed only because GPB does not support repeated fields directly inside 'oneof'
     message IMeasTypes { repeated uint32 iMeasType = 1; }
@@ -63,8 +59,8 @@ message MeasInfo
 message MeasValue
 {
     oneof MeasObjInstId {                   // monitored object LDN as per 3GPP TS 32.300 and 3GPP TS 32.432
-                                            string measObjInstId = 1;           // LDN itself
-                                            uint32 measObjInstIdListIdx = 2;    // %%: index into measObjInstIdList
+        string measObjInstId = 1;           // LDN itself
+        uint32 measObjInstIdListIdx = 2;    // %%: index into measObjInstIdList
     }
     repeated MeasResult measResults = 3;
     bool suspectFlag = 4;

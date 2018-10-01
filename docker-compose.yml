@@ -80,6 +80,6 @@ services:
       - "6063:6063/tcp"
     command: ["--listen-port", "6063",
               "--kafka-bootstrap-servers", "kafka:9092",
-              "--kafka-topics", "ves_hvRanMeas"]
+              "--kafka-topics", "HV_VES_PERF3GPP"]
     depends_on:
       - kafka

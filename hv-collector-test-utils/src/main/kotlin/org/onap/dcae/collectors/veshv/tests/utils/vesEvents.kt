@@ -24,25 +24,25 @@ import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.ves.VesEventOuterClass
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
 import java.util.UUID.randomUUID
 
-fun vesEvent(domain: VesEventDomain = HVMEAS,
+fun vesEvent(domain: VesEventDomain = PERF3GPP,
              id: String = randomUUID().toString(),
-             hvRanMeasFields: ByteString = ByteString.EMPTY
-): VesEventOuterClass.VesEvent = vesEvent(commonHeader(domain, id), hvRanMeasFields)
+             eventFields: ByteString = ByteString.EMPTY
+): VesEventOuterClass.VesEvent = vesEvent(commonHeader(domain, id), eventFields)
 
 fun vesEvent(commonEventHeader: CommonEventHeader,
-             hvRanMeasFields: ByteString = ByteString.EMPTY): VesEventOuterClass.VesEvent =
+             eventFields: ByteString = ByteString.EMPTY): VesEventOuterClass.VesEvent =
         VesEventOuterClass.VesEvent.newBuilder()
                 .setCommonEventHeader(commonEventHeader)
-                .setEventFields(hvRanMeasFields)
+                .setEventFields(eventFields)
                 .build()
 
-fun commonHeader(domain: VesEventDomain = HVMEAS,
+fun commonHeader(domain: VesEventDomain = PERF3GPP,
                  id: String = randomUUID().toString(),
                  priority: Priority = Priority.NORMAL): CommonEventHeader =
         CommonEventHeader.newBuilder()

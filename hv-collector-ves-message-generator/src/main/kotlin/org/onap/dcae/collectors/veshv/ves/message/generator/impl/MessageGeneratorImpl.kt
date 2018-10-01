@@ -78,8 +78,8 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                     WireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
-    private fun vesEvent(commonEventHeader: CommonEventHeader, hvRanMeasPayload: ByteString): ByteArray {
-        return createVesEvent(commonEventHeader, hvRanMeasPayload).toByteArray()
+    private fun vesEvent(commonEventHeader: CommonEventHeader, eventFields: ByteString): ByteArray {
+        return createVesEvent(commonEventHeader, eventFields).toByteArray()
     }
 
     private fun createVesEvent(commonEventHeader: CommonEventHeader, payload: ByteString): VesEvent =
