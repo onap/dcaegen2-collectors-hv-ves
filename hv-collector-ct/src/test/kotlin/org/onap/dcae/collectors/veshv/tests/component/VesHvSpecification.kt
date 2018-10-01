@@ -25,12 +25,12 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
-import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_HVMEAS_TOPIC
-import org.onap.dcae.collectors.veshv.tests.fakes.HVMEAS_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
@@ -57,8 +57,8 @@ object VesHvSpecification : Spek({
         it("should handle multiple HV RAN events") {
             val (sut, sink) = vesHvWithStoringSink()
             val messages = sut.handleConnection(sink,
-                    vesWireFrameMessage(HVMEAS),
-                    vesWireFrameMessage(HVMEAS)
+                    vesWireFrameMessage(PERF3GPP),
+                    vesWireFrameMessage(PERF3GPP)
             )
 
             assertThat(messages)
@@ -70,9 +70,9 @@ object VesHvSpecification : Spek({
     describe("Memory management") {
         it("should release memory for each handled and dropped message") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesWireFrameMessage(HVMEAS)
+            val validMessage = vesWireFrameMessage(PERF3GPP)
             val msgWithInvalidFrame = invalidWireFrame()
-            val msgWithTooBigPayload = vesMessageWithTooBigPayload(HVMEAS)
+            val msgWithTooBigPayload = vesMessageWithTooBigPayload(PERF3GPP)
             val expectedRefCnt = 0
 
             val handledEvents = sut.handleConnection(
@@ -93,7 +93,7 @@ object VesHvSpecification : Spek({
 
         it("should release memory for each message with invalid payload") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesWireFrameMessage(HVMEAS)
+            val validMessage = vesWireFrameMessage(PERF3GPP)
             val msgWithInvalidPayload = wireFrameMessageWithInvalidPayload()
             val expectedRefCnt = 0
 
@@ -112,7 +112,7 @@ object VesHvSpecification : Spek({
 
         it("should release memory for each message with garbage frame") {
             val (sut, sink) = vesHvWithStoringSink()
-            val validMessage = vesWireFrameMessage(HVMEAS)
+            val validMessage = vesWireFrameMessage(PERF3GPP)
             val msgWithGarbageFrame = garbageFrame()
             val expectedRefCnt = 0
 
@@ -134,11 +134,11 @@ object VesHvSpecification : Spek({
         it("should direct message to a topic by means of routing configuration") {
             val (sut, sink) = vesHvWithStoringSink()
 
-            val messages = sut.handleConnection(sink, vesWireFrameMessage(HVMEAS))
+            val messages = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
             assertThat(messages).describedAs("number of routed messages").hasSize(1)
 
             val msg = messages[0]
-            assertThat(msg.topic).describedAs("routed message topic").isEqualTo(HVMEAS_TOPIC)
+            assertThat(msg.topic).describedAs("routed message topic").isEqualTo(PERF3GPP_TOPIC)
             assertThat(msg.partition).describedAs("routed message partition").isEqualTo(0)
         }
 
@@ -148,17 +148,17 @@ object VesHvSpecification : Spek({
             sut.configurationProvider.updateConfiguration(twoDomainsToOneTopicConfiguration)
 
             val messages = sut.handleConnection(sink,
-                    vesWireFrameMessage(HVMEAS),
+                    vesWireFrameMessage(PERF3GPP),
                     vesWireFrameMessage(HEARTBEAT),
                     vesWireFrameMessage(MEASUREMENT))
 
             assertThat(messages).describedAs("number of routed messages").hasSize(3)
 
             assertThat(messages[0].topic).describedAs("first message topic")
-                    .isEqualTo(HVMEAS_TOPIC)
+                    .isEqualTo(PERF3GPP_TOPIC)
 
             assertThat(messages[1].topic).describedAs("second message topic")
-                    .isEqualTo(HVMEAS_TOPIC)
+                    .isEqualTo(PERF3GPP_TOPIC)
 
             assertThat(messages[2].topic).describedAs("last message topic")
                     .isEqualTo(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
@@ -168,13 +168,13 @@ object VesHvSpecification : Spek({
             val (sut, sink) = vesHvWithStoringSink()
             val messages = sut.handleConnection(sink,
                     vesWireFrameMessage(OTHER, "first"),
-                    vesWireFrameMessage(HVMEAS, "second"),
+                    vesWireFrameMessage(PERF3GPP, "second"),
                     vesWireFrameMessage(HEARTBEAT, "third"))
 
             assertThat(messages).describedAs("number of routed messages").hasSize(1)
 
             val msg = messages[0]
-            assertThat(msg.topic).describedAs("routed message topic").isEqualTo(HVMEAS_TOPIC)
+            assertThat(msg.topic).describedAs("routed message topic").isEqualTo(PERF3GPP_TOPIC)
             assertThat(msg.message.header.eventId).describedAs("routed message eventId").isEqualTo("second")
         }
     }
@@ -208,41 +208,41 @@ object VesHvSpecification : Spek({
 
                 sut.configurationProvider.updateConfiguration(configurationWithoutRouting)
 
-                val messages = sut.handleConnection(sink, vesWireFrameMessage(HVMEAS))
+                val messages = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messages).isEmpty()
 
                 sut.configurationProvider.updateConfiguration(basicConfiguration)
 
-                val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(HVMEAS))
+                val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messagesAfterUpdate).hasSize(1)
                 val message = messagesAfterUpdate[0]
 
                 assertThat(message.topic).describedAs("routed message topic after configuration's change")
-                        .isEqualTo(HVMEAS_TOPIC)
+                        .isEqualTo(PERF3GPP_TOPIC)
                 assertThat(message.partition).describedAs("routed message partition")
                         .isEqualTo(0)
             }
 
             it("should change domain routing") {
 
-                val messages = sut.handleConnection(sink, vesWireFrameMessage(HVMEAS))
+                val messages = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messages).hasSize(1)
                 val firstMessage = messages[0]
 
                 assertThat(firstMessage.topic).describedAs("routed message topic on initial configuration")
-                        .isEqualTo(HVMEAS_TOPIC)
+                        .isEqualTo(PERF3GPP_TOPIC)
                 assertThat(firstMessage.partition).describedAs("routed message partition")
                         .isEqualTo(0)
 
 
                 sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
 
-                val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(HVMEAS))
+                val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messagesAfterUpdate).hasSize(2)
                 val secondMessage = messagesAfterUpdate[1]
 
                 assertThat(secondMessage.topic).describedAs("routed message topic after configuration's change")
-                        .isEqualTo(ALTERNATE_HVMEAS_TOPIC)
+                        .isEqualTo(ALTERNATE_PERF3GPP_TOPIC)
                 assertThat(secondMessage.partition).describedAs("routed message partition")
                         .isEqualTo(0)
             }
@@ -257,13 +257,13 @@ object VesHvSpecification : Spek({
                         sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
                     }
                 }.doOnNext {
-                    sut.handleConnection(sink, vesWireFrameMessage(HVMEAS))
+                    sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 }.then().block(defaultTimeout)
 
 
                 val messages = sink.sentMessages
-                val firstTopicMessagesCount = messages.count { it.topic == HVMEAS_TOPIC }
-                val secondTopicMessagesCount = messages.count { it.topic == ALTERNATE_HVMEAS_TOPIC }
+                val firstTopicMessagesCount = messages.count { it.topic == PERF3GPP_TOPIC }
+                val secondTopicMessagesCount = messages.count { it.topic == ALTERNATE_PERF3GPP_TOPIC }
 
                 assertThat(messages.size).isEqualTo(messagesAmount)
                 assertThat(messagesForEachTopic)
@@ -284,14 +284,14 @@ object VesHvSpecification : Spek({
                                 println("config changed")
                             }
                         }
-                        .map { vesWireFrameMessage(HVMEAS) }
+                        .map { vesWireFrameMessage(PERF3GPP) }
 
 
                 sut.collector.handleConnection(sut.alloc, incomingMessages).block(defaultTimeout)
 
                 val messages = sink.sentMessages
-                val firstTopicMessagesCount = messages.count { it.topic == HVMEAS_TOPIC }
-                val secondTopicMessagesCount = messages.count { it.topic == ALTERNATE_HVMEAS_TOPIC }
+                val firstTopicMessagesCount = messages.count { it.topic == PERF3GPP_TOPIC }
+                val secondTopicMessagesCount = messages.count { it.topic == ALTERNATE_PERF3GPP_TOPIC }
 
                 assertThat(messages.size).isEqualTo(messageStreamSize)
                 assertThat(firstTopicMessagesCount)
@@ -328,9 +328,9 @@ object VesHvSpecification : Spek({
             val (sut, sink) = vesHvWithStoringSink()
 
             val handledMessages = sut.handleConnection(sink,
-                    vesWireFrameMessage(HVMEAS, "first"),
-                    vesMessageWithTooBigPayload(HVMEAS),
-                    vesWireFrameMessage(HVMEAS))
+                    vesWireFrameMessage(PERF3GPP, "first"),
+                    vesMessageWithTooBigPayload(PERF3GPP),
+                    vesWireFrameMessage(PERF3GPP))
 
             assertThat(handledMessages).hasSize(1)
             assertThat(handledMessages.first().message.header.eventId).isEqualTo("first")

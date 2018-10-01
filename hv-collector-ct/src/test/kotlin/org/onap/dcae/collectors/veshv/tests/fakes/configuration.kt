@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
@@ -31,16 +31,16 @@ import reactor.core.publisher.UnicastProcessor
 import reactor.retry.RetryExhaustedException
 
 
-const val HVMEAS_TOPIC = "ves_hvRanMeas"
-const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "ves_hvMeasForVfScaling"
-const val ALTERNATE_HVMEAS_TOPIC = "ves_alternateHvRanMeas"
+const val PERF3GPP_TOPIC = "HV_VES_PERF3GPP"
+const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "HV_VES_MEAS_FOR_VF_SCALING"
+const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
 
 val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(HVMEAS.name)
-                toTopic(HVMEAS_TOPIC)
+                fromDomain(PERF3GPP.name)
+                toTopic(PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }
         }.build()
@@ -50,13 +50,13 @@ val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfigu
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(HVMEAS.name)
-                toTopic(HVMEAS_TOPIC)
+                fromDomain(PERF3GPP.name)
+                toTopic(PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }
             defineRoute {
                 fromDomain(HEARTBEAT.name)
-                toTopic(HVMEAS_TOPIC)
+                toTopic(PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }
             defineRoute {
@@ -72,8 +72,8 @@ val configurationWithDifferentRouting: CollectorConfiguration = CollectorConfigu
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(HVMEAS.name)
-                toTopic(ALTERNATE_HVMEAS_TOPIC)
+                fromDomain(PERF3GPP.name)
+                toTopic(ALTERNATE_PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }
         }.build()

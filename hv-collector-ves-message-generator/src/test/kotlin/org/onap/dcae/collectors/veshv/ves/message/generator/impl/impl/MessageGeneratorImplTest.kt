@@ -30,7 +30,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.FAULT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
@@ -54,7 +54,7 @@ object MessageGeneratorImplTest : Spek({
                     val limit = 1000L
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    commonHeader(HVMEAS),
+                                    commonHeader(PERF3GPP),
                                     MessageType.VALID
                             )))
                             .take(limit)
@@ -67,7 +67,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create message flux of specified size") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    commonHeader(HVMEAS),
+                                    commonHeader(PERF3GPP),
                                     MessageType.VALID,
                                     5
                             )))
@@ -98,7 +98,7 @@ object MessageGeneratorImplTest : Spek({
 
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    commonHeader(HVMEAS),
+                                    commonHeader(PERF3GPP),
                                     MessageType.TOO_BIG_PAYLOAD,
                                     1
                             )))
@@ -106,7 +106,7 @@ object MessageGeneratorImplTest : Spek({
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
                                 assertThat(it.payloadSize).isGreaterThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVMEAS.name)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.name)
                             }
                             .verifyComplete()
                 }
@@ -115,7 +115,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create flux of messages with invalid payload") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    commonHeader(HVMEAS),
+                                    commonHeader(PERF3GPP),
                                     MessageType.INVALID_GPB_DATA,
                                     1
                             )))
@@ -133,7 +133,7 @@ object MessageGeneratorImplTest : Spek({
                 it("should create flux of messages with invalid version") {
                     generator
                             .createMessageFlux(listOf(MessageParameters(
-                                    commonHeader(HVMEAS),
+                                    commonHeader(PERF3GPP),
                                     MessageType.INVALID_WIRE_FRAME,
                                     1
                             )))
@@ -141,7 +141,7 @@ object MessageGeneratorImplTest : Spek({
                             .assertNext {
                                 assertThat(it.isValid()).isFalse()
                                 assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVMEAS.name)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.name)
                                 assertThat(it.versionMajor).isNotEqualTo(WireFrameMessage.SUPPORTED_VERSION_MINOR)
                             }
                             .verifyComplete()
@@ -170,7 +170,7 @@ object MessageGeneratorImplTest : Spek({
             it("should create concatenated flux of messages") {
                 val singleFluxSize = 5L
                 val messageParameters = listOf(
-                        MessageParameters(commonHeader(HVMEAS), MessageType.VALID, singleFluxSize),
+                        MessageParameters(commonHeader(PERF3GPP), MessageType.VALID, singleFluxSize),
                         MessageParameters(commonHeader(FAULT), MessageType.TOO_BIG_PAYLOAD, singleFluxSize),
                         MessageParameters(commonHeader(HEARTBEAT), MessageType.VALID, singleFluxSize)
                 )
@@ -178,7 +178,7 @@ object MessageGeneratorImplTest : Spek({
                         .test()
                         .assertNext {
                             assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HVMEAS.name)
+                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.name)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .assertNext {

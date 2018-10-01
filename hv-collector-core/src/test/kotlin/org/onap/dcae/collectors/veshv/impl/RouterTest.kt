@@ -27,7 +27,7 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.SYSLOG
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
@@ -45,7 +45,7 @@ object RouterTest : Spek({
         val config = routing {
 
             defineRoute {
-                fromDomain(HVMEAS.name)
+                fromDomain(PERF3GPP.name)
                 toTopic("ves_rtpm")
                 withFixedPartitioning(2)
             }
@@ -59,7 +59,7 @@ object RouterTest : Spek({
         val cut = Router(config)
 
         on("message with existing route (rtpm)") {
-            val message = VesMessage(commonHeader(HVMEAS), ByteData.EMPTY)
+            val message = VesMessage(commonHeader(PERF3GPP), ByteData.EMPTY)
             val result = cut.findDestination(message)
 
             it("should have route available") {
