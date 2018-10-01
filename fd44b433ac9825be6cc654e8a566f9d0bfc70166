@@ -1,0 +1,8 @@
+Code-Review+1: Filip Krzywka <filip.krzywka@nokia.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Przemyslaw Wasala <przemyslaw.wasala@nokia.com>
+Submitted-by: Przemyslaw Wasala <przemyslaw.wasala@nokia.com>
+Submitted-at: Mon, 01 Oct 2018 08:03:58 +0000
+Reviewed-on: https://gerrit.onap.org/r/69568
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
