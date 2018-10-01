@@ -17,19 +17,21 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
+syntax = "proto3";
+package org.onap.ves;
+import "MeasDataCollection.proto";          // for 3GPP PM format
 
-enum class VesEventDomain {
-    FAULT,
-    HEARTBEAT,
-    MEASUREMENT,
-    MOBILE_FLOW,
-    OTHER,
-    PNFREGISTRATION,
-    SIP_SIGNALING,
-    STATE_CHANGE,
-    SYSLOG,
-    THRESHOLD_CROSSING_ALERT,
-    VOICE_QUALITY,
-    PERF3GPP
+message Perf3GPPFields
+{
+    string perf3GPPFieldsVersion = 1;
+    MeasDataCollection measDataCollection = 2;
+    // Based on 3GPP TS 28.550
+    // Logical mapping from 3GPP to ONAP header fields:
+    // 3GPP MeasFileHeader     ONAP/VES CommonEventHeader
+    // senderName              sourceName
+    // senderType              nfNamingCode + nfcNamingCode
+    // vendorName              nfVendorName
+    // collectionBeginTime     startEpochMicrosec
+    // timestamp               lastEpochMicrosec
+    map<string, string> eventAddlFlds = 3;     // optional per-event data (name/value HashMap)
 }

@@ -20,25 +20,26 @@
 syntax = "proto3";
 package org.onap.ves;
 
-message VesEvent {
+message VesEvent                            // top-level message
+{
     CommonEventHeader commonEventHeader=1;  // required
 
     bytes eventFields=2;                    // required, payload
-    // this field contains a domain-specific GPB message
-    // the field being opaque (bytes), the decoding of the payload occurs in a separate step
-    // the name of the GPB message for domain XYZ is XYZFields
-    // e.g. for domain==HVMEAS, the GPB message is HVMEASFields
+        // this field contains a domain-specific GPB message
+        // the field being opaque (bytes), the decoding of the payload occurs in a separate step
+        // the name of the GPB message for domain XYZ is XYZFields
+        // e.g. for domain==PERF3GPP, the GPB message is Perf3GPPFields
 }
 
 // VES CommonEventHeader adapted to GPB (Google Protocol Buffers)
-// Aligned with VES 7.0.1 schema, and extending to hvMeas Domain.
+// Aligned with VES 7.0.1 schema, and extending to Performance Domain.
 
 message CommonEventHeader
 {
     string version = 1;                     // required, "version of the gpb common event header"
     string domain = 2;                      // required, "the eventing domain associated with the event", allowed values:
-    // FAULT, HEARTBEAT, MEASUREMENT, MOBILE_FLOW, OTHER, PNFREGISTRATION, SIP_SIGNALING,
-    // STATE_CHANGE, SYSLOG, THRESHOLD_CROSSING_ALERT, VOICE_QUALITY, HVMEAS
+                                            // FAULT, HEARTBEAT, MEASUREMENT, MOBILE_FLOW, OTHER, PNFREGISTRATION, SIP_SIGNALING,
+                                            // STATE_CHANGE, SYSLOG, THRESHOLD_CROSSING_ALERT, VOICE_QUALITY, PERF3GPP
 
     uint32 sequence = 3;                    // required, "ordering of events communicated by an event source instance or 0 if not needed"
 

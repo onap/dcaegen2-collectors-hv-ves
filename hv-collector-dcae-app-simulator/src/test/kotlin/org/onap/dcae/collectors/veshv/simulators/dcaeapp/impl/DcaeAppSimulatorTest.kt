@@ -62,7 +62,7 @@ internal class DcaeAppSimulatorTest : Spek({
     fun consumerState(vararg messages: ByteArray) = ConsumerState(ConcurrentLinkedQueue(messages.toList()))
 
     describe("listenToTopics") {
-        val topics = setOf("hvMeas", "faults")
+        val topics = setOf("perf3gpp", "faults")
 
         it("should fail when topic list is empty") {
             val result = cut.listenToTopics(setOf()).attempt().unsafeRunSync()
@@ -70,7 +70,7 @@ internal class DcaeAppSimulatorTest : Spek({
         }
 
         it("should fail when topic list contains empty strings") {
-            val result = cut.listenToTopics(setOf("hvMeas", " ", "faults")).attempt().unsafeRunSync()
+            val result = cut.listenToTopics(setOf("perf3gpp", " ", "faults")).attempt().unsafeRunSync()
             assertThat(result.isLeft()).isTrue()
         }
 
@@ -80,7 +80,7 @@ internal class DcaeAppSimulatorTest : Spek({
         }
 
         it("should subscribe to given topics when called with comma separated list") {
-            cut.listenToTopics("hvMeas,faults").unsafeRunSync()
+            cut.listenToTopics("perf3gpp,faults").unsafeRunSync()
             verify(consumerFactory).createConsumerForTopics(topics)
         }
 
@@ -91,7 +91,7 @@ internal class DcaeAppSimulatorTest : Spek({
                     .thenReturn(IO.raiseError(error))
 
             // when
-            val result = cut.listenToTopics("hvMeas").attempt().unsafeRunSync()
+            val result = cut.listenToTopics("perf3gpp").attempt().unsafeRunSync()
 
             // then
             assertThat(result).isEqualTo(Left(error))
@@ -106,7 +106,7 @@ internal class DcaeAppSimulatorTest : Spek({
 
         describe("when topics are initialized") {
             beforeEachTest {
-                cut.listenToTopics("hvMeas").unsafeRunSync()
+                cut.listenToTopics("perf3gpp").unsafeRunSync()
             }
 
             it("should return some state when it has been set") {
@@ -126,7 +126,7 @@ internal class DcaeAppSimulatorTest : Spek({
 
         describe("when topics are initialized") {
             beforeEachTest {
-                cut.listenToTopics("hvMeas").unsafeRunSync()
+                cut.listenToTopics("perf3gpp").unsafeRunSync()
             }
 
             it("should reset the state") {
@@ -158,7 +158,7 @@ internal class DcaeAppSimulatorTest : Spek({
 
         it("should delegate to MessageStreamValidation") {
             // given
-            cut.listenToTopics("hvMeas").unsafeRunSync()
+            cut.listenToTopics("perf3gpp").unsafeRunSync()
             whenever(consumer.currentState()).thenReturn(consumerState(vesEvent().toByteArray()))
 
             // when

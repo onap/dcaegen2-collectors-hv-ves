@@ -26,7 +26,7 @@ import io.netty.buffer.PooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.MAX_PAYLOAD_SIZE
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.RESERVED_BYTE_COUNT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HVMEAS
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
 
 import java.util.UUID.randomUUID
@@ -70,7 +70,7 @@ fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
     writeByte(0x01)   // version minor
 }
 
-fun vesMessageWithTooBigPayload(domain: VesEventDomain = HVMEAS): ByteBuf =
+fun vesMessageWithTooBigPayload(domain: VesEventDomain = PERF3GPP): ByteBuf =
         allocator.buffer().run {
             writeValidWireFrameHeaders()
 
