@@ -1,0 +1,18 @@
+syntax = "proto3";
+package org.onap.ves;
+import "MeasDataCollection.proto";          // for 3GPP PM format
+
+message Perf3GPPFields
+{
+    string perf3GPPFieldsVersion = 1;
+    MeasDataCollection measDataCollection = 2;
+    // Based on 3GPP TS 28.550
+    // Logical mapping from 3GPP to ONAP header fields:
+    // 3GPP MeasFileHeader     ONAP/VES CommonEventHeader
+    // senderName              sourceName
+    // senderType              nfNamingCode + nfcNamingCode
+    // vendorName              nfVendorName
+    // collectionBeginTime     startEpochMicrosec
+    // timestamp               lastEpochMicrosec
+    map<string, string> eventAddlFlds = 3;     // optional per-event data (name/value HashMap)
+}
