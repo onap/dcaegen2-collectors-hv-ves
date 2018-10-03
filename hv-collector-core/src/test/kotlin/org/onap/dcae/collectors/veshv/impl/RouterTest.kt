@@ -45,13 +45,13 @@ object RouterTest : Spek({
         val config = routing {
 
             defineRoute {
-                fromDomain(PERF3GPP.name)
+                fromDomain(PERF3GPP.domainName)
                 toTopic("ves_rtpm")
                 withFixedPartitioning(2)
             }
 
             defineRoute {
-                fromDomain(SYSLOG.name)
+                fromDomain(SYSLOG.domainName)
                 toTopic("ves_trace")
                 withFixedPartitioning()
             }

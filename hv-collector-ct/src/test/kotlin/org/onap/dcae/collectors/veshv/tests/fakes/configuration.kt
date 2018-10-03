@@ -39,7 +39,7 @@ val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(PERF3GPP.name)
+                fromDomain(PERF3GPP.domainName)
                 toTopic(PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }
@@ -50,17 +50,17 @@ val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfigu
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(PERF3GPP.name)
+                fromDomain(PERF3GPP.domainName)
                 toTopic(PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }
             defineRoute {
-                fromDomain(HEARTBEAT.name)
+                fromDomain(HEARTBEAT.domainName)
                 toTopic(PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }
             defineRoute {
-                fromDomain(MEASUREMENT.name)
+                fromDomain(MEASUREMENT.domainName)
                 toTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
                 withFixedPartitioning()
             }
@@ -72,7 +72,7 @@ val configurationWithDifferentRouting: CollectorConfiguration = CollectorConfigu
         kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
-                fromDomain(PERF3GPP.name)
+                fromDomain(PERF3GPP.domainName)
                 toTopic(ALTERNATE_PERF3GPP_TOPIC)
                 withFixedPartitioning()
             }

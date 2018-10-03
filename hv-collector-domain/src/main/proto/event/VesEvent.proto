@@ -28,7 +28,7 @@ message VesEvent                            // top-level message
         // this field contains a domain-specific GPB message
         // the field being opaque (bytes), the decoding of the payload occurs in a separate step
         // the name of the GPB message for domain XYZ is XYZFields
-        // e.g. for domain==PERF3GPP, the GPB message is Perf3GPPFields
+        // e.g. for domain==perf3gpp, the GPB message is Perf3GPPFields
 }
 
 // VES CommonEventHeader adapted to GPB (Google Protocol Buffers)
@@ -38,8 +38,8 @@ message CommonEventHeader
 {
     string version = 1;                     // required, "version of the gpb common event header"
     string domain = 2;                      // required, "the eventing domain associated with the event", allowed values:
-                                            // FAULT, HEARTBEAT, MEASUREMENT, MOBILE_FLOW, OTHER, PNFREGISTRATION, SIP_SIGNALING,
-                                            // STATE_CHANGE, SYSLOG, THRESHOLD_CROSSING_ALERT, VOICE_QUALITY, PERF3GPP
+                                            // fault, heartbeat, measurement, mobile_flow, other, pnfregistration, sip_signaling,
+                                            // state_change, syslog, threshold_crossing_alert, voice_quality, perf3gpp
 
     uint32 sequence = 3;                    // required, "ordering of events communicated by an event source instance or 0 if not needed"
 

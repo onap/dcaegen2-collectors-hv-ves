@@ -47,7 +47,7 @@ fun commonHeader(domain: VesEventDomain = PERF3GPP,
                  priority: Priority = Priority.NORMAL): CommonEventHeader =
         CommonEventHeader.newBuilder()
                 .setVersion("sample-version")
-                .setDomain(domain.name)
+                .setDomain(domain.domainName)
                 .setSequence(1)
                 .setPriority(priority)
                 .setEventId(id)

@@ -35,7 +35,7 @@ For more details on the rationale, please read a [high-level feature description
 
 VES-HV was designed to allow for extendability - by adding new domain-specific PROTO files.
 
-The PROTO file, which contains the VES CommonHeader, comes with a binary-type Payload parameter, where domain-specific data shall be placed. Domain-specific data are encoded as well with GPB, and they do require a domain-specific PROTO file to decode the data. This domain-specific PROTO needs to be shared with analytics applications - VES-HV is not analyzing domain-specific data. In order to support the RT-PM use-case, VES-HV includes a "PERF3GPP" domain PROTO file, as within this domain, the high volume data is expected to be reported to VES-HV collector.
+The PROTO file, which contains the VES CommonHeader, comes with a binary-type Payload parameter, where domain-specific data shall be placed. Domain-specific data are encoded as well with GPB, and they do require a domain-specific PROTO file to decode the data. This domain-specific PROTO needs to be shared with analytics applications - VES-HV is not analyzing domain-specific data. In order to support the RT-PM use-case, VES-HV includes a "perf3gpp" domain PROTO file, as within this domain, the high volume data is expected to be reported to VES-HV collector.
 Still, there are no limitations to define additional domains, based on existing VES domains (like Fault, Heartbeat) or completely new domains. New domains can be added "when needed".
 
 In case of new domains, it is necessary to extend the Common Header PROTO "Domain" enumeration with new values covering this new domain(s).

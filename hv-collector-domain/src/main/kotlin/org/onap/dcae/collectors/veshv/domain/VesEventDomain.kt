@@ -19,17 +19,17 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-enum class VesEventDomain {
-    FAULT,
-    HEARTBEAT,
-    MEASUREMENT,
-    MOBILE_FLOW,
-    OTHER,
-    PNFREGISTRATION,
-    SIP_SIGNALING,
-    STATE_CHANGE,
-    SYSLOG,
-    THRESHOLD_CROSSING_ALERT,
-    VOICE_QUALITY,
-    PERF3GPP
+enum class VesEventDomain(val domainName: String) {
+    FAULT("fault"),
+    HEARTBEAT("heartbeat"),
+    MEASUREMENT("measurement"),
+    MOBILE_FLOW("mobileFlow"),
+    OTHER("other"),
+    PNF_REGISTRATION("pnfRegistration"),
+    SIP_SIGNALING("sipSignaling"),
+    STATE_CHANGE("stateChange"),
+    SYSLOG("syslog"),
+    THRESHOLD_CROSSING_ALERT("thresholdCrossingAlert"),
+    VOICE_QUALITY("voiceQuality"),
+    PERF3GPP("perf3gpp");
 }
