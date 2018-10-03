@@ -16,6 +16,24 @@
       "revId": "399dbc26bc509d77ec909b598f1078b3ae8185fb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_70ff8502",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/VesEventDomain.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-10-03T11:24:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bada0100_2dd1aacd",
+      "revId": "399dbc26bc509d77ec909b598f1078b3ae8185fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
