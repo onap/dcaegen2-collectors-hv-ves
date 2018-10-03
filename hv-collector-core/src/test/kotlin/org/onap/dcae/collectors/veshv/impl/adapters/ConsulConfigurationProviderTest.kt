@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
@@ -67,12 +68,20 @@ internal object ConsulConfigurationProviderTest : Spek({
                                 assertEquals("$kafkaAddress:9093", it.kafkaBootstrapServers)
 
                                 val route1 = it.routing.routes[0]
-                                assertEquals(FAULT.name, route1.domain)
-                                assertEquals("test-topic-1", route1.targetTopic)
+                                assertThat(FAULT.domainName)
+                                        .describedAs("routed domain 1")
+                                        .isEqualTo(route1.domain)
+                                assertThat("test-topic-1")
+                                        .describedAs("target topic 1")
+                                        .isEqualTo(route1.targetTopic)
 
                                 val route2 = it.routing.routes[1]
-                                assertEquals(HEARTBEAT.name, route2.domain)
-                                assertEquals("test-topic-2", route2.targetTopic)
+                                assertThat(HEARTBEAT.domainName)
+                                        .describedAs("routed domain 2")
+                                        .isEqualTo(route2.domain)
+                                assertThat("test-topic-2")
+                                        .describedAs("target topic 2")
+                                        .isEqualTo(route2.targetTopic)
 
                             }.verifyComplete()
                 }
@@ -138,11 +147,11 @@ fun constructConsulResponse(): String {
     "dmaap.kafkaBootstrapServers": "$kafkaAddress:9093",
     "collector.routing": [
             {
-                "fromDomain": "FAULT",
+                "fromDomain": "fault",
                 "toTopic": "test-topic-1"
             },
             {
-                "fromDomain": "HEARTBEAT",
+                "fromDomain": "heartbeat",
                 "toTopic": "test-topic-2"
             }
     ]

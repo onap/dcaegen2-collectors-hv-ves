@@ -26,7 +26,7 @@ private const val validMessageParameters =
         {
           "commonEventHeader": {
             "version": "sample-version",
-            "domain": "PERF3GPP",
+            "domain": "perf3gpp",
             "sequence": 1,
             "priority": 1,
             "eventId": "sample-event-id",
@@ -48,7 +48,7 @@ private const val validMessageParameters =
         {
           "commonEventHeader": {
             "version": "sample-version",
-            "domain": "PERF3GPP",
+            "domain": "perf3gpp",
             "sequence": 1,
             "priority": 1,
             "eventId": "sample-event-id",
@@ -76,7 +76,7 @@ private const val invalidMessageParameters =
         {
           "commonEventHeader": {
             "version": "sample-version",
-            "domain": "PERF3GPP",
+            "domain": "perf3gpp",
             "sequence": 1,
             "priority": 1,
             "eventId": "sample-event-id",

@@ -163,7 +163,7 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageReceived(128)
                 cut.notifyMessageReceived(256)
                 cut.notifyMessageReceived(256)
-                cut.notifyMessageSent("PERF3GPP")
+                cut.notifyMessageSent("perf3gpp")
                 verifyGauge("messages.processing.count") { gauge ->
                     assertThat(gauge.value()).isCloseTo(2.0, doublePrecision)
                 }
@@ -171,7 +171,7 @@ object MicrometerMetricsTest : Spek({
 
             on("zero difference") {
                 cut.notifyMessageReceived(128)
-                cut.notifyMessageSent("PERF3GPP")
+                cut.notifyMessageSent("perf3gpp")
                 verifyGauge("messages.processing.count") { gauge ->
                     assertThat(gauge.value()).isCloseTo(0.0, doublePrecision)
                 }
@@ -179,8 +179,8 @@ object MicrometerMetricsTest : Spek({
 
             on("negative difference") {
                 cut.notifyMessageReceived(128)
-                cut.notifyMessageSent("FAULT")
-                cut.notifyMessageSent("PERF3GPP")
+                cut.notifyMessageSent("fault")
+                cut.notifyMessageSent("perf3gpp")
                 verifyGauge("messages.processing.count") { gauge ->
                     assertThat(gauge.value()).isCloseTo(0.0, doublePrecision)
                 }

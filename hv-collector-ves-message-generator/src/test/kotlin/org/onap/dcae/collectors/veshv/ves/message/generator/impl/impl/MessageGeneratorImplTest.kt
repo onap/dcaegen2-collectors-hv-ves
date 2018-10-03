@@ -88,7 +88,7 @@ object MessageGeneratorImplTest : Spek({
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
                                 assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.name)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)
                             }
                             .verifyComplete()
                 }
@@ -106,7 +106,7 @@ object MessageGeneratorImplTest : Spek({
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
                                 assertThat(it.payloadSize).isGreaterThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.name)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                             }
                             .verifyComplete()
                 }
@@ -141,7 +141,7 @@ object MessageGeneratorImplTest : Spek({
                             .assertNext {
                                 assertThat(it.isValid()).isFalse()
                                 assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.name)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                                 assertThat(it.versionMajor).isNotEqualTo(WireFrameMessage.SUPPORTED_VERSION_MINOR)
                             }
                             .verifyComplete()
@@ -160,7 +160,7 @@ object MessageGeneratorImplTest : Spek({
                                 assertThat(it.isValid()).isTrue()
                                 assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
                                 assertThat(extractEventFields(it.payload).size()).isEqualTo(MessageGenerator.FIXED_PAYLOAD_SIZE)
-                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.name)
+                                assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)
                             }
                             .verifyComplete()
                 }
@@ -178,17 +178,17 @@ object MessageGeneratorImplTest : Spek({
                         .test()
                         .assertNext {
                             assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.name)
+                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .assertNext {
                             assertThat(it.payloadSize).isGreaterThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.name)
+                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .assertNext {
                             assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
-                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HEARTBEAT.name)
+                            assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HEARTBEAT.domainName)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .verifyComplete()
