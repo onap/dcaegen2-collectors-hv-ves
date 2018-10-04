@@ -183,16 +183,16 @@ object WireFrameCodecsTest : Spek({
 
             it("should return error when payload message header does not fit") {
                 val buff = Unpooled.buffer()
-                        .writeByte(0xFF)
+                        .writeByte(0xAA)
                         .writeBytes("MOMOM".toByteArray())
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(MissingWireFrameHeaderBytes::class.java) }
                 assertBufferIntact(buff)
             }
 
-            it("should return error when length looks ok but first byte is not 0xFF") {
+            it("should return error when length looks ok but first byte is not 0xAA") {
                 val buff = Unpooled.buffer()
-                        .writeByte(0x69)
+                        .writeByte(0xFF)
                         .writeBytes("some garbage".toByteArray())
 
                 decoder.decodeFirst(buff).assertFailedWithError { it.isInstanceOf(InvalidWireFrameMarker::class.java) }
@@ -262,7 +262,7 @@ object WireFrameCodecsTest : Spek({
                         payloadSize = payload.size)
 
 
-                assertTrue(decoder.decodeFirst(encoder.encode(input).writeByte(0xFF)).isRight())
+                assertTrue(decoder.decodeFirst(encoder.encode(input).writeByte(0xAA)).isRight())
             }
         }
     }

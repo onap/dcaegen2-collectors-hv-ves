@@ -26,7 +26,7 @@ package org.onap.dcae.collectors.veshv.domain
  * ```
  * -- Precedes every HV-VES message
  * Header ::= SEQUENCE {
- *   magic           INTEGER (0..255),         – always 0xFF, identifies extended header usage
+ *   magic           INTEGER (0..255),         – always 0xAA, identifies extended header usage
  *   versionMajor    INTEGER (0..255),         – major interface v, forward incompatible with previous major v
  *   versionMinor    INTEGER (0..255),         – minor interface v, forward compatible with previous minor v
  *   reserved        OCTET STRING (SIZE (3)),  – reserved for future use
@@ -58,7 +58,7 @@ data class WireFrameMessage(val payload: ByteData,
                     && payload.size() == payloadSize
 
     companion object {
-        const val MARKER_BYTE: Short = 0xFF
+        const val MARKER_BYTE: Short = 0xAA
         const val RESERVED_BYTE_COUNT: Int = 3
 
         const val SUPPORTED_VERSION_MAJOR: Short = 1

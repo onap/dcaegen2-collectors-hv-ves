@@ -35,7 +35,7 @@ import java.util.UUID.randomUUID
 val allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT
 
 private fun ByteBuf.writeValidWireFrameHeaders() {
-    writeByte(0xFF)          // always 0xFF
+    writeByte(0xAA)          // always 0xAA
     writeByte(0x01)          // major version
     writeByte(0x00)          // minor version
     writeZero(RESERVED_BYTE_COUNT)  // reserved
@@ -65,7 +65,7 @@ fun garbageFrame(): ByteBuf = allocator.buffer().run {
 }
 
 fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
-    writeByte(0xFF)
+    writeByte(0xAA)
     writeByte(0x01)   // version major
     writeByte(0x01)   // version minor
 }
