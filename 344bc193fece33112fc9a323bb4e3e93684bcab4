@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "bada0100_16206a48",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-10-05T09:05:04Z",
+      "side": 1,
+      "message": "Is the usage of past tense of \"send\" verb intended here, or is it a typo?",
+      "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_366fae94",
         "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
         "patchSetId": 1
@@ -13,6 +30,23 @@
       "writtenOn": "2018-10-05T08:55:59Z",
       "side": 1,
       "message": "I think comments are swapped.",
+      "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_f61606f1",
+        "filename": "hv-collector-domain/src/main/proto/event/VesEvent.proto",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-10-05T09:05:04Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we mark here, that it is configurable now?",
       "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
