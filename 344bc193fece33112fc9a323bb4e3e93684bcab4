@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_b6a63ec0",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-10-05T09:31:50Z",
+      "side": 1,
+      "message": "I agree that it\u0027s a \"bug\", but as it\u0027s a copy\u0026paste from the official specification let\u0027s not touch this.",
+      "parentUuid": "bada0100_16206a48",
+      "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_366fae94",
         "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_56ab5289",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-10-05T09:31:50Z",
+      "side": 1,
+      "message": "java.lang.Byte has single byte and we have 2 such fields + marker.\n\nSimilarly java.lang.Short has two bytes and we do have 1 such field\n\nit\u0027s ok",
+      "parentUuid": "bada0100_366fae94",
+      "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_f61606f1",
         "filename": "hv-collector-domain/src/main/proto/event/VesEvent.proto",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2018-10-05T09:05:04Z",
       "side": 1,
       "message": "Shouldn\u0027t we mark here, that it is configurable now?",
+      "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_76b0d6f4",
+        "filename": "hv-collector-domain/src/main/proto/event/VesEvent.proto",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-10-05T09:31:50Z",
+      "side": 1,
+      "message": "As before - let\u0027s not change the specification now. Also it is configurable but the default deployment is still limiting it to 1 MiB.",
+      "parentUuid": "bada0100_f61606f1",
       "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
