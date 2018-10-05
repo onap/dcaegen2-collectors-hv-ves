@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "bada0100_9688da23",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-10-05T09:37:27Z",
+      "side": 1,
+      "message": "ok, I get it.",
+      "parentUuid": "bada0100_56ab5289",
+      "revId": "344bc193fece33112fc9a323bb4e3e93684bcab4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bada0100_f61606f1",
         "filename": "hv-collector-domain/src/main/proto/event/VesEvent.proto",
         "patchSetId": 1
