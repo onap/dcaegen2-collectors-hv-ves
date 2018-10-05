@@ -39,7 +39,7 @@ class WireFrameEncoder(private val allocator: ByteBufAllocator = ByteBufAllocato
                 writeByte(frame.versionMajor.toInt())
                 writeByte(frame.versionMinor.toInt())
                 writeZero(RESERVED_BYTE_COUNT)
-                writeByte(frame.payloadType.toInt())
+                writeShort(frame.payloadType)
                 writeInt(frame.payloadSize)
             }
             .also {
@@ -81,7 +81,7 @@ class WireFrameDecoder(private val maxPayloadSizeBytes: Int) {
         val versionMajor = byteBuf.readUnsignedByte()
         val versionMinor = byteBuf.readUnsignedByte()
         byteBuf.skipBytes(RESERVED_BYTE_COUNT)
-        val payloadTypeRaw = byteBuf.readUnsignedByte()
+        val payloadTypeRaw = byteBuf.readUnsignedShort()
         val payloadSize = byteBuf.readInt()
 
         if (payloadSize > maxPayloadSizeBytes) {

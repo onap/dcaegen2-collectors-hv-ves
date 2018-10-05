@@ -23,12 +23,12 @@ package org.onap.dcae.collectors.veshv.domain
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-enum class PayloadContentType(val hexValue: Short) {
-    GOOGLE_PROTOCOL_BUFFER(0x01);
+enum class PayloadContentType(val hexValue: Int) {
+    GOOGLE_PROTOCOL_BUFFER(0x0001);
 
     companion object {
         private val hexValues = PayloadContentType.values().map { it.hexValue }
 
-        fun isValidHexValue(hex: Short) = hexValues.contains(hex)
+        fun isValidHexValue(hex: Int) = hexValues.contains(hex)
     }
 }

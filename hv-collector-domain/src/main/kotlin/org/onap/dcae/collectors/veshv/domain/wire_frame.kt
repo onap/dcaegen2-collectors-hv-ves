@@ -21,19 +21,30 @@ package org.onap.dcae.collectors.veshv.domain
 
 
 /**
- * Wire frame structure is presented bellow using ASN.1 notation. All fields are in network byte order (big-endian).
+ * Wire frame structure is presented bellow using ASN.1 notation. Please note that official supported specification
+ * should be available on
+ * [RTD documentation](https://onap.readthedocs.io/en/latest/submodules/dcaegen2.git/docs/sections/apis/ves-hv.html).
  *
  * ```
- * -- Precedes every HV-VES message
- * Header ::= SEQUENCE {
- *   magic           INTEGER (0..255),         – always 0xAA, identifies extended header usage
- *   versionMajor    INTEGER (0..255),         – major interface v, forward incompatible with previous major v
- *   versionMinor    INTEGER (0..255),         – minor interface v, forward compatible with previous minor v
- *   reserved        OCTET STRING (SIZE (3)),  – reserved for future use
- *   payloadId       INTEGER (0..255),         – message payload type: 0x00=undefined, 0x01=protobuf
- *   payloadLength   INTEGER (0..4294967295)   – message payload length
- *   payload         OCTET STRING              – length as per payloadLength
+ * -- Wire Transfer Protocol (binary, defined using ASN.1 notation)
+ * -- Encoding: use "direct encoding" to the number of octets indicated in the comment [n], using network byte order.
+ *
+ * WTP DEFINITIONS ::= BEGIN
+ *
+ * -- Used to sent data from the data provider
+ * WtpData ::= SEQUENCE {
+ * magic           INTEGER (0..255),           -- [1] always 0xAA
+ * versionMajor    INTEGER (0..255),           -- [1] major interface version, forward incompatible
+ *                                             --     with previous  major version, current value: 1
+ * versionMinor    INTEGER (0..255),           -- [1] minor interface version, forward compatible
+ *                                             --     with previous minor version, current value: 0
+ * reserved        OCTET STRING (SIZE (3)),    -- [3] reserved for future use (ignored, but use 0)
+ * payloadId       INTEGER (0..65535),         -- [2] payload type: 0x0000=undefined, 0x0001=ONAP VesEvent (protobuf)
+ * payloadLength   INTEGER (0..4294967295).    -- [4] payload length in octets
+ * payload         OCTET STRING                -- [length as per payloadLength]
  * }
+ *
+ * END
  * ```
  *
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -42,7 +53,7 @@ package org.onap.dcae.collectors.veshv.domain
 data class WireFrameMessage(val payload: ByteData,
                             val versionMajor: Short,
                             val versionMinor: Short,
-                            val payloadType: Short,
+                            val payloadType: Int,
                             val payloadSize: Int
 ) {
     constructor(payload: ByteArray) : this(
@@ -66,7 +77,8 @@ data class WireFrameMessage(val payload: ByteData,
 
         const val HEADER_SIZE =
                 1 * java.lang.Byte.BYTES +                           // marker
-                        3 * java.lang.Byte.BYTES +                   // single byte fields
+                        2 * java.lang.Byte.BYTES +                   // single byte fields
+                        1 * java.lang.Short.BYTES +                  // double byte fields
                         RESERVED_BYTE_COUNT * java.lang.Byte.BYTES + // reserved bytes
                         1 * java.lang.Integer.BYTES                  // payload length
 

@@ -38,7 +38,7 @@ private fun ByteBuf.writeValidWireFrameHeaders() {
     writeByte(0x01)          // major version
     writeByte(0x00)          // minor version
     writeZero(RESERVED_BYTE_COUNT)  // reserved
-    writeByte(0x01)          // content type = GPB
+    writeShort(0x0001)       // content type = GPB
 }
 
 fun vesWireFrameMessage(domain: VesEventDomain = OTHER,

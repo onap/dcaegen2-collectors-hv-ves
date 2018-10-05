@@ -1,0 +1,1 @@
+Measurements data (data placed in VesEvent.eventFields) description should be available in [RTD documentation](https://onap.readthedocs.io/en/latest/submodules/dcaegen2.git/docs/sections/apis/ves-hv.html).
