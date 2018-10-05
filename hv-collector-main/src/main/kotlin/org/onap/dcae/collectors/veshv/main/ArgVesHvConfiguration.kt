@@ -27,6 +27,7 @@ import arrow.instances.extensions
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
@@ -40,6 +41,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.IDLE_T
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_FILE
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_PASSWORD
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MAXIMUM_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.SSL_DISABLE
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_FILE
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_PASSWORD
@@ -62,6 +64,7 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
             TRUST_STORE_FILE,
             TRUST_STORE_PASSWORD,
             IDLE_TIMEOUT_SEC,
+            MAXIMUM_PAYLOAD_SIZE_BYTES,
             DUMMY_MODE
     )
 
@@ -73,6 +76,7 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                 )
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                 val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
+                val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES, DefaultValues.MAX_PAYLOAD_SIZE_BYTES)
                 val dummyMode = cmdLine.hasOption(DUMMY_MODE)
                 val security = createSecurityConfiguration(cmdLine).bind()
                 val configurationProviderParams = createConfigurationProviderParams(cmdLine).bind()
@@ -82,6 +86,7 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                         configurationProviderParams = configurationProviderParams,
                         securityConfiguration = security,
                         idleTimeout = Duration.ofSeconds(idleTimeoutSec),
+                        maximumPayloadSizeBytes = maxPayloadSizeBytes,
                         dummyMode = dummyMode)
             }.fix()
 
@@ -110,5 +115,6 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
         const val CONSUL_FIRST_REQUEST_DELAY = 10L
         const val CONSUL_REQUEST_INTERVAL = 5L
         const val IDLE_TIMEOUT_SEC = 60L
+        const val MAX_PAYLOAD_SIZE_BYTES = WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES
     }
 }

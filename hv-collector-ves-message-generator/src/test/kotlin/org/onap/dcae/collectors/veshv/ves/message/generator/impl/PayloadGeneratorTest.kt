@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given

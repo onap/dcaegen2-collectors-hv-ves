@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import com.google.protobuf.ByteString
 import com.google.protobuf.InvalidProtocolBufferException
@@ -47,7 +47,8 @@ import reactor.test.test
  */
 object MessageGeneratorImplTest : Spek({
     describe("message factory") {
-        val generator = MessageGenerator.INSTANCE
+        val maxPayloadSizeBytes = 1024
+        val generator = MessageGeneratorImpl(PayloadGenerator(), maxPayloadSizeBytes)
         given("single message parameters") {
             on("messages amount not specified in parameters") {
                 it("should create infinite flux") {
@@ -87,7 +88,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)
                             }
                             .verifyComplete()
@@ -105,7 +106,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isGreaterThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isGreaterThan(maxPayloadSizeBytes)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                             }
                             .verifyComplete()
@@ -122,7 +123,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThatExceptionOfType(InvalidProtocolBufferException::class.java)
                                         .isThrownBy { extractCommonEventHeader(it.payload) }
                             }
@@ -140,7 +141,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isFalse()
-                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                                 assertThat(it.versionMajor).isNotEqualTo(WireFrameMessage.SUPPORTED_VERSION_MINOR)
                             }
@@ -158,7 +159,7 @@ object MessageGeneratorImplTest : Spek({
                             .test()
                             .assertNext {
                                 assertThat(it.isValid()).isTrue()
-                                assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                                assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThat(extractEventFields(it.payload).size()).isEqualTo(MessageGenerator.FIXED_PAYLOAD_SIZE)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)
                             }
@@ -177,17 +178,17 @@ object MessageGeneratorImplTest : Spek({
                 generator.createMessageFlux(messageParameters)
                         .test()
                         .assertNext {
-                            assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                            assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                             assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .assertNext {
-                            assertThat(it.payloadSize).isGreaterThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                            assertThat(it.payloadSize).isGreaterThan(maxPayloadSizeBytes)
                             assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)
                         }
                         .expectNextCount(singleFluxSize - 1)
                         .assertNext {
-                            assertThat(it.payloadSize).isLessThan(WireFrameMessage.MAX_PAYLOAD_SIZE)
+                            assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                             assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(HEARTBEAT.domainName)
                         }
                         .expectNextCount(singleFluxSize - 1)

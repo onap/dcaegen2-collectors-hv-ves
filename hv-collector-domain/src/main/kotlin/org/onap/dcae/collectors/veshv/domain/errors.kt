@@ -19,8 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.MAX_PAYLOAD_SIZE
-
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
@@ -38,7 +36,8 @@ class InvalidWireFrameMarker(actualMarker: Short) : InvalidWireFrame(
                 .format(WireFrameMessage.MARKER_BYTE, actualMarker)
 )
 
-object PayloadSizeExceeded : InvalidWireFrame("payload size exceeds the limit ($MAX_PAYLOAD_SIZE bytes)")
+class PayloadSizeExceeded(maxPayloadSizeBytes: Int) :
+        InvalidWireFrame("payload size exceeds the limit ($maxPayloadSizeBytes bytes)")
 
 // Missing bytes errors
 

@@ -54,7 +54,7 @@ internal class XnfSimulatorTest : Spek({
         vesClient = mock()
         messageParametersParser = mock()
         messageGenerator = mock()
-        cut = XnfSimulator(vesClient, messageParametersParser, messageGenerator)
+        cut = XnfSimulator(vesClient, messageGenerator, messageParametersParser)
     }
 
     describe("startSimulation") {

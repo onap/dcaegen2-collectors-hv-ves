@@ -39,8 +39,8 @@ import javax.json.Json
  */
 class XnfSimulator(
         private val vesClient: VesHvClient,
-        private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE,
-        private val messageGenerator: MessageGenerator = MessageGenerator.INSTANCE) {
+        private val messageGenerator: MessageGenerator,
+        private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {
 
     fun startSimulation(messageParameters: InputStream): Either<ParsingError, IO<Unit>> =
             Either.monad<ParsingError>().binding {

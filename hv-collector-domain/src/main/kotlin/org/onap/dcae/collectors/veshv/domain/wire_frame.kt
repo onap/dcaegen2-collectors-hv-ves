@@ -70,6 +70,6 @@ data class WireFrameMessage(val payload: ByteData,
                         RESERVED_BYTE_COUNT * java.lang.Byte.BYTES + // reserved bytes
                         1 * java.lang.Integer.BYTES                  // payload length
 
-        const val MAX_PAYLOAD_SIZE = 1024 * 1024
+        const val DEFAULT_MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
     }
 }

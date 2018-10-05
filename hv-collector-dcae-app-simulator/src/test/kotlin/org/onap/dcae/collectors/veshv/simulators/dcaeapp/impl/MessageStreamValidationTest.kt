@@ -53,7 +53,7 @@ internal class MessageStreamValidationTest : Spek({
     beforeEachTest {
         messageParametersParser = mock()
         messageGenerator = mock()
-        cut = MessageStreamValidation(messageParametersParser, messageGenerator)
+        cut = MessageStreamValidation(messageGenerator, messageParametersParser)
     }
 
     fun givenParsedMessageParameters(vararg params: MessageParameters) {

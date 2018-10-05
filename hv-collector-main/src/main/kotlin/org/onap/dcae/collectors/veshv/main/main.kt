@@ -48,6 +48,7 @@ fun main(args: Array<String>) =
 
 private fun startAndAwaitServers(config: ServerConfiguration) =
         IO.monad().binding {
+            logger.info("Using configuration: $config")
             HealthCheckServer.start(config).bind()
             VesServer.start(config).bind()
                     .await().bind()

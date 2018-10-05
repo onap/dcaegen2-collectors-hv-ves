@@ -23,7 +23,6 @@ import com.google.protobuf.ByteString
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.MAX_PAYLOAD_SIZE
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.RESERVED_BYTE_COUNT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
@@ -70,13 +69,13 @@ fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
     writeByte(0x01)   // version minor
 }
 
-fun vesMessageWithTooBigPayload(domain: VesEventDomain = PERF3GPP): ByteBuf =
+fun vesMessageWithPayloadOfSize(payloadSizeBytes: Int, domain: VesEventDomain = PERF3GPP): ByteBuf =
         allocator.buffer().run {
             writeValidWireFrameHeaders()
 
             val gpb = vesEvent(
                     domain = domain,
-                    eventFields = ByteString.copyFrom(ByteArray(MAX_PAYLOAD_SIZE))
+                    eventFields = ByteString.copyFrom(ByteArray(payloadSizeBytes))
             ).toByteString().asReadOnlyByteBuffer()
 
             writeInt(gpb.limit())  // ves event size in bytes

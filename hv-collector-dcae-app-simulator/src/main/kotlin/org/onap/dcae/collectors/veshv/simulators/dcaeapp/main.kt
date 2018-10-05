@@ -24,12 +24,14 @@ import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppS
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.MessageStreamValidation
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.DcaeAppApiServer
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.arrow.unit
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.dcaeapp"
 private val logger = Logger(PACKAGE_NAME)
@@ -51,7 +53,10 @@ fun main(args: Array<String>) =
 
 
 private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
-    return DcaeAppApiServer(DcaeAppSimulator(ConsumerFactory(config.kafkaBootstrapServers)))
+    logger.info("Using configuration: $config")
+    val consumerFactory = ConsumerFactory(config.kafkaBootstrapServers)
+    val messageStreamValidation = MessageStreamValidation(MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
+    return DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))
             .start(config.apiPort, config.kafkaTopics)
             .unit()
 }

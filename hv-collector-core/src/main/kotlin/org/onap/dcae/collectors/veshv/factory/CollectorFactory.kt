@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicReference
 class CollectorFactory(val configuration: ConfigurationProvider,
                        private val sinkProvider: SinkProvider,
                        private val metrics: Metrics,
+                       private val maximumPayloadSizeBytes: Int,
                        private val healthState: HealthState = HealthState.INSTANCE) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
@@ -63,7 +64,9 @@ class CollectorFactory(val configuration: ConfigurationProvider,
 
     private fun createVesHvCollector(config: CollectorConfiguration): Collector {
         return VesHvCollector(
-                wireChunkDecoderSupplier = { alloc -> WireChunkDecoder(WireFrameDecoder(), alloc) },
+                wireChunkDecoderSupplier = { alloc ->
+                    WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), alloc)
+                },
                 protobufDecoder = VesDecoder(),
                 router = Router(config.routing),
                 sink = sinkProvider(config),

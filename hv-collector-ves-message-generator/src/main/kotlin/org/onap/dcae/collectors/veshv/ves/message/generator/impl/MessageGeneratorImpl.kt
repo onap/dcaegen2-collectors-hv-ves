@@ -42,7 +42,10 @@ import java.nio.charset.Charset
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-class MessageGeneratorImpl internal constructor(private val payloadGenerator: PayloadGenerator) : MessageGenerator {
+class MessageGeneratorImpl internal constructor(
+        private val payloadGenerator: PayloadGenerator,
+        private val maxPayloadSizeBytes: Int
+) : MessageGenerator {
 
     override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<WireFrameMessage> = Flux
             .fromIterable(messageParameters)
@@ -89,7 +92,7 @@ class MessageGeneratorImpl internal constructor(private val payloadGenerator: Pa
                     .build()
 
     private fun oversizedPayload() =
-            payloadGenerator.generateRawPayload(WireFrameMessage.MAX_PAYLOAD_SIZE + 1)
+            payloadGenerator.generateRawPayload(maxPayloadSizeBytes + 1)
 
     private fun fixedPayload() =
             payloadGenerator.generateRawPayload(MessageGenerator.FIXED_PAYLOAD_SIZE)

@@ -22,12 +22,8 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 import arrow.core.Either
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.Status
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
-import org.onap.dcae.collectors.veshv.utils.http.Content
-import org.onap.dcae.collectors.veshv.utils.http.ContentType
 import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
-import org.onap.dcae.collectors.veshv.utils.http.HttpStatus
 import org.onap.dcae.collectors.veshv.utils.http.Response
 import org.onap.dcae.collectors.veshv.utils.http.Responses
 import org.onap.dcae.collectors.veshv.utils.http.sendAndHandleErrors
@@ -40,7 +36,6 @@ import ratpack.http.TypedData
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
 import java.util.*
-import javax.json.Json
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>

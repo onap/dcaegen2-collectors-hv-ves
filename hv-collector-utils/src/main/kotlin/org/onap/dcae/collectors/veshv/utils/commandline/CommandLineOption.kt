@@ -119,6 +119,12 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
                 |connection might be closed.""".trimMargin())
             .build()
     ),
+    MAXIMUM_PAYLOAD_SIZE_BYTES(Option.builder("m")
+            .longOpt("max-payload-size")
+            .hasArg()
+            .desc("Maximum supported payload size in bytes")
+            .build()
+    ),
     DUMMY_MODE(Option.builder("u")
             .longOpt("dummy")
             .desc("If present will start in dummy mode (dummy external services)")

@@ -45,11 +45,21 @@ class Sut(sink: Sink = StoringSink()) {
 
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
     private val metrics = FakeMetrics()
-    private val collectorFactory = CollectorFactory(configurationProvider, SinkProvider.just(sink), metrics, healthStateProvider)
+    private val collectorFactory = CollectorFactory(
+            configurationProvider,
+            SinkProvider.just(sink),
+            metrics,
+            MAX_PAYLOAD_SIZE_BYTES,
+            healthStateProvider)
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
         get() = collectorProvider().getOrElse{ throw IllegalStateException("Collector not available.") }
+
+    companion object {
+        const val MAX_PAYLOAD_SIZE_BYTES = 1024
+    }
+
 }
 
 fun Sut.handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {

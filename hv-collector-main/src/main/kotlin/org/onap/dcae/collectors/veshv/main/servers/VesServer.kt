@@ -40,7 +40,8 @@ object VesServer : ServerStarter() {
         val collectorProvider = CollectorFactory(
                 AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
                 sink,
-                MicrometerMetrics()
+                MicrometerMetrics(),
+                config.maximumPayloadSizeBytes
         ).createVesHvCollectorProvider()
 
         return ServerFactory.createNettyTcpServer(config, collectorProvider)

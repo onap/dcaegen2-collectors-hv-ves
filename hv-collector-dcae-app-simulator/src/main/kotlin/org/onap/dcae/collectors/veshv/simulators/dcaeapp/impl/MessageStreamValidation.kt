@@ -35,8 +35,8 @@ import java.io.InputStream
 import javax.json.Json
 
 class MessageStreamValidation(
-        private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE,
-        private val messageGenerator: MessageGenerator = MessageGenerator.INSTANCE) {
+        private val messageGenerator: MessageGenerator,
+        private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {
 
     fun validate(jsonDescription: InputStream, consumedMessages: List<ByteArray>): IO<Boolean> =
             IO.monadError().bindingCatch {

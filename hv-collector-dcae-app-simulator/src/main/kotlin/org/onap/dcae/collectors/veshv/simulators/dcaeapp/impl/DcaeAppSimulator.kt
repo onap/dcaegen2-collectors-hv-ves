@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference
  * @since August 2018
  */
 class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
-                       private val messageStreamValidation: MessageStreamValidation = MessageStreamValidation()) {
+                       private val messageStreamValidation: MessageStreamValidation) {
     private val consumerState: AtomicReference<ConsumerStateProvider> = AtomicReference()
 
     fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))

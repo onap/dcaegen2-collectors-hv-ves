@@ -28,7 +28,6 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.MAX_PAYLOAD_SIZE
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -39,8 +38,9 @@ import kotlin.test.fail
  */
 object WireFrameCodecsTest : Spek({
     val payloadAsString = "coffeebabe"
+    val maxPayloadSizeBytes = 1024
     val encoder = WireFrameEncoder()
-    val decoder = WireFrameDecoder()
+    val decoder = WireFrameDecoder(maxPayloadSizeBytes)
 
     fun createSampleFrame() = WireFrameMessage(payloadAsString.toByteArray(Charset.defaultCharset()))
 
@@ -223,7 +223,7 @@ object WireFrameCodecsTest : Spek({
 
             it("should decode successfully when payload size is equal 1 MiB") {
 
-                val payload = ByteArray(MAX_PAYLOAD_SIZE)
+                val payload = ByteArray(maxPayloadSizeBytes)
                 val input = WireFrameMessage(
                         payload = ByteData(payload),
                         versionMajor = 1,
@@ -237,7 +237,7 @@ object WireFrameCodecsTest : Spek({
 
             it("should return error when payload exceeds 1 MiB") {
 
-                val payload = ByteArray(MAX_PAYLOAD_SIZE + 1)
+                val payload = ByteArray(maxPayloadSizeBytes + 1)
                 val input = WireFrameMessage(
                         payload = ByteData(payload),
                         versionMajor = 1,
@@ -253,7 +253,7 @@ object WireFrameCodecsTest : Spek({
 
             it("should validate only first message") {
 
-                val payload = ByteArray(MAX_PAYLOAD_SIZE)
+                val payload = ByteArray(maxPayloadSizeBytes)
                 val input = WireFrameMessage(
                         payload = ByteData(payload),
                         versionMajor = 1,

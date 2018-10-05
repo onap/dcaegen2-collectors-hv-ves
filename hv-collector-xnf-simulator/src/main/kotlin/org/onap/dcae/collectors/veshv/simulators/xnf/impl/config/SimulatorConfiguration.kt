@@ -29,4 +29,5 @@ data class SimulatorConfiguration(
         val listenPort: Int,
         val vesHost: String,
         val vesPort: Int,
+        val maxPayloadSizeBytes: Int,
         val security: SecurityConfiguration)

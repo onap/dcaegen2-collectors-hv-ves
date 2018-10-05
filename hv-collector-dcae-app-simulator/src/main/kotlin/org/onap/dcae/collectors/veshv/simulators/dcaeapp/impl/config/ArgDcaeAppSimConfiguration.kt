@@ -26,17 +26,20 @@ import arrow.instances.extensions
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_SERVERS
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_TOPICS
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MAXIMUM_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.utils.commandline.intValue
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
 
 class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList: List<CommandLineOption> = listOf(
             LISTEN_PORT,
+            MAXIMUM_PAYLOAD_SIZE_BYTES,
             KAFKA_SERVERS,
             KAFKA_TOPICS
     )
@@ -47,6 +50,8 @@ class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration
                     val listenPort = cmdLine
                             .intValue(LISTEN_PORT)
                             .bind()
+                    val maxPayloadSizeBytes = cmdLine
+                            .intValue(MAXIMUM_PAYLOAD_SIZE_BYTES, WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
                     val kafkaBootstrapServers = cmdLine
                             .stringValue(KAFKA_SERVERS)
                             .bind()
@@ -57,6 +62,7 @@ class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration
 
                     DcaeAppSimConfiguration(
                             listenPort,
+                            maxPayloadSizeBytes,
                             kafkaBootstrapServers,
                             kafkaTopics)
                 }.fix()

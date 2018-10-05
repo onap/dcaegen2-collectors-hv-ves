@@ -17,20 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.api
+package org.onap.dcae.collectors.veshv.ves.message.generator.factory
 
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import reactor.core.publisher.Flux
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageGeneratorImpl
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
+ * @since October 2018
  */
-interface MessageGenerator {
-    fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<WireFrameMessage>
-
-    companion object {
-        const val FIXED_PAYLOAD_SIZE = 100
-    }
+object MessageGeneratorFactory {
+    fun create(maxPayloadSizeBytes: Int): MessageGenerator =
+            MessageGeneratorImpl(PayloadGenerator(), maxPayloadSizeBytes)
 }
-

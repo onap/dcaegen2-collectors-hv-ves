@@ -32,4 +32,5 @@ data class ServerConfiguration(
         val securityConfiguration: SecurityConfiguration,
         val idleTimeout: Duration,
         val healthCheckApiPort: Int,
+        val maximumPayloadSizeBytes: Int,
         val dummyMode: Boolean = false)

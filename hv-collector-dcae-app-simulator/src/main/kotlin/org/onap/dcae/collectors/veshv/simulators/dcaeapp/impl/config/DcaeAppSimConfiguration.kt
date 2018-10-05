@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config
 
 data class DcaeAppSimConfiguration(
         val apiPort: Int,
+        val maxPayloadSizeBytes: Int,
         val kafkaBootstrapServers: String,
         val kafkaTopics: Set<String>
 )

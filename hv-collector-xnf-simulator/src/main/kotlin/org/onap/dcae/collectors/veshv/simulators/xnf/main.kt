@@ -29,6 +29,7 @@ import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.arrow.unit
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.xnf"
 private val logger = Logger(PACKAGE_NAME)
@@ -41,7 +42,11 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
 fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
         .map { config ->
-            XnfApiServer(XnfSimulator(VesHvClient(config)), OngoingSimulations())
+            logger.info("Using configuration: $config")
+            val xnfSimulator = XnfSimulator(
+                    VesHvClient(config),
+                    MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
+            XnfApiServer(xnfSimulator, OngoingSimulations())
                     .start(config.listenPort)
                     .unit()
         }
