@@ -21,7 +21,7 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
 import arrow.core.Option
 import arrow.core.fix
-import arrow.core.monad
+import arrow.instances.option.monad.monad
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser

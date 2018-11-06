@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 import arrow.core.getOrElse
 import arrow.effects.IO
 import arrow.effects.fix
-import arrow.effects.monadError
+import arrow.effects.instances.io.monadError.monadError
 import arrow.typeclasses.bindingCatch
 import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger

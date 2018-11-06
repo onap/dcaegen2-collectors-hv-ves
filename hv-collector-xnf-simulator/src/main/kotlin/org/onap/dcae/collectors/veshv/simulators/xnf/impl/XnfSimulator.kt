@@ -23,8 +23,8 @@ import arrow.core.Either
 import arrow.core.Some
 import arrow.core.Try
 import arrow.core.fix
-import arrow.core.monad
 import arrow.effects.IO
+import arrow.instances.either.monad.monad
 import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator

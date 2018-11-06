@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.effects.IO
-import kotlinx.coroutines.experimental.asCoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.XnfApiServer
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.util.*

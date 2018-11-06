@@ -21,7 +21,7 @@ package org.onap.dcae.collectors.veshv.main
 
 import arrow.effects.IO
 import arrow.effects.fix
-import arrow.effects.monad
+import arrow.effects.instances.io.monad.monad
 import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
 import org.onap.dcae.collectors.veshv.main.servers.VesServer
