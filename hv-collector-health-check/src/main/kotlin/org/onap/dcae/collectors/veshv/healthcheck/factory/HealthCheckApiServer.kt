@@ -27,9 +27,9 @@ import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.ipc.netty.http.server.HttpServer
-import reactor.ipc.netty.http.server.HttpServerRequest
-import reactor.ipc.netty.http.server.HttpServerResponse
+import reactor.netty.http.server.HttpServer
+import reactor.netty.http.server.HttpServerRequest
+import reactor.netty.http.server.HttpServerResponse
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -42,11 +42,13 @@ class HealthCheckApiServer(private val healthState: HealthState, private val por
 
     fun start(): IO<ServerHandle> = IO {
         healthState().subscribe(healthDescription::set)
-        val ctx = HttpServer.create(port).startRouter { routes ->
+        val ctx = HttpServer.create()
+                .port(port)
+                .route { routes ->
             routes.get("/health/ready", ::readinessHandler)
             routes.get("/health/alive", ::livenessHandler)
         }
-        NettyServerHandle(ctx)
+        NettyServerHandle(ctx.bindNow())
     }
 
     private fun readinessHandler(req: HttpServerRequest, resp: HttpServerResponse) =

@@ -91,24 +91,22 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
             }.fix()
 
     private fun createConfigurationProviderParams(cmdLine: CommandLine): Option<ConfigurationProviderParams> =
-            ForOption extensions {
-                binding {
-                    val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL).bind()
-                    val firstRequestDelay = cmdLine.longValue(
-                            CONSUL_FIRST_REQUEST_DELAY,
-                            DefaultValues.CONSUL_FIRST_REQUEST_DELAY
-                    )
-                    val requestInterval = cmdLine.longValue(
-                            CONSUL_REQUEST_INTERVAL,
-                            DefaultValues.CONSUL_REQUEST_INTERVAL
-                    )
-                    ConfigurationProviderParams(
-                            configUrl,
-                            Duration.ofSeconds(firstRequestDelay),
-                            Duration.ofSeconds(requestInterval)
-                    )
-                }.fix()
-            }
+            Option.monad().binding {
+                val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL).bind()
+                val firstRequestDelay = cmdLine.longValue(
+                        CONSUL_FIRST_REQUEST_DELAY,
+                        DefaultValues.CONSUL_FIRST_REQUEST_DELAY
+                )
+                val requestInterval = cmdLine.longValue(
+                        CONSUL_REQUEST_INTERVAL,
+                        DefaultValues.CONSUL_REQUEST_INTERVAL
+                )
+                ConfigurationProviderParams(
+                        configUrl,
+                        Duration.ofSeconds(firstRequestDelay),
+                        Duration.ofSeconds(requestInterval)
+                )
+            }.fix()
 
     internal object DefaultValues {
         const val HEALTH_CHECK_API_PORT = 6060

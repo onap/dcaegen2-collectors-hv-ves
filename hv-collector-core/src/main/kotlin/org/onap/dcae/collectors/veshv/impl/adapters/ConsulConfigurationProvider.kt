@@ -125,7 +125,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
     }
 
     companion object {
-        private const val MAX_RETRIES = 5
+        private const val MAX_RETRIES = 5L
         private const val BACKOFF_INTERVAL_FACTOR = 30L
         private val logger = Logger(ConsulConfigurationProvider::class)
     }

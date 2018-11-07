@@ -19,10 +19,9 @@
 */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config
 
-import arrow.core.ForOption
 import arrow.core.Option
 import arrow.core.fix
-import arrow.instances.extensions
+import arrow.instances.option.monad.monad
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
@@ -45,26 +44,24 @@ class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration
     )
 
     override fun getConfiguration(cmdLine: CommandLine): Option<DcaeAppSimConfiguration> =
-            ForOption extensions {
-                binding {
-                    val listenPort = cmdLine
-                            .intValue(LISTEN_PORT)
-                            .bind()
-                    val maxPayloadSizeBytes = cmdLine
-                            .intValue(MAXIMUM_PAYLOAD_SIZE_BYTES, WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
-                    val kafkaBootstrapServers = cmdLine
-                            .stringValue(KAFKA_SERVERS)
-                            .bind()
-                    val kafkaTopics = cmdLine
-                            .stringValue(KAFKA_TOPICS)
-                            .map { it.split(",").toSet() }
-                            .bind()
+            Option.monad().binding {
+                val listenPort = cmdLine
+                        .intValue(LISTEN_PORT)
+                        .bind()
+                val maxPayloadSizeBytes = cmdLine
+                        .intValue(MAXIMUM_PAYLOAD_SIZE_BYTES, WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
+                val kafkaBootstrapServers = cmdLine
+                        .stringValue(KAFKA_SERVERS)
+                        .bind()
+                val kafkaTopics = cmdLine
+                        .stringValue(KAFKA_TOPICS)
+                        .map { it.split(",").toSet() }
+                        .bind()
 
-                    DcaeAppSimConfiguration(
-                            listenPort,
-                            maxPayloadSizeBytes,
-                            kafkaBootstrapServers,
-                            kafkaTopics)
-                }.fix()
-            }
+                DcaeAppSimConfiguration(
+                        listenPort,
+                        maxPayloadSizeBytes,
+                        kafkaBootstrapServers,
+                        kafkaTopics)
+            }.fix()
 }

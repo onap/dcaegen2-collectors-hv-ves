@@ -19,10 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters
 
+import io.netty.handler.codec.http.HttpStatusClass
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
-import reactor.core.publisher.toMono
-import reactor.ipc.netty.http.client.HttpClient
+import reactor.netty.http.client.HttpClient
+import java.lang.IllegalStateException
 import java.nio.charset.Charset
 
 /**
@@ -34,14 +35,18 @@ open class HttpAdapter(private val httpClient: HttpClient) {
     private val logger = LoggerFactory.getLogger(HttpAdapter::class.java)
 
     open fun get(url: String, queryParams: Map<String, Any> = emptyMap()): Mono<String> = httpClient
-            .get(url + createQueryString(queryParams))
+            .get()
+            .uri(url + createQueryString(queryParams))
+            .responseSingle { response, content ->
+                if (response.status().codeClass() == HttpStatusClass.SUCCESS)
+                    content.asString()
+                else
+                    Mono.error(IllegalStateException("$url ${response.status().code()} ${response.status().reasonPhrase()}"))
+            }
             .doOnError {
                 logger.error("Failed to get resource on path: $url (${it.localizedMessage})")
                 logger.debug("Nested exception:", it)
             }
-            .flatMap { it.receiveContent().toMono() }
-            .map { it.content().toString(Charset.defaultCharset()) }
-
 
     private fun createQueryString(params: Map<String, Any>): String {
         if (params.isEmpty())
@@ -57,7 +62,7 @@ open class HttpAdapter(private val httpClient: HttpClient) {
 
         }
 
-        return  builder.removeSuffix("&").toString()
+        return builder.removeSuffix("&").toString()
     }
 
 }

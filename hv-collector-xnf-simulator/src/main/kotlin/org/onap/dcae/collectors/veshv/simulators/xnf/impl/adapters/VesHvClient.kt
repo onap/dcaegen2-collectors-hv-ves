@@ -35,8 +35,8 @@ import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.ReplayProcessor
-import reactor.ipc.netty.NettyOutbound
-import reactor.ipc.netty.tcp.TcpClient
+import reactor.netty.NettyOutbound
+import reactor.netty.tcp.TcpClient
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -44,13 +44,12 @@ import reactor.ipc.netty.tcp.TcpClient
  */
 class VesHvClient(private val configuration: SimulatorConfiguration) {
 
-    private val client: TcpClient = TcpClient.builder()
-            .options { opts ->
-                opts.host(configuration.vesHost)
-                        .port(configuration.vesPort)
-                        .sslContext(createSslContext(configuration.security).orNull())
+    private val client: TcpClient = TcpClient.create()
+            .host(configuration.vesHost)
+            .port(configuration.vesPort)
+            .secure { sslSpec ->
+                createSslContext(configuration.security).fold({}, sslSpec::sslContext)
             }
-            .build()
 
     fun sendIo(messages: Flux<WireFrameMessage>) =
             sendRx(messages).then(Mono.just(Unit)).asIo()
@@ -58,7 +57,8 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
     private fun sendRx(messages: Flux<WireFrameMessage>): Mono<Void> {
         val complete = ReplayProcessor.create<Void>(1)
         client
-                .newHandler { _, output -> handler(complete, messages, output) }
+                .handle { _, output -> handler(complete, messages, output) }
+                .connect()
                 .doOnError {
                     logger.info("Failed to connect to VesHvCollector on " +
                             "${configuration.vesHost}:${configuration.vesPort}")
@@ -94,12 +94,12 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
     private fun createSslContext(config: SecurityConfiguration): Option<SslContext> =
             ClientSslContextFactory().createSslContext(config)
 
-    private fun NettyOutbound.logConnectionClosed(): NettyOutbound {
-        context().onClose {
-            logger.info { "Connection to ${context().address()} has been closed" }
-        }
-        return this
-    }
+    private fun NettyOutbound.logConnectionClosed() =
+            withConnection { conn ->
+                conn.onTerminate().subscribe {
+                    logger.info { "Connection to ${conn.address()} has been closed" }
+                }
+            }
 
     companion object {
         private val logger = Logger(VesHvClient::class)
