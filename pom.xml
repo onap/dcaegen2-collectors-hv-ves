@@ -68,8 +68,8 @@
         <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
 
         <!-- Protocol buffers -->
-        <protobuf.version>3.5.1</protobuf.version>
-        <protoc-jar-maven-plugin.version>3.5.1.1</protoc-jar-maven-plugin.version>
+        <protobuf.version>3.6.1</protobuf.version>
+        <protoc-jar-maven-plugin.version>3.6.0.1</protoc-jar-maven-plugin.version>
         <protobuf-generated-files.directory>${project.build.directory}/generated-sources/proto/main/java/
         </protobuf-generated-files.directory>
 
