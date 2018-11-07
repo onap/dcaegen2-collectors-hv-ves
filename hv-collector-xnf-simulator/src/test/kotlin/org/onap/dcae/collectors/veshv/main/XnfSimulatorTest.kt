@@ -23,10 +23,9 @@ import arrow.core.Left
 import arrow.core.None
 import arrow.core.Right
 import arrow.effects.IO
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -39,6 +38,7 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameter
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
 import reactor.core.publisher.Flux
+import java.io.ByteArrayInputStream
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -60,7 +60,7 @@ internal class XnfSimulatorTest : Spek({
     describe("startSimulation") {
         it("should fail when empty input stream") {
             // given
-            val emptyInputStream = ByteInputStream()
+            val emptyInputStream = ByteArrayInputStream(byteArrayOf())
 
             // when
             val result = cut.startSimulation(emptyInputStream)

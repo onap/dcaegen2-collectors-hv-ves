@@ -19,10 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import arrow.core.ForOption
 import arrow.core.Option
 import arrow.core.fix
-import arrow.instances.extensions
 import arrow.instances.option.monad.monad
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
@@ -49,6 +47,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.hasOption
 import org.onap.dcae.collectors.veshv.utils.commandline.intValue
 import org.onap.dcae.collectors.veshv.utils.commandline.longValue
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
+import java.net.InetSocketAddress
 import java.time.Duration
 
 internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
@@ -81,8 +80,8 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                 val security = createSecurityConfiguration(cmdLine).bind()
                 val configurationProviderParams = createConfigurationProviderParams(cmdLine).bind()
                 ServerConfiguration(
-                        healthCheckApiPort = healthCheckApiPort,
-                        listenPort = listenPort,
+                        serverListenAddress = InetSocketAddress(listenPort),
+                        healthCheckApiListenAddress = InetSocketAddress(healthCheckApiPort),
                         configurationProviderParams = configurationProviderParams,
                         securityConfiguration = security,
                         idleTimeout = Duration.ofSeconds(idleTimeoutSec),
@@ -91,24 +90,22 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
             }.fix()
 
     private fun createConfigurationProviderParams(cmdLine: CommandLine): Option<ConfigurationProviderParams> =
-            ForOption extensions {
-                binding {
-                    val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL).bind()
-                    val firstRequestDelay = cmdLine.longValue(
-                            CONSUL_FIRST_REQUEST_DELAY,
-                            DefaultValues.CONSUL_FIRST_REQUEST_DELAY
-                    )
-                    val requestInterval = cmdLine.longValue(
-                            CONSUL_REQUEST_INTERVAL,
-                            DefaultValues.CONSUL_REQUEST_INTERVAL
-                    )
-                    ConfigurationProviderParams(
-                            configUrl,
-                            Duration.ofSeconds(firstRequestDelay),
-                            Duration.ofSeconds(requestInterval)
-                    )
-                }.fix()
-            }
+            Option.monad().binding {
+                val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL).bind()
+                val firstRequestDelay = cmdLine.longValue(
+                        CONSUL_FIRST_REQUEST_DELAY,
+                        DefaultValues.CONSUL_FIRST_REQUEST_DELAY
+                )
+                val requestInterval = cmdLine.longValue(
+                        CONSUL_REQUEST_INTERVAL,
+                        DefaultValues.CONSUL_REQUEST_INTERVAL
+                )
+                ConfigurationProviderParams(
+                        configUrl,
+                        Duration.ofSeconds(firstRequestDelay),
+                        Duration.ofSeconds(requestInterval)
+                )
+            }.fix()
 
     internal object DefaultValues {
         const val HEALTH_CHECK_API_PORT = 6060
