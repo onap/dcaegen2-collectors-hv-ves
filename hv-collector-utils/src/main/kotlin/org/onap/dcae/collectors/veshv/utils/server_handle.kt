@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.utils
 
 import arrow.effects.IO
-import reactor.ipc.netty.tcp.BlockingNettyContext
+import reactor.netty.DisposableServer
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -35,12 +35,12 @@ abstract class ServerHandle(val host: String, val port: Int) {
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class NettyServerHandle(private val ctx: BlockingNettyContext) : ServerHandle(ctx.host, ctx.port) {
+class NettyServerHandle(private val ctx: DisposableServer) : ServerHandle(ctx.host(), ctx.port()) {
     override fun shutdown() = IO {
-        ctx.shutdown()
+        ctx.disposeNow()
     }
 
     override fun await() = IO<Unit> {
-        ctx.context.channel().closeFuture().sync()
+        ctx.channel().closeFuture().sync()
     }
 }

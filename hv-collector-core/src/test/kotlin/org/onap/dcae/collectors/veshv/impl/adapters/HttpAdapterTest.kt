@@ -19,21 +19,15 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters
 
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
-import io.netty.buffer.Unpooled
-import io.netty.handler.codec.http.HttpContent
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.ipc.netty.http.client.HttpClient
-import reactor.ipc.netty.http.client.HttpClientResponse
+import reactor.netty.http.client.HttpClient
+import reactor.netty.http.server.HttpServer
 import reactor.test.StepVerifier
-import java.nio.charset.Charset
+import reactor.test.test
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -42,66 +36,51 @@ import java.nio.charset.Charset
 internal object HttpAdapterTest : Spek({
     describe("HttpAdapter") {
 
-        val httpClientMock: HttpClient = mock()
-        val httpAdapter = HttpAdapter(httpClientMock)
+        val httpServer = HttpServer.create()
+                .host("127.0.0.1")
+                .route { routes ->
+                    routes.get("/url") { req, resp ->
+                        resp.sendString(Mono.just(req.uri()))
+                    }
+                }
+                .bindNow()
+        val baseUrl = "http://${httpServer.host()}:${httpServer.port()}"
+        val httpAdapter = HttpAdapter(HttpClient.create().baseUrl(baseUrl))
+
+        afterGroup {
+            httpServer.disposeNow()
+        }
 
         given("url without query params") {
-            val initialUrl = "http://test-url"
-            whenever(httpClientMock.get(initialUrl)).thenReturn(Mono.empty())
+            val url = "/url"
 
             it("should not append query string") {
-                httpAdapter.get(initialUrl)
-                verify(httpClientMock).get(initialUrl)
+                httpAdapter.get(url).test()
+                        .expectNext(url)
+                        .verifyComplete()
             }
         }
 
         given("url with query params") {
-            val queryParams = mapOf(Pair("key", "value"))
-            val initialUrl = "http://test-url"
-            val expectedUrl = "http://test-url?key=value"
-            whenever(httpClientMock.get(expectedUrl)).thenReturn(Mono.empty())
+            val queryParams = mapOf(Pair("p", "the-value"))
+            val url = "/url"
 
-            it("should parse them to query string and append to url") {
-                httpAdapter.get(initialUrl, queryParams)
-                verify(httpClientMock).get(expectedUrl)
+            it("should add them as query string to the url") {
+                httpAdapter.get(url, queryParams).test()
+                        .expectNext("/url?p=the-value")
+                        .verifyComplete()
             }
         }
 
-        given("valid resource url") {
-            val validUrl = "http://valid-url/"
-            val responseContent = """{"key1": "value1", "key2": "value2"}"""
-            val httpResponse = createHttpResponseMock(responseContent)
-            whenever(httpClientMock.get(validUrl)).thenReturn(Mono.just(httpResponse))
-
-            it("should return response string") {
-                StepVerifier
-                        .create(httpAdapter.get(validUrl))
-                        .expectNext(responseContent)
-            }
-        }
-
-        given("invalid resource url") {
-            val invalidUrl = "http://invalid-url/"
-            val exceptionMessage = "Test exception"
-            whenever(httpClientMock.get(invalidUrl)).thenReturn(Mono.error(Exception(exceptionMessage)))
+        given("invalid url") {
+            val invalidUrl = "/wtf"
 
             it("should interrupt the flux") {
                 StepVerifier
                         .create(httpAdapter.get(invalidUrl))
-                        .verifyErrorMessage(exceptionMessage)
+                        .verifyError()
             }
         }
     }
 
 })
-
-fun createHttpResponseMock(content: String): HttpClientResponse {
-    val responseMock: HttpClientResponse = mock()
-    val contentMock: HttpContent = mock()
-    val contentByteBuff = Unpooled.copiedBuffer(content, Charset.defaultCharset())
-
-    whenever(responseMock.receiveContent()).thenReturn(Flux.just(contentMock))
-    whenever(contentMock.content()).thenReturn(contentByteBuff)
-
-    return responseMock
-}

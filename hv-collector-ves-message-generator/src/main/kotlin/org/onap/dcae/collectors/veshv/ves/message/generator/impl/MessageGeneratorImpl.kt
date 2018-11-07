@@ -31,9 +31,8 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVA
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_WIRE_FRAME
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.TOO_BIG_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
-import org.onap.ves.VesEventOuterClass.VesEvent
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
-
+import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.nio.charset.Charset
@@ -54,10 +53,17 @@ class MessageGeneratorImpl internal constructor(
     private fun createMessageFlux(parameters: MessageParameters): Flux<WireFrameMessage> =
             Mono.fromCallable { createMessage(parameters.commonEventHeader, parameters.messageType) }
                     .let {
-                        if (parameters.amount < 0)
-                            it.repeat()
-                        else
-                            it.repeat(parameters.amount)
+                        when {
+                            parameters.amount < 0 ->
+                                // repeat forever
+                                it.repeat()
+                            parameters.amount == 0L ->
+                                // do not generate any message
+                                Flux.empty()
+                            else ->
+                                // send original message and additional amount-1 messages
+                                it.repeat(parameters.amount - 1)
+                        }
                     }
 
     private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): WireFrameMessage =
