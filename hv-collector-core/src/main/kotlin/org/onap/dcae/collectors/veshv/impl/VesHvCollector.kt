@@ -30,6 +30,7 @@ import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.handleReactiveStreamError
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -52,8 +53,8 @@ internal class VesHvCollector(
                         .transform(::decodePayload)
                         .filter(VesMessage::isValid)
                         .transform(::routeMessage)
+                        .onErrorResume { logger.handleReactiveStreamError(it) }
                         .doFinally { releaseBuffersMemory(wireDecoder) }
-                        .onErrorResume(::handleErrors)
                         .then()
             }
 
@@ -80,12 +81,6 @@ internal class VesHvCollector(
             { Mono.just(it) })
 
     private fun releaseBuffersMemory(wireChunkDecoder: WireChunkDecoder) = wireChunkDecoder.release()
-
-    private fun handleErrors(ex: Throwable): Flux<RoutedMessage> {
-        logger.warn("Error while handling message stream: ${ex::class.qualifiedName} (${ex.message})")
-        logger.debug("Detailed stack trace", ex)
-        return Flux.empty()
-    }
 
     companion object {
         private val logger = Logger(VesHvCollector::class)
