@@ -28,6 +28,7 @@ import org.onap.dcae.collectors.veshv.domain.InvalidWireFrame
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecodingError
 import org.onap.dcae.collectors.veshv.domain.MissingWireFrameBytes
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.handleReactiveStreamError
 import reactor.core.publisher.Flux
 import reactor.core.publisher.SynchronousSink
 
@@ -51,7 +52,9 @@ internal class WireChunkDecoder(
             Flux.empty()
         } else {
             streamBuffer.addComponent(true, byteBuf)
-            generateFrames().doOnTerminate { streamBuffer.discardReadComponents() }
+            generateFrames()
+                    .onErrorResume { logger.handleReactiveStreamError(it, Flux.error(it)) }
+                    .doFinally { streamBuffer.discardReadComponents() }
         }
     }
 

@@ -71,7 +71,8 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                     },
                     {
                         logger.info { "Handling connection from ${nettyInbound.remoteAddress()}" }
-                        it.handleConnection(nettyInbound.context().channel().alloc(), createDataStream(nettyInbound))
+                        val allocator = nettyInbound.context().channel().alloc()
+                        it.handleConnection(allocator, createDataStream(nettyInbound))
                     }
             )
 
