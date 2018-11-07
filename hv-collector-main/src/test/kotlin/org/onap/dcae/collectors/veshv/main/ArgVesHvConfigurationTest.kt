@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -70,12 +69,21 @@ object ArgVesHvConfigurationTest : Spek({
                 )
             }
 
-            it("should set proper health check api port") {
-                assertThat(result.healthCheckApiPort).isEqualTo(healthCheckApiPort.toInt())
+            it("should set proper listen port") {
+                assertThat(result.serverListenAddress.port).isEqualTo(listenPort.toInt())
             }
 
-            it("should set proper listen port") {
-                assertThat(result.listenPort).isEqualTo(listenPort.toInt())
+
+            it("should set default listen address") {
+                assertThat(result.serverListenAddress.address.hostAddress).isEqualTo("0.0.0.0")
+            }
+
+            it("should set proper health check api port") {
+                assertThat(result.healthCheckApiListenAddress.port).isEqualTo(healthCheckApiPort.toInt())
+            }
+
+            it("should set default health check api address") {
+                assertThat(result.healthCheckApiListenAddress.address.hostAddress).isEqualTo("0.0.0.0")
             }
 
             it("should set proper first consul request delay") {

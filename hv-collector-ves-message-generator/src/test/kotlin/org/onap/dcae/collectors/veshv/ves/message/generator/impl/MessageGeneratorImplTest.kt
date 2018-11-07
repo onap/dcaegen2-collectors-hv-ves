@@ -50,6 +50,7 @@ object MessageGeneratorImplTest : Spek({
         val maxPayloadSizeBytes = 1024
         val generator = MessageGeneratorImpl(PayloadGenerator(), maxPayloadSizeBytes)
         given("single message parameters") {
+
             on("messages amount not specified in parameters") {
                 it("should create infinite flux") {
                     val limit = 1000L
@@ -64,6 +65,20 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
+
+            on("messages amount = 0 specified in parameters") {
+                it("should create empty message flux") {
+                    generator
+                            .createMessageFlux(listOf(MessageParameters(
+                                    commonHeader(PERF3GPP),
+                                    MessageType.VALID,
+                                    0
+                            )))
+                            .test()
+                            .verifyComplete()
+                }
+            }
+
             on("messages amount specified in parameters") {
                 it("should create message flux of specified size") {
                     generator
@@ -77,6 +92,7 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
+
             on("message type requesting valid message") {
                 it("should create flux of valid messages with given domain") {
                     generator
@@ -94,6 +110,7 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
+
             on("message type requesting too big payload") {
                 it("should create flux of messages with given domain and payload exceeding threshold") {
 
@@ -112,6 +129,7 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
+
             on("message type requesting invalid GPB data ") {
                 it("should create flux of messages with invalid payload") {
                     generator
@@ -130,6 +148,7 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
+
             on("message type requesting invalid wire frame ") {
                 it("should create flux of messages with invalid version") {
                     generator
@@ -148,6 +167,7 @@ object MessageGeneratorImplTest : Spek({
                             .verifyComplete()
                 }
             }
+
             on("message type requesting fixed payload") {
                 it("should create flux of valid messages with fixed payload") {
                     generator

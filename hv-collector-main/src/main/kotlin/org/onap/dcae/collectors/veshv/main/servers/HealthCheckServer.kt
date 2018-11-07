@@ -32,7 +32,9 @@ object HealthCheckServer : ServerStarter() {
     override fun startServer(config: ServerConfiguration) = createHealthCheckServer(config).start()
 
     private fun createHealthCheckServer(config: ServerConfiguration) =
-            HealthCheckApiServer(HealthState.INSTANCE, config.healthCheckApiPort)
+            HealthCheckApiServer(
+                    HealthState.INSTANCE,
+                    config.healthCheckApiListenAddress)
 
     override fun serverStartedMessage(handle: ServerHandle) =
             "Health check server is up and listening on ${handle.host}:${handle.port}"

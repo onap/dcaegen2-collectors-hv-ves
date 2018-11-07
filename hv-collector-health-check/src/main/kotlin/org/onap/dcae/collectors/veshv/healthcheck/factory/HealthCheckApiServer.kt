@@ -27,26 +27,30 @@ import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.ipc.netty.http.server.HttpServer
-import reactor.ipc.netty.http.server.HttpServerRequest
-import reactor.ipc.netty.http.server.HttpServerResponse
+import reactor.netty.http.server.HttpServer
+import reactor.netty.http.server.HttpServerRequest
+import reactor.netty.http.server.HttpServerResponse
+import java.net.SocketAddress
 import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-class HealthCheckApiServer(private val healthState: HealthState, private val port: Int) {
+class HealthCheckApiServer(private val healthState: HealthState,
+                           private val listenAddress: SocketAddress) {
 
     private val healthDescription: AtomicReference<HealthDescription> = AtomicReference(HealthDescription.STARTING)
 
     fun start(): IO<ServerHandle> = IO {
         healthState().subscribe(healthDescription::set)
-        val ctx = HttpServer.create(port).startRouter { routes ->
-            routes.get("/health/ready", ::readinessHandler)
-            routes.get("/health/alive", ::livenessHandler)
-        }
-        NettyServerHandle(ctx)
+        val ctx = HttpServer.create()
+                .tcpConfiguration { it.addressSupplier { listenAddress } }
+                .route { routes ->
+                    routes.get("/health/ready", ::readinessHandler)
+                    routes.get("/health/alive", ::livenessHandler)
+                }
+        NettyServerHandle(ctx.bindNow())
     }
 
     private fun readinessHandler(req: HttpServerRequest, resp: HttpServerResponse) =
@@ -55,6 +59,6 @@ class HealthCheckApiServer(private val healthState: HealthState, private val por
             }
 
     private fun livenessHandler(req: HttpServerRequest, resp: HttpServerResponse) =
-                resp.status(HttpResponseStatus.NOT_IMPLEMENTED).sendString(Mono.just("Not implemented yet"))
+            resp.status(HttpResponseStatus.NOT_IMPLEMENTED).sendString(Mono.just("Not implemented yet"))
 
 }

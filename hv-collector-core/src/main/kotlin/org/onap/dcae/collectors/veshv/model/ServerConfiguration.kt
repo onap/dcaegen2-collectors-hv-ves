@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.model
 
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import java.net.InetSocketAddress
 import java.time.Duration
 
 /**
@@ -27,10 +28,10 @@ import java.time.Duration
  * @since May 2018
  */
 data class ServerConfiguration(
-        val listenPort: Int,
+        val serverListenAddress: InetSocketAddress,
         val configurationProviderParams: ConfigurationProviderParams,
         val securityConfiguration: SecurityConfiguration,
         val idleTimeout: Duration,
-        val healthCheckApiPort: Int,
+        val healthCheckApiListenAddress: InetSocketAddress,
         val maximumPayloadSizeBytes: Int,
         val dummyMode: Boolean = false)
