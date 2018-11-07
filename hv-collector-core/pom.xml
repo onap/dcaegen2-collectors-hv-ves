@@ -111,7 +111,7 @@
             <artifactId>reactor-extra</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.projectreactor.ipc</groupId>
+            <groupId>io.projectreactor.netty</groupId>
             <artifactId>reactor-netty</artifactId>
         </dependency>
         <dependency>

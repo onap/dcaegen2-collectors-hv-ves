@@ -32,7 +32,7 @@
     <parent>
         <groupId>org.onap.oparent</groupId>
         <artifactId>oparent</artifactId>
-        <version>1.2.0</version>
+        <version>1.2.1</version>
         <relativePath/>
     </parent>
 
@@ -593,7 +593,7 @@
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
                 <!-- remember to update netty native bindings versions -->
-                <version>Bismuth-SR11</version>
+                <version>Californium-SR2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
