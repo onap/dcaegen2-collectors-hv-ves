@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_6baf85e4",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-09T07:41:37Z",
+      "side": 1,
+      "message": "Use function reference instead of lambda",
+      "revId": "a2ebbca724733620708bd13e1abc075c5b14c548",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
