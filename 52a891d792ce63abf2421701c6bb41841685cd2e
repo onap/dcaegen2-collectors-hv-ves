@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_8bff4934",
+        "filename": "hv-collector-xnf-simulator/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-09T13:23:45Z",
+      "side": 1,
+      "message": "This env is not used",
+      "revId": "52a891d792ce63abf2421701c6bb41841685cd2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6b022540",
+        "filename": "hv-collector-xnf-simulator/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-09T13:23:45Z",
+      "side": 1,
+      "message": "There is no ENTRYPOINT now.",
+      "revId": "52a891d792ce63abf2421701c6bb41841685cd2e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
