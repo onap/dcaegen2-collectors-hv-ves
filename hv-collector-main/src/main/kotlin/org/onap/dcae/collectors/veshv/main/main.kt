@@ -34,17 +34,25 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
 private val logger = Logger("org.onap.dcae.collectors.veshv.main")
 private const val PROGRAM_NAME = "java org.onap.dcae.collectors.veshv.main.MainKt"
 
-fun main(args: Array<String>) =
-        ArgVesHvConfiguration().parse(args)
-                .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-                .map(::startAndAwaitServers)
-                .unsafeRunEitherSync(
-                        { ex ->
-                            logger.error("Failed to start a server", ex)
-                            ExitFailure(1)
-                        },
-                        { logger.info("Gentle shutdown") }
-                )
+fun main(args: Array<String>) {
+
+    logger.info("procs: ${Runtime.getRuntime().availableProcessors()}, " +
+            "maxMem: ${Runtime.getRuntime().maxMemory()}, " +
+            "totalMem: ${Runtime.getRuntime().totalMemory()}"
+    )
+
+    ArgVesHvConfiguration().parse(args)
+            .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
+            .map(::startAndAwaitServers)
+            .unsafeRunEitherSync(
+                    { ex ->
+                        logger.error("Failed to start a server", ex)
+                        ExitFailure(1)
+                    },
+                    { logger.info("Gentle shutdown") }
+            )
+}
+
 
 private fun startAndAwaitServers(config: ServerConfiguration) =
         IO.monad().binding {
