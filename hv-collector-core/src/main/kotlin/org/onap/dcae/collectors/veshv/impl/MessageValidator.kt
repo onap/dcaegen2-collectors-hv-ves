@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
+import org.onap.dcae.collectors.veshv.domain.vesEventListenerVersionRegex
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
@@ -32,4 +33,6 @@ internal object MessageValidator {
     private fun allMandatoryFieldsArePresent(header: CommonEventHeader) =
             headerRequiredFieldDescriptors
                     .all { fieldDescriptor -> header.hasField(fieldDescriptor) }
+                    .and(vesEventListenerVersionRegex.matches(header.vesEventListenerVersion))
+
 }
