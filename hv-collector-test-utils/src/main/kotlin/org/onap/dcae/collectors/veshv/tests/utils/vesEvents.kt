@@ -63,7 +63,7 @@ fun commonHeader(domain: VesEventDomain = PERF3GPP,
                 .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
                 .setSourceName("sample-source-name")
                 .setTimeZoneOffset("+1")
-                .setVesEventListenerVersion("another-version")
+                .setVesEventListenerVersion("7.1.1")
                 .build()
 
 fun vesEventBytes(commonHeader: CommonEventHeader, byteString: ByteString = ByteString.EMPTY): ByteData =
