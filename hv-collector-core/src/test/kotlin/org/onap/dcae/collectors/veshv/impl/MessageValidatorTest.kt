@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import com.google.protobuf.ByteString
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -29,10 +30,12 @@ import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
+import org.onap.ves.VesEventOuterClass
 
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.getDefaultInstance
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.newBuilder
+import java.util.UUID.randomUUID
 
 internal object MessageValidatorTest : Spek({
 
@@ -91,9 +94,24 @@ internal object MessageValidatorTest : Spek({
                     .build()
             val rawMessageBytes = vesEventBytes(commonHeader)
 
-            it("should not accept not fully initialized message header ") {
+            it("should not accept not fully initialized message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
+
+        on("ves hv message including header with sequence field not matching required pattern") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
+            val commonHeader2 = commonHeader(vesEventListenerVersion = "7.21.123")
+
+            val rawMessageBytes = vesEventBytes(commonHeader)
+
+            it("should not accept message header") {
+                val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+
+                val vesMessage2 = VesMessage(commonHeader2, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage2)).describedAs("second message validation result").isFalse()
             }
         }
     }
