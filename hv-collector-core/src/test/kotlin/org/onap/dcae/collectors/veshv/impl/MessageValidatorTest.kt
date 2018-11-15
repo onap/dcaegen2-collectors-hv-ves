@@ -29,10 +29,7 @@ import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
-
-import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
-import org.onap.ves.VesEventOuterClass.CommonEventHeader.getDefaultInstance
-import org.onap.ves.VesEventOuterClass.CommonEventHeader.newBuilder
+import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
 
 internal object MessageValidatorTest : Spek({
 
@@ -94,6 +91,27 @@ internal object MessageValidatorTest : Spek({
             it("should not accept not fully initialized message header ") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
+
+        on("ves hv message including header with vesEventListenerVersion field not matching required pattern") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
+            val commonHeader2 = commonHeader(vesEventListenerVersion = "sample-version")
+            val commonHeader3 = commonHeader(vesEventListenerVersion = "7.test")
+
+            val rawMessageBytes = vesEventBytes(commonHeader)
+            val rawMessageBytes2 = vesEventBytes(commonHeader2)
+            val rawMessageBytes3 = vesEventBytes(commonHeader3)
+
+            it("should not accept message header") {
+                val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+
+                val vesMessage2 = VesMessage(commonHeader2, rawMessageBytes2)
+                assertThat(cut.isValid(vesMessage2)).describedAs("second message validation result").isFalse()
+
+                val vesMessage3 = VesMessage(commonHeader3, rawMessageBytes3)
+                assertThat(cut.isValid(vesMessage3)).describedAs("third message validation result").isFalse()
             }
         }
     }
