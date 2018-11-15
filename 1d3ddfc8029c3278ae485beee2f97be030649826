@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_115e16e7",
+        "filename": "hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-11-15T13:03:52Z",
+      "side": 1,
+      "message": "`sequence` -\u003e `vesEventListenerVersion`. Also in second test description",
+      "revId": "1d3ddfc8029c3278ae485beee2f97be030649826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9169a68d",
+        "filename": "hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-11-15T13:03:52Z",
+      "side": 1,
+      "message": "Let\u0027s add `vesEventListenerVersion` as optional parameter (set by default to lowest possible e.g. 7.0.0) to `utils.vesEvents.commonHeader()` function and call it here as\n\n```\nval commonHeader \u003d commonHeader(vesEventListenerVersion\u003d\"1.2.1\")\n```",
+      "revId": "1d3ddfc8029c3278ae485beee2f97be030649826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f10fd2df",
+        "filename": "hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-11-15T13:03:52Z",
+      "side": 1,
+      "message": "We might test this regexp more exhaustively and add another test which would check for some \"7.64.209\" version",
+      "revId": "1d3ddfc8029c3278ae485beee2f97be030649826",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
