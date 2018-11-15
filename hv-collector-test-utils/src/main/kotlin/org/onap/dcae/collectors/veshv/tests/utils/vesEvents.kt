@@ -44,7 +44,8 @@ fun vesEvent(commonEventHeader: CommonEventHeader,
 
 fun commonHeader(domain: VesEventDomain = PERF3GPP,
                  id: String = randomUUID().toString(),
-                 priority: Priority = Priority.NORMAL): CommonEventHeader =
+                 priority: Priority = Priority.NORMAL,
+                 vesEventListenerVersion: String = "7.0.2"): CommonEventHeader =
         CommonEventHeader.newBuilder()
                 .setVersion("sample-version")
                 .setDomain(domain.domainName)
@@ -63,7 +64,7 @@ fun commonHeader(domain: VesEventDomain = PERF3GPP,
                 .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
                 .setSourceName("sample-source-name")
                 .setTimeZoneOffset("+1")
-                .setVesEventListenerVersion("another-version")
+                .setVesEventListenerVersion(vesEventListenerVersion)
                 .build()
 
 fun vesEventBytes(commonHeader: CommonEventHeader, byteString: ByteString = ByteString.EMPTY): ByteData =

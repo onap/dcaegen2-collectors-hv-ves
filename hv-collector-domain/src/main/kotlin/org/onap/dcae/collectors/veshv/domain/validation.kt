@@ -24,7 +24,7 @@ import org.onap.ves.VesEventOuterClass
 val headerRequiredFieldDescriptors = listOf(
         "version",
         "domain",
-        "sequence",
+        /* field "sequence" has been removed from validation, since default value "0" is acceptable */
         "priority",
         "eventId",
         "eventName",
@@ -34,3 +34,5 @@ val headerRequiredFieldDescriptors = listOf(
         "sourceName",
         "vesEventListenerVersion")
         .map { fieldName -> VesEventOuterClass.CommonEventHeader.getDescriptor().findFieldByName(fieldName) }
+
+val vesEventListenerVersionRegex = """7\.[0-9]+\.[0-9]+""".toRegex()
