@@ -29,10 +29,7 @@ import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
-
-import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
-import org.onap.ves.VesEventOuterClass.CommonEventHeader.getDefaultInstance
-import org.onap.ves.VesEventOuterClass.CommonEventHeader.newBuilder
+import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
 
 internal object MessageValidatorTest : Spek({
 
@@ -92,6 +89,37 @@ internal object MessageValidatorTest : Spek({
             val rawMessageBytes = vesEventBytes(commonHeader)
 
             it("should not accept not fully initialized message header ") {
+                val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
+
+        on("ves hv message including header.vesEventListenerVersion with non-string major part") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "sample-version")
+            val rawMessageBytes = vesEventBytes(commonHeader)
+
+
+            it("should not accept message header") {
+                val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
+
+        on("ves hv message including header.vesEventListenerVersion with major part != 7") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
+            val rawMessageBytes = vesEventBytes(commonHeader)
+
+            it("should not accept message header") {
+                val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
+
+        on("ves hv message including header.vesEventListenerVersion with minor part not starting with a digit") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "7.test")
+            val rawMessageBytes = vesEventBytes(commonHeader)
+
+            it("should not accept message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
             }
