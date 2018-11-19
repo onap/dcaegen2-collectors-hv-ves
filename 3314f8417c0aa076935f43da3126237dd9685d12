@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_15191988",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/validation.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-11-19T07:47:35Z",
+      "side": 1,
+      "message": "Please revert to version using \"[0-9]+\" as it\u0027s correct regex here.",
+      "revId": "3314f8417c0aa076935f43da3126237dd9685d12",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
