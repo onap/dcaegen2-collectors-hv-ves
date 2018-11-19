@@ -38,7 +38,7 @@
 
     <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
     <artifactId>ves-hv-collector</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>dcaegen2-collectors-veshv</name>
     <description>VES HighVolume Collector</description>
     <packaging>pom</packaging>
@@ -60,6 +60,8 @@
     </modules>
 
     <properties>
+        <casablanca-docker-image.latest-tag>1.0-SNAPSHOT</casablanca-docker-image.latest-tag>
+
         <kotlin.version>1.2.70</kotlin.version>
         <arrow.version>0.7.3</arrow.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
@@ -343,7 +345,7 @@
                     <dependency>
                         <groupId>${project.groupId}</groupId>
                         <artifactId>hv-collector-analysis</artifactId>
-                        <version>1.0.0-SNAPSHOT</version>
+                        <version>1.0.1-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -453,7 +455,7 @@
                                             <tags>
                                                 <tag>${project.version}-${maven.build.timestamp}Z</tag>
                                                 <tag>${project.version}</tag>
-                                                <tag>latest</tag>
+                                                <tag>${casablanca-docker-image.latest-tag}</tag>
                                             </tags>
                                         </build>
                                     </image>
