@@ -35,4 +35,4 @@ val headerRequiredFieldDescriptors = listOf(
         "vesEventListenerVersion")
         .map { fieldName -> VesEventOuterClass.CommonEventHeader.getDescriptor().findFieldByName(fieldName) }
 
-val vesEventListenerVersionRegex = """7\.[0-9]+\.[0-9]+""".toRegex()
+val vesEventListenerVersionRegex = """7\.[0-9].*""".toRegex()

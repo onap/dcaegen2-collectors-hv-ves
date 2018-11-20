@@ -94,19 +94,34 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-        on("ves hv message including header with vesEventListenerVersion field not matching required pattern") {
-            val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
-            val commonHeader2 = commonHeader(vesEventListenerVersion = "sample-version")
-
+        on("ves hv message including header.vesEventListenerVersion with non-string major part") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "sample-version")
             val rawMessageBytes = vesEventBytes(commonHeader)
-            val rawMessageBytes2 = vesEventBytes(commonHeader2)
+
 
             it("should not accept message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
 
-                val vesMessage2 = VesMessage(commonHeader2, rawMessageBytes2)
-                assertThat(cut.isValid(vesMessage2)).describedAs("second message validation result").isFalse()
+        on("ves hv message including header.vesEventListenerVersion with major part != 7") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
+            val rawMessageBytes = vesEventBytes(commonHeader)
+
+            it("should not accept message header") {
+                val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
+            }
+        }
+
+        on("ves hv message including header.vesEventListenerVersion with minor part not starting with a digit") {
+            val commonHeader = commonHeader(vesEventListenerVersion = "7.test")
+            val rawMessageBytes = vesEventBytes(commonHeader)
+
+            it("should not accept message header") {
+                val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+                assertThat(cut.isValid(vesMessage)).describedAs("message validation result").isFalse()
             }
         }
     }
