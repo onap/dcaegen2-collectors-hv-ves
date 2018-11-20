@@ -97,9 +97,11 @@ internal object MessageValidatorTest : Spek({
         on("ves hv message including header with vesEventListenerVersion field not matching required pattern") {
             val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
             val commonHeader2 = commonHeader(vesEventListenerVersion = "sample-version")
+            val commonHeader3 = commonHeader(vesEventListenerVersion = "7.test")
 
             val rawMessageBytes = vesEventBytes(commonHeader)
             val rawMessageBytes2 = vesEventBytes(commonHeader2)
+            val rawMessageBytes3 = vesEventBytes(commonHeader3)
 
             it("should not accept message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
@@ -107,6 +109,9 @@ internal object MessageValidatorTest : Spek({
 
                 val vesMessage2 = VesMessage(commonHeader2, rawMessageBytes2)
                 assertThat(cut.isValid(vesMessage2)).describedAs("second message validation result").isFalse()
+
+                val vesMessage3 = VesMessage(commonHeader3, rawMessageBytes3)
+                assertThat(cut.isValid(vesMessage3)).describedAs("third message validation result").isFalse()
             }
         }
     }
