@@ -20,10 +20,8 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.core.Option
-import io.netty.handler.ssl.ClientAuth
+import arrow.core.getOrElse
 import io.netty.handler.ssl.SslContext
-import io.netty.handler.ssl.SslContextBuilder
-import io.netty.handler.ssl.SslProvider
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
@@ -47,9 +45,12 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
     private val client: TcpClient = TcpClient.create()
             .host(configuration.vesHost)
             .port(configuration.vesPort)
-            .secure { sslSpec ->
-                createSslContext(configuration.security).fold({}, sslSpec::sslContext)
-            }
+            .configureSsl()
+
+    private fun TcpClient.configureSsl() =
+            createSslContext(configuration.security)
+                    .map { sslContext -> this.secure(sslContext) }
+                    .getOrElse { this }
 
     fun sendIo(messages: Flux<WireFrameMessage>) =
             sendRx(messages).then(Mono.just(Unit)).asIo()
