@@ -31,7 +31,6 @@ import reactor.retry.Jitter
 import reactor.retry.Retry
 import java.io.StringReader
 import java.time.Duration
-import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 import javax.json.Json
 import javax.json.JsonObject
@@ -72,32 +71,31 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
 
     override fun invoke(): Flux<CollectorConfiguration> =
             Flux.interval(firstRequestDelay, requestInterval)
-                    .flatMap { askForConfig() }
-                    .map(::parseJsonResponse)
+                    .concatMap { askForConfig() }
                     .flatMap(::filterDifferentValues)
+                    .map(::parseJsonResponse)
                     .map(::createCollectorConfiguration)
                     .retryWhen(retry)
 
     private fun askForConfig(): Mono<String> = http.get(url)
 
+    private fun filterDifferentValues(configurationString: String) =
+            hashOf(configurationString).let {
+                if (it == lastConfigurationHash.get()) {
+                    Mono.empty()
+                } else {
+                    lastConfigurationHash.set(it)
+                    Mono.just(configurationString)
+                }
+            }
+
+    private fun hashOf(str: String) = str.hashCode()
+
     private fun parseJsonResponse(responseString: String): JsonObject =
             Json.createReader(StringReader(responseString)).readObject()
 
-    private fun filterDifferentValues(configuration: JsonObject): Mono<JsonObject> =
-            hashOf(configuration)
-                    .let {
-                        if (it == lastConfigurationHash.get()) {
-                            Mono.empty()
-                        } else {
-                            lastConfigurationHash.set(it)
-                            Mono.just(configuration)
-                        }
-                    }
-
-    private fun hashOf(json: JsonObject) = json.hashCode()
-
     private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration {
-        logger.info("Obtained new configuration from consul:\n${configuration}")
+        logger.info { "Obtained new configuration from consul:\n${configuration}" }
         val routing = configuration.getJsonArray("collector.routing")
 
         return CollectorConfiguration(
