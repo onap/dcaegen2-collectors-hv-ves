@@ -15,4 +15,5 @@ ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.main.MainKt"]
 
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./
+COPY healthcheck.sh ./
 COPY target/hv-collector-main-*.jar ./
