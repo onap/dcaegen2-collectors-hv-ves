@@ -37,5 +37,4 @@ internal class PayloadGenerator {
                             .toString()
                             .toByteArray()
             )
-
 }

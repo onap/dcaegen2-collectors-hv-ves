@@ -324,10 +324,8 @@
                                     <arg value="onap-detekt-config.yml"/>
                                     <arg value="--filters"/>
                                     <arg value=".*/target/.*,.*/resources/.*"/>
-                                    <arg value="--output"/>
-                                    <arg value="${basedir}/target/reports"/>
-                                    <arg value="--output-name"/>
-                                    <arg value="detekt-report"/>
+                                    <arg value="--report"/>
+                                    <arg value="detekt-report:${basedir}/target/reports"/>
                                     <arg value="--baseline"/>
                                     <arg value="${basedir}/target/reports/baseline.xml"/>
                                 </java>
@@ -339,7 +337,7 @@
                     <dependency>
                         <groupId>io.gitlab.arturbosch.detekt</groupId>
                         <artifactId>detekt-cli</artifactId>
-                        <version>1.0.0.RC7</version>
+                        <version>1.0.0-RC11</version>
                     </dependency>
                     <dependency>
                         <groupId>${project.groupId}</groupId>

@@ -99,8 +99,8 @@ private const val invalidMessageParameters =
 
 fun validMessagesParametesJson() = Json
         .createReader(validMessageParameters.reader())
-        .readArray()
+        .readArray()!!
 
 fun invalidMessagesParametesJson() = Json
         .createReader(invalidMessageParameters.reader())
-        .readArray()
+        .readArray()!!

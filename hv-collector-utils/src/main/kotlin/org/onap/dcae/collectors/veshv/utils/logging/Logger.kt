@@ -19,9 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.utils.logging
 
-import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
+import org.slf4j.LoggerFactory
 
+@Suppress("TooManyFunctions")
 class Logger(val logger: org.slf4j.Logger) {
     constructor(clazz: KClass<out Any>) : this(LoggerFactory.getLogger(clazz.java))
     constructor(name: String) : this(LoggerFactory.getLogger(name))
@@ -38,7 +39,6 @@ class Logger(val logger: org.slf4j.Logger) {
             logger.trace(messageProvider())
         }
     }
-
 
     //
     // DEBUG
@@ -64,14 +64,12 @@ class Logger(val logger: org.slf4j.Logger) {
         }
     }
 
-
     //
     // INFO
     //
     fun info(message: String) {
         logger.info(message)
     }
-
 
     fun info(messageProvider: () -> String) {
         if (logger.isInfoEnabled) {
@@ -83,13 +81,11 @@ class Logger(val logger: org.slf4j.Logger) {
         logger.info(message, t)
     }
 
-
     fun info(t: Throwable, messageProvider: () -> String) {
         if (logger.isInfoEnabled) {
             logger.info(messageProvider(), t)
         }
     }
-
 
     //
     // WARN
@@ -115,7 +111,6 @@ class Logger(val logger: org.slf4j.Logger) {
         }
     }
 
-
     //
     // ERROR
     //
@@ -123,7 +118,6 @@ class Logger(val logger: org.slf4j.Logger) {
     fun error(message: String) {
         logger.error(message)
     }
-
 
     fun error(message: String, t: Throwable) {
         logger.error(message, t)

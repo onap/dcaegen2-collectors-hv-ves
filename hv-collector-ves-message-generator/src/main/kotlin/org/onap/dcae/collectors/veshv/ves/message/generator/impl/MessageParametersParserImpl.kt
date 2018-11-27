@@ -40,13 +40,13 @@ internal class MessageParametersParserImpl(
             Try {
                 request
                         .map { it.asJsonObject() }
-                        .map {
+                        .map { json ->
                             val commonEventHeader = commonEventHeaderParser
-                                    .parse(it.getJsonObject("commonEventHeader"))
+                                    .parse(json.getJsonObject("commonEventHeader"))
                                     .fold({ throw IllegalStateException("Invalid common header") }, ::identity)
-                            val messageType = MessageType.valueOf(it.getString("messageType"))
-                            val messagesAmount = it.getJsonNumber("messagesAmount")?.longValue()
-                                    ?: throw NullPointerException("\"messagesAmount\" could not be parsed from message.")
+                            val messageType = MessageType.valueOf(json.getString("messageType"))
+                            val messagesAmount = json.getJsonNumber("messagesAmount")?.longValue()
+                                    ?: throw NullPointerException("\"messagesAmount\" could not be parsed.")
                             MessageParameters(commonEventHeader, messageType, messagesAmount)
                         }
             }.toEither().mapLeft { ex ->
@@ -54,5 +54,4 @@ internal class MessageParametersParserImpl(
                         ex.message ?: "Unable to parse message parameters",
                         Option.fromNullable(ex))
             }
-
 }
