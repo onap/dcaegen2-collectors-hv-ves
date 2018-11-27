@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-
 /**
  * Wire frame structure is presented bellow using ASN.1 notation. Please note that official supported specification
  * should be available on

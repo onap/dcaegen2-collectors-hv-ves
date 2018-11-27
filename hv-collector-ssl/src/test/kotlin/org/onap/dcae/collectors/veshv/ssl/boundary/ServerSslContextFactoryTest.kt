@@ -19,9 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.ssl.boundary
 
-import arrow.core.Left
-import arrow.core.Option
-import arrow.core.Right
 import arrow.core.Some
 import arrow.core.toOption
 import io.netty.handler.ssl.ClientAuth

@@ -77,6 +77,7 @@ class WireFrameDecoder(private val maxPayloadSizeBytes: Int) {
         }
     }
 
+    @Suppress("ReturnCount")
     private fun parsePayloadFrame(byteBuf: ByteBuf): Either<WireFrameDecodingError, WireFrameMessage> {
         val versionMajor = byteBuf.readUnsignedByte()
         val versionMinor = byteBuf.readUnsignedByte()
@@ -97,6 +98,5 @@ class WireFrameDecoder(private val maxPayloadSizeBytes: Int) {
         val payload = ByteData.readFrom(byteBuf, payloadSize)
 
         return Right(WireFrameMessage(payload, versionMajor, versionMinor, payloadTypeRaw, payloadSize))
-
     }
 }

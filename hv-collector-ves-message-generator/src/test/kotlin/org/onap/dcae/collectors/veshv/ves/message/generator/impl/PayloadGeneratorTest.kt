@@ -19,12 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
 
 object PayloadGeneratorTest : Spek({
 

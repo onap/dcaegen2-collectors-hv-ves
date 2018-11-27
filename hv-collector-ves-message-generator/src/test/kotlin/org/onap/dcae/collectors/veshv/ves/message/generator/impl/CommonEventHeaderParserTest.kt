@@ -79,4 +79,4 @@ class CommonEventHeaderParserTest : Spek({
 fun assertFailed(result: Option<CommonEventHeader>) =
         result.fold({}, { fail() })
 
-fun jsonObject(json: ByteArrayInputStream) = Json.createReader(json).readObject()
+fun jsonObject(json: ByteArrayInputStream) = Json.createReader(json).readObject()!!

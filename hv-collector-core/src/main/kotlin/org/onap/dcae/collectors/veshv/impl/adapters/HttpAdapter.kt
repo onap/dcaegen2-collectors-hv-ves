@@ -23,8 +23,6 @@ import io.netty.handler.codec.http.HttpStatusClass
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
-import java.lang.IllegalStateException
-import java.nio.charset.Charset
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -40,8 +38,10 @@ open class HttpAdapter(private val httpClient: HttpClient) {
             .responseSingle { response, content ->
                 if (response.status().codeClass() == HttpStatusClass.SUCCESS)
                     content.asString()
-                else
-                    Mono.error(IllegalStateException("$url ${response.status().code()} ${response.status().reasonPhrase()}"))
+                else {
+                    val errorMessage = "$url ${response.status().code()} ${response.status().reasonPhrase()}"
+                    Mono.error(IllegalStateException(errorMessage))
+                }
             }
             .doOnError {
                 logger.error("Failed to get resource on path: $url (${it.localizedMessage})")

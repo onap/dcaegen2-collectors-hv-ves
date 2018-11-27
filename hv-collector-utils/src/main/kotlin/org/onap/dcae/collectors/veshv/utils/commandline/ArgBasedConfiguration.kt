@@ -23,11 +23,9 @@ import arrow.core.Either
 import arrow.core.Option
 import arrow.core.Try
 import arrow.core.flatMap
-import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.Options
-import org.onap.dcae.collectors.veshv.utils.arrow.fromNullablesChain
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths

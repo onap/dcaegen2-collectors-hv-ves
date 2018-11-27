@@ -47,7 +47,8 @@ class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
             return KafkaSource(KafkaReceiver.create(createReceiverOptions(bootstrapServers, topics)))
         }
 
-        fun createReceiverOptions(bootstrapServers: String, topics: Set<String>): ReceiverOptions<ByteArray, ByteArray>? {
+        fun createReceiverOptions(bootstrapServers: String,
+                                  topics: Set<String>): ReceiverOptions<ByteArray, ByteArray>? {
             val props = mapOf<String, Any>(
                     ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
                     ConsumerConfig.CLIENT_ID_CONFIG to "hv-collector-dcae-app-simulator",

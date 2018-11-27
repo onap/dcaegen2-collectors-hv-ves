@@ -75,7 +75,7 @@ class RouteBuilder {
     }
 
     fun withFixedPartitioning(num: Int = 0) {
-        partitioning = { _ -> num }
+        partitioning = { num }
     }
 
     fun build() = Route(domain, targetTopic, partitioning)
