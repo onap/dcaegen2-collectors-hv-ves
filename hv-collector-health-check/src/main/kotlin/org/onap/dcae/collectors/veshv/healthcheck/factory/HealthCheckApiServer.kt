@@ -53,12 +53,11 @@ class HealthCheckApiServer(private val healthState: HealthState,
         NettyServerHandle(ctx.bindNow())
     }
 
-    private fun readinessHandler(req: HttpServerRequest, resp: HttpServerResponse) =
+    private fun readinessHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
             healthDescription.get().run {
                 resp.status(status.httpResponseStatus.number).sendString(Flux.just(status.toString(), "\n", message))
             }
 
-    private fun livenessHandler(req: HttpServerRequest, resp: HttpServerResponse) =
+    private fun livenessHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
             resp.status(HttpResponseStatus.NOT_IMPLEMENTED).sendString(Mono.just("Not implemented yet"))
-
 }

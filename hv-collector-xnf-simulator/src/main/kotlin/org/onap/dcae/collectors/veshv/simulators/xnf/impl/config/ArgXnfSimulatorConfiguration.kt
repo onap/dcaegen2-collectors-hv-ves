@@ -40,7 +40,6 @@ import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV
 import org.onap.dcae.collectors.veshv.utils.commandline.intValue
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
 
-
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
@@ -62,7 +61,8 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                 val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
                 val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
-                val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES, WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
+                val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES,
+                        WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
 
                 SimulatorConfiguration(
                         listenPort,
@@ -71,6 +71,4 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
                         maxPayloadSizeBytes,
                         createSecurityConfiguration(cmdLine).bind())
             }.fix()
-
-
 }

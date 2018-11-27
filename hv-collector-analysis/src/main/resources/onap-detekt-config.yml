@@ -200,7 +200,7 @@ formatting:
   android: false
   autoCorrect: true
   ChainWrapping:
-    active: true
+    active: false
     autoCorrect: true
   CommentSpacing:
     active: true
@@ -260,7 +260,7 @@ formatting:
     active: true
     autoCorrect: true
   ParameterListWrapping:
-    active: true
+    active: false
     autoCorrect: true
     indentSize: 4
   SpacingAroundColon:
@@ -307,7 +307,7 @@ naming:
     functionPattern: '^([a-z$][a-zA-Z$0-9]*)|(`.*`)$'
     excludeClassPattern: '$^'
   MatchingDeclarationName:
-    active: true
+    active: false
   MemberNameEqualsClassName:
     active: false
     ignoreOverriddenFunction: true
@@ -463,8 +463,8 @@ style:
   UnusedImports:
     active: false
   UnusedPrivateMember:
-    active: false
-    allowedNames: "(_|ignored|expected)"
+    active: true
+    allowedNames: "(_.*|ignored|expected)"
   UseDataClass:
     active: false
     excludeAnnotatedClasses: ""

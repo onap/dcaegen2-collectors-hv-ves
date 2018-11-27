@@ -43,7 +43,9 @@ abstract class SslContextFactory {
                         }
             }
 
-    protected open fun createSslContextWithConfiguredCerts(secConfig: SecurityConfiguration): Option<SslContextBuilder> =
+    protected open fun createSslContextWithConfiguredCerts(
+            secConfig: SecurityConfiguration
+    ): Option<SslContextBuilder> =
             secConfig.keys.map { keys ->
                 when (keys) {
                     is JdkKeys -> jdkContext(keys)

@@ -65,7 +65,7 @@
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.2</jacoco.version>
-        <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
+        <jacoco.minimum.coverage>1</jacoco.minimum.coverage>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.6.1</protobuf.version>
@@ -323,10 +323,8 @@
                                     <arg value="onap-detekt-config.yml"/>
                                     <arg value="--filters"/>
                                     <arg value=".*/target/.*,.*/resources/.*"/>
-                                    <arg value="--output"/>
-                                    <arg value="${basedir}/target/reports"/>
-                                    <arg value="--output-name"/>
-                                    <arg value="detekt-report"/>
+                                    <arg value="--report"/>
+                                    <arg value="detekt-report:${basedir}/target/reports"/>
                                     <arg value="--baseline"/>
                                     <arg value="${basedir}/target/reports/baseline.xml"/>
                                 </java>
@@ -338,7 +336,7 @@
                     <dependency>
                         <groupId>io.gitlab.arturbosch.detekt</groupId>
                         <artifactId>detekt-cli</artifactId>
-                        <version>1.0.0.RC7</version>
+                        <version>1.0.0-RC11</version>
                     </dependency>
                     <dependency>
                         <groupId>${project.groupId}</groupId>

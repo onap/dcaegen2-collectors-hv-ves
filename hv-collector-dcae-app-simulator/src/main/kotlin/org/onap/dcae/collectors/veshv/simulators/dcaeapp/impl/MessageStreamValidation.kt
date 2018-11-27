@@ -67,13 +67,12 @@ class MessageStreamValidation(
     private fun shouldValidatePayloads(parameters: List<MessageParameters>) =
             parameters.all { it.messageType == MessageType.FIXED_PAYLOAD }
 
-
-    private fun validateHeaders(actual: List<VesEventOuterClass.VesEvent>, expected: List<VesEventOuterClass.VesEvent>): Boolean {
+    private fun validateHeaders(actual: List<VesEventOuterClass.VesEvent>,
+                                expected: List<VesEventOuterClass.VesEvent>): Boolean {
         val consumedHeaders = actual.map { it.commonEventHeader }
         val generatedHeaders = expected.map { it.commonEventHeader }
         return generatedHeaders == consumedHeaders
     }
-
 
     private fun generateEvents(parameters: List<MessageParameters>): IO<List<VesEventOuterClass.VesEvent>> =
             messageGenerator.createMessageFlux(parameters)

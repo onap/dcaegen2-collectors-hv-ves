@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-import com.google.protobuf.MessageLite
 import io.netty.buffer.ByteBuf
 import java.nio.charset.Charset
 

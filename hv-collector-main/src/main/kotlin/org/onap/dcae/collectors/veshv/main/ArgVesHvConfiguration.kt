@@ -75,7 +75,8 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                 )
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                 val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
-                val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES, DefaultValues.MAX_PAYLOAD_SIZE_BYTES)
+                val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES,
+                        DefaultValues.MAX_PAYLOAD_SIZE_BYTES)
                 val dummyMode = cmdLine.hasOption(DUMMY_MODE)
                 val security = createSecurityConfiguration(cmdLine).bind()
                 val configurationProviderParams = createConfigurationProviderParams(cmdLine).bind()

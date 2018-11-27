@@ -36,6 +36,5 @@ object AdapterFactory {
     fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
             ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
 
-    fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
+    private fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
 }
-

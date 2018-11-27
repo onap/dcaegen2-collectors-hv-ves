@@ -32,7 +32,6 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusNotFound
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusOngoing
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusSuccess
 import org.onap.dcae.collectors.veshv.tests.utils.waitUntilSucceeds
-import java.time.Duration
 import java.util.*
 import java.util.concurrent.Executors
 
