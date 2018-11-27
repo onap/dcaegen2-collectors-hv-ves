@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_b8f106cf",
+        "filename": "hv-collector-analysis/src/main/resources/onap-detekt-config.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-27T12:48:20Z",
+      "side": 1,
+      "message": "Could you describe the meaning of this rule?",
+      "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d8ec0af6",
+        "filename": "hv-collector-analysis/src/main/resources/onap-detekt-config.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-27T12:48:20Z",
+      "side": 1,
+      "message": "Could you describe the meaning of this rule?",
+      "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_98be82d3",
+        "filename": "hv-collector-analysis/src/main/resources/onap-detekt-config.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-27T12:48:20Z",
+      "side": 1,
+      "message": "Could you describe the meaning of this rule?",
+      "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
