@@ -88,6 +88,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_78bdde67",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/Logger.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-27T13:56:26Z",
+      "side": 1,
+      "message": "agreed with Filip",
+      "parentUuid": "9adffdf1_18fe1239",
+      "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_d81baac8",
         "filename": "pom.xml",
         "patchSetId": 1
@@ -117,6 +135,24 @@
       "side": 1,
       "message": "Thanks for finding this, obviously mistake from my side :D",
       "parentUuid": "9adffdf1_d81baac8",
+      "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b8582657",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-27T13:56:26Z",
+      "side": 1,
+      "message": "Good job Kuba :)",
+      "parentUuid": "9adffdf1_d8e08a98",
       "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
