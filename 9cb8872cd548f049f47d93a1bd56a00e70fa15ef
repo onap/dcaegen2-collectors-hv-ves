@@ -50,6 +50,40 @@
       "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f826ae15",
+        "filename": "hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/Logger.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-11-27T13:06:44Z",
+      "side": 1,
+      "message": "Is it possible to disable this warning in detekt configuration?",
+      "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d81baac8",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-11-27T13:06:44Z",
+      "side": 1,
+      "message": "Could you explain why this change was introduced?",
+      "revId": "9cb8872cd548f049f47d93a1bd56a00e70fa15ef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
