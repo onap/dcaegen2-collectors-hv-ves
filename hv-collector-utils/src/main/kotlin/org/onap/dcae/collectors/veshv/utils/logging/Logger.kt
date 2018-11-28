@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.utils.logging
 import kotlin.reflect.KClass
 import org.slf4j.LoggerFactory
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "SuboptimalLoggerUsage")
 class Logger(val logger: org.slf4j.Logger) {
     constructor(clazz: KClass<out Any>) : this(LoggerFactory.getLogger(clazz.java))
     constructor(name: String) : this(LoggerFactory.getLogger(name))

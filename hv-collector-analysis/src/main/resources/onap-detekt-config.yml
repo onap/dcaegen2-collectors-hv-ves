@@ -473,3 +473,8 @@ style:
   WildcardImport:
     active: true
     excludeImports: 'java.util.*,kotlinx.android.synthetic.*'
+
+HvVesCustomRules:
+  active: true
+  SuboptimalLoggerUsage:
+    active: true
