@@ -44,19 +44,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>hv-collector-analysis</module>
-        <module>hv-collector-core</module>
-        <module>hv-collector-coverage</module>
-        <module>hv-collector-ct</module>
-        <module>hv-collector-dcae-app-simulator</module>
-        <module>hv-collector-domain</module>
-        <module>hv-collector-health-check</module>
-        <module>hv-collector-main</module>
-        <module>hv-collector-ssl</module>
-        <module>hv-collector-test-utils</module>
-        <module>hv-collector-utils</module>
-        <module>hv-collector-ves-message-generator</module>
-        <module>hv-collector-xnf-simulator</module>
+        <module>build</module>
+        <module>sources</module>
     </modules>
 
     <properties>
@@ -65,7 +54,7 @@
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.2</jacoco.version>
-        <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
+        <detekt.version>1.0.0-RC11</detekt.version>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.6.1</protobuf.version>
@@ -81,6 +70,7 @@
         <failIfMissingUnitTests>false</failIfMissingUnitTests>
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
         <skipAnalysis>true</skipAnalysis>
+        <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
 
         <!-- Docker -->
         <skipDocker>false</skipDocker>
@@ -125,7 +115,6 @@
                     <version>${kotlin.version}</version>
                     <configuration>
                         <jvmTarget>1.8</jvmTarget>
-                        <experimentalCoroutines>enable</experimentalCoroutines>
                     </configuration>
                     <executions>
                         <execution>
@@ -271,82 +260,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.onap.oparent</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>1.1.1</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <!-- To override oparent configuration different id must be used
-                             We need to override it to include .kt files in check. -->
-                        <id>check-license-kotlin</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <configLocation>onap-checkstyle/check-license.xml</configLocation>
-                            <includeResources>false</includeResources>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                            <includeTestResources>false</includeTestResources>
-                            <includes>**\/*.kt</includes>
-                            <consoleOutput>true</consoleOutput>
-                            <!--<failOnViolation>false</failOnViolation>-->
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <!-- This can be run separately with mvn antrun:run@detekt -->
-                        <id>detekt</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target name="detekt" unless="${skipAnalysis}">
-                                <java taskname="detekt" dir="${basedir}" fork="true" failonerror="true" classname="io.gitlab.arturbosch.detekt.cli.Main" classpathref="maven.plugin.classpath">
-                                    <arg value="--input"/>
-                                    <arg value="${basedir}/src/main/kotlin"/>
-                                    <arg value="--config-resource"/>
-                                    <arg value="onap-detekt-config.yml"/>
-                                    <arg value="--filters"/>
-                                    <arg value=".*/target/.*,.*/resources/.*"/>
-                                    <arg value="--report"/>
-                                    <arg value="detekt-report:${basedir}/target/reports"/>
-                                    <arg value="--baseline"/>
-                                    <arg value="${basedir}/target/reports/baseline.xml"/>
-                                </java>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.gitlab.arturbosch.detekt</groupId>
-                        <artifactId>detekt-cli</artifactId>
-                        <version>1.0.0-RC11</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>hv-collector-analysis</artifactId>
-                        <version>1.1.0-SNAPSHOT</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -519,6 +432,23 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-reflect</artifactId>
                 <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-compiler-embeddable</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-script-runtime</artifactId>
+                <version>${kotlin.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-script-util</artifactId>
+                <version>${kotlin.version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
