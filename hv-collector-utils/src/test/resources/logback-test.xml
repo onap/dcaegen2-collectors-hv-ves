@@ -26,8 +26,7 @@
       </rollingPolicy>
     </appender>
 
-  <logger name="org.onap.dcae.collectors.veshv" level="DEBUG"/>
-  <!--<logger name="reactor.ipc.netty" level="DEBUG"/>-->
+  <logger name="org.onap.dcae.collectors.veshv" level="TRACE"/>
 
   <root level="INFO">
       <appender-ref ref="CONSOLE"/>
