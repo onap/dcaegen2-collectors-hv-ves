@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.core.Either
+import arrow.core.getOrElse
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
@@ -64,9 +65,13 @@ internal class XnfApiServer(
     }
 
     private fun startSimulationHandler(ctx: Context) {
-        logger.info("Starting asynchronous scenario")
+        logger.info("Attempting to start asynchronous scenario")
         ctx.request.body.then { body ->
             val id = startSimulation(body)
+            when (id) {
+                is Either.Left -> logger.warn { "Failed to start scenario: ${id.a.message}" }
+                is Either.Right -> logger.info { "Started scenario id: $id" }
+            }
             ctx.response.sendEitherErrorOrResponse(id)
         }
     }
@@ -78,9 +83,12 @@ internal class XnfApiServer(
     }
 
     private fun simulatorStatusHandler(ctx: Context) {
+        logger.debug ( "Checking task status" )
         val id = UUID.fromString(ctx.pathTokens["id"])
+        logger.debug { "Checking status for id: $id" }
         val status = ongoingSimulations.status(id)
         val response = Responses.statusResponse(status.toString(), status.message)
+        logger.info { "Task $id status: $response" }
         ctx.response.sendAndHandleErrors(IO.just(response))
     }
 
