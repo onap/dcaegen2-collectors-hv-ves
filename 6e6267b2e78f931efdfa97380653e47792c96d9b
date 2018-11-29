@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_b2dcbae5",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/SuboptimalLoggerUsage.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-11-29T12:58:35Z",
+      "side": 1,
+      "message": "As we are not using log/LOG version we could think of getting rid of it here and instead writing another custom rule for LoggerName. just a thought.",
+      "revId": "6e6267b2e78f931efdfa97380653e47792c96d9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b2035a41",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-11-29T12:58:35Z",
+      "side": 1,
+      "message": "Are these deps needed in top-level pom? As they are added in this commit I assume they are need only for hv-collector-build modules",
+      "revId": "6e6267b2e78f931efdfa97380653e47792c96d9b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
