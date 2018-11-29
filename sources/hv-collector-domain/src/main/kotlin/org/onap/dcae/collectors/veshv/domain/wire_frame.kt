@@ -19,6 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
+import arrow.core.Either
+import arrow.core.Either.Companion.left
+import arrow.core.Either.Companion.right
+
+
 /**
  * Wire frame structure is presented bellow using ASN.1 notation. Please note that official supported specification
  * should be available on
@@ -62,10 +67,13 @@ data class WireFrameMessage(val payload: ByteData,
             PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
             payload.size)
 
-    fun isValid(): Boolean =
-            versionMajor == SUPPORTED_VERSION_MAJOR
-                    && PayloadContentType.isValidHexValue(payloadType)
-                    && payload.size() == payloadSize
+    fun validate(): Either<WireFrameMessageValidationError, WireFrameMessage> =
+            when {
+                versionMajor != SUPPORTED_VERSION_MAJOR -> left(InvalidMajorVersion(versionMajor))
+                !PayloadContentType.isValidHexValue(payloadType) -> left(UnsupportedPayloadContentType(payloadType))
+                payload.size() != payloadSize -> left(NotMatchingPayloadSize(payload.size(), payloadSize))
+                else -> right(this)
+            }
 
     companion object {
         const val MARKER_BYTE: Short = 0xAA

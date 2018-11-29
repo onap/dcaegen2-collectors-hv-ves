@@ -46,3 +46,19 @@ sealed class MissingWireFrameBytes(msg: String) : WireFrameDecodingError(msg)
 object MissingWireFrameHeaderBytes : MissingWireFrameBytes("readable bytes < header size")
 object MissingWireFramePayloadBytes : MissingWireFrameBytes("readable bytes < payload size")
 object EmptyWireFrame : MissingWireFrameBytes("empty wire frame")
+
+// WireFrameMessage validation exceptions
+
+sealed class WireFrameMessageValidationError(val message: String)
+
+class InvalidMajorVersion(actualVersion: Short) : WireFrameMessageValidationError(
+        "Invalid major version in wire frame header. " +
+                "Expected ${WireFrameMessage.SUPPORTED_VERSION_MAJOR} but was $actualVersion")
+
+class UnsupportedPayloadContentType(actualType: Int) : WireFrameMessageValidationError(
+        "Invalid content type in wire frame header. " +
+                "Expected one of ${PayloadContentType.hexValues}, but was $actualType")
+
+class NotMatchingPayloadSize(definedInHeader: Int, actual: Int) : WireFrameMessageValidationError(
+        "Payload size does not match one defined in wire frame header.\n" +
+                "Defined in header: $definedInHeader, but was: $actual")

@@ -25,6 +25,7 @@ import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.netty.http.server.HttpServer
@@ -55,9 +56,15 @@ class HealthCheckApiServer(private val healthState: HealthState,
 
     private fun readinessHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
             healthDescription.get().run {
+                logger.debug { "HV-VES status: $status, $message" }
                 resp.status(status.httpResponseStatus.number).sendString(Flux.just(status.toString(), "\n", message))
             }
 
     private fun livenessHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
             resp.status(HttpResponseStatus.NOT_IMPLEMENTED).sendString(Mono.just("Not implemented yet"))
+
+    companion object {
+        private val logger = Logger(HealthCheckApiServer::class)
+    }
+
 }
