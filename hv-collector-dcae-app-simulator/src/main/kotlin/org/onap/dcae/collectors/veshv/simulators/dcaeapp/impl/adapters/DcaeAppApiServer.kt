@@ -26,6 +26,7 @@ import org.onap.dcae.collectors.veshv.utils.http.HttpStatus
 import org.onap.dcae.collectors.veshv.utils.http.Responses
 import org.onap.dcae.collectors.veshv.utils.http.sendAndHandleErrors
 import org.onap.dcae.collectors.veshv.utils.http.sendOrError
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import ratpack.handling.Chain
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
@@ -70,12 +71,17 @@ class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
                 }
                 .delete("messages") { ctx ->
                     ctx.response.contentType(CONTENT_TEXT)
+                    logger.info { "Resetting simulator state" }
                     ctx.response.sendOrError(simulator.resetState())
                 }
                 .get("messages/all/count") { ctx ->
+                    logger.info { "Processing request for count of received messages" }
                     simulator.state().fold(
-                            { ctx.response.status(HttpConstants.STATUS_NOT_FOUND) },
+                            { ctx.response.status(HttpConstants.STATUS_NOT_FOUND)
+                                logger.debug { "Error - number of messages could not be specified"  }
+                            },
                             {
+                                logger.info { "Number of received messages: ${it.messagesCount}" }
                                 ctx.response
                                         .contentType(CONTENT_TEXT)
                                         .send(it.messagesCount.toString())
@@ -83,6 +89,7 @@ class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
                 }
                 .post("messages/all/validate") { ctx ->
                     ctx.request.body.then { body ->
+                        logger.info { "Processing request for message validation" }
                         val response = simulator.validate(body.inputStream)
                                 .map { isValid ->
                                     if (isValid) responseValid else responseInvalid
@@ -91,11 +98,14 @@ class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
                     }
                 }
                 .get("healthcheck") { ctx ->
-                    ctx.response.status(HttpConstants.STATUS_OK).send()
+                    val status = HttpConstants.STATUS_OK
+                    logger.info { "Healthcheck OK, returning status: $status" }
+                    ctx.response.status(status).send()
                 }
     }
 
     companion object {
         private const val CONTENT_TEXT = "text/plain"
+        private val logger = Logger(DcaeAppApiServer::class)
     }
 }
