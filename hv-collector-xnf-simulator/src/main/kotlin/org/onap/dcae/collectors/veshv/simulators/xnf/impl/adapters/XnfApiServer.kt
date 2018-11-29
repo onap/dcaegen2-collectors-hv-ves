@@ -20,14 +20,11 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.core.Either
+import arrow.core.getOrElse
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
-import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
-import org.onap.dcae.collectors.veshv.utils.http.Response
-import org.onap.dcae.collectors.veshv.utils.http.Responses
-import org.onap.dcae.collectors.veshv.utils.http.sendAndHandleErrors
-import org.onap.dcae.collectors.veshv.utils.http.sendEitherErrorOrResponse
+import org.onap.dcae.collectors.veshv.utils.http.*
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
 import ratpack.handling.Chain
@@ -64,9 +61,10 @@ internal class XnfApiServer(
     }
 
     private fun startSimulationHandler(ctx: Context) {
-        logger.info("Starting asynchronous scenario")
+        logger.info("Attempting to start asynchronous scenario")
         ctx.request.body.then { body ->
             val id = startSimulation(body)
+            logger.debug { "Scenario id: ${id.getOrElse { "Scenario not started" }}" }
             ctx.response.sendEitherErrorOrResponse(id)
         }
     }
@@ -81,6 +79,7 @@ internal class XnfApiServer(
         val id = UUID.fromString(ctx.pathTokens["id"])
         val status = ongoingSimulations.status(id)
         val response = Responses.statusResponse(status.toString(), status.message)
+        logger.info { "Simulator info: $response" }
         ctx.response.sendAndHandleErrors(IO.just(response))
     }
 
