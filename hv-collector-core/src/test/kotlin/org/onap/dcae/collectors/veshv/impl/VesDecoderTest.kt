@@ -20,6 +20,8 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Option
+import arrow.core.Try
+import arrow.core.success
 import com.google.protobuf.ByteString
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -30,6 +32,7 @@ import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
+import reactor.test.test
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -68,7 +71,7 @@ internal object VesDecoderTest : Spek({
     }
 })
 
-private fun <A> assertFailedWithError(option: Option<A>) =
-        option.exists {
+private fun <A> assertFailedWithError(t: Try<A>) =
+        t.exists {
             fail("Error expected")
         }
