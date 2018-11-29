@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.utils.logging
 
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
