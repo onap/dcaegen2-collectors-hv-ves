@@ -57,8 +57,12 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
             sslContextFactory
                     .createSslContext(serverConfig.securityConfiguration)
                     .map { sslContext ->
+                        logger.info("Collector configured with enabled SSL")
                         this.secure { b -> b.sslContext(sslContext) }
-                    }.getOrElse { this }
+                    }.getOrElse {
+                        logger.info("Collector configured with disabled SSL")
+                        this
+                    }
 
     private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> =
             collectorProvider().fold(

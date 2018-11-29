@@ -23,8 +23,22 @@ import arrow.core.Option
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.Routing
 import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import reactor.core.publisher.Mono
 
 class Router(private val routing: Routing) {
     fun findDestination(message: VesMessage): Option<RoutedMessage> =
             routing.routeFor(message.header).map { it(message) }
+
+    fun Option<RoutedMessage>.asMono(): Mono<RoutedMessage> = fold({
+        logger.debug("Could not find route for message")
+        Mono.empty()
+    }, {
+        logger.trace { "Found route for message: ${it.topic}, partition: ${it.partition}" }
+        Mono.just(it)
+    })
+
+    companion object {
+        val logger = Logger(Router::class)
+    }
 }
