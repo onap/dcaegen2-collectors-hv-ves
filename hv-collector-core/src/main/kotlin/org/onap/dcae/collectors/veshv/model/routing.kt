@@ -20,12 +20,21 @@
 package org.onap.dcae.collectors.veshv.model
 
 import arrow.core.Option
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 data class Routing(val routes: List<Route>) {
 
     fun routeFor(commonHeader: CommonEventHeader): Option<Route> =
-            Option.fromNullable(routes.find { it.applies(commonHeader) })
+            Option.fromNullable(routes.find { it.applies(commonHeader) }).also {
+                if (it.isEmpty()) {
+                    logger.debug { "No route is defined for domain: ${commonHeader.domain}" }
+                }
+            }
+
+    companion object {
+        private val logger = Logger(Routing::class)
+    }
 }
 
 data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int) {

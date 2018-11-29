@@ -19,10 +19,43 @@
  */
 package org.onap.dcae.collectors.veshv.utils.logging
 
+import arrow.core.Either
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 fun <T> Logger.handleReactiveStreamError(ex: Throwable, returnFlux: Flux<T> = Flux.empty()): Flux<T> {
     logger.warn("Error while handling message stream: ${ex::class.qualifiedName} (${ex.message})")
     logger.debug("Detailed stack trace", ex)
     return returnFlux
 }
+
+
+
+
+typealias FailureMessage = () -> String
+typealias SuccessMessage = () -> String
+
+fun <T> Flux<T>.filterWithLog(logger: Logger,
+                              predicate: (T) -> Boolean,
+                              acceptedMsg: SuccessMessage,
+                              rejectedMsg: FailureMessage) =
+        this.doOnNext {
+            if (predicate(it)) {
+                logger.debug(acceptedMsg)
+                Mono.just(it)
+            } else {
+                logger.warn(rejectedMsg)
+                Mono.empty<T>()
+            }
+        }
+
+fun <T> Flux<T>.filterWithLog(logger: Logger, predicate: (T) -> Either<FailureMessage, SuccessMessage>) =
+        doOnNext { t ->
+            predicate(t).fold({
+                logger.trace(it)
+                Mono.just<T>(t)
+            }, {
+                logger.debug(it)
+                Mono.empty<T>()
+            })
+        }

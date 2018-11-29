@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
-import arrow.core.Option
+import arrow.core.Either
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
@@ -30,6 +30,7 @@ import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.filterWithLog
 import org.onap.dcae.collectors.veshv.utils.logging.handleReactiveStreamError
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -49,9 +50,9 @@ internal class VesHvCollector(
             wireChunkDecoderSupplier(alloc).let { wireDecoder ->
                 dataStream
                         .transform { decodeWireFrame(it, wireDecoder) }
-                        .filter(WireFrameMessage::isValid)
+                        .transform(::filterInvalidWireFrame)
                         .transform(::decodePayload)
-                        .filter(VesMessage::isValid)
+                        .transform(::filterInvalidProtobufMessages)
                         .transform(::routeMessage)
                         .onErrorResume { logger.handleReactiveStreamError(it) }
                         .doFinally { releaseBuffersMemory(wireDecoder) }
@@ -63,24 +64,30 @@ internal class VesHvCollector(
             .concatMap(decoder::decode)
             .doOnNext { metrics.notifyMessageReceived(it.payloadSize) }
 
+    private fun filterInvalidWireFrame(flux: Flux<WireFrameMessage>): Flux<WireFrameMessage> = flux
+            .filterWithLog(MessageValidator::validateFrameMessage)
+
     private fun decodePayload(flux: Flux<WireFrameMessage>): Flux<VesMessage> = flux
             .map(WireFrameMessage::payload)
-            .map(protobufDecoder::decode)
-            .flatMap { omitWhenNone(it) }
+            .flatMap { with(protobufDecoder) { decode(it).asFlux() } }
+
+    private fun filterInvalidProtobufMessages(flux: Flux<VesMessage>): Flux<VesMessage> = flux
+            .filterWithLog(MessageValidator::validateProtobufMessage)
 
     private fun routeMessage(flux: Flux<VesMessage>): Flux<RoutedMessage> = flux
             .flatMap(this::findRoute)
             .compose(sink::send)
             .doOnNext { metrics.notifyMessageSent(it.topic) }
 
-
-    private fun findRoute(msg: VesMessage): Mono<RoutedMessage> = omitWhenNone((router::findDestination)(msg))
-
-    private fun <V> omitWhenNone(it: Option<V>): Mono<V> = it.fold(
-            { Mono.empty() },
-            { Mono.just(it) })
+    private fun findRoute(msg: VesMessage): Mono<RoutedMessage> = with(router) {
+        findDestination(msg).asMono()
+    }
 
     private fun releaseBuffersMemory(wireChunkDecoder: WireChunkDecoder) = wireChunkDecoder.release()
+            .also { logger.debug("Released buffer memory after handling message stream") }
+
+    fun <T> Flux<T>.filterWithLog(predicate: (T) -> Either<() -> String, () -> String>) =
+            filterWithLog(logger, predicate)
 
     companion object {
         private val logger = Logger(VesHvCollector::class)
