@@ -23,11 +23,7 @@ import arrow.core.Either
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
-import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
-import org.onap.dcae.collectors.veshv.utils.http.Response
-import org.onap.dcae.collectors.veshv.utils.http.Responses
-import org.onap.dcae.collectors.veshv.utils.http.sendAndHandleErrors
-import org.onap.dcae.collectors.veshv.utils.http.sendEitherErrorOrResponse
+import org.onap.dcae.collectors.veshv.utils.http.*
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
 import ratpack.handling.Chain
@@ -64,7 +60,7 @@ internal class XnfApiServer(
     }
 
     private fun startSimulationHandler(ctx: Context) {
-        logger.info("Starting asynchronous scenario")
+        logger.info("Attempting to start asynchronous scenario")
         ctx.request.body.then { body ->
             val id = startSimulation(body)
             ctx.response.sendEitherErrorOrResponse(id)
