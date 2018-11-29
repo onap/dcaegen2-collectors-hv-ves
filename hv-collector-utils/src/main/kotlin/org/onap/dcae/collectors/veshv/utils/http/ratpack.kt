@@ -42,7 +42,7 @@ fun ratpack.http.Response.sendOrError(action: IO<Unit>) {
 }
 
 fun <A> ratpack.http.Response.sendEitherErrorOrResponse(response: Either<A, Response>) {
-    when(response) {
+    when (response) {
         is Either.Left -> send(errorResponse(response.a.toString()))
         is Either.Right -> sendAndHandleErrors(IO.just(response.b))
     }
@@ -60,6 +60,7 @@ fun ratpack.http.Response.sendAndHandleErrors(response: IO<Response>) {
 }
 
 private fun errorResponse(message: String?): Response {
+    logger.error(message.orEmpty())
     return Response(
             HttpStatus.INTERNAL_SERVER_ERROR,
             Content(

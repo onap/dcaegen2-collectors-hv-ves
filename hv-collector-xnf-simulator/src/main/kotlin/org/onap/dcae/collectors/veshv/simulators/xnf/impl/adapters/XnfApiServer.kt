@@ -20,7 +20,9 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.core.Either
+import arrow.core.getOrElse
 import arrow.effects.IO
+import arrow.instances.either.foldable.get
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
