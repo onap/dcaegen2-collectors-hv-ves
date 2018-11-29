@@ -40,6 +40,7 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.test.test
+import kotlin.test.assertTrue
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -103,7 +104,7 @@ object MessageGeneratorImplTest : Spek({
                             )))
                             .test()
                             .assertNext {
-                                assertThat(it.isValid()).isTrue()
+                                assertTrue(it.validate().isRight())
                                 assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)
                             }
@@ -122,7 +123,7 @@ object MessageGeneratorImplTest : Spek({
                             )))
                             .test()
                             .assertNext {
-                                assertThat(it.isValid()).isTrue()
+                                assertTrue(it.validate().isRight())
                                 assertThat(it.payloadSize).isGreaterThan(maxPayloadSizeBytes)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                             }
@@ -140,7 +141,7 @@ object MessageGeneratorImplTest : Spek({
                             )))
                             .test()
                             .assertNext {
-                                assertThat(it.isValid()).isTrue()
+                                assertTrue(it.validate().isRight())
                                 assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThatExceptionOfType(InvalidProtocolBufferException::class.java)
                                         .isThrownBy { extractCommonEventHeader(it.payload) }
@@ -159,7 +160,7 @@ object MessageGeneratorImplTest : Spek({
                             )))
                             .test()
                             .assertNext {
-                                assertThat(it.isValid()).isFalse()
+                                assertTrue(it.validate().isLeft())
                                 assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(PERF3GPP.domainName)
                                 assertThat(it.versionMajor).isNotEqualTo(WireFrameMessage.SUPPORTED_VERSION_MINOR)
@@ -178,7 +179,7 @@ object MessageGeneratorImplTest : Spek({
                             )))
                             .test()
                             .assertNext {
-                                assertThat(it.isValid()).isTrue()
+                                assertTrue(it.validate().isRight())
                                 assertThat(it.payloadSize).isLessThan(maxPayloadSizeBytes)
                                 assertThat(extractEventFields(it.payload).size()).isEqualTo(MessageGenerator.FIXED_PAYLOAD_SIZE)
                                 assertThat(extractCommonEventHeader(it.payload).domain).isEqualTo(FAULT.domainName)

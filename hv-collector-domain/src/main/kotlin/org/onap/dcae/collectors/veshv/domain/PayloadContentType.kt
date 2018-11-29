@@ -27,7 +27,7 @@ enum class PayloadContentType(val hexValue: Int) {
     GOOGLE_PROTOCOL_BUFFER(0x0001);
 
     companion object {
-        private val hexValues = PayloadContentType.values().map { it.hexValue }
+        val hexValues = PayloadContentType.values().map { it.hexValue }
 
         fun isValidHexValue(hex: Int) = hexValues.contains(hex)
     }
