@@ -26,6 +26,7 @@ import arrow.typeclasses.bindingCatch
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.utils.arrow.asIo
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
@@ -55,10 +56,16 @@ class MessageStreamValidation(
         val messageParams = messageParametersParser.parse(expectations)
 
         return messageParams.fold(
-                { throw IllegalArgumentException("Parsing error: " + it.message) },
                 {
-                    if (it.isEmpty())
-                        throw IllegalArgumentException("Message param list cannot be empty")
+                    logger.debug { "Parsing error: ${it.message}" }
+                    throw IllegalArgumentException("Parsing error: " + it.message)
+                },
+                {
+                    if (it.isEmpty()) {
+                        val message = "Message param list cannot be empty"
+                        logger.debug { message }
+                        throw IllegalArgumentException(message)
+                    }
                     it
                 }
         )
@@ -86,4 +93,7 @@ class MessageStreamValidation(
     private fun decodeConsumedEvents(consumedMessages: List<ByteArray>) =
             consumedMessages.map(VesEventOuterClass.VesEvent::parseFrom)
 
+    companion object {
+        private val logger = Logger(MessageStreamValidation::class)
+    }
 }
