@@ -19,13 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
+import arrow.core.getOrElse
 import arrow.effects.IO
 import arrow.effects.fix
 import arrow.effects.instances.io.monadError.monadError
+import arrow.instances.option.foldable.fold
 import arrow.typeclasses.bindingCatch
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.utils.arrow.asIo
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
@@ -41,6 +44,7 @@ class MessageStreamValidation(
     fun validate(jsonDescription: InputStream, consumedMessages: List<ByteArray>): IO<Boolean> =
             IO.monadError().bindingCatch {
                 val messageParams = parseMessageParams(jsonDescription)
+                logger.debug { "Parsed message parameters: $messageParams" }
                 val expectedEvents = generateEvents(messageParams).bind()
                 val actualEvents = decodeConsumedEvents(consumedMessages)
                 if (shouldValidatePayloads(messageParams)) {
@@ -55,10 +59,17 @@ class MessageStreamValidation(
         val messageParams = messageParametersParser.parse(expectations)
 
         return messageParams.fold(
-                { throw IllegalArgumentException("Parsing error: " + it.message) },
                 {
-                    if (it.isEmpty())
-                        throw IllegalArgumentException("Message param list cannot be empty")
+                    logger.warn { "Error while parsing message parameters: ${it::class.qualifiedName} : ${it.message}" }
+                    logger.debug { "Detailed stack trace: ${it}"}
+                    throw IllegalArgumentException("Parsing error: " + it.message)
+                },
+                {
+                    if (it.isEmpty()) {
+                        val message = "Message param list cannot be empty"
+                        logger.warn { message }
+                        throw IllegalArgumentException(message)
+                    }
                     it
                 }
         )
@@ -85,4 +96,7 @@ class MessageStreamValidation(
     private fun decodeConsumedEvents(consumedMessages: List<ByteArray>) =
             consumedMessages.map(VesEventOuterClass.VesEvent::parseFrom)
 
+    companion object {
+        private val logger = Logger(MessageStreamValidation::class)
+    }
 }
