@@ -60,7 +60,7 @@ object WireFrameCodecsTest : Spek({
                     payloadSize = 0)
 
             it("should fail validation") {
-                assertThat(input.isValid()).isFalse()
+                input.validate().assertFailedWithError { it.isInstanceOf(InvalidMajorVersion::class.java) }
             }
         }
 
@@ -73,7 +73,7 @@ object WireFrameCodecsTest : Spek({
                     payloadSize = 0)
 
             it("should pass validation") {
-                assertThat(input.isValid()).isTrue()
+                assertTrue(input.validate().isRight())
             }
         }
 
@@ -86,7 +86,7 @@ object WireFrameCodecsTest : Spek({
                     payloadSize = 0)
 
             it("should fail validation") {
-                assertThat(input.isValid()).isFalse()
+                input.validate().assertFailedWithError { it.isInstanceOf(UnsupportedPayloadContentType::class.java) }
             }
         }
 
@@ -99,7 +99,7 @@ object WireFrameCodecsTest : Spek({
                     payloadSize = 1)
 
             it("should fail validation") {
-                assertThat(input.isValid()).isFalse()
+                input.validate().assertFailedWithError { it.isInstanceOf(NotMatchingPayloadSize::class.java) }
             }
         }
 
@@ -112,7 +112,7 @@ object WireFrameCodecsTest : Spek({
                     payloadSize = 8)
 
             it("should fail validation") {
-                assertThat(input.isValid()).isFalse()
+                input.validate().assertFailedWithError { it.isInstanceOf(NotMatchingPayloadSize::class.java) }
             }
         }
 
@@ -126,7 +126,7 @@ object WireFrameCodecsTest : Spek({
                     payloadSize = payload.size)
 
             it("should pass validation") {
-                assertThat(input.isValid()).isTrue()
+                assertTrue(input.validate().isRight())
             }
         }
 
@@ -214,7 +214,7 @@ object WireFrameCodecsTest : Spek({
                         .writeByte(0xAB)
                 val decoded = decoder.decodeFirst(buff).getMessageOrFail()
 
-                assertThat(decoded.isValid()).describedAs("should be valid").isTrue()
+                assertTrue(decoded.validate().isRight(), "should be valid")
                 assertThat(buff.readableBytes()).isEqualTo(1)
             }
         }
