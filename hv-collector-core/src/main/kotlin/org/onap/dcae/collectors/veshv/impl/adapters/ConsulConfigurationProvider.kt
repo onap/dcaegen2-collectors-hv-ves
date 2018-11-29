@@ -82,8 +82,10 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
     private fun filterDifferentValues(configurationString: String) =
             hashOf(configurationString).let {
                 if (it == lastConfigurationHash.get()) {
+                    logger.trace { "No change detected in consul configuration" }
                     Mono.empty()
                 } else {
+                    logger.info { "Obtained new configuration from consul:\n${configurationString}" }
                     lastConfigurationHash.set(it)
                     Mono.just(configurationString)
                 }
@@ -95,7 +97,6 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
             Json.createReader(StringReader(responseString)).readObject()
 
     private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration {
-        logger.info { "Obtained new configuration from consul:\n${configuration}" }
         val routing = configuration.getJsonArray("collector.routing")
 
         return CollectorConfiguration(

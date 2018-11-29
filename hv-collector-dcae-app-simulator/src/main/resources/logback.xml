@@ -27,7 +27,7 @@
     </appender>
 
   <logger name="org.onap.dcae.collectors.veshv" level="INFO"/>
-  <!--<logger name="reactor.ipc.netty" level="DEBUG"/>-->
+  <!--<logger name="reactor.netty" level="DEBUG"/>-->
 
   <root level="INFO">
       <appender-ref ref="CONSOLE"/>
