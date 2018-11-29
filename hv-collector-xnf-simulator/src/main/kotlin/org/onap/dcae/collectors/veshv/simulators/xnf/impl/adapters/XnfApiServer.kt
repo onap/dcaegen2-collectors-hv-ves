@@ -20,7 +20,9 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.core.Either
+import arrow.core.getOrElse
 import arrow.effects.IO
+import arrow.instances.either.foldable.get
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
@@ -68,6 +70,7 @@ internal class XnfApiServer(
         ctx.request.body.then { body ->
             val id = startSimulation(body)
             ctx.response.sendEitherErrorOrResponse(id)
+            id.mapLeft { logger.debug(it.message, it.cause.getOrElse { Throwable("Parsing error") }) }
         }
     }
 
