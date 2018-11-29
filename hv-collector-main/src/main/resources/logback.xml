@@ -40,7 +40,8 @@
     <logger name="org.onap.dcae.collectors.veshv.impl.wire" level="DEBUG"/>
     <logger name="org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSink" level="DEBUG"/>
     <logger name="org.onap.dcae.collectors.veshv.impl.adapters.LoggingSinkProvider" level="DEBUG"/>
-    <!--<logger name="reactor.ipc.netty" level="DEBUG"/>-->
+    <logger name="reactor.ipc.netty" level="WARN"/>
+    <logger name="org.apache.kafka" level="WARN"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

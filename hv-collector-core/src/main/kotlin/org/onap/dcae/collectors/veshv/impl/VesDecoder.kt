@@ -19,11 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import arrow.core.None
 import arrow.core.Try
 import arrow.core.Option
+import arrow.core.toOption
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventOuterClass.VesEvent
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -31,9 +36,22 @@ import org.onap.ves.VesEventOuterClass.VesEvent
  */
 internal class VesDecoder {
 
-    fun decode(bytes: ByteData): Option<VesMessage> =
+    fun decode(bytes: ByteData): Try<VesMessage> =
             Try {
                 val decodedHeader = VesEvent.parseFrom(bytes.unsafeAsArray()).commonEventHeader
                 VesMessage(decodedHeader, bytes)
-            }.toOption()
+            }
+
+    fun Try<VesMessage>.asFlux() =
+            fold({
+                logger.debug { "Failed to decode ves event header, reason: ${it.message}" }
+                Flux.empty<VesMessage>()
+            }, {
+                logger.trace { "Ves event header decoded successfully" }
+                Flux.just(it)
+            })
+
+    companion object {
+        private val logger = Logger(VesDecoder::class)
+    }
 }

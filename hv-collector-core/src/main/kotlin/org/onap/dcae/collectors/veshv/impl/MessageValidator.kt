@@ -19,16 +19,36 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
 import org.onap.dcae.collectors.veshv.domain.vesEventListenerVersionRegex
 import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import reactor.core.publisher.Mono
 
 internal object MessageValidator {
+    private val logger = Logger(MessageValidator::class)
 
-    fun isValid(message: VesMessage): Boolean {
-        return allMandatoryFieldsArePresent(message.header)
-    }
+    fun validateFrameMessage(message: WireFrameMessage) = message
+            .isValid().fold({
+                logger.debug { "Invalid wire frame message, reason: ${it.message}" }
+                Mono.empty<WireFrameMessage>()
+            }, {
+                logger.trace { "Wire frame message is valid" }
+                Mono.just(it)
+            })
+
+    fun validateProtobufMessage(message: VesMessage) =
+            if (message.isValid()) {
+                logger.trace { "Protocol buffers message is valid" }
+                Mono.just(message)
+            } else {
+                logger.debug("Unsupported protocol buffers message.")
+                Mono.empty()
+            }
+
+    fun VesMessage.isValid() = allMandatoryFieldsArePresent(this.header)
 
     private fun allMandatoryFieldsArePresent(header: CommonEventHeader) =
             headerRequiredFieldDescriptors
