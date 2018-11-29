@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 import arrow.core.Option
 import arrow.core.Try
 import arrow.core.identity
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
@@ -40,6 +41,7 @@ internal class MessageParametersParserImpl(
             Try {
                 request
                         .map { it.asJsonObject() }
+                        .onEach { logger.info { "Obtained new json request: $it" } }
                         .map { json ->
                             val commonEventHeader = commonEventHeaderParser
                                     .parse(json.getJsonObject("commonEventHeader"))
@@ -54,4 +56,9 @@ internal class MessageParametersParserImpl(
                         ex.message ?: "Unable to parse message parameters",
                         Option.fromNullable(ex))
             }
+
+    companion object {
+        private val logger = Logger(MessageParametersParserImpl::class)
+    }
+
 }
