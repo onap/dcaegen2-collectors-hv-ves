@@ -40,10 +40,16 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
     fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))
 
     fun listenToTopics(topics: Set<String>): IO<Unit> = IO.monadError().bindingCatch {
-        if (topics.any { it.isBlank() })
-            throw IllegalArgumentException("Topic list cannot contain empty elements")
-        if (topics.isEmpty())
-            throw IllegalArgumentException("Topic list cannot be empty")
+        if (topics.isEmpty()) {
+            val message = "Topic list cannot be empty"
+            logger.info { message }
+            throw IllegalArgumentException(message)
+        }
+        if (topics.any { it.isBlank() }) {
+            val message = "Topic list cannot contain empty elements, topics: $topics"
+            logger.info { message }
+            throw IllegalArgumentException(message)
+        }
 
         logger.info("Received new configuration. Creating consumer for topics: $topics")
         consumerState.set(consumerFactory.createConsumerForTopics(topics).bind())
