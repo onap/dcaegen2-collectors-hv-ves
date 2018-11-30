@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_c047231c",
+        "filename": "hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-11-30T13:47:07Z",
+      "side": 1,
+      "message": "Remove the space at the end of the message",
+      "revId": "d2bd2d2e66af3f497e86fa12be28de85b77f61d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
