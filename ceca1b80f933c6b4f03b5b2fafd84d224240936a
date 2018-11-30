@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_253161a2",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "I\u0027d prefer to have this class non-rx. Maybe return Either\u003cString(nok), String(ok)\u003e or Optional\u003cerrormessage\u003e in both cases. Having utility function in utils module, we can simply use it on a result from current class in VesHvCollector class.",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c55975ff",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "Such logs should be inside reactive stream, eg. `Mono.just(...).doOnNext(log)`. There are 2 reasons:\n\n1. We may loose the rx context (so also MDCs)\n2. Log should be done in rx runtime/subscription phase (not when setting up the stream)",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e55cb9ef",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "Also this little method begs to be extracted to common `Option\u003cT\u003e.asMonoWithLog(accMsgPrvdr, rjctdMsgPrvdr)`",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_85736d7f",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesDecoder.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "As in other cases: try to extract the common part and put it in utils. Also I do not like the fact that you\u0027ve put rx to this plain functional class. I believe that when we extract this utility method then it will settle down as expected. Please also check other similar places. The goal is to have as much restricted rx part of code as possible.",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6568c987",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "After removing rx from decoder there won\u0027t be a need for this bizarre construct ;)",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_05077dcb",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "As above.",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a5c0f17c",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSink.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "It would be nice to have a common operator in our utils module.\n\n```\nfun Flux\u003cT\u003e.filterWithLog(pred: T -\u003e Bool, acceptedMsg: T-\u003e String, rejectedMsg: T-\u003e String)\n```\n\nor similar.",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_65ba090c",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "\"...with SSL enabled\" sounds better, or not?",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_45bfc5fb",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "... with SSL disabled",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_05d21d5c",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/errors.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "Looks like error messages do no match actual errors.",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_253c0193",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "Rename this function to `validate` as it does a little more than returning a boolean",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e5cef9b3",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T07:17:38Z",
+      "side": 1,
+      "message": "Convert to `when` (there is refactoring in intellij ready to be used).",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
