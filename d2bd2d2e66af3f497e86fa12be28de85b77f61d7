@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_c0cac36d",
+        "filename": "hv-collector-utils/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T14:20:39Z",
+      "side": 1,
+      "message": "Maybe we should add logback-core compile-scoped dependency to the test-utils module and remove direct test dependency from every other module.",
+      "revId": "d2bd2d2e66af3f497e86fa12be28de85b77f61d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_00e20b03",
+        "filename": "hv-collector-utils/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T14:20:39Z",
+      "side": 1,
+      "message": "Do not specify versions in this pom. All versions should be harmonized (the same) and defined in main pom dependencyManagement section + no version here.",
+      "revId": "d2bd2d2e66af3f497e86fa12be28de85b77f61d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_c047231c",
         "filename": "hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
         "patchSetId": 5
@@ -13,6 +47,23 @@
       "writtenOn": "2018-11-30T13:47:07Z",
       "side": 1,
       "message": "Remove the space at the end of the message",
+      "revId": "d2bd2d2e66af3f497e86fa12be28de85b77f61d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c09f234f",
+        "filename": "pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-11-30T14:20:39Z",
+      "side": 1,
+      "message": "Why test? This will probably ruin logging in every \"main\" module.\n\nQuick intro to slf4j: every module should have dependency to slf4j-api. Only \"main\" modules should have runtime dependency to one of the implementations of this api, eg logback. In order for logging in unit tests to work they also need a test-scoped dependency to logback. If any external library uses slf4j-api then we are fine - it will work out of the box. Every other case should be analyzed separately. Eg. misbehaving deps with logback-classic dependency should have it excluded; for libs using log4j (another logging framework) an adapter should be in the classpath which will expose log4j api and direct it through slf4j api to logback in main module.",
       "revId": "d2bd2d2e66af3f497e86fa12be28de85b77f61d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
