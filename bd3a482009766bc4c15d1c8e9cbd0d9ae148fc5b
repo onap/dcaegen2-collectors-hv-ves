@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_35c50a3c",
+        "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T13:12:18Z",
+      "side": 1,
+      "message": "This triggers Detekt rule for wildcard imports",
+      "revId": "bd3a482009766bc4c15d1c8e9cbd0d9ae148fc5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f505427a",
+        "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T13:12:18Z",
+      "side": 1,
+      "message": "We should rather say either \"Scenario started: $id\" or in case of failure \"Failed to start scenario. Reason: ${reason}\".\n\nYour log will output in case of failure:\n\"Scenario id: Scenario not started\"  which is weird",
+      "revId": "bd3a482009766bc4c15d1c8e9cbd0d9ae148fc5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_15e246d5",
+        "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T13:12:18Z",
+      "side": 1,
+      "message": "We should log also that we received request and for what id (as in current \"Sim info: $response\" log there is only info like \"not found\" or \"ongoing\" which is pretty useless in logs without context).\n\nSo we probably should do something like\n```\nlogger.info { \"Checking task status\" }\nval id \u003d UUID.fromString(ctx.pathTokens[\"id\"])\nlogger.info { \"Checking status for id: $id\" }\nval status \u003d ongoingSimulations.status(id)\nval response \u003d Responses.statusResponse(status.toString(), status.message)\nlogger.info { \"Task $id status: $response\" }\nctx.response.sendAndHandleErrors(IO.just(response))",
+      "revId": "bd3a482009766bc4c15d1c8e9cbd0d9ae148fc5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
