@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_5159c358",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T08:28:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_253161a2",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_c55975ff",
         "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 2
