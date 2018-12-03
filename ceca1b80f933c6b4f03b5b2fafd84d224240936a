@@ -138,6 +138,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_918acbbd",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T07:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_65ba090c",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_45bfc5fb",
         "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
         "patchSetId": 2
@@ -149,6 +167,24 @@
       "writtenOn": "2018-11-30T07:17:38Z",
       "side": 1,
       "message": "... with SSL disabled",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b1858fae",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T07:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_45bfc5fb",
       "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -172,6 +208,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_718f27cd",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/errors.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T07:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_05d21d5c",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_253c0193",
         "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
         "patchSetId": 2
@@ -189,6 +243,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_11bedb65",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T07:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_253c0193",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_e5cef9b3",
         "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
         "patchSetId": 2
@@ -200,6 +272,24 @@
       "writtenOn": "2018-11-30T07:17:38Z",
       "side": 1,
       "message": "Convert to `when` (there is refactoring in intellij ready to be used).",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d1b7f384",
+        "filename": "hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/wire_frame.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T07:58:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_e5cef9b3",
       "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
