@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_354aeac5",
+        "filename": "hv-collector-utils/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T13:18:48Z",
+      "side": 1,
+      "message": "Please add logback back",
+      "revId": "bd3a482009766bc4c15d1c8e9cbd0d9ae148fc5b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_35c50a3c",
         "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
         "patchSetId": 7
