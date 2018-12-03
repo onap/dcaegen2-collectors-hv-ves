@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_b5101a02",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T10:58:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_c55975ff",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_e55cb9ef",
         "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 2
@@ -105,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_5568ce86",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T10:58:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_6568c987",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_05077dcb",
         "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
         "patchSetId": 2
@@ -116,6 +152,24 @@
       "writtenOn": "2018-11-30T07:17:38Z",
       "side": 1,
       "message": "As above.",
+      "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f506a2cd",
+        "filename": "hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-03T10:58:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_05077dcb",
       "revId": "ceca1b80f933c6b4f03b5b2fafd84d224240936a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
