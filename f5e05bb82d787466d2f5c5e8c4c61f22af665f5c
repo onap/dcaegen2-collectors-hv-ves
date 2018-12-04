@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_7e55af4e",
+        "filename": "hv-collector-ct/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "There is no need to remove entirely logback+sl4j \n- we want to have logs in component tests, only reduce it\u0027s scope, so\n```\n\u003cdependency\u003e\n        \u003cgroupId\u003eorg.slf4j\u003c/groupId\u003e\n            \u003cartifactId\u003eslf4j-api\u003c/artifactId\u003e\n        \u003c/dependency\u003e\n        \u003cdependency\u003e\n            \u003cgroupId\u003ech.qos.logback\u003c/groupId\u003e\n            \u003cartifactId\u003elogback-classic\u003c/artifactId\u003e\n            \u003cscope\u003etest\u003c/scope\u003e\n        \u003c/dependency\u003e\n```",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3e4f27bf",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "Change level to INFO (here and in the other if statement)\n\nPlease also change the order of if-statements to perform isEmpty check earlier ( it\u0027s more logical order and also Iterable.any{} also calls isEmpty, so redundant operation )",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_fec8bf23",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "Let\u0027s change this log level to WARN and also log stack trace on DEBUG or maybe even TRACE. Example can be found in reactive_logging.kt:\n```\nlogger.warn(\"Error while handling message stream: ${ex::class.qualifiedName} (${ex.localizedMessage})\")\nlogger.trace(\"Detailed stack trace\", ex)\n```",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_bed237d0",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "Change level to WARN",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7edccfe4",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "move logging above sending request, change log level to WARN\n\nGeneral remark: when in log message you write word \"error\" it usually indicates that log level should be high :)",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3ee647b5",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "Let\u0027s log the the body (after parsing it, so in MessageSreamValidation) and validation result",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5ee1cb98",
+        "filename": "hv-collector-ssl/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "Same comment as in hv-collector-ct pom.xml",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_deecdb91",
+        "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "When `id` is Left then it is an instance of ParsingError, so we should log here on WARN level and also print the reason for failing to start scenario",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7e036f42",
+        "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-04T06:48:39Z",
+      "side": 1,
+      "message": "Please change level to INFO",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
