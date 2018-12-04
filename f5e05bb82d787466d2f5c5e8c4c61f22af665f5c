@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_1e6823f4",
+        "filename": "hv-collector-ct/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_7e55af4e",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_3e4f27bf",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
         "patchSetId": 9
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-04T06:48:39Z",
       "side": 1,
       "message": "Change level to INFO (here and in the other if statement)\n\nPlease also change the order of if-statements to perform isEmpty check earlier ( it\u0027s more logical order and also Iterable.any{} also calls isEmpty, so redundant operation )",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7e784fc4",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_3e4f27bf",
       "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_1e36e303",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_fec8bf23",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_bed237d0",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
         "patchSetId": 9
@@ -64,6 +118,24 @@
       "writtenOn": "2018-12-04T06:48:39Z",
       "side": 1,
       "message": "Change level to WARN",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_be3c77e3",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_bed237d0",
       "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_3e308700",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_7edccfe4",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_3ee647b5",
         "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
         "patchSetId": 9
@@ -98,6 +188,24 @@
       "writtenOn": "2018-12-04T06:48:39Z",
       "side": 1,
       "message": "Let\u0027s log the the body (after parsing it, so in MessageSreamValidation) and validation result",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_fe199f88",
+        "filename": "hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_3ee647b5",
       "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_be131765",
+        "filename": "hv-collector-ssl/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_5ee1cb98",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_deecdb91",
         "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
         "patchSetId": 9
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_c9ebc7ae",
+        "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_deecdb91",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_7e036f42",
         "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
         "patchSetId": 9
@@ -149,6 +293,24 @@
       "writtenOn": "2018-12-04T06:48:39Z",
       "side": 1,
       "message": "Please change level to INFO",
+      "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_69d2db01",
+        "filename": "hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/XnfApiServer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-04T11:51:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_7e036f42",
       "revId": "f5e05bb82d787466d2f5c5e8c4c61f22af665f5c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
