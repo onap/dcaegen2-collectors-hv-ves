@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_0acc5d34",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-05T11:22:48Z",
+      "side": 1,
+      "message": "1. This won\u0027t log stack trace.\n2. Debug logs should always use lazy evaluation.\n\nTo fix booth you have to use `fun debug(t: Throwable, messageProvider: () -\u003e String)` function from Logger.",
+      "revId": "54c944c5efc98b56264417ec623bac60fb6917c5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
