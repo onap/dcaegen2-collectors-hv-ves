@@ -21,10 +21,7 @@ package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Either
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
-import org.onap.dcae.collectors.veshv.domain.vesEventListenerVersionRegex
 import org.onap.dcae.collectors.veshv.model.VesMessage
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 typealias ValidationFailMessage = () -> String
 typealias ValidationSuccessMessage = () -> String
@@ -33,24 +30,20 @@ typealias ValidationResult = Either<ValidationFailMessage, ValidationSuccessMess
 internal object MessageValidator {
 
     fun validateFrameMessage(message: WireFrameMessage): ValidationResult =
-            message.validate().fold({
-                Either.left { "Invalid wire frame header, reason: ${it.message}" }
-            }, {
-                Either.right { "Wire frame header is valid" }
-            })
+        message.validate().fold({
+            Either.left { "Invalid wire frame header, reason: ${it.message}" }
+        }, {
+            Either.right { "Wire frame header is valid" }
+        })
 
     fun validateProtobufMessage(message: VesMessage): ValidationResult =
-            if (message.isValid()) {
+        HeaderValidator.parallelValidate(message.header).fold(
+            {
+                var errorMessage = "Protocol buffers message is invalid, reasons:"
+                errorMessage += it.all.joinToString(prefix = "\n-") { value -> value.errorMessage }
+                Either.left { errorMessage }
+            },
+            {
                 Either.right { "Protocol buffers message is valid" }
-            } else {
-                Either.left { "Unsupported protocol buffers message." }
-            }
-
-    fun VesMessage.isValid() = allMandatoryFieldsArePresent(this.header)
-            .and(vesEventListenerVersionRegex.matches(header.vesEventListenerVersion))
-
-    private fun allMandatoryFieldsArePresent(header: CommonEventHeader) =
-            headerRequiredFieldDescriptors
-                    .all { fieldDescriptor -> header.hasField(fieldDescriptor) }
-
+            })
 }
