@@ -25,10 +25,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.jetbrains.spek.api.dsl.*
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.InvalidMajorVersion
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
@@ -50,7 +47,7 @@ internal object MessageValidatorTest : Spek({
             it("should accept message with fully initialized message header") {
                 val vesMessage = VesMessage(commonHeader, vesEventBytes(commonHeader))
                 with(cut) {
-                    assertThat(vesMessage.isValid()).describedAs("message validation result").isTrue()
+                    assertThat(isValid(vesMessage).isValid).describedAs("message validation result").isTrue()
                 }
             }
 
@@ -59,7 +56,7 @@ internal object MessageValidatorTest : Spek({
                     val header = commonHeader(domain)
                     val vesMessage = VesMessage(header, vesEventBytes(header))
                     with(cut) {
-                        assertThat(vesMessage.isValid()).describedAs("message validation result").isTrue()
+                        assertThat(isValid(vesMessage).isValid).describedAs("message validation result").isTrue()
                     }
                 }
             }
@@ -69,16 +66,16 @@ internal object MessageValidatorTest : Spek({
             val vesMessage = VesMessage(getDefaultInstance(), ByteData.EMPTY)
             it("should not accept message with default header") {
                 with(cut) {
-                    assertThat(vesMessage.isValid()).describedAs("message validation result").isFalse()
+                    assertThat(isValid(vesMessage).isInvalid).describedAs("message validation result").isTrue()
                 }
             }
         }
 
         val priorityTestCases = mapOf(
-                Priority.PRIORITY_NOT_PROVIDED to false,
-                Priority.LOW to true,
-                Priority.MEDIUM to true,
-                Priority.HIGH to true
+            Priority.PRIORITY_NOT_PROVIDED to false,
+            Priority.LOW to true,
+            Priority.MEDIUM to true,
+            Priority.HIGH to true
         )
 
         priorityTestCases.forEach { value, expectedResult ->
@@ -88,8 +85,8 @@ internal object MessageValidatorTest : Spek({
 
                 it("should resolve validation result") {
                     with(cut) {
-                        assertThat(vesMessage.isValid()).describedAs("message validation results")
-                                .isEqualTo(expectedResult)
+                        assertThat(isValid(vesMessage).isValid).describedAs("message validation results")
+                            .isEqualTo(expectedResult)
                     }
                 }
             }
@@ -97,17 +94,17 @@ internal object MessageValidatorTest : Spek({
 
         on("ves hv message including header with not initialized fields") {
             val commonHeader = newBuilder()
-                    .setVersion("1.9")
-                    .setEventName("Sample event name")
-                    .setEventId("Sample event Id")
-                    .setSourceName("Sample Source")
-                    .build()
+                .setVersion("1.9")
+                .setEventName("Sample event name")
+                .setEventId("Sample event Id")
+                .setSourceName("Sample Source")
+                .build()
             val rawMessageBytes = vesEventBytes(commonHeader)
 
             it("should not accept not fully initialized message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 with(cut) {
-                    assertThat(vesMessage.isValid()).describedAs("message validation result").isFalse()
+                    assertThat(isValid(vesMessage).isInvalid).describedAs("message validation result").isTrue()
                 }
             }
         }
@@ -120,7 +117,7 @@ internal object MessageValidatorTest : Spek({
             it("should not accept message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 with(cut) {
-                    assertThat(vesMessage.isValid()).describedAs("message validation result").isFalse()
+                    assertThat(isValid(vesMessage).isInvalid).describedAs("message validation result").isTrue()
                 }
             }
         }
@@ -133,7 +130,7 @@ internal object MessageValidatorTest : Spek({
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
 
                 with(cut) {
-                    assertThat(vesMessage.isValid()).describedAs("message validation result").isFalse()
+                    assertThat(isValid(vesMessage).isInvalid).describedAs("message validation result").isTrue()
                 }
             }
         }
@@ -146,7 +143,7 @@ internal object MessageValidatorTest : Spek({
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
 
                 with(cut) {
-                    assertThat(vesMessage.isValid()).describedAs("message validation result").isFalse()
+                    assertThat(isValid(vesMessage).isInvalid).describedAs("message validation result").isTrue()
                 }
             }
         }
