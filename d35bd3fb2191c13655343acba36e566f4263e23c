@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_f2646b4a",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderReader.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "Name the \"s\" argument so it will be obvious what is it.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_925b9f86",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderReader.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "I believe having `interface HeaderReader\u003cA\u003e` + `object RequiredFieldReader : HeaderReader\u003cFieldDescriptor\u003e` + ... would be more straightforward way of doing this. Or are there any reason not to use named objects and use anonymous ones?",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_72507b5e",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "We should try not to create new objects for each message in a stream.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5255374e",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "Rename s\nRename read to reader",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b25ee374",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "How are you sure this \"String\" will represent only vesEventListenerVersion? Now it might be true but it\u0027s not obvious dependency which can cause bugs in the future.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_124fafbe",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "What are v1 and v2? Please name it so it reads well.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d2c84724",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "If an api dont have \"tail\"-like operation then maybe extract it to utils (use Kotlin extension function as in `fun List\u003cT\u003e.tail()`)",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f2cb0b1c",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "You can use map and joinToString to do it in cleaner way.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_92d2bfd0",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-07T06:42:36Z",
+      "side": 1,
+      "message": "I believe MessageValidator::isValid should be a private method. Is it used only in tests? If so, please test using public API. Also add test methods to check error messages. On these strings use contains check (instead of equals) to mitigate little variance which may occur.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
