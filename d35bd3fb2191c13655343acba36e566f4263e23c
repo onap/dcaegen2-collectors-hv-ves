@@ -138,6 +138,23 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_72acfb35",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-07T08:44:17Z",
+      "side": 1,
+      "message": "Please check whether default values from enums (for example Priority, Domain) are handled somehow.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_92d2bfd0",
         "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
         "patchSetId": 1
