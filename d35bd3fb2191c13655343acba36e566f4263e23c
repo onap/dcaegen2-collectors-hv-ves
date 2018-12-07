@@ -138,6 +138,40 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_926e3f00",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-07T08:56:38Z",
+      "side": 1,
+      "message": "You can write this function as one expression in more functional way like this:\n\n    fun isValid(message: VesMessage): Validated\u003cNonEmptyList\u003cValidationError\u003e, CommonEventHeader\u003e \u003d\n            HeaderValidator(message.header).let { validator -\u003e\n                validator.parallelValidate(\n                        validator.validate(HeaderReader.EVENT_LISTENER_VERSION_READ, message.header.vesEventListenerVersion),\n                        headerRequiredFieldDescriptors.map { \n                            validator.validate(HeaderReader.REQUIRED_FIELD_READ, it)\n                        }\n                )\n            }\n\nAlso, if all you\u0027re doing with the message is extracting its header, it would be better to make this method take CommonEventHeader as argument instead of VesMessage",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_327d13b2",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-07T08:56:38Z",
+      "side": 1,
+      "message": "These \"field\" fields can be made private, here and in VersionMatch class.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_72acfb35",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
         "patchSetId": 1
@@ -149,6 +183,23 @@
       "writtenOn": "2018-12-07T08:44:17Z",
       "side": 1,
       "message": "Please check whether default values from enums (for example Priority, Domain) are handled somehow.",
+      "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_72739be7",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-07T08:56:38Z",
+      "side": 1,
+      "message": "Get rid of this redundant newline",
       "revId": "d35bd3fb2191c13655343acba36e566f4263e23c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
