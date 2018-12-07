@@ -61,12 +61,14 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
                 .handle { _, output -> handler(complete, messages, output) }
                 .connect()
                 .doOnError {
-                    logger.info("Failed to connect to VesHvCollector on " +
-                            "${configuration.vesHost}:${configuration.vesPort}")
+                    logger.info {
+                        "Failed to connect to VesHvCollector on ${configuration.vesHost}:${configuration.vesPort}"
+                    }
                 }
                 .subscribe {
-                    logger.info("Connected to VesHvCollector on " +
-                            "${configuration.vesHost}:${configuration.vesPort}")
+                    logger.info {
+                        "Connected to VesHvCollector on ${configuration.vesHost}:${configuration.vesPort}"
+                    }
                 }
         return complete.then()
     }
@@ -86,7 +88,7 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
                 .options { it.flushOnBoundary() }
                 .sendGroups(frames)
                 .then {
-                    logger.info("Messages have been sent")
+                    logger.info { "Messages have been sent" }
                     complete.onComplete()
                 }
                 .then()
