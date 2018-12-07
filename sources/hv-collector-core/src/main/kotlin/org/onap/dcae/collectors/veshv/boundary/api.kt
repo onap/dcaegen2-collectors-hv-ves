@@ -23,15 +23,17 @@ import arrow.core.Option
 import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
+import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.util.*
 
 interface Collector {
-    fun handleConnection(alloc: ByteBufAllocator, dataStream: Flux<ByteBuf>): Mono<Void>
+    fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void>
 }
 
-typealias CollectorProvider = () -> Option<Collector>
+typealias CollectorProvider = (ClientContext) -> Option<Collector>
 
 interface Server {
     fun start(): IO<ServerHandle>

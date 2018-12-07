@@ -59,17 +59,17 @@ internal class XnfApiServer(
                 .post("simulator/async", ::startSimulationHandler)
                 .get("simulator/:id", ::simulatorStatusHandler)
                 .get("healthcheck") { ctx ->
-                    logger.info("Checking health")
+                    logger.info { "Checking health" }
                     ctx.response.status(HttpConstants.STATUS_OK).send()
                 }
     }
 
     private fun startSimulationHandler(ctx: Context) {
-        logger.info("Attempting to start asynchronous scenario")
+        logger.info { "Attempting to start asynchronous scenario" }
         ctx.request.body.then { body ->
             val id = startSimulation(body)
             when (id) {
-                is Either.Left -> logger.warn { "Failed to start scenario, ${id.a}"}
+                is Either.Left -> logger.warn { "Failed to start scenario, ${id.a}" }
                 is Either.Right -> logger.info { "Scenario started, details: ${id.b}" }
             }
             ctx.response.sendEitherErrorOrResponse(id)
@@ -83,7 +83,7 @@ internal class XnfApiServer(
     }
 
     private fun simulatorStatusHandler(ctx: Context) {
-        logger.debug("Checking task status")
+        logger.debug { "Checking task status" }
         val id = UUID.fromString(ctx.pathTokens["id"])
         logger.debug { "Checking status for id: $id" }
         val status = ongoingSimulations.status(id)

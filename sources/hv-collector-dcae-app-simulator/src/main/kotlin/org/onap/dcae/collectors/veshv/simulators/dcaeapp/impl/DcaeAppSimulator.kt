@@ -46,7 +46,7 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
             throw IllegalArgumentException(message)
         }
 
-        logger.info("Received new configuration. Creating consumer for topics: $topics")
+        logger.info { "Received new configuration. Creating consumer for topics: $topics" }
         consumerState.set(consumerFactory.createConsumerForTopics(topics).bind())
     }.fix()
 
