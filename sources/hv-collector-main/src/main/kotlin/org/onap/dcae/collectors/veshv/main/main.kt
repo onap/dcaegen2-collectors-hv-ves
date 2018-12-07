@@ -40,15 +40,15 @@ fun main(args: Array<String>) =
                 .map(::startAndAwaitServers)
                 .unsafeRunEitherSync(
                         { ex ->
-                            logger.error("Failed to start a server", ex)
+                            logger.withError { log("Failed to start a server", ex) }
                             ExitFailure(1)
                         },
-                        { logger.info("Gentle shutdown") }
+                        { logger.info { "Gentle shutdown" } }
                 )
 
 private fun startAndAwaitServers(config: ServerConfiguration) =
         IO.monad().binding {
-            logger.info("Using configuration: $config")
+            logger.info { "Using configuration: $config" }
             HealthCheckServer.start(config).bind()
             VesServer.start(config).bind()
                     .await().bind()

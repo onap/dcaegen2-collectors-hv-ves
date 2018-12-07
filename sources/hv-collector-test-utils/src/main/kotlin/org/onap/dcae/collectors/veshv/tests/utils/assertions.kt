@@ -31,7 +31,7 @@ import java.time.Duration
 private val logger = Logger("org.onap.dcae.collectors.veshv.tests.utils")
 
 object Assertions : org.assertj.core.api.Assertions() {
-    fun <A,B> assertThat(actual: Either<A, B>) = EitherAssert(actual)
+    fun <A, B> assertThat(actual: Either<A, B>) = EitherAssert(actual)
 }
 
 
@@ -42,7 +42,7 @@ fun waitUntilSucceeds(retries: Int, sleepTime: Duration, action: () -> Unit) {
     while (tryNum <= retries) {
         tryNum++
         try {
-            logger.debug("Try number $tryNum")
+            logger.debug { "Try number $tryNum" }
             action()
             break
         } catch (ex: Throwable) {

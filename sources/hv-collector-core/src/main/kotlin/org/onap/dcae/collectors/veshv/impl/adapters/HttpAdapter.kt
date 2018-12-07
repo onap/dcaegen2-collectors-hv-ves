@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import io.netty.handler.codec.http.HttpStatusClass
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
@@ -29,8 +30,6 @@ import reactor.netty.http.client.HttpClient
  * @since May 2018
  */
 open class HttpAdapter(private val httpClient: HttpClient) {
-
-    private val logger = LoggerFactory.getLogger(HttpAdapter::class.java)
 
     open fun get(url: String, queryParams: Map<String, Any> = emptyMap()): Mono<String> = httpClient
             .get()
@@ -44,8 +43,8 @@ open class HttpAdapter(private val httpClient: HttpClient) {
                 }
             }
             .doOnError {
-                logger.error("Failed to get resource on path: $url (${it.localizedMessage})")
-                logger.debug("Nested exception:", it)
+                logger.error { "Failed to get resource on path: $url (${it.localizedMessage})" }
+                logger.withDebug { log("Nested exception:", it) }
             }
 
     private fun createQueryString(params: Map<String, Any>): String {
@@ -65,4 +64,9 @@ open class HttpAdapter(private val httpClient: HttpClient) {
         return builder.removeSuffix("&").toString()
     }
 
+    companion object {
+
+
+        private val logger = Logger(HttpAdapter::class)
+    }
 }
