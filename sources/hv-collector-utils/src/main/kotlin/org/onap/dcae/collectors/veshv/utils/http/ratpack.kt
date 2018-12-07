@@ -51,7 +51,7 @@ fun <A> ratpack.http.Response.sendEitherErrorOrResponse(response: Either<A, Resp
 fun ratpack.http.Response.sendAndHandleErrors(response: IO<Response>) {
     response.attempt().unsafeRunSync().fold(
             { err ->
-                logger.warn("Error occurred. Sending .", err)
+                logger.withWarn { log("Error occurred. Sending .", err) }
                 val message = err.message
                 send(errorResponse(message))
             },

@@ -34,11 +34,16 @@ import org.jetbrains.spek.api.dsl.it
 object LoggerTest : Spek({
 
     lateinit var slf4jLogger: org.slf4j.Logger
-    lateinit var cut: Logger
+    fun cut() = Logger(slf4jLogger).also {
+        verify(slf4jLogger).isTraceEnabled
+        verify(slf4jLogger).isDebugEnabled
+        verify(slf4jLogger).isInfoEnabled
+        verify(slf4jLogger).isWarnEnabled
+        verify(slf4jLogger).isErrorEnabled
+    }
 
     beforeEachTest {
         slf4jLogger = mock()
-        cut = Logger(slf4jLogger)
     }
 
     afterEachTest {
@@ -50,28 +55,19 @@ object LoggerTest : Spek({
         val exception = Exception("fail")
 
         describe("debug levels") {
-            it("should log message") {
-                cut.debug(message)
-                verify(slf4jLogger).debug(message)
-            }
-
-            it("should log message with exception") {
-                cut.debug(message, exception)
-                verify(slf4jLogger).debug(message, exception)
-            }
 
             describe("lazy logging message") {
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isDebugEnabled).thenReturn(true)
-                    cut.debug { message }
+                    cut().debug { message }
                     verify(slf4jLogger).isDebugEnabled
                     verify(slf4jLogger).debug(message)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isDebugEnabled).thenReturn(false)
-                    cut.debug { message }
+                    cut().debug { message }
                     verify(slf4jLogger).isDebugEnabled
                 }
             }
@@ -80,42 +76,33 @@ object LoggerTest : Spek({
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isDebugEnabled).thenReturn(true)
-                    cut.debug(exception) { message }
+                    cut().withDebug { log(message, exception) }
                     verify(slf4jLogger).isDebugEnabled
                     verify(slf4jLogger).debug(message, exception)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isDebugEnabled).thenReturn(false)
-                    cut.debug(exception) { message }
+                    cut().withDebug { log(message, exception) }
                     verify(slf4jLogger).isDebugEnabled
                 }
             }
         }
 
         describe("info levels") {
-            it("should log message") {
-                cut.info(message)
-                verify(slf4jLogger).info(message)
-            }
-
-            it("should log message with exception") {
-                cut.info(message, exception)
-                verify(slf4jLogger).info(message, exception)
-            }
 
             describe("lazy logging message") {
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isInfoEnabled).thenReturn(true)
-                    cut.info { message }
+                    cut().info { message }
                     verify(slf4jLogger).isInfoEnabled
                     verify(slf4jLogger).info(message)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isInfoEnabled).thenReturn(false)
-                    cut.info { message }
+                    cut().info { message }
                     verify(slf4jLogger).isInfoEnabled
                 }
             }
@@ -124,42 +111,32 @@ object LoggerTest : Spek({
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isInfoEnabled).thenReturn(true)
-                    cut.info(exception) { message }
+                    cut().withInfo { log(message, exception) }
                     verify(slf4jLogger).isInfoEnabled
                     verify(slf4jLogger).info(message, exception)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isInfoEnabled).thenReturn(false)
-                    cut.info(exception) { message }
+                    cut().withInfo { log(message, exception) }
                     verify(slf4jLogger).isInfoEnabled
                 }
             }
         }
 
         describe("warning levels") {
-            it("should log message") {
-                cut.warn(message)
-                verify(slf4jLogger).warn(message)
-            }
-
-            it("should log message with exception") {
-                cut.warn(message, exception)
-                verify(slf4jLogger).warn(message, exception)
-            }
-
             describe("lazy logging message") {
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isWarnEnabled).thenReturn(true)
-                    cut.warn { message }
+                    cut().warn { message }
                     verify(slf4jLogger).isWarnEnabled
                     verify(slf4jLogger).warn(message)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isWarnEnabled).thenReturn(false)
-                    cut.warn { message }
+                    cut().warn { message }
                     verify(slf4jLogger).isWarnEnabled
                 }
             }
@@ -168,42 +145,33 @@ object LoggerTest : Spek({
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isWarnEnabled).thenReturn(true)
-                    cut.warn(exception) { message }
+                    cut().withWarn { log(message, exception) }
                     verify(slf4jLogger).isWarnEnabled
                     verify(slf4jLogger).warn(message, exception)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isWarnEnabled).thenReturn(false)
-                    cut.warn(exception) { message }
+                    cut().withWarn { log(message, exception) }
                     verify(slf4jLogger).isWarnEnabled
                 }
             }
         }
 
         describe("error levels") {
-            it("should log message") {
-                cut.error(message)
-                verify(slf4jLogger).error(message)
-            }
-
-            it("should log message with exception") {
-                cut.error(message, exception)
-                verify(slf4jLogger).error(message, exception)
-            }
 
             describe("lazy logging message") {
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isErrorEnabled).thenReturn(true)
-                    cut.error { message }
+                    cut().error { message }
                     verify(slf4jLogger).isErrorEnabled
                     verify(slf4jLogger).error(message)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isErrorEnabled).thenReturn(false)
-                    cut.error { message }
+                    cut().error { message }
                     verify(slf4jLogger).isErrorEnabled
                 }
             }
@@ -212,14 +180,14 @@ object LoggerTest : Spek({
 
                 it("should log when debug is ON") {
                     whenever(slf4jLogger.isErrorEnabled).thenReturn(true)
-                    cut.error(exception) { message }
+                    cut().withError { log(message, exception) }
                     verify(slf4jLogger).isErrorEnabled
                     verify(slf4jLogger).error(message, exception)
                 }
 
                 it("should not log when debug is OFF") {
                     whenever(slf4jLogger.isErrorEnabled).thenReturn(false)
-                    cut.error(exception) { message }
+                    cut().withError { log(message, exception) }
                     verify(slf4jLogger).isErrorEnabled
                 }
             }

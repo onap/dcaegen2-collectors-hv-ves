@@ -27,6 +27,7 @@ import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
+import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthState
@@ -54,7 +55,7 @@ class Sut(sink: Sink = StoringSink()) {
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
-        get() = collectorProvider().getOrElse{ throw IllegalStateException("Collector not available.") }
+        get() = collectorProvider(ClientContext(alloc)).getOrElse{ throw IllegalStateException("Collector not available.") }
 
     companion object {
         const val MAX_PAYLOAD_SIZE_BYTES = 1024
@@ -63,6 +64,6 @@ class Sut(sink: Sink = StoringSink()) {
 }
 
 fun Sut.handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
-    collector.handleConnection(alloc, Flux.fromArray(packets)).block(Duration.ofSeconds(10))
+    collector.handleConnection(Flux.fromArray(packets)).block(Duration.ofSeconds(10))
     return sink.sentMessages
 }

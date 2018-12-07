@@ -43,17 +43,17 @@ fun main(args: Array<String>) =
                 .map(::startApp)
                 .unsafeRunEitherSync(
                         { ex ->
-                            logger.error("Failed to start a server", ex)
+                            logger.withError { log("Failed to start a server", ex) }
                             ExitFailure(1)
                         },
                         {
-                            logger.info("Started DCAE-APP Simulator API server")
+                            logger.info { "Started DCAE-APP Simulator API server" }
                         }
                 )
 
 
 private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
-    logger.info("Using configuration: $config")
+    logger.info { "Using configuration: $config" }
     val consumerFactory = ConsumerFactory(config.kafkaBootstrapServers)
     val messageStreamValidation = MessageStreamValidation(MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
     return DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))

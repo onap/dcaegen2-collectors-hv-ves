@@ -21,6 +21,9 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.model.ClientContextLogging.info
+import org.onap.dcae.collectors.veshv.model.ClientContextLogging.trace
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -33,7 +36,7 @@ import java.util.concurrent.atomic.AtomicLong
  */
 internal class LoggingSinkProvider : SinkProvider {
 
-    override fun invoke(config: CollectorConfiguration): Sink {
+    override fun invoke(config: CollectorConfiguration, ctx: ClientContext): Sink {
         return object : Sink {
             private val totalMessages = AtomicLong()
             private val totalBytes = AtomicLong()
@@ -47,9 +50,9 @@ internal class LoggingSinkProvider : SinkProvider {
                 val bytes = totalBytes.addAndGet(msg.message.rawMessage.size().toLong())
                 val logMessageSupplier = { "Message routed to ${msg.topic}. Total = $msgs ($bytes B)" }
                 if (msgs % INFO_LOGGING_FREQ == 0L)
-                    logger.info(logMessageSupplier)
+                    logger.info(ctx, logMessageSupplier)
                 else
-                    logger.trace(logMessageSupplier)
+                    logger.trace(ctx, logMessageSupplier)
             }
 
         }

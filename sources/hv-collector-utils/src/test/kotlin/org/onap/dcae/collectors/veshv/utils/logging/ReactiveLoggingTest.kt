@@ -42,7 +42,7 @@ class ReactiveLoggingTest : Spek({
                 val cut = Try.just(event)
 
                 it("should not filter stream event and log accepted message") {
-                    cut.filterFailedWithLog(logger, ACCEPTED_MESSAGE, FAILED_WITH_EXCEPTION_MESSAGE)
+                    cut.filterFailedWithLog(logger, ::emptyMap, ACCEPTED_MESSAGE, FAILED_WITH_EXCEPTION_MESSAGE)
                             .test()
                             .expectNext(event)
                             .verifyComplete()
@@ -53,7 +53,7 @@ class ReactiveLoggingTest : Spek({
                 val e = Exception()
                 val cut = Failure(e)
                 it("should filter stream event and log rejected message") {
-                    cut.filterFailedWithLog(logger, ACCEPTED_MESSAGE, FAILED_WITH_EXCEPTION_MESSAGE)
+                    cut.filterFailedWithLog(logger, ::emptyMap, ACCEPTED_MESSAGE, FAILED_WITH_EXCEPTION_MESSAGE)
                             .test()
                             .verifyComplete()
                 }
@@ -65,7 +65,7 @@ class ReactiveLoggingTest : Spek({
                 val cut = Option.just(event)
 
                 it("should not filter stream event and log accepted message") {
-                    cut.filterEmptyWithLog(logger, ACCEPTED_MESSAGE, FAILED_MESSAGE)
+                    cut.filterEmptyWithLog(logger, ::emptyMap, ACCEPTED_MESSAGE, FAILED_MESSAGE)
                             .test()
                             .expectNext(event)
                             .verifyComplete()
@@ -75,7 +75,7 @@ class ReactiveLoggingTest : Spek({
             given("empty Option") {
                 val cut = Option.empty<Int>()
                 it("should filter stream event and log rejected message") {
-                    cut.filterEmptyWithLog(logger, ACCEPTED_MESSAGE, FAILED_MESSAGE)
+                    cut.filterEmptyWithLog(logger,::emptyMap, ACCEPTED_MESSAGE, FAILED_MESSAGE)
                             .test()
                             .verifyComplete()
                 }
@@ -88,7 +88,7 @@ class ReactiveLoggingTest : Spek({
                 val cut = Flux.just(event)
 
                 it("should not filter stream event and log accepted message") {
-                    cut.filterFailedWithLog(logger, right())
+                    cut.filterFailedWithLog(logger,::emptyMap, right())
                             .test()
                             .expectNext(event)
                             .verifyComplete()
@@ -99,7 +99,7 @@ class ReactiveLoggingTest : Spek({
                 val cut = Flux.just(event)
 
                 it("should filter stream event and log rejected message") {
-                    cut.filterFailedWithLog(logger, left())
+                    cut.filterFailedWithLog(logger,::emptyMap, left())
                             .test()
                             .verifyComplete()
                 }

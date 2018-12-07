@@ -42,7 +42,7 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
 fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
         .map { config ->
-            logger.info("Using configuration: $config")
+            logger.info { "Using configuration: $config" }
             val xnfSimulator = XnfSimulator(
                     VesHvClient(config),
                     MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
@@ -52,10 +52,10 @@ fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         }
         .unsafeRunEitherSync(
                 { ex ->
-                    logger.error("Failed to start a server", ex)
+                    logger.withError { log("Failed to start a server", ex) }
                     ExitFailure(1)
                 },
                 {
-                    logger.info("Started xNF Simulator API server")
+                    logger.info { "Started xNF Simulator API server" }
                 }
         )
