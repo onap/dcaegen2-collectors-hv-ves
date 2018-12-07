@@ -71,15 +71,15 @@ class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
                 }
                 .delete("messages") { ctx ->
                     ctx.response.contentType(CONTENT_TEXT)
-                    logger.info("Resetting simulator state")
+                    logger.info { "Resetting simulator state" }
                     ctx.response.sendOrError(simulator.resetState())
                 }
                 .get("messages/all/count") { ctx ->
-                    logger.info("Processing request for count of received messages")
+                    logger.info { "Processing request for count of received messages" }
                     simulator.state().fold(
                             {
                                 ctx.response.status(HttpConstants.STATUS_NOT_FOUND)
-                                logger.warn("Error - number of messages could not be specified")
+                                logger.warn { "Error - number of messages could not be specified" }
                             },
                             {
                                 logger.info { "Returned number of received messages: ${it.messagesCount}" }
@@ -90,7 +90,7 @@ class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
                 }
                 .post("messages/all/validate") { ctx ->
                     ctx.request.body.then { body ->
-                        logger.info("Processing request for message validation")
+                        logger.info { "Processing request for message validation" }
                         val response = simulator.validate(body.inputStream)
                                 .map { isValid ->
                                     if (isValid) {

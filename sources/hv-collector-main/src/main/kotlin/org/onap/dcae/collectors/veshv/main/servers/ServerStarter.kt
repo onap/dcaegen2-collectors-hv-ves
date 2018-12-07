@@ -31,7 +31,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
 abstract class ServerStarter {
     fun start(config: ServerConfiguration): IO<ServerHandle> =
             startServer(config)
-                    .map { logger.info(serverStartedMessage(it)); it }
+                    .map { logger.info { serverStartedMessage(it) }; it }
 
     protected abstract fun startServer(config: ServerConfiguration): IO<ServerHandle>
     protected abstract fun serverStartedMessage(handle: ServerHandle): String

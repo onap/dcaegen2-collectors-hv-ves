@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.None
 import arrow.core.Some
+import io.netty.buffer.ByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -30,6 +31,7 @@ import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.SYSLOG
+import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.model.routing
@@ -56,7 +58,7 @@ object RouterTest : Spek({
                 withFixedPartitioning()
             }
         }.build()
-        val cut = Router(config)
+        val cut = Router(config, ClientContext())
 
         on("message with existing route (rtpm)") {
             val message = VesMessage(commonHeader(PERF3GPP), ByteData.EMPTY)
