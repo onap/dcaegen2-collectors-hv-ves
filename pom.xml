@@ -89,8 +89,8 @@
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>${project.groupId}.${project.artifactId}</docker-image.name>
+        <docker-image.latest>1.0-SNAPSHOT</docker-image.latest>
         <docker.http_proxy/>
-
     </properties>
 
     <build>
@@ -453,7 +453,7 @@
                                             <tags>
                                                 <tag>${project.version}-${maven.build.timestamp}Z</tag>
                                                 <tag>${project.version}</tag>
-                                                <tag>latest</tag>
+                                                <tag>${docker-image.latest}</tag>
                                             </tags>
                                         </build>
                                     </image>
