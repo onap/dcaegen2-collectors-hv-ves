@@ -43,11 +43,11 @@ class OngoingSimulations(executor: Executor = Executors.newCachedThreadPool()) {
         simulationIo.continueOn(asyncSimulationContext).unsafeRunAsync { result ->
             result.fold(
                     { err ->
-                        logger.warn("Error", err)
+                        logger.withWarn { log("Error", err) }
                         simulations[id] = StatusFailure(err)
                     },
                     {
-                        logger.info("Finished sending messages")
+                        logger.info { "Finished sending messages" }
                         simulations[id] = StatusSuccess
                     }
             )

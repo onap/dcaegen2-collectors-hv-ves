@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import reactor.core.publisher.Flux
@@ -35,12 +36,12 @@ interface Metrics {
 
 @FunctionalInterface
 interface SinkProvider {
-    operator fun invoke(config: CollectorConfiguration): Sink
+    operator fun invoke(config: CollectorConfiguration, ctx: ClientContext): Sink
 
     companion object {
         fun just(sink: Sink): SinkProvider =
                 object : SinkProvider {
-                    override fun invoke(config: CollectorConfiguration): Sink = sink
+                    override fun invoke(config: CollectorConfiguration, ctx: ClientContext): Sink = sink
                 }
     }
 }

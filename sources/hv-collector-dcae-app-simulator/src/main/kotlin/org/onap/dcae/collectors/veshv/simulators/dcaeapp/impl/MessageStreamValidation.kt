@@ -61,13 +61,13 @@ class MessageStreamValidation(
         return messageParams.fold(
                 {
                     logger.warn { "Error while parsing message parameters: ${it::class.qualifiedName} : ${it.message}" }
-                    logger.debug { "Detailed stack trace: ${it}" }
+                    logger.debug { "Detailed stack trace: $it" }
                     throw IllegalArgumentException("Parsing error: " + it.message)
                 },
                 {
                     if (it.isEmpty()) {
                         val message = "Message param list cannot be empty"
-                        logger.warn(message)
+                        logger.warn { message }
                         throw IllegalArgumentException(message)
                     }
                     it

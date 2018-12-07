@@ -287,7 +287,7 @@ object VesHvSpecification : Spek({
                         .map { vesWireFrameMessage(PERF3GPP) }
 
 
-                sut.collector.handleConnection(sut.alloc, incomingMessages).block(defaultTimeout)
+                sut.collector.handleConnection(incomingMessages).block(defaultTimeout)
 
                 val messages = sink.sentMessages
                 val firstTopicMessagesCount = messages.count { it.topic == PERF3GPP_TOPIC }
