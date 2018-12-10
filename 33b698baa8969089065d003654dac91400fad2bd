@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5f153b3e",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-10T14:36:20Z",
+      "side": 1,
+      "message": "I think you have skipped a change made by Piotr during merging. \n\nlogger.warn(clientContext::asMap) { \"Collector not ready. Closing connection...\" }",
+      "revId": "33b698baa8969089065d003654dac91400fad2bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
