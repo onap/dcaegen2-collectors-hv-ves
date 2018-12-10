@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.model
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.utils.logging.AtLevelLogger
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.slf4j.MDC
 import java.net.InetSocketAddress
 import java.util.*
 
