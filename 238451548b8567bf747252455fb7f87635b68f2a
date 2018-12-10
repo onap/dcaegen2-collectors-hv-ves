@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_1f49f35f",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T14:50:29Z",
+      "side": 1,
+      "message": "I\u0027m not sure I understand, was this supposed to be comment to  not successful message sending to Kafka?",
+      "parentUuid": "9adffdf1_ff066f1c",
+      "revId": "238451548b8567bf747252455fb7f87635b68f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_6308af2d",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/markers.kt",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_ff542f00",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/markers.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T14:50:29Z",
+      "side": 1,
+      "message": "* Unfortunately as this is enum the compiler will complain about name-clash and won\u0027t allow it to be named Marker.\n\n* File moved to utils as Markers.kt\n\nDo you have idea how to decouple API from slf4j?",
+      "parentUuid": "9adffdf1_6308af2d",
+      "revId": "238451548b8567bf747252455fb7f87635b68f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_2302a70b",
         "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2018-12-10T14:37:19Z",
       "side": 1,
       "message": "What will be an output of %mdc? Map.toString or something more fancy?",
+      "revId": "238451548b8567bf747252455fb7f87635b68f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7f403f34",
+        "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T14:50:29Z",
+      "side": 1,
+      "message": "It\u0027s shortcut for logging every MDC defined for thread, so in current impl:\n```\nclientAddress\u003d/172.19.0.6:48274, clientId\u003dc87db18f-7290-4538-9fb8-86449bba037b\n```",
+      "parentUuid": "9adffdf1_2302a70b",
       "revId": "238451548b8567bf747252455fb7f87635b68f2a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
