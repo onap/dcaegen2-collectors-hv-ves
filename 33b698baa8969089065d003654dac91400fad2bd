@@ -16,6 +16,24 @@
       "revId": "33b698baa8969089065d003654dac91400fad2bd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7f391fd6",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T14:41:24Z",
+      "side": 1,
+      "message": "True - cherrypick has overriden changes, thanks",
+      "parentUuid": "9adffdf1_5f153b3e",
+      "revId": "33b698baa8969089065d003654dac91400fad2bd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
