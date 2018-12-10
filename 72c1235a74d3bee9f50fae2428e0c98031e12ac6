@@ -2,6 +2,74 @@
   "comments": [
     {
       "key": {
+        "uuid": "9adffdf1_6378af2b",
+        "filename": "docker-compose.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "Maybe it\u0027s just me, but when using docker-compose from command line in form \"docker-compose up \u003cservice-name\u003e\" it was more convenient to use short name \"kafka\" :)  I don\u0027t mind the change, but we could think of using shortnames for declaring components and long-names in `network:aliases` section",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_437d6b1b",
+        "filename": "docker-compose.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "docker.io/consul:1.0.6?\n\nAs another approach we could use something small like `alpine` image and use `curl` - this would follow our actual deployment on DCAE platform.",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0377633b",
+        "filename": "docker-compose.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "Maybe we could depend on consul-config instead? That way we assure that when we boot collector using compose-file it\u0027s fully prepared to run",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c3b71bd7",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "I believe we need to pass context here (and also in right-fold part)",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_a39d375b",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
         "patchSetId": 4
@@ -19,6 +87,23 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_e3ba5fbf",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/wire/WireChunkDecoder.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "We could define `handleReactiveStreamError(ClientContext, _, _)` that would call `::asMap`, as this is only use case right now",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_43a48ba5",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
         "patchSetId": 4
@@ -30,6 +115,58 @@
       "writtenOn": "2018-12-10T10:51:33Z",
       "side": 1,
       "message": "If we add more and more mdcs the constructor can grow really big. Wouldn\u0027t it be better idea to keep all the context properties in string to object map?",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_83b113e3",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "I agree, Map\u003cMDCKey, Option\u003e would allow the method `asMap` to be more generic",
+      "parentUuid": "9adffdf1_43a48ba5",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a3b457d1",
+        "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "Let\u0027s change it to `%mdc`",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_63c66f4b",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/reactive_logging.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T11:42:58Z",
+      "side": 1,
+      "message": "Maybe we could create ContextualLogger(Logger, ClientContext) implementation that would hold ClientContext and delegate to logger methods with ClientContext.MDC usage?\n\nFor example let\u0027s take VesHvCollector class - every call to logger in this class is passing along also clientContext object. So we could simply hold reference to ContextualLogger(HvVes.logger, clientContext) object which we would pass to all calls inside reactive_logging. \n\nI believe this could reduce the \"pollution\" of interfaces inside the component",
       "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
