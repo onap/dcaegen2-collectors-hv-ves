@@ -142,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_0321a3fa",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T13:32:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_a302176d",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_a39d375b",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
         "patchSetId": 4
@@ -212,6 +230,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_e37d7fe8",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/wire/WireChunkDecoder.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T13:32:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_23ee27b5",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_43a48ba5",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
         "patchSetId": 4
@@ -265,6 +301,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_436ecb30",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T13:32:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_633bcf38",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_43400ba5",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
         "patchSetId": 4
@@ -276,6 +330,24 @@
       "writtenOn": "2018-12-10T13:17:28Z",
       "side": 1,
       "message": "@Suppress(\"TooManyFunctions\")",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_63698f24",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T13:32:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_43400ba5",
       "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -317,6 +389,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_0378c3f0",
+        "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T13:32:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_c3139bb6",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_63c66f4b",
         "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/reactive_logging.kt",
         "patchSetId": 4
@@ -346,6 +436,24 @@
       "side": 1,
       "message": "As I said before. On \"logging\" level it makes sense to use Map\u003cString,String\u003e but in the collector its too vague. So ClientContext is defined in core module and not to be used in general utility module.",
       "parentUuid": "9adffdf1_63c66f4b",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_23738716",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/reactive_logging.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T13:32:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_e316dfa6",
       "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
