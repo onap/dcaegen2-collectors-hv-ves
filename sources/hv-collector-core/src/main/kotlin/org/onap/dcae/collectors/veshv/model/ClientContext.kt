@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.model
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.utils.logging.AtLevelLogger
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.slf4j.MDC
+import org.onap.dcae.collectors.veshv.utils.logging.Markers
 import java.net.InetSocketAddress
 import java.util.*
 
@@ -55,4 +55,10 @@ object ClientContextLogging {
     fun Logger.info(ctx: ClientContext, message: () -> String) = info(ctx::asMap, message)
     fun Logger.debug(ctx: ClientContext, message: () -> String) = debug(ctx::asMap, message)
     fun Logger.trace(ctx: ClientContext, message: () -> String) = trace(ctx::asMap, message)
+
+    fun Logger.error(ctx: ClientContext, marker: Markers, message: () -> String) = error(ctx::asMap, marker(), message)
+    fun Logger.warn(ctx: ClientContext, marker: Markers, message: () -> String) = warn(ctx::asMap, marker(), message)
+    fun Logger.info(ctx: ClientContext, marker: Markers, message: () -> String) = info(ctx::asMap, marker(), message)
+    fun Logger.debug(ctx: ClientContext, marker: Markers, message: () -> String) = debug(ctx::asMap, marker(), message)
+    fun Logger.trace(ctx: ClientContext, marker: Markers, message: () -> String) = trace(ctx::asMap, marker(), message)
 }
