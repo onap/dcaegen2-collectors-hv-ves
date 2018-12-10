@@ -139,6 +139,23 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_43400ba5",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T13:17:28Z",
+      "side": 1,
+      "message": "@Suppress(\"TooManyFunctions\")",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_a3b457d1",
         "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
         "patchSetId": 4
