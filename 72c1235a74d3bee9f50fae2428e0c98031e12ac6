@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_23f86748",
+        "filename": "docker-compose.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T14:01:46Z",
+      "side": 1,
+      "message": "Yes I do understand the reason - with my proposition the components could still refer to each other using \"production\" names. The change would be simply more friendly for developing",
+      "parentUuid": "9adffdf1_43f9eb7e",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_437d6b1b",
         "filename": "docker-compose.yml",
         "patchSetId": 4
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Same as above. It is the actual docker image used in OOM in Casablanca.",
       "parentUuid": "9adffdf1_437d6b1b",
+      "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_435fab41",
+        "filename": "docker-compose.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-10T14:01:46Z",
+      "side": 1,
+      "message": "I didn\u0027t meant to refer to image used in consul-server, but to different image used in consul-config (one uses full name `docker.io/consul:1.0.6` and the other one simply `consul`[with :latest])",
+      "parentUuid": "9adffdf1_63f42f87",
       "revId": "72c1235a74d3bee9f50fae2428e0c98031e12ac6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
