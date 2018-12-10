@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_ff066f1c",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T14:37:19Z",
+      "side": 1,
+      "message": "As it\u0027s used only in few places maybe we should use \n\n```\nwithError(ctx) {\n  log(Marker.INVOKE, \"epic fail\")\n}\n```",
+      "revId": "238451548b8567bf747252455fb7f87635b68f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6308af2d",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/markers.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T14:37:19Z",
+      "side": 1,
+      "message": "* Markers -\u003e Marker\n* Rename file to Marker.kt as there is only class inside the file\n* It\u0027s rather part of our logging framework so should be put in utils. Also in utils/Logger we should try to avoid binding public API to SLF4J (currently it\u0027s not ideal, too...).",
+      "revId": "238451548b8567bf747252455fb7f87635b68f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2302a70b",
+        "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T14:37:19Z",
+      "side": 1,
+      "message": "What will be an output of %mdc? Map.toString or something more fancy?",
+      "revId": "238451548b8567bf747252455fb7f87635b68f2a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
