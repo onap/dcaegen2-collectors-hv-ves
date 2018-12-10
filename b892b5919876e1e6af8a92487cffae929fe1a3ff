@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_ffa2effb",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/Markers.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-10T15:03:02Z",
+      "side": 1,
+      "message": "Won\u0027t\n\n```\n\nenum class Marker(private val marker: org.slf4j.Marker) {\n    ENTRY(MarkerFactory.getMarker(\"ENTRY\")),\n    EXIT(MarkerFactory.getMarker(\"EXIT\")),\n    INVOKE(MarkerFactory.getMarker(\"INVOKE\"));\n\n    operator fun invoke() \u003d marker\n}\n```\n\nwork?",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 1
+      },
+      "revId": "b892b5919876e1e6af8a92487cffae929fe1a3ff",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
