@@ -27,6 +27,7 @@ import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ClientContextLogging.info
 import org.onap.dcae.collectors.veshv.model.ClientContextLogging.debug
 import org.onap.dcae.collectors.veshv.model.ClientContextLogging.withWarn
+import org.onap.dcae.collectors.veshv.model.Markers
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.ServerSslContextFactory
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
@@ -74,9 +75,10 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
             clientContext.clientAddress = it.address()
         }
 
+        logger.debug(clientContext, Markers.ENTRY) { "Client connection request received" }
         return collectorProvider(clientContext).fold(
                 {
-                    logger.warn(clientContext::asMap) { "Collector not ready. Closing connection..." }
+                    logger.warn { "Collector not ready. Closing connection..." }
                     Mono.empty()
                 },
                 {
@@ -106,6 +108,7 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
 
     private fun Connection.disconnectClient(ctx: ClientContext) {
         channel().close().addListener {
+            logger.debug(ctx, Markers.EXIT) { "Closing client channel." }
             if (it.isSuccess)
                 logger.debug(ctx) { "Channel closed successfully." }
             else
@@ -114,8 +117,8 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
     }
 
     private fun Connection.logConnectionClosed(ctx: ClientContext): Connection {
-        onTerminate().subscribe {
-            logger.info(ctx) { "Connection has been closed" }
+        onDispose().subscribe {
+            logger.info(ctx, Markers.EXIT) { "Connection has been closed" }
         }
         return this
     }
