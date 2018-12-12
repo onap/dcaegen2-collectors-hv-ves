@@ -24,12 +24,16 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.search.RequiredSearch
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
+import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -37,11 +41,11 @@ import org.jetbrains.spek.api.dsl.on
  */
 object MicrometerMetricsTest : Spek({
     val doublePrecision = Percentage.withPercentage(0.5)
-    lateinit var registry: SimpleMeterRegistry
+    lateinit var registry: PrometheusMeterRegistry
     lateinit var cut: MicrometerMetrics
 
     beforeEachTest {
-        registry = SimpleMeterRegistry()
+        registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
         cut = MicrometerMetrics(registry)
     }
 
@@ -67,14 +71,17 @@ object MicrometerMetricsTest : Spek({
     fun verifyAllCountersAreUnchangedBut(vararg changedCounters: String) {
         registry.meters
                 .filter { it is Counter }
+                .map { it as Counter }
                 .filterNot { it.id.name in changedCounters }
-                .forEach { assertThat((it as Counter).count()).isCloseTo(0.0, doublePrecision) }
+                .forEach {
+                    assertThat(it.count()).describedAs(it.id.toString()).isCloseTo(0.0, doublePrecision)
+                }
     }
 
     describe("notifyBytesReceived") {
 
-        on("data.received.bytes counter") {
-            val counterName = "data.received.bytes"
+        on("hvves.data.received.bytes counter") {
+            val counterName = "hvves.data.received.bytes"
 
             it("should increment counter") {
                 val bytes = 128
@@ -93,8 +100,8 @@ object MicrometerMetricsTest : Spek({
     }
 
     describe("notifyMessageReceived") {
-        on("messages.received.count counter") {
-            val counterName = "messages.received.count"
+        on("hvves.messages.received.count counter") {
+            val counterName = "hvves.messages.received.count"
 
             it("should increment counter") {
                 cut.notifyMessageReceived(777)
@@ -105,8 +112,8 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("messages.received.bytes counter") {
-            val counterName = "messages.received.bytes"
+        on("hvves.messages.received.bytes counter") {
+            val counterName = "hvves.messages.received.bytes"
 
             it("should increment counter") {
                 val bytes = 888
@@ -120,39 +127,42 @@ object MicrometerMetricsTest : Spek({
 
         it("should leave all other counters unchanged") {
             cut.notifyMessageReceived(128)
-            verifyAllCountersAreUnchangedBut("messages.received.count", "messages.received.bytes")
+            verifyAllCountersAreUnchangedBut("hvves.messages.received.count", "hvves.messages.received.bytes")
         }
     }
 
     describe("notifyMessageSent") {
-        val topicName = "dmaap_topic_name"
-        val counterName = "messages.sent.count"
+        val topicName1 = "PERF3GPP"
+        val topicName2 = "CALLTRACE"
 
-        on("$counterName counter") {
+        on("hvves.messages.sent.count counter") {
+            val counterName = "hvves.messages.sent.count"
 
             it("should increment counter") {
-                cut.notifyMessageSent(topicName)
+                cut.notifyMessageSent(topicName1)
 
                 verifyCounter(counterName) { counter ->
                     assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
                 }
+                verifyAllCountersAreUnchangedBut(counterName, "hvves.messages.sent.topic.count")
             }
         }
 
-        on("$counterName[topic=$topicName] counter") {
+        on("hvves.messages.sent.topic.count counter") {
+            val counterName = "hvves.messages.sent.topic.count"
+            it("should handle counters for different topics") {
+                cut.notifyMessageSent(topicName1)
+                cut.notifyMessageSent(topicName2)
+                cut.notifyMessageSent(topicName2)
 
-            it("should increment counter") {
-                cut.notifyMessageSent(topicName)
-
-                verifyCounter(registrySearch().name(counterName).tag("topic", topicName)) { counter ->
+                verifyCounter(registrySearch().name(counterName).tag("topic", topicName1)) { counter ->
                     assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
                 }
-            }
-        }
 
-        it("should leave all other counters unchanged") {
-            cut.notifyMessageSent(topicName)
-            verifyAllCountersAreUnchangedBut(counterName)
+                verifyCounter(registrySearch().name(counterName).tag("topic", topicName2)) { counter ->
+                    assertThat(counter.count()).isCloseTo(2.0, doublePrecision)
+                }
+            }
         }
     }
 
