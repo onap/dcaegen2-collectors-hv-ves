@@ -17,27 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.servers
+package org.onap.dcae.collectors.veshv.main.metrics
 
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
-import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import io.micrometer.prometheus.PrometheusMeterRegistry
+import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
+import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since December 2018
  */
-object HealthCheckServer : ServerStarter() {
-    override fun startServer(config: ServerConfiguration) = createHealthCheckServer(config).start()
-
-    private fun createHealthCheckServer(config: ServerConfiguration) =
-            HealthCheckApiServer(
-                    HealthState.INSTANCE,
-                    MicrometerMetrics.INSTANCE.metricsProvider,
-                    config.healthCheckApiListenAddress)
-
-    override fun serverStartedMessage(handle: ServerHandle) =
-            "Health check server is up and listening on ${handle.host}:${handle.port}"
+class MicrometerPrometheusMetricsProvider(private val registry: PrometheusMeterRegistry) : PrometheusMetricsProvider {
+    override fun lastStatus(): Mono<String> = Mono.fromCallable {
+        registry.scrape()
+    }
 }
