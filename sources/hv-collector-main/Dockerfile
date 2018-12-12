@@ -11,9 +11,9 @@ RUN apt-get update \
 
 WORKDIR /opt/ves-hv-collector
 
-ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.main.MainKt"]
+ENTRYPOINT ["entry.sh"]
 
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./
-COPY src/main/scripts/healthcheck.sh ./
+COPY src/main/scripts/*.sh ./
 COPY target/hv-collector-main-*.jar ./
