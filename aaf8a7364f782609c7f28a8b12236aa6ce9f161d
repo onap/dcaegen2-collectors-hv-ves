@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_8edcd374",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-12T11:02:48Z",
+      "side": 1,
+      "message": "Use ValidatedNel\u003cValidationError, CommonEventHeader\u003e as a output type. e.g.:\n```\nfun parallelValidate(header: CommonEventHeader): ValidatedNel\u003cValidationError, CommonEventHeader\u003e\n```",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_6e6acfb4",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
         "patchSetId": 3
@@ -30,6 +47,24 @@
       "writtenOn": "2018-12-12T09:29:26Z",
       "side": 1,
       "message": "Maybe its worth to reformat it to have lines shorter?",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4e8b4b68",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-12T11:02:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_6e6acfb4",
       "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
