@@ -19,6 +19,58 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_19c26b59",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "If this function is used only in \u0027parallelValidate\u0027 then its definition should be moved beneath \u0027parallelValidate\u0027 to improve readability",
+      "parentUuid": "9adffdf1_0e7c6382",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d9b703f4",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Just like with the \u0027validateEventListenerVersion\u0027",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_79d0571f",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Break the line after \u0027if (!header.hasField(requiredField))\u0027 - this line is too long. You can do the same with else statement to be consistent",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_8edcd374",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
         "patchSetId": 3
@@ -65,6 +117,159 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "9adffdf1_6e6acfb4",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b9b23f04",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "As Kornel mentioned above - move each operator to a new line like this: \n val invalidFields \u003d requiredFieldsValidationResults\n          .filter { value -\u003e value is Validated.Invalid }\n          .map { (it as Validated.Invalid) }",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_99cdfb87",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Just concatenate the second part when defining the variable and use \u0027val\u0027 instead of \u0027var\u0027. Also add space at the end of the first string. \n\nP.S. To be honest you can take it further and skip this variable definition completely - i think it wont affect the readability at all\n\nEither.left {\n    \"Protocol buffers message is invalid, reasons:\" +\n        it.all.joinToString(prefix \u003d \"\\n-\") { value -\u003e value.errorMessage }\n}",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_59c31357",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Move \u0027describedAs\u0027 to a new line",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f9a3e7af",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Reformat",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_997bbb27",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Nest this into \u0027given\u0027 and give it some proper description. Also you can skip variable definition and call the \u0027forEach\u0027 directly on the return value of \u0027mapOf\u0027 function.",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d9ae2398",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Move \u0027describedAs\u0027 to a new line",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7997f748",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Move both \u0027describedAs\u0027 and \u0027isTrue\u0027 to new lines",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_99941b44",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Reformat",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_399def66",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidatorTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-12T18:11:41Z",
+      "side": 1,
+      "message": "Reformat",
       "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
