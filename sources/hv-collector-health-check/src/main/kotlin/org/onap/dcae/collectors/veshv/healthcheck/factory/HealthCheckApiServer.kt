@@ -23,6 +23,7 @@ import arrow.effects.IO
 import io.netty.handler.codec.http.HttpResponseStatus
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -39,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference
  * @since August 2018
  */
 class HealthCheckApiServer(private val healthState: HealthState,
+                           private val monitoring: PrometheusMetricsProvider,
                            private val listenAddress: SocketAddress) {
 
     private val healthDescription: AtomicReference<HealthDescription> = AtomicReference(HealthDescription.STARTING)
@@ -50,6 +52,7 @@ class HealthCheckApiServer(private val healthState: HealthState,
                 .route { routes ->
                     routes.get("/health/ready", ::readinessHandler)
                     routes.get("/health/alive", ::livenessHandler)
+                    routes.get("/monitoring/prometheus", ::monitoringHandler)
                 }
         NettyServerHandle(ctx.bindNow())
     }
@@ -62,6 +65,10 @@ class HealthCheckApiServer(private val healthState: HealthState,
 
     private fun livenessHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
             resp.status(HttpResponseStatus.NOT_IMPLEMENTED).sendString(Mono.just("Not implemented yet"))
+
+
+    private fun monitoringHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
+            resp.sendString(monitoring.lastStatus())
 
     companion object {
         private val logger = Logger(HealthCheckApiServer::class)
