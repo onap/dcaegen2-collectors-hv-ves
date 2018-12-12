@@ -20,12 +20,18 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
+import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class FakeMetrics: Metrics {
+class FakeMetrics : Metrics {
+    override val metricsProvider: PrometheusMetricsProvider = object : PrometheusMetricsProvider {
+        override fun lastStatus(): Mono<String> = Mono.empty()
+    }
+
     override fun notifyBytesReceived(size: Int) {
     }
 

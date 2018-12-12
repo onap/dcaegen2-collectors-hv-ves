@@ -24,12 +24,16 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.search.RequiredSearch
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
+import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -37,11 +41,11 @@ import org.jetbrains.spek.api.dsl.on
  */
 object MicrometerMetricsTest : Spek({
     val doublePrecision = Percentage.withPercentage(0.5)
-    lateinit var registry: SimpleMeterRegistry
+    lateinit var registry: PrometheusMeterRegistry
     lateinit var cut: MicrometerMetrics
 
     beforeEachTest {
-        registry = SimpleMeterRegistry()
+        registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
         cut = MicrometerMetrics(registry)
     }
 

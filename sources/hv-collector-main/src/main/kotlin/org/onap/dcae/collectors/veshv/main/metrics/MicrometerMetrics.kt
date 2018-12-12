@@ -17,39 +17,49 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.main.metrics
 
 import arrow.syntax.function.memoize
-import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.jmx.JmxConfig
-import io.micrometer.jmx.JmxMeterRegistry
+import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
+import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
+import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
+import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
+import io.micrometer.core.instrument.binder.system.ProcessorMetrics
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class MicrometerMetrics(
-        private val registry: MeterRegistry = JmxMeterRegistry(JmxConfig.DEFAULT, Clock.SYSTEM)
+class MicrometerMetrics internal constructor(
+        private val registry : PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 ) : Metrics {
 
-    private val receivedBytes = registry.counter("data.received.bytes")
-    private val receivedMsgCount = registry.counter("messages.received.count")
-    private val receivedMsgBytes = registry.counter("messages.received.bytes")
-    private val sentCountTotal = registry.counter("messages.sent.count")
+    private val receivedBytes = registry.counter("hvves.data.received.bytes")
+    private val receivedMsgCount = registry.counter("hvves.messages.received.count")
+    private val receivedMsgBytes = registry.counter("hvves.messages.received.bytes")
+    private val sentCountTotal = registry.counter("hvves.messages.sent.count")
 
     init {
-        registry.gauge("messages.processing.count", this) {
+        registry.gauge("hvves.messages.processing.count", this) {
             (receivedMsgCount.count() - sentCountTotal.count()).coerceAtLeast(0.0)
         }
+        ClassLoaderMetrics().bindTo(registry)
+        JvmMemoryMetrics().bindTo(registry)
+        JvmGcMetrics().bindTo(registry)
+        ProcessorMetrics().bindTo(registry)
+        JvmThreadMetrics().bindTo(registry)
     }
 
     private val sentCount = { topic: String ->
         registry.counter("messages.sent.count", "topic", topic)
     }.memoize<String, Counter>()
 
+    override val metricsProvider = MicrometerPrometheusMetricsProvider(registry)
 
     override fun notifyBytesReceived(size: Int) {
         receivedBytes.increment(size.toDouble())
@@ -63,5 +73,9 @@ class MicrometerMetrics(
     override fun notifyMessageSent(topic: String) {
         sentCountTotal.increment()
         sentCount(topic).increment()
+    }
+
+    companion object {
+        val INSTANCE = MicrometerMetrics()
     }
 }

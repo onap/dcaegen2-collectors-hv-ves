@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.healthcheck.api
 
 import org.onap.dcae.collectors.veshv.healthcheck.impl.HealthStateImpl
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>

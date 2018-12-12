@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
@@ -32,6 +33,7 @@ interface Metrics {
     fun notifyBytesReceived(size: Int)
     fun notifyMessageReceived(size: Int)
     fun notifyMessageSent(topic: String)
+    val metricsProvider: PrometheusMetricsProvider
 }
 
 @FunctionalInterface
