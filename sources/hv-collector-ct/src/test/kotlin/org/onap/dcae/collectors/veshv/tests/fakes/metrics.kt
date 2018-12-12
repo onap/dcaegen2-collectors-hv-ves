@@ -25,7 +25,7 @@ import org.onap.dcae.collectors.veshv.boundary.Metrics
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class FakeMetrics: Metrics {
+class FakeMetrics : Metrics {
     override fun notifyBytesReceived(size: Int) {
     }
 
