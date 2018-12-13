@@ -57,3 +57,7 @@ class CountingSink : Sink {
         }
     }
 }
+
+class NoOpSink : Sink {
+    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> = messages
+}
