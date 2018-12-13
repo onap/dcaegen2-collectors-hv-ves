@@ -20,18 +20,31 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
 class FakeMetrics : Metrics {
+    var bytesReceived: Int = 0
+
+    var messageBytesReceived: Int = 0
+
+    var messageSentCount: Int = 0
+    val messagesSentToTopic: MutableMap<String, AtomicInteger> = HashMap()
+
     override fun notifyBytesReceived(size: Int) {
+        bytesReceived += size
     }
 
     override fun notifyMessageReceived(size: Int) {
+        messageBytesReceived += size
     }
 
     override fun notifyMessageSent(topic: String) {
+        messageSentCount++
+        messagesSentToTopic.putIfAbsent(topic, AtomicInteger(0))
+        messagesSentToTopic.get(topic)!!.getAndIncrement()
     }
 }
