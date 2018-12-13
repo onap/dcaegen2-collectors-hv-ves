@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_e8b792f3",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-13T14:26:18Z",
+      "side": 1,
+      "message": "If these methods aren\u0027t meant to be used anywhere else, make them private. On the other hand if they are going to be used outside this class you can think about making them getters, since they are closely connected with clientCert and clientAddress fields.",
+      "revId": "3030145004fc5e11ad84238e278dbf4b7b5ee706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e8855207",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-13T14:26:18Z",
+      "side": 1,
+      "message": "Maybe val + get() would be a good idea? To be consistent with ServiceContext.mdc. You can consider also applying this to fullMdc",
+      "revId": "3030145004fc5e11ad84238e278dbf4b7b5ee706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
