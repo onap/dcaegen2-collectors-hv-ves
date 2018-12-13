@@ -19,27 +19,17 @@
  */
 package org.onap.dcae.collectors.veshv.utils.logging
 
-import org.slf4j.MarkerFactory
-import java.time.Instant
-import java.util.*
-
-sealed class Marker(internal val slf4jMarker: org.slf4j.Marker, val mdc: Map<String, String> = emptyMap()) {
-
-    object Entry : Marker(ENTRY)
-    object Exit : Marker(EXIT)
-
-    class Invoke(id: UUID = UUID.randomUUID(), timestamp: Instant = Instant.now()) : Marker(INVOKE, mdc(id, timestamp)) {
-        companion object {
-            private fun mdc(id: UUID, timestamp: Instant) = mapOf(
-                    OnapMdc.INVOCATION_ID to id.toString(),
-                    OnapMdc.INVOCATION_TIMESTAMP to timestamp.toString()
-            )
-        }
-    }
-
-    companion object {
-        private val ENTRY = MarkerFactory.getMarker("ENTRY")
-        private val EXIT = MarkerFactory.getMarker("EXIT")
-        private val INVOKE = MarkerFactory.getMarker("INVOKE")
-    }
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since December 2018
+ */
+object OnapMdc {
+    const val REQUEST_ID = "RequestID"
+    const val CLIENT_NAME = "PartnerName"
+    const val CLIENT_IP = "ClientIPAddress"
+    const val INVOCATION_ID = "InvocationID"
+    const val INVOCATION_TIMESTAMP = "InvokeTimestamp"
+    const val STATUS_CODE = "StatusCode"
+    const val INSTANCE_ID = "InstanceID"
+    const val SERVER_FQDN = "ServerFQDN"
 }

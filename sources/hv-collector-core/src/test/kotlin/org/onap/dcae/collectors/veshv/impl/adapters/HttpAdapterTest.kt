@@ -23,11 +23,13 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.impl.adapters.HttpAdapter.Companion.INVOCATION_ID_HEADER
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
 import reactor.netty.http.server.HttpServer
 import reactor.test.StepVerifier
 import reactor.test.test
+import java.util.*
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -42,6 +44,9 @@ internal object HttpAdapterTest : Spek({
                     routes.get("/url") { req, resp ->
                         resp.sendString(Mono.just(req.uri()))
                     }
+                    routes.get("/inv-id") { req, resp ->
+                        resp.sendString(Mono.just(req.requestHeaders()[INVOCATION_ID_HEADER]))
+                    }
                 }
                 .bindNow()
         val baseUrl = "http://${httpServer.host()}:${httpServer.port()}"
@@ -53,10 +58,17 @@ internal object HttpAdapterTest : Spek({
 
         given("url without query params") {
             val url = "/url"
+            val invocationId = UUID.randomUUID()
 
             it("should not append query string") {
-                httpAdapter.get(url).test()
+                httpAdapter.get(url, invocationId).test()
                         .expectNext(url)
+                        .verifyComplete()
+            }
+
+            it("should pass invocation id") {
+                httpAdapter.get("/inv-id", invocationId).test()
+                        .expectNext(invocationId.toString())
                         .verifyComplete()
             }
         }
@@ -64,20 +76,28 @@ internal object HttpAdapterTest : Spek({
         given("url with query params") {
             val queryParams = mapOf(Pair("p", "the-value"))
             val url = "/url"
+            val invocationId = UUID.randomUUID()
 
             it("should add them as query string to the url") {
-                httpAdapter.get(url, queryParams).test()
+                httpAdapter.get(url, invocationId, queryParams).test()
                         .expectNext("/url?p=the-value")
+                        .verifyComplete()
+            }
+
+            it("should pass invocation id") {
+                httpAdapter.get("/inv-id", invocationId, queryParams).test()
+                        .expectNext(invocationId.toString())
                         .verifyComplete()
             }
         }
 
         given("invalid url") {
             val invalidUrl = "/wtf"
+            val invocationId = UUID.randomUUID()
 
             it("should interrupt the flux") {
                 StepVerifier
-                        .create(httpAdapter.get(invalidUrl))
+                        .create(httpAdapter.get(invalidUrl, invocationId))
                         .verifyError()
             }
         }

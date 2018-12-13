@@ -27,21 +27,21 @@ import reactor.core.publisher.Flux
 
 @Suppress("TooManyFunctions")
 internal object ClientContextLogging {
-    fun Logger.withError(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withError(ctx::asMap, block)
-    fun Logger.withWarn(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withWarn(ctx::asMap, block)
-    fun Logger.withInfo(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withInfo(ctx::asMap, block)
-    fun Logger.withDebug(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withDebug(ctx::asMap, block)
-    fun Logger.withTrace(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withTrace(ctx::asMap, block)
+    fun Logger.withError(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withError(ctx::fullMdc, block)
+    fun Logger.withWarn(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withWarn(ctx::fullMdc, block)
+    fun Logger.withInfo(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withInfo(ctx::fullMdc, block)
+    fun Logger.withDebug(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withDebug(ctx::fullMdc, block)
+    fun Logger.withTrace(ctx: ClientContext, block: AtLevelLogger.() -> Unit) = withTrace(ctx::fullMdc, block)
 
-    fun Logger.error(ctx: ClientContext, message: () -> String) = error(ctx::asMap, message)
-    fun Logger.warn(ctx: ClientContext, message: () -> String) = warn(ctx::asMap, message)
-    fun Logger.info(ctx: ClientContext, message: () -> String) = info(ctx::asMap, message)
-    fun Logger.debug(ctx: ClientContext, message: () -> String) = debug(ctx::asMap, message)
-    fun Logger.trace(ctx: ClientContext, message: () -> String) = trace(ctx::asMap, message)
+    fun Logger.error(ctx: ClientContext, message: () -> String) = error(ctx::fullMdc, message)
+    fun Logger.warn(ctx: ClientContext, message: () -> String) = warn(ctx::fullMdc, message)
+    fun Logger.info(ctx: ClientContext, message: () -> String) = info(ctx::fullMdc, message)
+    fun Logger.debug(ctx: ClientContext, message: () -> String) = debug(ctx::fullMdc, message)
+    fun Logger.trace(ctx: ClientContext, message: () -> String) = trace(ctx::fullMdc, message)
 
     fun <T> Logger.handleReactiveStreamError(context: ClientContext, ex: Throwable,
                                              returnFlux: Flux<T> = Flux.empty()): Flux<T> {
-        return this.handleReactiveStreamError({ context.asMap() }, ex, returnFlux)
+        return this.handleReactiveStreamError({ context.fullMdc }, ex, returnFlux)
     }
 }
 
