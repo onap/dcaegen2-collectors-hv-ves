@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters
 
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -57,7 +58,7 @@ internal object ConsulConfigurationProviderTest : Spek({
             val consulConfigProvider = constructConsulConfigProvider(validUrl, httpAdapterMock, healthStateProvider)
 
             on("call to consul") {
-                whenever(httpAdapterMock.get(eq(validUrl), Mockito.anyMap()))
+                whenever(httpAdapterMock.get(eq(validUrl), any(), Mockito.anyMap()))
                         .thenReturn(Mono.just(constructConsulResponse()))
 
                 it("should use received configuration") {
@@ -97,7 +98,7 @@ internal object ConsulConfigurationProviderTest : Spek({
             )
 
             on("call to consul") {
-                whenever(httpAdapterMock.get(eq(invalidUrl), Mockito.anyMap()))
+                whenever(httpAdapterMock.get(eq(invalidUrl), any(), Mockito.anyMap()))
                         .thenReturn(Mono.error(RuntimeException("Test exception")))
 
                 it("should interrupt the flux") {
