@@ -477,4 +477,4 @@ style:
 HvVesCustomRules:
   active: true
   SuboptimalLoggerUsage:
-    active: true
+    active: false

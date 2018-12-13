@@ -19,10 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.getOrElse
 import io.netty.buffer.ByteBufAllocator
-import org.onap.dcae.collectors.veshv.utils.logging.AtLevelLogger
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import java.net.InetSocketAddress
+import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
+import java.net.InetAddress
+import java.security.cert.X509Certificate
 import java.util.*
 
 /**
@@ -31,13 +34,28 @@ import java.util.*
  */
 data class ClientContext(
         val alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT,
-        val clientId: String = UUID.randomUUID().toString(),
-        var clientAddress: InetSocketAddress? = null) {
-    fun asMap(): Map<String, String> {
-        val result = mutableMapOf("clientId" to clientId)
-        if (clientAddress != null) {
-            result["clientAddress"] = clientAddress.toString()
-        }
-        return result
+        var clientAddress: Option<InetAddress> = None,
+        var clientCert: Option<X509Certificate> = None,
+        val requestId: String = UUID.randomUUID().toString(), // Should be somehow propagated to DMAAP
+        val invocationId: String = UUID.randomUUID().toString()) {
+
+    val mdc: Map<String, String>
+        get() = mapOf(
+                OnapMdc.REQUEST_ID to requestId,
+                OnapMdc.INVOCATION_ID to invocationId,
+                OnapMdc.STATUS_CODE to DEFAULT_STATUS_CODE,
+                OnapMdc.CLIENT_NAME to clientDn().getOrElse { DEFAULT_VALUE },
+                OnapMdc.CLIENT_IP to clientIp().getOrElse { DEFAULT_VALUE }
+        )
+
+    val fullMdc: Map<String, String>
+        get() = mdc + ServiceContext.mdc
+
+    private fun clientDn(): Option<String> = clientCert.map { it.subjectX500Principal.toString() }
+    private fun clientIp(): Option<String> = clientAddress.map(InetAddress::getHostAddress)
+
+    companion object {
+        const val DEFAULT_STATUS_CODE = "INPROGRESS"
+        const val DEFAULT_VALUE = ""
     }
 }

@@ -127,6 +127,7 @@ abstract class AtLevelLogger {
     abstract fun log(message: String)
     abstract fun log(message: String, t: Throwable)
     abstract fun log(marker: Marker, message: String)
+
     open val enabled: Boolean
         get() = true
 
@@ -137,6 +138,19 @@ abstract class AtLevelLogger {
                 block()
             } finally {
                 MDC.clear()
+            }
+        }
+    }
+
+    protected fun withAdditionalMdc(mdc: Map<String, String>, block: () -> Unit) {
+        if (mdc.isEmpty()) {
+            block()
+        } else {
+            try {
+                mdc.forEach(MDC::put)
+                block()
+            } finally {
+                mdc.keys.forEach(MDC::remove)
             }
         }
     }
@@ -168,9 +182,10 @@ class ErrorLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
         logger.error(message, t)
     }
 
-    override fun log(marker: Marker, message: String) {
-        logger.error(marker(), message)
-    }
+    override fun log(marker: Marker, message: String) =
+            withAdditionalMdc(marker.mdc) {
+                logger.error(marker.slf4jMarker, message)
+            }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -183,9 +198,10 @@ class WarnLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
         logger.warn(message, t)
     }
 
-    override fun log(marker: Marker, message: String) {
-        logger.warn(marker(), message)
-    }
+    override fun log(marker: Marker, message: String) =
+            withAdditionalMdc(marker.mdc) {
+                logger.warn(marker.slf4jMarker, message)
+            }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -198,9 +214,10 @@ class InfoLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
         logger.info(message, t)
     }
 
-    override fun log(marker: Marker, message: String) {
-        logger.info(marker(), message)
-    }
+    override fun log(marker: Marker, message: String) =
+            withAdditionalMdc(marker.mdc) {
+                logger.info(marker.slf4jMarker, message)
+            }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -213,9 +230,10 @@ class DebugLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
         logger.debug(message, t)
     }
 
-    override fun log(marker: Marker, message: String) {
-        logger.debug(marker(), message)
-    }
+    override fun log(marker: Marker, message: String) =
+            withAdditionalMdc(marker.mdc) {
+                logger.debug(marker.slf4jMarker, message)
+            }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -228,7 +246,8 @@ class TraceLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
         logger.trace(message, t)
     }
 
-    override fun log(marker: Marker, message: String) {
-        logger.trace(marker(), message)
-    }
+    override fun log(marker: Marker, message: String) =
+            withAdditionalMdc(marker.mdc) {
+                logger.trace(marker.slf4jMarker, message)
+            }
 }

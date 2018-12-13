@@ -17,29 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.logging
+package org.onap.dcae.collectors.veshv.model
 
-import org.slf4j.MarkerFactory
-import java.time.Instant
+import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
+import java.net.InetAddress
+import java.net.UnknownHostException
 import java.util.*
 
-sealed class Marker(internal val slf4jMarker: org.slf4j.Marker, val mdc: Map<String, String> = emptyMap()) {
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since December 2018
+ */
+object ServiceContext {
+    val instanceId = UUID.randomUUID().toString()
+    val serverFqdn = getHost().hostName
 
-    object Entry : Marker(ENTRY)
-    object Exit : Marker(EXIT)
+    val mdc = mapOf(
+            OnapMdc.INSTANCE_ID to instanceId,
+            OnapMdc.SERVER_FQDN to serverFqdn
+    )
 
-    class Invoke(id: UUID = UUID.randomUUID(), timestamp: Instant = Instant.now()) : Marker(INVOKE, mdc(id, timestamp)) {
-        companion object {
-            private fun mdc(id: UUID, timestamp: Instant) = mapOf(
-                    OnapMdc.INVOCATION_ID to id.toString(),
-                    OnapMdc.INVOCATION_TIMESTAMP to timestamp.toString()
-            )
-        }
-    }
-
-    companion object {
-        private val ENTRY = MarkerFactory.getMarker("ENTRY")
-        private val EXIT = MarkerFactory.getMarker("EXIT")
-        private val INVOKE = MarkerFactory.getMarker("INVOKE")
+    private fun getHost() = try {
+        InetAddress.getLocalHost()
+    } catch (ex: UnknownHostException) {
+        InetAddress.getLoopbackAddress()
     }
 }
