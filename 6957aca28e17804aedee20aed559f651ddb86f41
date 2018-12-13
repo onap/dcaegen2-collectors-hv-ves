@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_542afa90",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-13T11:48:02Z",
+      "side": 1,
+      "message": "Maybe we could extend VersionMismatch constructor to accept regex and actual version- then we can change message to something like \"version mismatch, expected $regex, but was $actual\". This might be helpful in debugging",
+      "revId": "6957aca28e17804aedee20aed559f651ddb86f41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f433ee11",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/MessageValidator.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-13T11:48:02Z",
+      "side": 1,
+      "message": "Let\u0027s put evaluation inside Left-lambda\n\n```\n{ validationErrors: Nel\u003cValidationError\u003e -\u003e\n    Either.left {\n        \"Protocol buffers message is invalid, reasons:\" \n            + validationErrors.all.joinToString(prefix \u003d \"\\n-\") { it.errorMessage }\n    }\n}\n\n```\nI believe this does the same",
+      "revId": "6957aca28e17804aedee20aed559f651ddb86f41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7427feca",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-13T11:48:02Z",
+      "side": 1,
+      "message": "I think there is no need to wrap derivative classes inside  curly braces",
+      "revId": "6957aca28e17804aedee20aed559f651ddb86f41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_342df6a8",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-13T11:48:02Z",
+      "side": 1,
+      "message": "Maybe we should call it VersionMismatch? VersionMatch doesn\u0027t really sound like error :)",
+      "revId": "6957aca28e17804aedee20aed559f651ddb86f41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
