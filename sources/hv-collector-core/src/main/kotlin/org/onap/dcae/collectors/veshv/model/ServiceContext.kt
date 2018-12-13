@@ -19,38 +19,27 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.getOrElse
-import arrow.core.toOption
-import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
 import java.net.InetAddress
-import java.net.InetSocketAddress
-import java.security.cert.X509Certificate
+import java.net.UnknownHostException
 import java.util.*
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since December 2018
  */
-data class ClientContext(
-        val alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT,
-        var clientAddress: Option<InetAddress> = None,
-        var clientCert: Option<X509Certificate> = None,
-        val requestId: String = UUID.randomUUID().toString(), // Should be somehow propagated to DMAAP
-        val invocationId: String = UUID.randomUUID().toString()) {
+object ServiceContext {
+    val instanceId = UUID.randomUUID().toString()
+    val serverFqdn = getHost().hostName
 
-    fun clientDn(): Option<String> = clientCert.map { it.subjectX500Principal.toString() }
-    fun clientIp(): Option<String> = clientAddress.map(InetAddress::getHostAddress)
-
-    fun mdc(): Map<String, String> = mapOf(
-            OnapMdc.REQUEST_ID to requestId,
-            OnapMdc.INVOCATION_ID to invocationId,
-            OnapMdc.STATUS_CODE to "INPROGRESS",
-            OnapMdc.CLIENT_NAME to clientDn().getOrElse { "" },
-            OnapMdc.CLIENT_IP to clientIp().getOrElse { "" }
+    val mdc = mapOf(
+            OnapMdc.INSTANCE_ID to instanceId,
+            OnapMdc.SERVER_FQDN to serverFqdn
     )
 
-    fun fullMdc(): Map<String, String> = mdc() + ServiceContext.mdc
+    private fun getHost() = try {
+        InetAddress.getLocalHost()
+    } catch (ex: UnknownHostException) {
+        InetAddress.getLoopbackAddress()
+    }
 }
