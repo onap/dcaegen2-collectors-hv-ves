@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_f4b8cec9",
+        "filename": "sources/hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/factory/HealthCheckApiServer.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-13T07:05:43Z",
+      "side": 1,
+      "message": "Maybe `/monitoring/prometheus` would be clearer for clients?",
+      "revId": "8563f14ea67ab07d1a01d3c917db9917d923fc05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d4b34ae7",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-13T07:05:43Z",
+      "side": 1,
+      "message": "Let\u0027s extract `hvves` to const - if prometheus would become ONAP-standard, then we are likely to change it to `dcaegen2.collectors.hvves` or similar.\n\nOverall we could think of enumerating these strings - tests for this class would also benefit",
+      "revId": "8563f14ea67ab07d1a01d3c917db9917d923fc05",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
