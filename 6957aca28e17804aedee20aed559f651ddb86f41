@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_a8ae6ae4",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T12:57:10Z",
+      "side": 1,
+      "message": "There is no need, but it organizes code quite well. Depends on the client usage we want to achieve. Wrapping allows both `Outer.Inner()` and `Inner()` depending on imports.",
+      "parentUuid": "9adffdf1_7427feca",
+      "revId": "6957aca28e17804aedee20aed559f651ddb86f41",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_342df6a8",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/ValidationError.kt",
         "patchSetId": 4
