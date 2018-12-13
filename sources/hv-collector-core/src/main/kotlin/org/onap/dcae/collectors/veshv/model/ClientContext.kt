@@ -19,10 +19,12 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.getOrElse
 import io.netty.buffer.ByteBufAllocator
-import org.onap.dcae.collectors.veshv.utils.logging.AtLevelLogger
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.net.InetSocketAddress
+import java.security.cert.X509Certificate
 import java.util.*
 
 /**
@@ -31,13 +33,20 @@ import java.util.*
  */
 data class ClientContext(
         val alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT,
-        val clientId: String = UUID.randomUUID().toString(),
-        var clientAddress: InetSocketAddress? = null) {
-    fun asMap(): Map<String, String> {
-        val result = mutableMapOf("clientId" to clientId)
-        if (clientAddress != null) {
-            result["clientAddress"] = clientAddress.toString()
-        }
-        return result
-    }
+        var clientAddress: Option<InetSocketAddress> = None,
+        var clientCert: Option<X509Certificate> = None,
+        val requestId: String = UUID.randomUUID().toString(), // Should be somehow propagated to DMAAP
+        val invocationId: String = UUID.randomUUID().toString()) {
+
+    fun clientDn(): Option<String> = clientCert.map { it.subjectX500Principal.toString() }
+
+    fun mdc(): Map<String, String> = mapOf(
+            "RequestID" to requestId,
+            "InvocationID" to invocationId,
+            "PartnerName" to clientDn().getOrElse { "" },
+            "StatusCode" to "INPROGRESS",
+            "ClientIPAddress" to clientAddress.map { it.address.hostAddress }.getOrElse { "" }
+    )
+
+    fun fullMdc(): Map<String, String> = mdc() + ServiceContext.mdc
 }
