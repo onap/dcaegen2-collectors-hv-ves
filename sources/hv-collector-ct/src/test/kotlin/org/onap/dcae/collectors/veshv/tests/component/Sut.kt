@@ -28,11 +28,9 @@ import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
-import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
-import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthState
-import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
-import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
+import org.onap.dcae.collectors.veshv.tests.fakes.*
 import reactor.core.publisher.Flux
 import java.time.Duration
 
@@ -43,9 +41,9 @@ import java.time.Duration
 class Sut(sink: Sink = StoringSink()) {
     val configurationProvider = FakeConfigurationProvider()
     val healthStateProvider = FakeHealthState()
-
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
-    private val metrics = FakeMetrics()
+    val metrics = FakeMetrics()
+
     private val collectorFactory = CollectorFactory(
             configurationProvider,
             SinkProvider.just(sink),
@@ -55,15 +53,27 @@ class Sut(sink: Sink = StoringSink()) {
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
-        get() = collectorProvider(ClientContext(alloc)).getOrElse{ throw IllegalStateException("Collector not available.") }
+        get() = collectorProvider(ClientContext(alloc)).getOrElse {
+            throw IllegalStateException("Collector not available.")
+        }
 
     companion object {
         const val MAX_PAYLOAD_SIZE_BYTES = 1024
     }
-
 }
+
+private val timeout = Duration.ofSeconds(10)
 
 fun Sut.handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
-    collector.handleConnection(Flux.fromArray(packets)).block(Duration.ofSeconds(10))
+    collector.handleConnection(Flux.fromArray(packets)).block(timeout)
     return sink.sentMessages
 }
+
+fun Sut.handleConnection(vararg packets: ByteBuf) {
+    collector.handleConnection(Flux.fromArray(packets)).block(timeout)
+}
+
+fun vesHvWithNoOpSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+        Sut(NoOpSink()).apply {
+            configurationProvider.updateConfiguration(collectorConfiguration)
+        }

@@ -27,6 +27,7 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.RESERVED
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
+import org.onap.ves.VesEventOuterClass.VesEvent
 
 import java.util.UUID.randomUUID
 
@@ -42,11 +43,15 @@ private fun ByteBuf.writeValidWireFrameHeaders() {
 }
 
 fun vesWireFrameMessage(domain: VesEventDomain = OTHER,
-                        id: String = randomUUID().toString()): ByteBuf =
+                        id: String = randomUUID().toString(),
+                        eventFields: ByteString = ByteString.EMPTY): ByteBuf =
+        vesWireFrameMessage(vesEvent(domain, id, eventFields))
+
+fun vesWireFrameMessage(vesEvent: VesEvent) =
         allocator.buffer().run {
             writeValidWireFrameHeaders()
 
-            val gpb = vesEvent(domain, id).toByteString().asReadOnlyByteBuffer()
+            val gpb = vesEvent.toByteString().asReadOnlyByteBuffer()
             writeInt(gpb.limit())  // ves event size in bytes
             writeBytes(gpb)  // ves event as GPB bytes
         }
@@ -70,16 +75,9 @@ fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
 }
 
 fun vesMessageWithPayloadOfSize(payloadSizeBytes: Int, domain: VesEventDomain = PERF3GPP): ByteBuf =
-        allocator.buffer().run {
-            writeValidWireFrameHeaders()
-
-            val gpb = vesEvent(
-                    domain = domain,
-                    eventFields = ByteString.copyFrom(ByteArray(payloadSizeBytes))
-            ).toByteString().asReadOnlyByteBuffer()
-
-            writeInt(gpb.limit())  // ves event size in bytes
-            writeBytes(gpb)  // ves event as GPB bytes
-        }
+        vesWireFrameMessage(
+                domain = domain,
+                eventFields = ByteString.copyFrom(ByteArray(payloadSizeBytes))
+        )
 
 
