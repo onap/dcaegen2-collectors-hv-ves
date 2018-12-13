@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_c80deee9",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/MetricsSpecification.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T13:30:26Z",
+      "side": 1,
+      "message": "Maybe add optional argument for config to vesHvWithDummySink",
+      "range": {
+        "startLine": 86,
+        "startChar": 7,
+        "endLine": 87,
+        "endChar": 92
+      },
+      "revId": "6be42568dc26c9c821922c2eeccdf4044065cf4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_a8718a77",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/Sut.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T13:30:26Z",
+      "side": 1,
+      "message": "Extract constant for `Duration.ofSeconds(10)`",
+      "revId": "6be42568dc26c9c821922c2eeccdf4044065cf4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_686722b8",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/metrics.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T13:30:26Z",
+      "side": 1,
+      "message": "Map.computeIfAbsent ?\n\nAlso consider using ConcurrentHashMap\u003cString, Int\u003e instead of Map\u003cString, AtomicInteger\u003e as current implementation is not thread safe (probably ;) ).",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 58
+      },
+      "revId": "6be42568dc26c9c821922c2eeccdf4044065cf4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0808d6d8",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/sink.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T13:30:26Z",
+      "side": 1,
+      "message": "NoopSink?",
+      "revId": "6be42568dc26c9c821922c2eeccdf4044065cf4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
