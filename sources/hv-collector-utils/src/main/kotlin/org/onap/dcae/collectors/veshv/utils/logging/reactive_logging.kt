@@ -34,7 +34,6 @@ fun <T> Logger.handleReactiveStreamError(
     return returnFlux
 }
 
-
 fun <T> Try<T>.filterFailedWithLog(logger: Logger,
                                    context: MappedDiagnosticContext,
                                    acceptedMsg: (T) -> String,
