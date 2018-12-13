@@ -21,7 +21,7 @@ package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Option
 import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.model.ClientContextLogging.debug
+import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.debug
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.Routing
 import org.onap.dcae.collectors.veshv.model.VesMessage
