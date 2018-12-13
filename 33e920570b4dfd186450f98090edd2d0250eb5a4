@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_b4fc8673",
+        "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T07:56:38Z",
+      "side": 1,
+      "message": "Maybe we could use READABLE for console and ONAP for file for filebeat to collect it?",
+      "revId": "33e920570b4dfd186450f98090edd2d0250eb5a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
