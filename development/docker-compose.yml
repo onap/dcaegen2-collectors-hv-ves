@@ -94,6 +94,7 @@ services:
     command: ["--listen-port", "6062",
               "--ves-host", "ves-hv-collector",
               "--ves-port", "6061",
+              "--key-store", "/etc/ves-hv/client.p12",
               "--key-store-password", "onaponap",
               "--trust-store-password", "onaponap"]
     depends_on:
