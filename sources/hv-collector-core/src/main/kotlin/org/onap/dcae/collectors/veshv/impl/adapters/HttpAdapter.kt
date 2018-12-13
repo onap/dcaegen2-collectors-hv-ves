@@ -21,9 +21,11 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 
 import io.netty.handler.codec.http.HttpStatusClass
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
 import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
+import java.util.*
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -31,21 +33,23 @@ import reactor.netty.http.client.HttpClient
  */
 open class HttpAdapter(private val httpClient: HttpClient) {
 
-    open fun get(url: String, queryParams: Map<String, Any> = emptyMap()): Mono<String> = httpClient
-            .get()
-            .uri(url + createQueryString(queryParams))
-            .responseSingle { response, content ->
-                if (response.status().codeClass() == HttpStatusClass.SUCCESS)
-                    content.asString()
-                else {
-                    val errorMessage = "$url ${response.status().code()} ${response.status().reasonPhrase()}"
-                    Mono.error(IllegalStateException(errorMessage))
-                }
-            }
-            .doOnError {
-                logger.error { "Failed to get resource on path: $url (${it.localizedMessage})" }
-                logger.withDebug { log("Nested exception:", it) }
-            }
+    open fun get(url: String, invocationId: UUID, queryParams: Map<String, Any> = emptyMap()): Mono<String> =
+            httpClient
+                    .headers { it[INVOCATION_ID_HEADER] = invocationId.toString() }
+                    .get()
+                    .uri(url + createQueryString(queryParams))
+                    .responseSingle { response, content ->
+                        if (response.status().codeClass() == HttpStatusClass.SUCCESS)
+                            content.asString()
+                        else {
+                            val errorMessage = "$url ${response.status().code()} ${response.status().reasonPhrase()}"
+                            Mono.error(IllegalStateException(errorMessage))
+                        }
+                    }
+                    .doOnError {
+                        logger.error { "Failed to get resource on path: $url (${it.localizedMessage})" }
+                        logger.withDebug { log("Nested exception:", it) }
+                    }
 
     private fun createQueryString(params: Map<String, Any>): String {
         if (params.isEmpty())
@@ -65,8 +69,7 @@ open class HttpAdapter(private val httpClient: HttpClient) {
     }
 
     companion object {
-
-
         private val logger = Logger(HttpAdapter::class)
+        const val INVOCATION_ID_HEADER = "X-${OnapMdc.INVOCATION_ID}"
     }
 }
