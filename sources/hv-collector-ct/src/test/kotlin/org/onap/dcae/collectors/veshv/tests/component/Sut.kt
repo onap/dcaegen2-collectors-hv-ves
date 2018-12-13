@@ -45,7 +45,7 @@ class Sut(sink: Sink = StoringSink()) {
     val healthStateProvider = FakeHealthState()
 
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
-    private val metrics = FakeMetrics()
+    val metrics = FakeMetrics()
     private val collectorFactory = CollectorFactory(
             configurationProvider,
             SinkProvider.just(sink),
@@ -63,7 +63,14 @@ class Sut(sink: Sink = StoringSink()) {
 
 }
 
+private val tenSeconds = Duration.ofSeconds(10)
+
 fun Sut.handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
-    collector.handleConnection(Flux.fromArray(packets)).block(Duration.ofSeconds(10))
+
+    collector.handleConnection(Flux.fromArray(packets)).block(tenSeconds)
     return sink.sentMessages
+}
+
+fun Sut.handleConnection(vararg packets: ByteBuf) {
+    collector.handleConnection(Flux.fromArray(packets)).block(tenSeconds)
 }
