@@ -37,6 +37,23 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_6e740f68",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T12:57:10Z",
+      "side": 1,
+      "message": "Return Validated\u003cValidationError, CommonEventHeader\u003e, eg:\n\n```\n        private fun validateEventListenerVersion(header: CommonEventHeader):\n                Validated\u003cValidationError, CommonEventHeader\u003e \u003d\n            if (!vesEventListenerVersionRegex.matches(header.vesEventListenerVersion))\n                Validated.Invalid(ValidationError.VersionMatch())\n            else Validated.Valid(header)\n\n```",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_d9b703f4",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
         "patchSetId": 3
@@ -48,6 +65,23 @@
       "writtenOn": "2018-12-12T18:11:41Z",
       "side": 1,
       "message": "Just like with the \u0027validateEventListenerVersion\u0027",
+      "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_8e713378",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/HeaderValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-13T12:57:10Z",
+      "side": 1,
+      "message": "Return Validated\u003cValidationError, CommonEventHeader\u003e as above",
       "revId": "aaf8a7364f782609c7f28a8b12236aa6ce9f161d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
