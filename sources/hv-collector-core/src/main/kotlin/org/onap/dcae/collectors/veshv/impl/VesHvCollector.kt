@@ -74,7 +74,7 @@ internal class VesHvCollector(
 
     private fun decodePayload(rawPayload: ByteData): Flux<VesMessage> = protobufDecoder
             .decode(rawPayload)
-            .filterFailedWithLog(logger, clientContext::asMap,
+            .filterFailedWithLog(logger, clientContext::fullMdc,
                     { "Ves event header decoded successfully" },
                     { "Failed to decode ves event header, reason: ${it.message}" })
 
@@ -88,7 +88,7 @@ internal class VesHvCollector(
 
     private fun findRoute(msg: VesMessage) = router
             .findDestination(msg)
-            .filterEmptyWithLog(logger, clientContext::asMap,
+            .filterEmptyWithLog(logger, clientContext::fullMdc,
                     { "Found route for message: ${it.topic}, partition: ${it.partition}" },
                     { "Could not find route for message" })
 
@@ -96,7 +96,7 @@ internal class VesHvCollector(
             .also { logger.debug { "Released buffer memory after handling message stream" } }
 
     fun <T> Flux<T>.filterFailedWithLog(predicate: (T) -> Either<() -> String, () -> String>) =
-            filterFailedWithLog(logger, clientContext::asMap, predicate)
+            filterFailedWithLog(logger, clientContext::fullMdc, predicate)
 
     companion object {
         private val logger = Logger(VesHvCollector::class)
