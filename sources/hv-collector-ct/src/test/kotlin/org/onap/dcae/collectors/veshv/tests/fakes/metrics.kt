@@ -20,7 +20,11 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
+import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.fail
 
@@ -31,6 +35,7 @@ import kotlin.test.fail
 class FakeMetrics : Metrics {
     var bytesReceived: Int = 0
     var messageBytesReceived: Int = 0
+    var lastProcessingTimeMicros: Double = -1.0
     var messagesSentCount: Int = 0
     var messagesDroppedCount: Int = 0
 
@@ -41,13 +46,16 @@ class FakeMetrics : Metrics {
         bytesReceived += size
     }
 
-    override fun notifyMessageReceived(size: Int) {
-        messageBytesReceived += size
+    override fun notifyMessageReceived(msg: WireFrameMessage) {
+        messageBytesReceived += msg.payloadSize
     }
 
-    override fun notifyMessageSent(topic: String) {
+    override fun notifyMessageSent(msg: RoutedMessage) {
         messagesSentCount++
-        messagesSentToTopic.compute(topic) { k, _ -> messagesSentToTopic[k]?.inc() ?: 1 }
+        messagesSentToTopic.compute(msg.topic) { k, _ ->
+            messagesSentToTopic[k]?.inc() ?: 1
+        }
+        lastProcessingTimeMicros = Duration.between(msg.message.rawMessage.receivedAt, Instant.now()).toNanos() / 1000.0
     }
 
     override fun notifyMessageDropped(cause: MessageDropCause) {
