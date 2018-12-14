@@ -19,12 +19,15 @@
  */
 package org.onap.dcae.collectors.veshv.tests.fakes
 
+import arrow.core.identity
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicLong
+import java.util.function.Function
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -58,6 +61,9 @@ class CountingSink : Sink {
     }
 }
 
-class NoOpSink : Sink {
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> = messages
+
+open class ProcessingSink(val transformer: (Flux<RoutedMessage>) -> Publisher<RoutedMessage>) : Sink {
+    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> = messages.transform(transformer)
 }
+
+class NoOpSink : ProcessingSink(::identity)

@@ -22,6 +22,8 @@ package org.onap.dcae.collectors.veshv.domain
 import arrow.core.Either
 import arrow.core.Either.Companion.left
 import arrow.core.Either.Companion.right
+import java.time.Instant
+import java.time.temporal.Temporal
 
 
 /**
@@ -58,7 +60,8 @@ data class WireFrameMessage(val payload: ByteData,
                             val versionMajor: Short,
                             val versionMinor: Short,
                             val payloadType: Int,
-                            val payloadSize: Int
+                            val payloadSize: Int,
+                            val receivedAt: Temporal = Instant.now()
 ) {
     constructor(payload: ByteArray) : this(
             ByteData(payload),

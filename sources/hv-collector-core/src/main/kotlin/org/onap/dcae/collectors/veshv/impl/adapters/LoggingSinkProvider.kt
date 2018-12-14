@@ -47,7 +47,7 @@ internal class LoggingSinkProvider : SinkProvider {
 
             private fun logMessage(msg: RoutedMessage) {
                 val msgs = totalMessages.addAndGet(1)
-                val bytes = totalBytes.addAndGet(msg.message.rawMessage.size().toLong())
+                val bytes = totalBytes.addAndGet(msg.message.rawMessage.payloadSize.toLong())
                 val logMessageSupplier = { "Message routed to ${msg.topic}. Total = $msgs ($bytes B)" }
                 if (msgs % INFO_LOGGING_FREQ == 0L)
                     logger.info(ctx, logMessageSupplier)
