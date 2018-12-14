@@ -21,7 +21,7 @@
 <configuration>
     <property name="p_tim" value="%date{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;, UTC}"/>
     <property name="p_lvl" value="%highlight(%-5level)"/>
-    <property name="p_log" value="%50.50logger"/>WireFrameCodecsTest
+    <property name="p_log" value="%50.50logger"/>
     <property name="SIMPLE_LOG_PATTERN" value="
 %nopexception
 | ${p_tim}\t
