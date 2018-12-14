@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
-import arrow.core.Either
 import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Metrics
@@ -29,9 +28,13 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleReactiveStreamError
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.MessageEither
 import org.onap.dcae.collectors.veshv.utils.logging.filterEmptyWithLog
 import org.onap.dcae.collectors.veshv.utils.logging.filterFailedWithLog
 import reactor.core.publisher.Flux
@@ -41,6 +44,7 @@ import reactor.core.publisher.Mono
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
+@SuppressWarnings("TooManyFunctions")
 internal class VesHvCollector(
         private val clientContext: ClientContext,
         private val wireChunkDecoder: WireChunkDecoder,
@@ -66,7 +70,11 @@ internal class VesHvCollector(
             .doOnNext { metrics.notifyMessageReceived(it.payloadSize) }
 
     private fun filterInvalidWireFrame(flux: Flux<WireFrameMessage>): Flux<WireFrameMessage> = flux
-            .filterFailedWithLog(MessageValidator::validateFrameMessage)
+            .filterFailedWithLog {
+                MessageValidator
+                        .validateFrameMessage(it)
+                        .notifyMsgDroppedOnLeft(INVALID_MESSAGE)
+            }
 
     private fun decodeProtobufPayload(flux: Flux<WireFrameMessage>): Flux<VesMessage> = flux
             .map(WireFrameMessage::payload)
@@ -76,10 +84,17 @@ internal class VesHvCollector(
             .decode(rawPayload)
             .filterFailedWithLog(logger, clientContext::fullMdc,
                     { "Ves event header decoded successfully" },
-                    { "Failed to decode ves event header, reason: ${it.message}" })
+                    {
+                        metrics.notifyMessageDropped(INVALID_MESSAGE)
+                        "Failed to decode ves event header, reason: ${it.message}"
+                    })
 
     private fun filterInvalidProtobufMessages(flux: Flux<VesMessage>): Flux<VesMessage> = flux
-            .filterFailedWithLog(MessageValidator::validateProtobufMessage)
+            .filterFailedWithLog {
+                MessageValidator
+                        .validateProtobufMessage(it)
+                        .notifyMsgDroppedOnLeft(INVALID_MESSAGE)
+            }
 
     private fun routeMessage(flux: Flux<VesMessage>): Flux<RoutedMessage> = flux
             .flatMap(this::findRoute)
@@ -90,12 +105,18 @@ internal class VesHvCollector(
             .findDestination(msg)
             .filterEmptyWithLog(logger, clientContext::fullMdc,
                     { "Found route for message: ${it.topic}, partition: ${it.partition}" },
-                    { "Could not find route for message" })
+                    {
+                        metrics.notifyMessageDropped(ROUTE_NOT_FOUND)
+                        "Could not find route for message"
+                    })
+
+    private fun ValidationResult.notifyMsgDroppedOnLeft(cause: MessageDropCause): ValidationResult =
+            apply { if (isLeft()) metrics.notifyMessageDropped(cause) }
 
     private fun releaseBuffersMemory() = wireChunkDecoder.release()
             .also { logger.debug { "Released buffer memory after handling message stream" } }
 
-    fun <T> Flux<T>.filterFailedWithLog(predicate: (T) -> Either<() -> String, () -> String>) =
+    private fun <T> Flux<T>.filterFailedWithLog(predicate: (T) -> MessageEither): Flux<T> =
             filterFailedWithLog(logger, clientContext::fullMdc, predicate)
 
     companion object {
