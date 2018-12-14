@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_1e348c91",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/MetricsSpecification.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-14T09:51:19Z",
+      "side": 1,
+      "message": "approved",
+      "parentUuid": "9adffdf1_3e0150af",
+      "revId": "1f6d6630514b69248aee8b84a48e9cfbe0c5aadb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_de128408",
         "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/MetricsSpecification.kt",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-14T09:45:22Z",
       "side": 1,
       "message": "Its a good use for kotlin \u0027run\u0027 or \u0027let\u0027 extension methods",
+      "revId": "1f6d6630514b69248aee8b84a48e9cfbe0c5aadb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_be246060",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/MetricsSpecification.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-14T09:51:19Z",
+      "side": 1,
+      "message": "approved",
+      "parentUuid": "9adffdf1_de128408",
       "revId": "1f6d6630514b69248aee8b84a48e9cfbe0c5aadb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
