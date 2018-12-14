@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_be3f8086",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/Sut.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-14T09:00:42Z",
+      "side": 1,
+      "message": "LOL. Maybe timeout would be a better name?",
+      "revId": "1f6d6630514b69248aee8b84a48e9cfbe0c5aadb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
