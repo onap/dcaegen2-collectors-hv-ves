@@ -77,3 +77,8 @@ fun vesHvWithNoOpSink(collectorConfiguration: CollectorConfiguration = basicConf
         Sut(NoOpSink()).apply {
             configurationProvider.updateConfiguration(collectorConfiguration)
         }
+
+fun vesHvWithDelayingSink(delay: Duration, collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+        Sut(ProcessingSink { it.delayElements(delay) }).apply {
+            configurationProvider.updateConfiguration(collectorConfiguration)
+        }

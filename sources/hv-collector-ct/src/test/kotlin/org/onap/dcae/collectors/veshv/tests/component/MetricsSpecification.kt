@@ -33,7 +33,12 @@ import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TO
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
-import org.onap.dcae.collectors.veshv.tests.utils.*
+import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidListenerVersion
+import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHeader
+import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
+import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
+import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
+import java.time.Duration
 
 object MetricsSpecification : Spek({
     debugRx(false)
@@ -99,6 +104,21 @@ object MetricsSpecification : Spek({
             assertThat(metrics.messagesOnTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC))
                     .describedAs("messagesSentToTopic $MEASUREMENTS_FOR_VF_SCALING_TOPIC metric")
                     .isEqualTo(1)
+        }
+    }
+
+    describe("Processing time") {
+        it("should gather processing time metric") {
+            val delay = Duration.ofMillis(10)
+            val sut = vesHvWithDelayingSink(delay)
+
+            sut.handleConnection(vesWireFrameMessage(PERF3GPP))
+
+
+            val metrics = sut.metrics
+            assertThat(metrics.lastProcessingTimeMicros)
+                    .describedAs("processingTime metric")
+                    .isGreaterThanOrEqualTo(delay.toNanos().toDouble() / 1000.0)
         }
     }
 

@@ -111,3 +111,13 @@ services:
               "--kafka-topics", "HV_VES_PERF3GPP"]
     depends_on:
     - message-router-kafka
+
+  #
+  # Monitoring
+  #
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml

@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
@@ -31,8 +32,8 @@ interface Sink {
 
 interface Metrics {
     fun notifyBytesReceived(size: Int)
-    fun notifyMessageReceived(size: Int)
-    fun notifyMessageSent(topic: String)
+    fun notifyMessageReceived(msg: WireFrameMessage)
+    fun notifyMessageSent(msg: RoutedMessage)
     fun notifyMessageDropped(cause: MessageDropCause)
 }
 

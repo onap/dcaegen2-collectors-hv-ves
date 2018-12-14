@@ -23,7 +23,6 @@ import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Sink
-import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleReactiveStreamError
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
@@ -68,7 +67,7 @@ internal class VesHvCollector(
     private fun decodeWireFrame(flux: Flux<ByteBuf>): Flux<WireFrameMessage> = flux
             .doOnNext { metrics.notifyBytesReceived(it.readableBytes()) }
             .concatMap(wireChunkDecoder::decode)
-            .doOnNext { metrics.notifyMessageReceived(it.payloadSize) }
+            .doOnNext(metrics::notifyMessageReceived)
 
     private fun filterInvalidWireFrame(flux: Flux<WireFrameMessage>): Flux<WireFrameMessage> = flux
             .filterFailedWithLog {
@@ -78,15 +77,14 @@ internal class VesHvCollector(
             }
 
     private fun decodeProtobufPayload(flux: Flux<WireFrameMessage>): Flux<VesMessage> = flux
-            .map(WireFrameMessage::payload)
-            .flatMap(::decodePayload)
-
-    private fun decodePayload(rawPayload: ByteData): Flux<VesMessage> = protobufDecoder
-            .decode(rawPayload)
-            .doOnFailure { metrics.notifyMessageDropped(INVALID_MESSAGE) }
+            .flatMap { frame ->
+                protobufDecoder
+                        .decode(frame)
+                        .doOnFailure { metrics.notifyMessageDropped(INVALID_MESSAGE) }
             .filterFailedWithLog(logger, clientContext::fullMdc,
-                    { "Ves event header decoded successfully" },
-                    { "Failed to decode ves event header, reason: ${it.message}" })
+                                { "Ves event header decoded successfully" },
+                                { "Failed to decode ves event header, reason: ${it.message}" })
+            }
 
     private fun filterInvalidProtobufMessages(flux: Flux<VesMessage>): Flux<VesMessage> = flux
             .filterFailedWithLog {
@@ -98,7 +96,7 @@ internal class VesHvCollector(
     private fun routeMessage(flux: Flux<VesMessage>): Flux<RoutedMessage> = flux
             .flatMap(this::findRoute)
             .compose(sink::send)
-            .doOnNext { metrics.notifyMessageSent(it.topic) }
+            .doOnNext { metrics.notifyMessageSent(it) }
 
     private fun findRoute(msg: VesMessage) = router
             .findDestination(msg)
