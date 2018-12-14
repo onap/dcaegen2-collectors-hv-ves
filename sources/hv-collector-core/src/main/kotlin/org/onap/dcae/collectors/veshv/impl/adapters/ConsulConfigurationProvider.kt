@@ -30,6 +30,7 @@ import reactor.core.publisher.Mono
 import reactor.retry.Jitter
 import reactor.retry.Retry
 import java.io.StringReader
+import java.security.MessageDigest
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
 import javax.json.Json
@@ -48,8 +49,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                                            retrySpec: Retry<Any>
 
 ) : ConfigurationProvider {
-
-    private val lastConfigurationHash: AtomicReference<Int> = AtomicReference(0)
+    private val lastConfigurationHash: AtomicReference<ByteArray> = AtomicReference(byteArrayOf())
     private val retry = retrySpec
             .doOnRetry {
                 logger.withWarn { log("Could not get fresh configuration", it.exception()) }
@@ -80,18 +80,16 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
     private fun askForConfig(): Mono<String> = http.get(url)
 
     private fun filterDifferentValues(configurationString: String) =
-            hashOf(configurationString).let {
-                if (it == lastConfigurationHash.get()) {
+            configurationString.sha256().let { newHash ->
+                if (newHash contentEquals lastConfigurationHash.get()) {
                     logger.trace { "No change detected in consul configuration" }
                     Mono.empty()
                 } else {
                     logger.info { "Obtained new configuration from consul:\n${configurationString}" }
-                    lastConfigurationHash.set(it)
+                    lastConfigurationHash.set(newHash)
                     Mono.just(configurationString)
                 }
             }
-
-    private fun hashOf(str: String) = str.hashCode()
 
     private fun parseJsonResponse(responseString: String): JsonObject =
             Json.createReader(StringReader(responseString)).readObject()
@@ -118,6 +116,12 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
         private const val MAX_RETRIES = 5L
         private const val BACKOFF_INTERVAL_FACTOR = 30L
         private val logger = Logger(ConsulConfigurationProvider::class)
+
+        private fun String.sha256() =
+                MessageDigest
+                        .getInstance("SHA-256")
+                        .digest(toByteArray())
+
     }
 }
 
