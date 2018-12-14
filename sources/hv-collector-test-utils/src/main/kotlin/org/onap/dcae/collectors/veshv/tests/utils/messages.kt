@@ -23,12 +23,11 @@ import com.google.protobuf.ByteString
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.PooledByteBufAllocator
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.RESERVED_BYTE_COUNT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage.Companion.RESERVED_BYTE_COUNT
 import org.onap.ves.VesEventOuterClass.VesEvent
-
 import java.util.UUID.randomUUID
 
 
@@ -42,18 +41,36 @@ private fun ByteBuf.writeValidWireFrameHeaders() {
     writeShort(0x0001)       // content type = GPB
 }
 
+private fun ByteBuf.writeInvalidWireFrameHeaders() {
+    writeByte(0xAA)          // always 0xAA
+    writeByte(0x00)          // invalid major version
+    writeByte(0x00)          // minor version
+    writeZero(RESERVED_BYTE_COUNT)  // reserved
+    writeShort(0x0001)       // content type = GPB
+}
+
 fun vesWireFrameMessage(domain: VesEventDomain = OTHER,
                         id: String = randomUUID().toString(),
-                        eventFields: ByteString = ByteString.EMPTY): ByteBuf =
-        vesWireFrameMessage(vesEvent(domain, id, eventFields))
+                        eventFields: ByteString = ByteString.EMPTY,
+                        vesEventListenerVersion: String = "7.0.2"): ByteBuf =
+        vesWireFrameMessage(vesEvent(domain, id, eventFields, vesEventListenerVersion))
 
-fun vesWireFrameMessage(vesEvent: VesEvent) =
+fun vesWireFrameMessage(vesEvent: VesEvent): ByteBuf =
         allocator.buffer().run {
             writeValidWireFrameHeaders()
 
             val gpb = vesEvent.toByteString().asReadOnlyByteBuffer()
             writeInt(gpb.limit())  // ves event size in bytes
-            writeBytes(gpb)  // ves event as GPB bytes
+            writeBytes(gpb)   // ves event as GPB bytes
+        }
+
+fun invalidWireFrameMessage(vesEvent: VesEvent = vesEvent()): ByteBuf =
+        allocator.buffer().run {
+            writeInvalidWireFrameHeaders()
+
+            val gpb = vesEvent.toByteString().asReadOnlyByteBuffer()
+            writeInt(gpb.limit())  // ves event size in bytes
+            writeBytes(gpb)   // ves event as GPB bytes
         }
 
 fun wireFrameMessageWithInvalidPayload(): ByteBuf = allocator.buffer().run {
@@ -70,7 +87,7 @@ fun garbageFrame(): ByteBuf = allocator.buffer().run {
 
 fun invalidWireFrame(): ByteBuf = allocator.buffer().run {
     writeByte(0xAA)
-    writeByte(0x01)   // version major
+    writeByte(0x01)        // version major
     writeByte(0x01)   // version minor
 }
 
@@ -80,4 +97,4 @@ fun vesMessageWithPayloadOfSize(payloadSizeBytes: Int, domain: VesEventDomain = 
                 eventFields = ByteString.copyFrom(ByteArray(payloadSizeBytes))
         )
 
-
+fun invalidEventListenerVersion() = vesWireFrameMessage(vesEventListenerVersion = "invalid")
