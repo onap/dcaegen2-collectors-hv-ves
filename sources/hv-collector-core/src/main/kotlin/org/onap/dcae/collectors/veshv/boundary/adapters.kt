@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.boundary
 
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import reactor.core.publisher.Flux
 
@@ -32,6 +33,7 @@ interface Metrics {
     fun notifyBytesReceived(size: Int)
     fun notifyMessageReceived(size: Int)
     fun notifyMessageSent(topic: String)
+    fun notifyMessageDropped(dropCause: MessageDropCause)
 }
 
 @FunctionalInterface
