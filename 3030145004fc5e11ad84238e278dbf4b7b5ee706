@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_1e7c8c82",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-14T06:50:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_e8b792f3",
+      "revId": "3030145004fc5e11ad84238e278dbf4b7b5ee706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_e8855207",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-13T14:26:18Z",
       "side": 1,
       "message": "Maybe val + get() would be a good idea? To be consistent with ServiceContext.mdc. You can consider also applying this to fullMdc",
+      "revId": "3030145004fc5e11ad84238e278dbf4b7b5ee706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_be6c60d1",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-14T06:50:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_e8855207",
       "revId": "3030145004fc5e11ad84238e278dbf4b7b5ee706",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
