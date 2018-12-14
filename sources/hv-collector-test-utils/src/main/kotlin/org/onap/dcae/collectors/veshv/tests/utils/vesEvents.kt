@@ -23,8 +23,10 @@ package org.onap.dcae.collectors.veshv.tests.utils
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import org.onap.dcae.collectors.veshv.domain.ByteData
+import org.onap.dcae.collectors.veshv.domain.PayloadContentType
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.ves.VesEventOuterClass
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
@@ -67,7 +69,38 @@ fun commonHeader(domain: VesEventDomain = PERF3GPP,
                 .setVesEventListenerVersion(vesEventListenerVersion)
                 .build()
 
-fun vesEventBytes(commonHeader: CommonEventHeader, byteString: ByteString = ByteString.EMPTY): ByteData =
-        vesEvent(commonHeader, byteString).toByteData()
+fun emptyWireProtocolFrame(): WireFrameMessage = wireProtocolFrameWithPayloadSize(0)
+
+
+fun wireProtocolFrameWithPayloadSize(size: Int): WireFrameMessage = WireFrameMessage(
+        payload = ByteData(ByteArray(size)),
+        versionMajor = WireFrameMessage.SUPPORTED_VERSION_MAJOR,
+        versionMinor = WireFrameMessage.SUPPORTED_VERSION_MINOR,
+        payloadSize = size,
+        payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue
+)
+
+fun wireProtocolFrame(commonHeader: CommonEventHeader, eventFields: ByteString = ByteString.EMPTY): WireFrameMessage =
+        vesEventBytes(commonHeader, eventFields).let { payload ->
+            WireFrameMessage(
+                    payload = payload,
+                    versionMajor = WireFrameMessage.SUPPORTED_VERSION_MAJOR,
+                    versionMinor = WireFrameMessage.SUPPORTED_VERSION_MINOR,
+                    payloadSize = payload.size(),
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue
+            )
+        }
+
+fun wireProtocolFrame(evt: VesEventOuterClass.VesEvent) =
+        WireFrameMessage(
+                payload = ByteData(evt.toByteArray()),
+                payloadSize = evt.serializedSize,
+                payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                versionMajor = WireFrameMessage.SUPPORTED_VERSION_MAJOR,
+                versionMinor = WireFrameMessage.SUPPORTED_VERSION_MINOR
+        )
+
+fun vesEventBytes(commonHeader: CommonEventHeader, eventFields: ByteString = ByteString.EMPTY): ByteData =
+        vesEvent(commonHeader, eventFields).toByteData()
 
 fun MessageLite.toByteData(): ByteData = ByteData(toByteArray())

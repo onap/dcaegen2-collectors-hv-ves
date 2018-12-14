@@ -29,7 +29,8 @@ import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
-import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
+import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
+import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -42,16 +43,16 @@ internal object VesDecoderTest : Spek({
 
         on("ves hv message bytes") {
             val commonHeader = commonHeader(HEARTBEAT)
-            val rawMessageBytes = vesEventBytes(commonHeader, ByteString.copyFromUtf8("highvolume measurements"))
+            val wtpFrame = wireProtocolFrame(commonHeader, ByteString.copyFromUtf8("highvolume measurements"))
 
             it("should decode only header and pass it on along with raw message") {
                 val expectedMessage = VesMessage(
                         commonHeader,
-                        rawMessageBytes
+                        wtpFrame
                 )
 
                 assertTrue {
-                    cut.decode(rawMessageBytes).exists {
+                    cut.decode(wtpFrame).exists {
                         it == expectedMessage
                     }
                 }
@@ -60,9 +61,10 @@ internal object VesDecoderTest : Spek({
 
         on("invalid ves hv message bytes") {
             val rawMessageBytes = ByteData("ala ma kota".toByteArray(Charset.defaultCharset()))
+            val wtpFrame = emptyWireProtocolFrame().copy(payload = rawMessageBytes, payloadSize = rawMessageBytes.size())
 
             it("should throw error") {
-                assertFailedWithError(cut.decode(rawMessageBytes))
+                assertFailedWithError(cut.decode(wtpFrame))
             }
         }
     }

@@ -28,10 +28,12 @@ import org.onap.dcae.collectors.veshv.model.VesMessage
  */
 class VesMessageSerializer : Serializer<VesMessage> {
     override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {
+        // not needed
     }
 
-    override fun serialize(topic: String?, msg: VesMessage?): ByteArray? = msg?.rawMessage?.unsafeAsArray()
+    override fun serialize(topic: String?, msg: VesMessage?): ByteArray? = msg?.rawMessage?.payload?.unsafeAsArray()
 
     override fun close() {
+        // not needed
     }
 }

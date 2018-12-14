@@ -20,8 +20,9 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
+import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -39,12 +40,14 @@ class FakeMetrics : Metrics {
         bytesReceived += size
     }
 
-    override fun notifyMessageReceived(size: Int) {
-        messageBytesReceived += size
+    override fun notifyMessageReceived(msg: WireFrameMessage) {
+        messageBytesReceived += msg.payloadSize
     }
 
-    override fun notifyMessageSent(topic: String) {
+    override fun notifyMessageSent(msg: RoutedMessage) {
         messageSentCount++
-        messagesSentToTopic.compute(topic, { k, v -> messagesSentToTopic.get(k)?.inc() ?: 1 })
+        messagesSentToTopic.compute(msg.topic) { k, _ ->
+            messagesSentToTopic[k]?.inc() ?: 1
+        }
     }
 }
