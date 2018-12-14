@@ -29,7 +29,11 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
+import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import java.time.Duration
+import java.time.Instant
 
 
 /**
@@ -53,6 +57,7 @@ class MicrometerMetrics internal constructor(
     private val droppedCount = { cause: String ->
         registry.counter(name(MESSAGES, DROPPED, COUNT, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
+    private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
 
     init {
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
@@ -71,14 +76,15 @@ class MicrometerMetrics internal constructor(
         receivedBytes.increment(size.toDouble())
     }
 
-    override fun notifyMessageReceived(size: Int) {
+    override fun notifyMessageReceived(msg: WireFrameMessage) {
         receivedMsgCount.increment()
-        receivedMsgBytes.increment(size.toDouble())
+        receivedMsgBytes.increment(msg.payloadSize.toDouble())
     }
 
-    override fun notifyMessageSent(topic: String) {
+    override fun notifyMessageSent(msg: RoutedMessage) {
         sentCountTotal.increment()
-        sentCount(topic).increment()
+        sentCount(msg.topic).increment()
+        processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, Instant.now()))
     }
 
     override fun notifyMessageDropped(cause: MessageDropCause) {
@@ -100,7 +106,7 @@ class MicrometerMetrics internal constructor(
         internal const val DROPPED = "dropped"
         internal const val CAUSE = "cause"
         internal const val TOTAL = "total"
-
+        internal const val TIME = "time"
         fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
