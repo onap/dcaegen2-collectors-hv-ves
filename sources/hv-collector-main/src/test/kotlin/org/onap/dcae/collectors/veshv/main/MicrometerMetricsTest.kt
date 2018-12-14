@@ -23,7 +23,6 @@ import arrow.core.Try
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.search.RequiredSearch
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
@@ -32,9 +31,10 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics.Companion.PREFIX
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -88,8 +88,8 @@ object MicrometerMetricsTest : Spek({
                 val bytes = 128
                 cut.notifyBytesReceived(bytes)
 
-                verifyCounter(counterName) { counter ->
-                    assertThat(counter.count()).isCloseTo(bytes.toDouble(), doublePrecision)
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(bytes.toDouble(), doublePrecision)
                 }
             }
 
@@ -107,8 +107,8 @@ object MicrometerMetricsTest : Spek({
             it("should increment counter") {
                 cut.notifyMessageReceived(777)
 
-                verifyCounter(counterName) { counter ->
-                    assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
             }
         }
@@ -120,15 +120,18 @@ object MicrometerMetricsTest : Spek({
                 val bytes = 888
                 cut.notifyMessageReceived(bytes)
 
-                verifyCounter(counterName) { counter ->
-                    assertThat(counter.count()).isCloseTo(bytes.toDouble(), doublePrecision)
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(bytes.toDouble(), doublePrecision)
                 }
             }
         }
 
         it("should leave all other counters unchanged") {
             cut.notifyMessageReceived(128)
-            verifyAllCountersAreUnchangedBut("$PREFIX.messages.received.count", "$PREFIX.messages.received.bytes")
+            verifyAllCountersAreUnchangedBut(
+                    "$PREFIX.messages.received.count",
+                    "$PREFIX.messages.received.bytes"
+            )
         }
     }
 
@@ -136,32 +139,65 @@ object MicrometerMetricsTest : Spek({
         val topicName1 = "PERF3GPP"
         val topicName2 = "CALLTRACE"
 
-        on("$PREFIX.messages.sent.count counter") {
-            val counterName = "$PREFIX.messages.sent.count"
+        on("$PREFIX.messages.sent.count.total counter") {
+            val counterName = "$PREFIX.messages.sent.count.total"
 
             it("should increment counter") {
                 cut.notifyMessageSent(topicName1)
 
-                verifyCounter(counterName) { counter ->
-                    assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
-                verifyAllCountersAreUnchangedBut(counterName, "$PREFIX.messages.sent.topic.count")
+                verifyAllCountersAreUnchangedBut(counterName, "$PREFIX.messages.sent.count.topic")
             }
         }
 
         on("$PREFIX.messages.sent.topic.count counter") {
-            val counterName = "$PREFIX.messages.sent.topic.count"
+            val counterName = "$PREFIX.messages.sent.count.topic"
             it("should handle counters for different topics") {
                 cut.notifyMessageSent(topicName1)
                 cut.notifyMessageSent(topicName2)
                 cut.notifyMessageSent(topicName2)
 
-                verifyCounter(registrySearch().name(counterName).tag("topic", topicName1)) { counter ->
-                    assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
+                verifyCounter(registrySearch().name(counterName).tag("topic", topicName1)) {
+                    assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
 
-                verifyCounter(registrySearch().name(counterName).tag("topic", topicName2)) { counter ->
-                    assertThat(counter.count()).isCloseTo(2.0, doublePrecision)
+                verifyCounter(registrySearch().name(counterName).tag("topic", topicName2)) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+            }
+        }
+    }
+
+    describe("notifyMessageDropped") {
+
+        on("$PREFIX.messages.dropped.count.total counter") {
+            val counterName = "$PREFIX.messages.dropped.count.total"
+            it("should increment counter") {
+                cut.notifyMessageDropped(ROUTE_NOT_FOUND)
+                cut.notifyMessageDropped(INVALID_MESSAGE)
+
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+                verifyAllCountersAreUnchangedBut(counterName, "$PREFIX.messages.dropped.count.cause")
+            }
+        }
+
+        on("$PREFIX.messages.dropped.count.cause counter") {
+            val counterName = "$PREFIX.messages.dropped.count.cause"
+            it("should handle counters for different drop reasons") {
+                cut.notifyMessageDropped(ROUTE_NOT_FOUND)
+                cut.notifyMessageDropped(INVALID_MESSAGE)
+                cut.notifyMessageDropped(INVALID_MESSAGE)
+
+                verifyCounter(registrySearch().name(counterName).tag("cause", ROUTE_NOT_FOUND.tag)) {
+                    assertThat(it.count()).isCloseTo(1.0, doublePrecision)
+                }
+
+                verifyCounter(registrySearch().name(counterName).tag("cause", INVALID_MESSAGE.tag)) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
             }
         }
@@ -175,16 +211,16 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageReceived(256)
                 cut.notifyMessageReceived(256)
                 cut.notifyMessageSent("perf3gpp")
-                verifyGauge("messages.processing.count") { gauge ->
-                    assertThat(gauge.value()).isCloseTo(2.0, doublePrecision)
+                verifyGauge("messages.processing.count") {
+                    assertThat(it.value()).isCloseTo(2.0, doublePrecision)
                 }
             }
 
             on("zero difference") {
                 cut.notifyMessageReceived(128)
                 cut.notifyMessageSent("perf3gpp")
-                verifyGauge("messages.processing.count") { gauge ->
-                    assertThat(gauge.value()).isCloseTo(0.0, doublePrecision)
+                verifyGauge("messages.processing.count") {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
 
@@ -192,8 +228,8 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageReceived(128)
                 cut.notifyMessageSent("fault")
                 cut.notifyMessageSent("perf3gpp")
-                verifyGauge("messages.processing.count") { gauge ->
-                    assertThat(gauge.value()).isCloseTo(0.0, doublePrecision)
+                verifyGauge("messages.processing.count") {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
         }

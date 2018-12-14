@@ -37,11 +37,7 @@ import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithDifferentRouting
 import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithoutRouting
 import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
-import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
-import org.onap.dcae.collectors.veshv.tests.utils.invalidWireFrame
-import org.onap.dcae.collectors.veshv.tests.utils.vesMessageWithPayloadOfSize
-import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
-import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
+import org.onap.dcae.collectors.veshv.tests.utils.*
 
 import reactor.core.publisher.Flux
 import java.time.Duration
@@ -71,8 +67,8 @@ object VesHvSpecification : Spek({
         it("should release memory for each handled and dropped message") {
             val (sut, sink) = vesHvWithStoringSink()
             val validMessage = vesWireFrameMessage(PERF3GPP)
-            val msgWithInvalidFrame = invalidWireFrame()
-            val msgWithTooBigPayload = vesMessageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP)
+            val msgWithInvalidFrame = messageWithInvalidWireFrameHeader()
+            val msgWithTooBigPayload = messageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP)
             val expectedRefCnt = 0
 
             val handledEvents = sut.handleConnection(
@@ -329,7 +325,7 @@ object VesHvSpecification : Spek({
 
             val handledMessages = sut.handleConnection(sink,
                     vesWireFrameMessage(PERF3GPP, "first"),
-                    vesMessageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP),
+                    messageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP),
                     vesWireFrameMessage(PERF3GPP))
 
             assertThat(handledMessages).hasSize(1)

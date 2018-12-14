@@ -25,6 +25,8 @@ import arrow.core.Try
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+typealias MessageEither = Either<() -> String, () -> String>
+
 fun <T> Logger.handleReactiveStreamError(
         context: MappedDiagnosticContext,
         ex: Throwable,
@@ -60,7 +62,7 @@ fun <T> Option<T>.filterEmptyWithLog(logger: Logger,
 
 fun <T> Flux<T>.filterFailedWithLog(logger: Logger,
                                     context: MappedDiagnosticContext,
-                                    predicate: (T) -> Either<() -> String, () -> String>) =
+                                    predicate: (T) -> MessageEither): Flux<T> =
         flatMap { t ->
             predicate(t).fold({
                 logger.warn(context, it)
