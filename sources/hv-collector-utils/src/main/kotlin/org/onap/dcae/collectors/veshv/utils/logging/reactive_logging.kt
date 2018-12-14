@@ -25,6 +25,8 @@ import arrow.core.Try
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+typealias MessageEither = Either<() -> String, () -> String>
+
 fun <T> Logger.handleReactiveStreamError(
         context: MappedDiagnosticContext,
         ex: Throwable,

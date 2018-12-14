@@ -32,8 +32,12 @@ import java.util.UUID.randomUUID
 
 fun vesEvent(domain: VesEventDomain = PERF3GPP,
              id: String = randomUUID().toString(),
-             eventFields: ByteString = ByteString.EMPTY
-): VesEventOuterClass.VesEvent = vesEvent(commonHeader(domain, id), eventFields)
+             eventFields: ByteString = ByteString.EMPTY,
+             vesEventListenerVersion: String = "7.0.2"
+): VesEventOuterClass.VesEvent = vesEvent(
+        commonHeader(domain, id, vesEventListenerVersion),
+        eventFields
+)
 
 fun vesEvent(commonEventHeader: CommonEventHeader,
              eventFields: ByteString = ByteString.EMPTY): VesEventOuterClass.VesEvent =
@@ -44,8 +48,9 @@ fun vesEvent(commonEventHeader: CommonEventHeader,
 
 fun commonHeader(domain: VesEventDomain = PERF3GPP,
                  id: String = randomUUID().toString(),
-                 priority: Priority = Priority.NORMAL,
-                 vesEventListenerVersion: String = "7.0.2"): CommonEventHeader =
+                 vesEventListenerVersion: String = "7.0.2",
+                 priority: Priority = Priority.NORMAL
+): CommonEventHeader =
         CommonEventHeader.newBuilder()
                 .setVersion("sample-version")
                 .setDomain(domain.domainName)

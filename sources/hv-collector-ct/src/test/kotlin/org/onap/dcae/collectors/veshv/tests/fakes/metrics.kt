@@ -20,8 +20,9 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
+import kotlin.test.fail
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -29,11 +30,12 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class FakeMetrics : Metrics {
     var bytesReceived: Int = 0
-
     var messageBytesReceived: Int = 0
+    var messagesSentCount: Int = 0
+    var messagesDroppedCount: Int = 0
 
-    var messageSentCount: Int = 0
-    val messagesSentToTopic: MutableMap<String, Int> = ConcurrentHashMap()
+    private val messagesSentToTopic: MutableMap<String, Int> = ConcurrentHashMap()
+    private val messagesDroppedCause: MutableMap<MessageDropCause, Int> = ConcurrentHashMap()
 
     override fun notifyBytesReceived(size: Int) {
         bytesReceived += size
@@ -44,7 +46,19 @@ class FakeMetrics : Metrics {
     }
 
     override fun notifyMessageSent(topic: String) {
-        messageSentCount++
-        messagesSentToTopic.compute(topic, { k, v -> messagesSentToTopic.get(k)?.inc() ?: 1 })
+        messagesSentCount++
+        messagesSentToTopic.compute(topic) { k, _ -> messagesSentToTopic[k]?.inc() ?: 1 }
     }
+
+    override fun notifyMessageDropped(dropCause: MessageDropCause) {
+        messagesDroppedCount++
+        messagesDroppedCause.compute(dropCause) { k, _ -> messagesDroppedCause[k]?.inc() ?: 1 }
+    }
+
+    fun messagesOnTopic(topic: String) =
+            messagesSentToTopic[topic] ?: fail("No messages were sent to topic $topic")
+
+    fun messagesDropped(cause: MessageDropCause) =
+            messagesDroppedCause[cause]
+                    ?: fail("No messages were dropped due to cause: ${cause.name}")
 }

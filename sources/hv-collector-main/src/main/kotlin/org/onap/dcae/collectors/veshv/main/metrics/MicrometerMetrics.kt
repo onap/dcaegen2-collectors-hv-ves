@@ -29,6 +29,7 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
 
 
 /**
@@ -43,6 +44,7 @@ class MicrometerMetrics internal constructor(
     private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED, COUNT))
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
     private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT))
+    private val droppedCountTotal = registry.counter(MESSAGES, DROPPED, COUNT)
 
     init {
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
@@ -56,7 +58,11 @@ class MicrometerMetrics internal constructor(
     }
 
     private val sentCount = { topic: String ->
-        registry.counter("hvves.messages.sent.topic.count", "topic", topic)
+        registry.counter(name(MESSAGES, SENT, COUNT), TOPIC, topic)
+    }.memoize<String, Counter>()
+
+    private val droppedCount = { cause: String ->
+        registry.counter(name(MESSAGES, DROPPED, COUNT), REASON, cause)
     }.memoize<String, Counter>()
 
     val metricsProvider = MicrometerPrometheusMetricsProvider(registry)
@@ -75,6 +81,11 @@ class MicrometerMetrics internal constructor(
         sentCount(topic).increment()
     }
 
+    override fun notifyMessageDropped(dropCause: MessageDropCause) {
+        droppedCountTotal.increment()
+        droppedCount(dropCause.tag).increment()
+    }
+
     companion object {
         val INSTANCE = MicrometerMetrics()
         internal const val PREFIX = "hvves"
@@ -85,6 +96,10 @@ class MicrometerMetrics internal constructor(
         internal const val DATA = "data"
         internal const val SENT = "sent"
         internal const val PROCESSING = "processing"
+        internal const val TOPIC = "topic"
+        internal const val DROPPED = "dropped"
+        internal const val REASON = "reason"
+
         fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
