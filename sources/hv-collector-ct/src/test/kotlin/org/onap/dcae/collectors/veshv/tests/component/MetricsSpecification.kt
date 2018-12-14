@@ -25,18 +25,15 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
-import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
-import org.onap.dcae.collectors.veshv.tests.fakes.NoOpSink
-import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
-import org.onap.dcae.collectors.veshv.tests.utils.invalidWireFrame
-import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
-import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
-import kotlin.test.fail
+import org.onap.dcae.collectors.veshv.tests.utils.*
 
 object MetricsSpecification : Spek({
     debugRx(false)
@@ -93,18 +90,62 @@ object MetricsSpecification : Spek({
             )
 
             val metrics = sut.metrics
-            assertThat(metrics.messageSentCount)
-                    .describedAs("messageSentCount metric")
+            assertThat(metrics.messagesSentCount)
+                    .describedAs("messagesSentCount metric")
                     .isEqualTo(3)
-            assertThat(messagesOnTopic(metrics, PERF3GPP_TOPIC))
+            assertThat(metrics.messagesOnTopic(PERF3GPP_TOPIC))
                     .describedAs("messagesSentToTopic $PERF3GPP_TOPIC metric")
                     .isEqualTo(2)
-            assertThat(messagesOnTopic(metrics, MEASUREMENTS_FOR_VF_SCALING_TOPIC))
+            assertThat(metrics.messagesOnTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC))
                     .describedAs("messagesSentToTopic $MEASUREMENTS_FOR_VF_SCALING_TOPIC metric")
                     .isEqualTo(1)
         }
     }
-})
 
-private fun messagesOnTopic(metrics: FakeMetrics, topic: String) =
-        metrics.messagesSentToTopic.get(topic) ?: fail("No messages were sent to topic $topic")
+    describe("Messages dropped metrics") {
+        it("should gather metrics for invalid messages") {
+            val sut = vesHvWithNoOpSink(basicConfiguration)
+
+            sut.handleConnection(
+                    invalidWireFrameMessage(),
+                    wireFrameMessageWithInvalidPayload(),
+                    vesWireFrameMessage(domain = PERF3GPP),
+                    invalidEventListenerVersion()
+            )
+
+            val metrics = sut.metrics
+            assertThat(metrics.messagesDropped(INVALID_MESSAGE))
+                    .describedAs("messagesDroppedCause $INVALID_MESSAGE metric")
+                    .isEqualTo(3)
+        }
+
+        it("should gather metrics for route not found") {
+            val sut = vesHvWithNoOpSink(basicConfiguration)
+
+            sut.handleConnection(
+                    vesWireFrameMessage(domain = PERF3GPP),
+                    vesWireFrameMessage(domain = HEARTBEAT)
+            )
+
+            val metrics = sut.metrics
+            assertThat(metrics.messagesDropped(ROUTE_NOT_FOUND))
+                    .describedAs("messagesDroppedCause $ROUTE_NOT_FOUND metric")
+                    .isEqualTo(1)
+        }
+
+        it("should gather summed metrics for dropped messages"){
+            val sut = vesHvWithNoOpSink(basicConfiguration)
+
+            sut.handleConnection(
+                    vesWireFrameMessage(domain = PERF3GPP),
+                    vesWireFrameMessage(domain = HEARTBEAT),
+                    wireFrameMessageWithInvalidPayload()
+            )
+
+            val metrics = sut.metrics
+            assertThat(metrics.messagesDroppedCount)
+                    .describedAs("messagesDroppedCount metric")
+                    .isEqualTo(2)
+        }
+    }
+})

@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
 import arrow.core.Option
+import arrow.core.Try
 import arrow.core.identity
 import arrow.syntax.collections.firstOption
 import java.util.concurrent.atomic.AtomicReference
@@ -45,3 +46,10 @@ fun <A> Option.Companion.fromNullablesChain(firstValue: A?, vararg nextValues: (
                 .map { it() }
                 .filter { it != null }
                 .firstOption()
+
+
+fun <A, B> Either<A, B>.doOnLeft(action: () -> Unit): Either<A, B> = apply { if (isLeft()) action() }
+
+fun <A> Option<A>.doOnEmpty(action: () -> Unit): Option<A> = apply { if (isEmpty()) action() }
+
+fun <A> Try<A>.doOnFailure(action: () -> Unit): Try<A> = apply { if (isFailure()) action() }
