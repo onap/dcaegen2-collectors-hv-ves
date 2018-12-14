@@ -19,11 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
-import org.onap.dcae.collectors.veshv.domain.ByteData
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class VesMessage(val header: CommonEventHeader, val rawMessage: ByteData)
+data class VesMessage(val header: CommonEventHeader, val rawMessage: WireFrameMessage)

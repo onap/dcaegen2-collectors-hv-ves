@@ -29,7 +29,8 @@ import org.jetbrains.spek.api.dsl.*
 import org.onap.dcae.collectors.veshv.domain.*
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
-import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
+import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
+import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -43,7 +44,7 @@ internal object MessageValidatorTest : Spek({
             val commonHeader = commonHeader()
 
             it("should accept message with fully initialized message header") {
-                val vesMessage = VesMessage(commonHeader, vesEventBytes(commonHeader))
+                val vesMessage = VesMessage(commonHeader, wireProtocolFrame(commonHeader))
                 with(cut) {
                     assertThat(validateProtobufMessage(vesMessage).isRight())
                         .describedAs("message validation result").isTrue()
@@ -53,7 +54,7 @@ internal object MessageValidatorTest : Spek({
             VesEventDomain.values().forEach { domain ->
                 it("should accept message with $domain domain") {
                     val header = commonHeader(domain)
-                    val vesMessage = VesMessage(header, vesEventBytes(header))
+                    val vesMessage = VesMessage(header, wireProtocolFrame(header))
                     with(cut) {
                         assertThat(validateProtobufMessage(vesMessage).isRight())
                             .describedAs("message validation result").isTrue()
@@ -63,7 +64,7 @@ internal object MessageValidatorTest : Spek({
         }
 
         on("ves hv message bytes") {
-            val vesMessage = VesMessage(getDefaultInstance(), ByteData.EMPTY)
+            val vesMessage = VesMessage(getDefaultInstance(), emptyWireProtocolFrame())
             it("should not accept message with default header") {
 
                 with(cut) {
@@ -100,7 +101,7 @@ internal object MessageValidatorTest : Spek({
             ).forEach { value, expectedResult ->
                 on("ves hv message including header with priority $value") {
                     val commonEventHeader = commonHeader(priority = value)
-                    val vesMessage = VesMessage(commonEventHeader, vesEventBytes(commonEventHeader))
+                    val vesMessage = VesMessage(commonEventHeader, wireProtocolFrame(commonEventHeader))
 
                     it("should resolve validation result") {
                         with(cut) {
@@ -121,7 +122,7 @@ internal object MessageValidatorTest : Spek({
                 .setEventId("Sample event Id")
                 .setSourceName("Sample Source")
                 .build()
-            val rawMessageBytes = vesEventBytes(commonHeader)
+            val rawMessageBytes = wireProtocolFrame(commonHeader)
 
             it("should not accept not fully initialized message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
@@ -148,7 +149,7 @@ internal object MessageValidatorTest : Spek({
 
         on("ves hv message including header.vesEventListenerVersion with non-string major part") {
             val commonHeader = commonHeader(vesEventListenerVersion = "sample-version")
-            val rawMessageBytes = vesEventBytes(commonHeader)
+            val rawMessageBytes = wireProtocolFrame(commonHeader)
 
 
             it("should not accept message header") {
@@ -169,7 +170,7 @@ internal object MessageValidatorTest : Spek({
 
         on("ves hv message including header.vesEventListenerVersion with major part != 7") {
             val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
-            val rawMessageBytes = vesEventBytes(commonHeader)
+            val rawMessageBytes = wireProtocolFrame(commonHeader)
 
             it("should not accept message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
@@ -190,7 +191,7 @@ internal object MessageValidatorTest : Spek({
 
         on("ves hv message including header.vesEventListenerVersion with minor part not starting with a digit") {
             val commonHeader = commonHeader(vesEventListenerVersion = "7.test")
-            val rawMessageBytes = vesEventBytes(commonHeader)
+            val rawMessageBytes = wireProtocolFrame(commonHeader)
 
             it("should not accept message header") {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
@@ -237,7 +238,7 @@ internal object MessageValidatorTest : Spek({
                 with(cut) {
                     on("valid message as input") {
                         val commonHeader = commonHeader()
-                        val rawMessageBytes = vesEventBytes(commonHeader)
+                        val rawMessageBytes = wireProtocolFrame(commonHeader)
                         val vesMessage = VesMessage(commonHeader, rawMessageBytes)
 
                         it("should be right") {
@@ -247,7 +248,7 @@ internal object MessageValidatorTest : Spek({
                 }
                 on("invalid message as input") {
                     val commonHeader = newBuilder().build()
-                    val rawMessageBytes = vesEventBytes(commonHeader)
+                    val rawMessageBytes = wireProtocolFrame(commonHeader)
                     val vesMessage = VesMessage(commonHeader, rawMessageBytes)
 
                     it("should be left") {

@@ -22,8 +22,8 @@ package org.onap.dcae.collectors.veshv.main
 import arrow.core.Try
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
+import io.micrometer.core.instrument.Timer
 import io.micrometer.core.instrument.search.RequiredSearch
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
@@ -32,9 +32,17 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics.Companion.PREFIX
+import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
+import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
+import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
+import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrameWithPayloadSize
+import java.time.Instant
+import java.time.temporal.Temporal
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -62,6 +70,9 @@ object MicrometerMetricsTest : Spek({
 
     fun <T> verifyGauge(name: String, verifier: (Gauge) -> T) =
             verifyMeter(registrySearch().name(name), RequiredSearch::gauge, verifier)
+
+    fun <T> verifyTimer(name: String, verifier: (Timer) -> T) =
+            verifyMeter(registrySearch().name(name), RequiredSearch::timer, verifier)
 
     fun <T> verifyCounter(search: RequiredSearch, verifier: (Counter) -> T) =
             verifyMeter(search, RequiredSearch::counter, verifier)
@@ -105,7 +116,7 @@ object MicrometerMetricsTest : Spek({
             val counterName = "$PREFIX.messages.received.count"
 
             it("should increment counter") {
-                cut.notifyMessageReceived(777)
+                cut.notifyMessageReceived(emptyWireProtocolFrame())
 
                 verifyCounter(counterName) { counter ->
                     assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
@@ -118,7 +129,7 @@ object MicrometerMetricsTest : Spek({
 
             it("should increment counter") {
                 val bytes = 888
-                cut.notifyMessageReceived(bytes)
+                cut.notifyMessageReceived(emptyWireProtocolFrame().copy(payloadSize = bytes))
 
                 verifyCounter(counterName) { counter ->
                     assertThat(counter.count()).isCloseTo(bytes.toDouble(), doublePrecision)
@@ -127,7 +138,7 @@ object MicrometerMetricsTest : Spek({
         }
 
         it("should leave all other counters unchanged") {
-            cut.notifyMessageReceived(128)
+            cut.notifyMessageReceived(emptyWireProtocolFrame().copy(payloadSize = 128))
             verifyAllCountersAreUnchangedBut("$PREFIX.messages.received.count", "$PREFIX.messages.received.bytes")
         }
     }
@@ -140,7 +151,7 @@ object MicrometerMetricsTest : Spek({
             val counterName = "$PREFIX.messages.sent.count"
 
             it("should increment counter") {
-                cut.notifyMessageSent(topicName1)
+                cut.notifyMessageSent(routedMessage(topicName1))
 
                 verifyCounter(counterName) { counter ->
                     assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
@@ -152,9 +163,9 @@ object MicrometerMetricsTest : Spek({
         on("$PREFIX.messages.sent.topic.count counter") {
             val counterName = "$PREFIX.messages.sent.topic.count"
             it("should handle counters for different topics") {
-                cut.notifyMessageSent(topicName1)
-                cut.notifyMessageSent(topicName2)
-                cut.notifyMessageSent(topicName2)
+                cut.notifyMessageSent(routedMessage(topicName1))
+                cut.notifyMessageSent(routedMessage(topicName2))
+                cut.notifyMessageSent(routedMessage(topicName2))
 
                 verifyCounter(registrySearch().name(counterName).tag("topic", topicName1)) { counter ->
                     assertThat(counter.count()).isCloseTo(1.0, doublePrecision)
@@ -165,33 +176,51 @@ object MicrometerMetricsTest : Spek({
                 }
             }
         }
+
+        on("$PREFIX.messages.processing.time") {
+            val counterName = "$PREFIX.messages.processing.time"
+            val processingTimeMs = 100L
+
+            it("should update timer") {
+
+                cut.notifyMessageSent(routedMessage(topicName1, Instant.now().minusMillis(processingTimeMs)))
+
+                verifyTimer(counterName) { timer ->
+                    assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
+                }
+                verifyAllCountersAreUnchangedBut(
+                        counterName,
+                        "$PREFIX.messages.sent.topic.count",
+                        "$PREFIX.messages.sent.count")
+            }
+        }
     }
 
     describe("processing gauge") {
         it("should show difference between sent and received messages") {
 
             on("positive difference") {
-                cut.notifyMessageReceived(128)
-                cut.notifyMessageReceived(256)
-                cut.notifyMessageReceived(256)
-                cut.notifyMessageSent("perf3gpp")
+                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
+                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
+                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
+                cut.notifyMessageSent(routedMessage("perf3gpp"))
                 verifyGauge("messages.processing.count") { gauge ->
                     assertThat(gauge.value()).isCloseTo(2.0, doublePrecision)
                 }
             }
 
             on("zero difference") {
-                cut.notifyMessageReceived(128)
-                cut.notifyMessageSent("perf3gpp")
+                cut.notifyMessageReceived(emptyWireProtocolFrame())
+                cut.notifyMessageSent(routedMessage("perf3gpp"))
                 verifyGauge("messages.processing.count") { gauge ->
                     assertThat(gauge.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
 
             on("negative difference") {
-                cut.notifyMessageReceived(128)
-                cut.notifyMessageSent("fault")
-                cut.notifyMessageSent("perf3gpp")
+                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
+                cut.notifyMessageSent(routedMessage("fault"))
+                cut.notifyMessageSent(routedMessage("perf3gpp"))
                 verifyGauge("messages.processing.count") { gauge ->
                     assertThat(gauge.value()).isCloseTo(0.0, doublePrecision)
                 }
@@ -200,3 +229,15 @@ object MicrometerMetricsTest : Spek({
     }
 
 })
+
+fun routedMessage(topic: String, partition: Int = 0) =
+        vesEvent().let {evt ->
+            RoutedMessage(topic, partition,
+                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
+        }
+
+fun routedMessage(topic: String, receivedAt: Temporal, partition: Int = 0) =
+        vesEvent().let {evt ->
+            RoutedMessage(topic, partition,
+                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt).copy(receivedAt = receivedAt)))
+        }

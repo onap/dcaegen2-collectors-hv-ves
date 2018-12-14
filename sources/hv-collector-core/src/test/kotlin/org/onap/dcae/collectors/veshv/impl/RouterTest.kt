@@ -21,13 +21,11 @@ package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.None
 import arrow.core.Some
-import io.netty.buffer.ByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.SYSLOG
@@ -36,6 +34,7 @@ import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
+import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
 
 
 /**
@@ -61,7 +60,7 @@ object RouterTest : Spek({
         val cut = Router(config, ClientContext())
 
         on("message with existing route (rtpm)") {
-            val message = VesMessage(commonHeader(PERF3GPP), ByteData.EMPTY)
+            val message = VesMessage(commonHeader(PERF3GPP), emptyWireProtocolFrame())
             val result = cut.findDestination(message)
 
             it("should have route available") {
@@ -82,7 +81,7 @@ object RouterTest : Spek({
         }
 
         on("message with existing route (trace)") {
-            val message = VesMessage(commonHeader(SYSLOG), ByteData.EMPTY)
+            val message = VesMessage(commonHeader(SYSLOG), emptyWireProtocolFrame())
             val result = cut.findDestination(message)
 
             it("should have route available") {
@@ -103,7 +102,7 @@ object RouterTest : Spek({
         }
 
         on("message with unknown route") {
-            val message = VesMessage(commonHeader(HEARTBEAT), ByteData.EMPTY)
+            val message = VesMessage(commonHeader(HEARTBEAT), emptyWireProtocolFrame())
             val result = cut.findDestination(message)
 
             it("should not have route available") {
