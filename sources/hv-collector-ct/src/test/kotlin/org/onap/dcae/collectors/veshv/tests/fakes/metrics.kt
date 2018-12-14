@@ -45,6 +45,6 @@ class FakeMetrics : Metrics {
 
     override fun notifyMessageSent(topic: String) {
         messageSentCount++
-        messagesSentToTopic.compute(topic, { k, v -> messagesSentToTopic.get(k)?.inc() ?: 1 })
+        messagesSentToTopic.compute(topic, { k, _ -> messagesSentToTopic.get(k)?.inc() ?: 1 })
     }
 }

@@ -69,14 +69,13 @@ internal class VesHvCollector(
             .filterFailedWithLog(MessageValidator::validateFrameMessage)
 
     private fun decodeProtobufPayload(flux: Flux<WireFrameMessage>): Flux<VesMessage> = flux
-            .map(WireFrameMessage::payload)
-            .flatMap(::decodePayload)
-
-    private fun decodePayload(rawPayload: ByteData): Flux<VesMessage> = protobufDecoder
-            .decode(rawPayload)
-            .filterFailedWithLog(logger, clientContext::fullMdc,
-                    { "Ves event header decoded successfully" },
-                    { "Failed to decode ves event header, reason: ${it.message}" })
+            .flatMap { frame ->
+                protobufDecoder
+                        .decode(frame)
+                        .filterFailedWithLog(logger, clientContext::fullMdc,
+                                { "Ves event header decoded successfully" },
+                                { "Failed to decode ves event header, reason: ${it.message}" })
+            }
 
     private fun filterInvalidProtobufMessages(flux: Flux<VesMessage>): Flux<VesMessage> = flux
             .filterFailedWithLog(MessageValidator::validateProtobufMessage)
