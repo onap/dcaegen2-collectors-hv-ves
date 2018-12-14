@@ -23,8 +23,10 @@ package org.onap.dcae.collectors.veshv.tests.utils
 import com.google.protobuf.ByteString
 import com.google.protobuf.MessageLite
 import org.onap.dcae.collectors.veshv.domain.ByteData
+import org.onap.dcae.collectors.veshv.domain.PayloadContentType
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.ves.VesEventOuterClass
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
@@ -66,6 +68,25 @@ fun commonHeader(domain: VesEventDomain = PERF3GPP,
                 .setTimeZoneOffset("+1")
                 .setVesEventListenerVersion(vesEventListenerVersion)
                 .build()
+
+fun emptyVesEventFrame(): WireFrameMessage = WireFrameMessage(
+        payload = ByteData(byteArrayOf()),
+        versionMajor = WireFrameMessage.SUPPORTED_VERSION_MAJOR,
+        versionMinor = WireFrameMessage.SUPPORTED_VERSION_MINOR,
+        payloadSize = 0,
+        payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue
+)
+
+fun vesEventFrame(commonHeader: CommonEventHeader, byteString: ByteString = ByteString.EMPTY): WireFrameMessage =
+        vesEventBytes(commonHeader, byteString).let { payload ->
+            WireFrameMessage(
+                    payload = payload,
+                    versionMajor = WireFrameMessage.SUPPORTED_VERSION_MAJOR,
+                    versionMinor = WireFrameMessage.SUPPORTED_VERSION_MINOR,
+                    payloadSize = payload.size(),
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue
+            )
+        }
 
 fun vesEventBytes(commonHeader: CommonEventHeader, byteString: ByteString = ByteString.EMPTY): ByteData =
         vesEvent(commonHeader, byteString).toByteData()

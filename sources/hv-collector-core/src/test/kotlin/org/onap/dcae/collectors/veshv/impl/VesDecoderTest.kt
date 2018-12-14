@@ -29,7 +29,7 @@ import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
-import org.onap.dcae.collectors.veshv.tests.utils.vesEventBytes
+import org.onap.dcae.collectors.veshv.tests.utils.vesEventFrame
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -42,7 +42,7 @@ internal object VesDecoderTest : Spek({
 
         on("ves hv message bytes") {
             val commonHeader = commonHeader(HEARTBEAT)
-            val rawMessageBytes = vesEventBytes(commonHeader, ByteString.copyFromUtf8("highvolume measurements"))
+            val rawMessageBytes = vesEventFrame(commonHeader, ByteString.copyFromUtf8("highvolume measurements"))
 
             it("should decode only header and pass it on along with raw message") {
                 val expectedMessage = VesMessage(
@@ -59,7 +59,7 @@ internal object VesDecoderTest : Spek({
         }
 
         on("invalid ves hv message bytes") {
-            val rawMessageBytes = ByteData("ala ma kota".toByteArray(Charset.defaultCharset()))
+            val rawMessageBytes = vesEventFrame(commonHeader(), ByteString.copyFromUtf8("Ala ma kota"))
 
             it("should throw error") {
                 assertFailedWithError(cut.decode(rawMessageBytes))

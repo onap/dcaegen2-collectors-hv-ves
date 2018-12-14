@@ -29,6 +29,8 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
+import org.onap.dcae.collectors.veshv.model.RoutedMessage
 
 
 /**
@@ -65,14 +67,14 @@ class MicrometerMetrics internal constructor(
         receivedBytes.increment(size.toDouble())
     }
 
-    override fun notifyMessageReceived(size: Int) {
+    override fun notifyMessageReceived(msg: WireFrameMessage) {
         receivedMsgCount.increment()
-        receivedMsgBytes.increment(size.toDouble())
+        receivedMsgBytes.increment(msg.payloadSize.toDouble())
     }
 
-    override fun notifyMessageSent(topic: String) {
+    override fun notifyMessageSent(msg: RoutedMessage) {
         sentCountTotal.increment()
-        sentCount(topic).increment()
+        sentCount(msg.topic).increment()
     }
 
     companion object {
