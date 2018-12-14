@@ -32,6 +32,7 @@ import reactor.core.publisher.Mono
 import reactor.retry.Jitter
 import reactor.retry.Retry
 import java.io.StringReader
+import java.security.MessageDigest
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -51,8 +52,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                                            retrySpec: Retry<Any>
 
 ) : ConfigurationProvider {
-
-    private val lastConfigurationHash: AtomicReference<Int> = AtomicReference(0)
+    private val lastConfigurationHash: AtomicReference<ByteArray> = AtomicReference(byteArrayOf())
     private val retry = retrySpec
             .doOnRetry {
                 logger.withWarn(ServiceContext::mdc) { log("Could not get fresh configuration", it.exception()) }
@@ -87,8 +87,8 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
 
     private fun filterDifferentValues(configuration: BodyWithInvocationId) =
             configuration.body.let { configurationString ->
-                hashOf(configurationString).let {
-                    if (it == lastConfigurationHash.get()) {
+                configurationString.sha256().let { newHash ->
+                    if (newHash contentEquals lastConfigurationHash.get()) {
                         logger.trace(ServiceContext::mdc, Marker.Invoke(configuration.invocationId)) {
                             "No change detected in consul configuration"
                         }
@@ -97,13 +97,11 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                         logger.info(ServiceContext::mdc, Marker.Invoke(configuration.invocationId)) {
                             "Obtained new configuration from consul:\n${configurationString}"
                         }
-                        lastConfigurationHash.set(it)
+                        lastConfigurationHash.set(newHash)
                         Mono.just(configurationString)
                     }
                 }
             }
-
-    private fun hashOf(str: String) = str.hashCode()
 
     private fun parseJsonResponse(responseString: String): JsonObject =
             Json.createReader(StringReader(responseString)).readObject()
@@ -130,6 +128,12 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
         private const val MAX_RETRIES = 5L
         private const val BACKOFF_INTERVAL_FACTOR = 30L
         private val logger = Logger(ConsulConfigurationProvider::class)
+
+        private fun String.sha256() =
+                MessageDigest
+                        .getInstance("SHA-256")
+                        .digest(toByteArray())
+
     }
 
     private data class BodyWithInvocationId(val body: String, val invocationId: UUID)
