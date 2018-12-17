@@ -21,12 +21,11 @@ package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import java.time.Duration
 import java.time.Instant
-import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.fail
 
 /**
@@ -35,14 +34,18 @@ import kotlin.test.fail
  */
 class FakeMetrics : Metrics {
 
-    var bytesReceived: Int = 0 ; private set
-    var messageBytesReceived: Int = 0 ; private set
-    var messagesDroppedCount: Int = 0 ; private set
-    var lastProcessingTimeMicros: Double = -1.0 ; private set
-    private val messagesDroppedCause: MutableMap<MessageDropCause, Int> = ConcurrentHashMap()
-    var messagesSentCount: Int = 0 ; private set
-    val messagesSentToTopic: MutableMap<String, Int> = ConcurrentHashMap()
-    var clientRejectionCause = mutableMapOf<ClientRejectionCause, Int>() ; private set
+    var bytesReceived: Int = 0; private set
+    var messageBytesReceived: Int = 0; private set
+    var messagesDroppedCount: Int = 0; private set
+    var lastProcessingTimeMicros: Double = -1.0; private set
+    var messagesSentCount: Int = 0; private set
+    var clientRejectionCause = mutableMapOf<ClientRejectionCause, Int>(); private set
+    var connectionsTotal: Int = 0; private set
+    var disconnections: Int = 0; private set
+    var activeConnections: Int = 0; private set
+
+    private val messagesSentToTopic = mutableMapOf<String, Int>()
+    private val messagesDroppedCause = mutableMapOf<MessageDropCause, Int>()
 
     override fun notifyBytesReceived(size: Int) {
         bytesReceived += size
@@ -67,6 +70,16 @@ class FakeMetrics : Metrics {
 
     override fun notifyClientRejected(cause: ClientRejectionCause) {
         clientRejectionCause.compute(cause) { k, _ -> clientRejectionCause[k]?.inc() ?: 1 }
+    }
+
+    override fun notifyClientDisconnected() {
+        disconnections++
+        activeConnections--
+    }
+
+    override fun notifyClientConnected() {
+        connectionsTotal++
+        activeConnections++
     }
 
     fun messagesOnTopic(topic: String) =

@@ -44,7 +44,7 @@ object VesServer : ServerStarter() {
                 config.maximumPayloadSizeBytes
         ).createVesHvCollectorProvider()
 
-        return ServerFactory.createNettyTcpServer(config, collectorProvider)
+        return ServerFactory.createNettyTcpServer(config, collectorProvider, MicrometerMetrics.INSTANCE)
     }
 
     override fun serverStartedMessage(handle: ServerHandle) =
