@@ -27,6 +27,7 @@ import io.micrometer.core.instrument.search.RequiredSearch
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.assertj.core.data.Percentage
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -189,7 +190,7 @@ object MicrometerMetricsTest : Spek({
 
             it("should update timer") {
 
-                cut.notifyMessageSent(routedMessage(topicName1, Instant.now().minusMillis(processingTimeMs)))
+                cut.notifyMessageSent(routedMessageReceivedAt(topicName1, Instant.now().minusMillis(processingTimeMs)))
 
                 verifyTimer(counterName) { timer ->
                     assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
@@ -200,6 +201,28 @@ object MicrometerMetricsTest : Spek({
                         "$PREFIX.messages.sent.count.total")
             }
         }
+
+        on("$PREFIX.messages.latency.time") {
+            val counterName = "$PREFIX.messages.latency.time"
+            val latencyMs = 1666L
+
+            it("should update timer") {
+
+                cut.notifyMessageSent(routedMessageSentAt(topicName1, Instant.now().minusMillis(latencyMs)))
+
+                verifyTimer(counterName) { timer ->
+                    assertThat(timer.mean(TimeUnit.MILLISECONDS))
+                            .isGreaterThanOrEqualTo(latencyMs.toDouble())
+                            .isLessThanOrEqualTo(latencyMs + 10000.0)
+
+                }
+                verifyAllCountersAreUnchangedBut(
+                        counterName,
+                        "$PREFIX.messages.sent.count.topic",
+                        "$PREFIX.messages.sent.count.total")
+            }
+        }
+
     }
 
     describe("notifyMessageDropped") {
@@ -266,17 +289,26 @@ object MicrometerMetricsTest : Spek({
             }
         }
     }
-
 })
 
 fun routedMessage(topic: String, partition: Int = 0) =
-        vesEvent().let {evt ->
+        vesEvent().let { evt ->
             RoutedMessage(topic, partition,
                     VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
         }
 
-fun routedMessage(topic: String, receivedAt: Temporal, partition: Int = 0) =
-        vesEvent().let {evt ->
+fun routedMessageReceivedAt(topic: String, receivedAt: Temporal, partition: Int = 0) =
+        vesEvent().let { evt ->
             RoutedMessage(topic, partition,
                     VesMessage(evt.commonEventHeader, wireProtocolFrame(evt).copy(receivedAt = receivedAt)))
+        }
+
+fun routedMessageSentAt(topic: String, sentAt: Instant, partition: Int = 0) =
+        vesEvent().let { evt ->
+            val builder = evt.toBuilder()
+            builder.commonEventHeaderBuilder.lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000
+            builder.build()
+        }.let { evt ->
+            RoutedMessage(topic, partition,
+                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
         }

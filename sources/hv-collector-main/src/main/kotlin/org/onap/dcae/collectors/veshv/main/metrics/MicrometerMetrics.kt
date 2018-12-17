@@ -32,6 +32,7 @@ import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.utils.TimeUtils.epochMicroToInstant
 import java.time.Duration
 import java.time.Instant
 
@@ -49,6 +50,8 @@ class MicrometerMetrics internal constructor(
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
     private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT, TOTAL))
     private val droppedCountTotal = registry.counter(name(MESSAGES, DROPPED, COUNT, TOTAL))
+    private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
+    private val totalLatency = registry.timer(name(MESSAGES, LATENCY, TIME))
 
     private val sentCount = { topic: String ->
         registry.counter(name(MESSAGES, SENT, COUNT, TOPIC), TOPIC, topic)
@@ -57,7 +60,6 @@ class MicrometerMetrics internal constructor(
     private val droppedCount = { cause: String ->
         registry.counter(name(MESSAGES, DROPPED, COUNT, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
-    private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
 
     init {
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
@@ -82,9 +84,12 @@ class MicrometerMetrics internal constructor(
     }
 
     override fun notifyMessageSent(msg: RoutedMessage) {
+        val now = Instant.now()
         sentCountTotal.increment()
         sentCount(msg.topic).increment()
-        processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, Instant.now()))
+
+        processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, now))
+        totalLatency.record(Duration.between(epochMicroToInstant(msg.message.header.lastEpochMicrosec), now))
     }
 
     override fun notifyMessageDropped(cause: MessageDropCause) {
@@ -107,6 +112,7 @@ class MicrometerMetrics internal constructor(
         internal const val CAUSE = "cause"
         internal const val TOTAL = "total"
         internal const val TIME = "time"
-        fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
+        internal const val LATENCY = "latency"
+        internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
