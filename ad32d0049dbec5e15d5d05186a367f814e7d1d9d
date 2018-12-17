@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_fcb750f3",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-17T09:51:26Z",
+      "side": 1,
+      "message": "We could think of changing this rule to ignore private methods ( I thought this is made as default, but apparently not https://github.com/arturbosch/detekt/blob/master/detekt-rules/src/main/kotlin/io/gitlab/arturbosch/detekt/rules/complexity/TooManyFunctions.kt ).",
+      "revId": "ad32d0049dbec5e15d5d05186a367f814e7d1d9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_bccd4887",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-17T09:51:26Z",
+      "side": 1,
+      "message": "I think we should keep `rejectedMessage` object without side effects and instead add step between findDest and filterEmpty?\n\n```\n            .findDestination(msg)\n            .apply { if (isEmpty()) metrics.notifyMessageDropped(ROUTE_NOT_FOUND) }\n            .filterEmptyWithLog(logger, clientContext::fullMdc,\n```\nWe are also making `apply-if-left` step inside of findDest, so to simplify maybe we could give Router class access to MicrometerMetrics instance and notify here",
+      "revId": "ad32d0049dbec5e15d5d05186a367f814e7d1d9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5cabfc74",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-17T09:51:26Z",
+      "side": 1,
+      "message": "Maybe we could rewrite these methods to be more generic and named similiar to reactive-streams methods (which allows to extract them to some utils file and not clutter this class)? E.g.\n```\n    private fun \u003cA, B\u003e Either\u003cA, B\u003e.doOnLeft(action: () -\u003e Unit): Either\u003cA, B\u003e \u003d\n            apply { if (isLeft()) action() }\n\n    private fun \u003cA\u003e Option\u003cA\u003e.doOnEmpty(action: () -\u003e Unit): Option\u003cA\u003e \u003d\n            apply { if (isEmpty()) action() }\n```\nThis could be then used as\n```\nrouter\n    .findDestination(msg)\n    .doOnEmpty { metrics.notifyMessageDropped(ROUTE_NOT_FOUND) }\n\n\n MessageValidator\n    .validateProtobufMessage(it)\n    .doOnLeft { metrics.notifyMessageDropped(INVALID_MESSAGE) }\n\n```",
+      "revId": "ad32d0049dbec5e15d5d05186a367f814e7d1d9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7cc36057",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/MetricsSpecification.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-17T09:51:26Z",
+      "side": 1,
+      "message": "remove duplicate correct message (or somehow try to be more verbose in test why it should be here).\n\nMaybe we should split these testcases to be more specific, i.e. one test for route_not_found drop and one for invalid messages ?",
+      "revId": "ad32d0049dbec5e15d5d05186a367f814e7d1d9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3ca95891",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-17T09:51:26Z",
+      "side": 1,
+      "message": "Let\u0027 put these above `init`",
+      "revId": "ad32d0049dbec5e15d5d05186a367f814e7d1d9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7c9a806f",
+        "filename": "sources/hv-collector-test-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/tests/utils/messages.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-17T09:51:26Z",
+      "side": 1,
+      "message": "There is already `invalidWireFrame()`, I guess these methods can be somehow merged",
+      "revId": "ad32d0049dbec5e15d5d05186a367f814e7d1d9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9c972448",
+        "filename": "sources/hv-collector-test-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/tests/utils/messages.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-17T09:51:26Z",
+      "side": 1,
+      "message": "`eventWithInvalidListenerVersion` / to align with above method maybe `vesMessageWith...` ?",
+      "revId": "ad32d0049dbec5e15d5d05186a367f814e7d1d9d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
