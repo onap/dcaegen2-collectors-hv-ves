@@ -29,6 +29,7 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
 
 
 /**
@@ -42,7 +43,16 @@ class MicrometerMetrics internal constructor(
     private val receivedBytes = registry.counter(name(DATA, RECEIVED, BYTES))
     private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED, COUNT))
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
-    private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT))
+    private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT, TOTAL))
+    private val droppedCountTotal = registry.counter(name(MESSAGES, DROPPED, COUNT, TOTAL))
+
+    private val sentCount = { topic: String ->
+        registry.counter(name(MESSAGES, SENT, COUNT, TOPIC), TOPIC, topic)
+    }.memoize<String, Counter>()
+
+    private val droppedCount = { cause: String ->
+        registry.counter(name(MESSAGES, DROPPED, COUNT, CAUSE), CAUSE, cause)
+    }.memoize<String, Counter>()
 
     init {
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
@@ -54,10 +64,6 @@ class MicrometerMetrics internal constructor(
         ProcessorMetrics().bindTo(registry)
         JvmThreadMetrics().bindTo(registry)
     }
-
-    private val sentCount = { topic: String ->
-        registry.counter("hvves.messages.sent.topic.count", "topic", topic)
-    }.memoize<String, Counter>()
 
     val metricsProvider = MicrometerPrometheusMetricsProvider(registry)
 
@@ -75,6 +81,11 @@ class MicrometerMetrics internal constructor(
         sentCount(topic).increment()
     }
 
+    override fun notifyMessageDropped(cause: MessageDropCause) {
+        droppedCountTotal.increment()
+        droppedCount(cause.tag).increment()
+    }
+
     companion object {
         val INSTANCE = MicrometerMetrics()
         internal const val PREFIX = "hvves"
@@ -85,6 +96,11 @@ class MicrometerMetrics internal constructor(
         internal const val DATA = "data"
         internal const val SENT = "sent"
         internal const val PROCESSING = "processing"
+        internal const val TOPIC = "topic"
+        internal const val DROPPED = "dropped"
+        internal const val CAUSE = "cause"
+        internal const val TOTAL = "total"
+
         fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
