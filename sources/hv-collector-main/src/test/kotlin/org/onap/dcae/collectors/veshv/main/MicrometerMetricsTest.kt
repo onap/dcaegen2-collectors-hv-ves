@@ -265,17 +265,16 @@ object MicrometerMetricsTest : Spek({
             }
         }
     }
-
 })
 
 fun routedMessage(topic: String, partition: Int = 0) =
-        vesEvent().let {evt ->
+        vesEvent().let { evt ->
             RoutedMessage(topic, partition,
                     VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
         }
 
 fun routedMessage(topic: String, receivedAt: Temporal, partition: Int = 0) =
-        vesEvent().let {evt ->
+        vesEvent().let { evt ->
             RoutedMessage(topic, partition,
                     VesMessage(evt.commonEventHeader, wireProtocolFrame(evt).copy(receivedAt = receivedAt)))
         }
