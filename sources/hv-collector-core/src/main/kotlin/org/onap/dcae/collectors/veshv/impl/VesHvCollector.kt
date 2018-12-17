@@ -27,6 +27,7 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleReactiveStreamError
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
@@ -60,7 +61,9 @@ internal class VesHvCollector(
                     .transform(::decodeProtobufPayload)
                     .transform(::filterInvalidProtobufMessages)
                     .transform(::routeMessage)
-                    .onErrorResume { logger.handleReactiveStreamError(clientContext, it) }
+                    .onErrorResume {
+                        metrics.notifyClientRejected(ClientRejectionCause.fromThrowable(it))
+                        logger.handleReactiveStreamError(clientContext, it) }
                     .doFinally { releaseBuffersMemory() }
                     .then()
 

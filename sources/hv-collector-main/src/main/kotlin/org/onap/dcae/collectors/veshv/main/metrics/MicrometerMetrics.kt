@@ -31,6 +31,7 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import java.time.Duration
 import java.time.Instant
@@ -47,17 +48,23 @@ class MicrometerMetrics internal constructor(
     private val receivedBytes = registry.counter(name(DATA, RECEIVED, BYTES))
     private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED, COUNT))
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
-    private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT, TOTAL))
-    private val droppedCountTotal = registry.counter(name(MESSAGES, DROPPED, COUNT, TOTAL))
 
-    private val sentCount = { topic: String ->
-        registry.counter(name(MESSAGES, SENT, COUNT, TOPIC), TOPIC, topic)
+    private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT))
+    private val sentToTopicCount = { topic: String ->
+        registry.counter(name(MESSAGES, SENT, TOPIC, COUNT), TOPIC, topic)
     }.memoize<String, Counter>()
 
-    private val droppedCount = { cause: String ->
-        registry.counter(name(MESSAGES, DROPPED, COUNT, CAUSE), CAUSE, cause)
+    private val droppedCount = registry.counter(name(MESSAGES, DROPPED, COUNT))
+    private val droppedCauseCount = { cause: String ->
+        registry.counter(name(MESSAGES, DROPPED, CAUSE, COUNT), CAUSE, cause)
     }.memoize<String, Counter>()
+
     private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
+
+    private val clientsRejectedCount = registry.counter(name(CLIENTS, REJECTED, COUNT))
+    private val clientsRejectedCauseCount = { cause: String ->
+        registry.counter(name(CLIENTS, REJECTED, CAUSE, COUNT), CAUSE, cause)
+    }.memoize<String, Counter>()
 
     init {
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
@@ -69,6 +76,7 @@ class MicrometerMetrics internal constructor(
         ProcessorMetrics().bindTo(registry)
         JvmThreadMetrics().bindTo(registry)
     }
+
 
     val metricsProvider = MicrometerPrometheusMetricsProvider(registry)
 
@@ -83,13 +91,18 @@ class MicrometerMetrics internal constructor(
 
     override fun notifyMessageSent(msg: RoutedMessage) {
         sentCountTotal.increment()
-        sentCount(msg.topic).increment()
+        sentToTopicCount(msg.topic).increment()
         processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, Instant.now()))
     }
 
     override fun notifyMessageDropped(cause: MessageDropCause) {
-        droppedCountTotal.increment()
-        droppedCount(cause.tag).increment()
+        droppedCount.increment()
+        droppedCauseCount(cause.tag).increment()
+    }
+
+    override fun notifyClientRejected(cause: ClientRejectionCause) {
+        clientsRejectedCount.increment()
+        clientsRejectedCauseCount(cause.tag).increment()
     }
 
     companion object {
@@ -102,10 +115,11 @@ class MicrometerMetrics internal constructor(
         internal const val DATA = "data"
         internal const val SENT = "sent"
         internal const val PROCESSING = "processing"
+        internal const val CAUSE = "cause"
+        internal const val CLIENTS = "clients"
+        internal const val REJECTED = "rejected"
         internal const val TOPIC = "topic"
         internal const val DROPPED = "dropped"
-        internal const val CAUSE = "cause"
-        internal const val TOTAL = "total"
         internal const val TIME = "time"
         fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }

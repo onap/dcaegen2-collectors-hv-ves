@@ -25,6 +25,7 @@ import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import java.time.Duration
 import java.time.Instant
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.fail
 
@@ -33,14 +34,15 @@ import kotlin.test.fail
  * @since June 2018
  */
 class FakeMetrics : Metrics {
-    var bytesReceived: Int = 0
-    var messageBytesReceived: Int = 0
-    var lastProcessingTimeMicros: Double = -1.0
-    var messagesSentCount: Int = 0
-    var messagesDroppedCount: Int = 0
 
-    private val messagesSentToTopic: MutableMap<String, Int> = ConcurrentHashMap()
+    var bytesReceived: Int = 0 ; private set
+    var messageBytesReceived: Int = 0 ; private set
+    var messagesDroppedCount: Int = 0 ; private set
+    var lastProcessingTimeMicros: Double = -1.0 ; private set
     private val messagesDroppedCause: MutableMap<MessageDropCause, Int> = ConcurrentHashMap()
+    var messagesSentCount: Int = 0 ; private set
+    val messagesSentToTopic: MutableMap<String, Int> = ConcurrentHashMap()
+    var clientRejectionCause = mutableMapOf<ClientRejectionCause, Int>() ; private set
 
     override fun notifyBytesReceived(size: Int) {
         bytesReceived += size
@@ -61,6 +63,10 @@ class FakeMetrics : Metrics {
     override fun notifyMessageDropped(cause: MessageDropCause) {
         messagesDroppedCount++
         messagesDroppedCause.compute(cause) { k, _ -> messagesDroppedCause[k]?.inc() ?: 1 }
+    }
+
+    override fun notifyClientRejected(cause: ClientRejectionCause) {
+        clientRejectionCause.compute(cause) { k, _ -> clientRejectionCause[k]?.inc() ?: 1 }
     }
 
     fun messagesOnTopic(topic: String) =
