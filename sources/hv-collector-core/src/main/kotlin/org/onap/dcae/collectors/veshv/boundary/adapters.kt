@@ -35,6 +35,8 @@ interface Metrics {
     fun notifyMessageReceived(msg: WireFrameMessage)
     fun notifyMessageSent(msg: RoutedMessage)
     fun notifyMessageDropped(cause: MessageDropCause)
+    fun notifyClientDisconnected()
+    fun notifyClientConnected()
 }
 
 @FunctionalInterface

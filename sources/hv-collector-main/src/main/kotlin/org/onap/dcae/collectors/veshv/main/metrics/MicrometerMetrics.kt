@@ -49,6 +49,8 @@ class MicrometerMetrics internal constructor(
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
     private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT, TOTAL))
     private val droppedCountTotal = registry.counter(name(MESSAGES, DROPPED, COUNT, TOTAL))
+    private val connectionsTotal = registry.counter(name(CONNECTIONS, COUNT, TOTAL))
+    private val disconnectionsTotal = registry.counter(name(DISCONNECTIONS, COUNT, TOTAL))
 
     private val sentCount = { topic: String ->
         registry.counter(name(MESSAGES, SENT, COUNT, TOPIC), TOPIC, topic)
@@ -63,6 +65,11 @@ class MicrometerMetrics internal constructor(
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
             (receivedMsgCount.count() - sentCountTotal.count()).coerceAtLeast(0.0)
         }
+
+        registry.gauge(name(CONNECTIONS, COUNT, ACTIVE), this) {
+            (connectionsTotal.count() - disconnectionsTotal.count()).coerceAtLeast(0.0)
+        }
+
         ClassLoaderMetrics().bindTo(registry)
         JvmMemoryMetrics().bindTo(registry)
         JvmGcMetrics().bindTo(registry)
@@ -92,11 +99,23 @@ class MicrometerMetrics internal constructor(
         droppedCount(cause.tag).increment()
     }
 
+    override fun notifyClientConnected() {
+        connectionsTotal.increment()
+    }
+
+    override fun notifyClientDisconnected() {
+        disconnectionsTotal.increment()
+    }
+
+
     companion object {
         val INSTANCE = MicrometerMetrics()
         internal const val PREFIX = "hvves"
         internal const val MESSAGES = "messages"
         internal const val RECEIVED = "received"
+        internal const val DISCONNECTIONS = "disconnections"
+        internal const val CONNECTIONS = "connections"
+        internal const val ACTIVE = "active"
         internal const val BYTES = "bytes"
         internal const val COUNT = "count"
         internal const val DATA = "data"

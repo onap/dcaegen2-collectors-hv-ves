@@ -94,7 +94,6 @@ object MicrometerMetricsTest : Spek({
     }
 
     describe("notifyBytesReceived") {
-
         on("$PREFIX.data.received.bytes counter") {
             val counterName = "$PREFIX.data.received.bytes"
 
@@ -168,6 +167,7 @@ object MicrometerMetricsTest : Spek({
 
         on("$PREFIX.messages.sent.topic.count counter") {
             val counterName = "$PREFIX.messages.sent.count.topic"
+
             it("should handle counters for different topics") {
                 cut.notifyMessageSent(routedMessage(topicName1))
                 cut.notifyMessageSent(routedMessage(topicName2))
@@ -206,6 +206,7 @@ object MicrometerMetricsTest : Spek({
 
         on("$PREFIX.messages.dropped.count.total counter") {
             val counterName = "$PREFIX.messages.dropped.count.total"
+
             it("should increment counter") {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
@@ -219,6 +220,7 @@ object MicrometerMetricsTest : Spek({
 
         on("$PREFIX.messages.dropped.count.cause counter") {
             val counterName = "$PREFIX.messages.dropped.count.cause"
+
             it("should handle counters for different drop reasons") {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
@@ -235,32 +237,102 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("processing gauge") {
-        it("should show difference between sent and received messages") {
+    describe("notifyClientConnected") {
+        on("$PREFIX.connections.count.total counter") {
+            val counterName = "$PREFIX.connections.count.total"
 
-            on("positive difference") {
+            it("should increment counter") {
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+                verifyAllCountersAreUnchangedBut(counterName)
+            }
+        }
+
+    }
+
+    describe("notifyClientDisconnected") {
+        on("$PREFIX.disconnections.count.total counter") {
+            val counterName = "$PREFIX.disconnections.count.total"
+
+            it("should increment counter") {
+                cut.notifyClientDisconnected()
+                cut.notifyClientDisconnected()
+
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+                verifyAllCountersAreUnchangedBut(counterName)
+            }
+        }
+
+    }
+
+    describe("$PREFIX.messages.processing.count gauge") {
+        val gaugeName = "$PREFIX.messages.processing.count"
+
+        on("message traffic") {
+            it("should calculate positive difference between sent and received messages") {
                 cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
                 cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
                 cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
                 cut.notifyMessageSent(routedMessage("perf3gpp"))
-                verifyGauge("messages.processing.count") {
+
+                verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(2.0, doublePrecision)
                 }
             }
 
-            on("zero difference") {
-                cut.notifyMessageReceived(emptyWireProtocolFrame())
+            it("should calculate no difference between sent and received messages") {
                 cut.notifyMessageSent(routedMessage("perf3gpp"))
-                verifyGauge("messages.processing.count") {
+                cut.notifyMessageSent(routedMessage("fault"))
+
+                verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
 
-            on("negative difference") {
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
+            it("should calculate negative difference between sent and received messages") {
                 cut.notifyMessageSent(routedMessage("fault"))
-                cut.notifyMessageSent(routedMessage("perf3gpp"))
-                verifyGauge("messages.processing.count") {
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
+                }
+            }
+        }
+    }
+
+    describe("$PREFIX.connections.count.active gauge") {
+        val gaugeName = "$PREFIX.connections.count.active"
+
+        on("connection traffic") {
+            it("should calculate positive difference between connected and disconnected clients") {
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(2.0, doublePrecision)
+                }
+            }
+
+            it("should calculate no difference between connected and disconnected clients") {
+                cut.notifyClientDisconnected()
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
+                }
+            }
+
+            it("should calculate negative difference between connected and disconnected clients") {
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
@@ -270,13 +342,13 @@ object MicrometerMetricsTest : Spek({
 })
 
 fun routedMessage(topic: String, partition: Int = 0) =
-        vesEvent().let {evt ->
+        vesEvent().let { evt ->
             RoutedMessage(topic, partition,
                     VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
         }
 
 fun routedMessage(topic: String, receivedAt: Temporal, partition: Int = 0) =
-        vesEvent().let {evt ->
+        vesEvent().let { evt ->
             RoutedMessage(topic, partition,
                     VesMessage(evt.commonEventHeader, wireProtocolFrame(evt).copy(receivedAt = receivedAt)))
         }
