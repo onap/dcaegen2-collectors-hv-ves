@@ -66,7 +66,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
 
     private fun createVesHvCollector(config: CollectorConfiguration, ctx: ClientContext): Collector = VesHvCollector(
             clientContext = ctx,
-            wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx),
+            wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx, metrics),
             protobufDecoder = VesDecoder(),
             router = Router(config.routing, ctx),
             sink = sinkProvider(config, ctx),

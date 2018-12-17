@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.impl.wire
 
 import arrow.effects.IO
 import io.netty.buffer.ByteBuf
+import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.domain.InvalidWireFrame
 import org.onap.dcae.collectors.veshv.domain.MissingWireFrameBytes
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
@@ -30,6 +31,7 @@ import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleReactiveStreamError
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.trace
+import org.onap.dcae.collectors.veshv.model.ClientRejectionReason
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Flux.defer
 import reactor.core.publisher.SynchronousSink
@@ -40,7 +42,8 @@ import reactor.core.publisher.SynchronousSink
  */
 internal class WireChunkDecoder(
         private val decoder: WireFrameDecoder,
-        private val ctx: ClientContext) {
+        private val ctx: ClientContext,
+        private val metrics: Metrics) {
     private val streamBuffer = ctx.alloc.compositeBuffer()
 
     fun release() {
@@ -69,6 +72,7 @@ internal class WireChunkDecoder(
     private fun onError(next: SynchronousSink<WireFrameMessage>): (WireFrameDecodingError) -> IO<Unit> = { err ->
         when (err) {
             is InvalidWireFrame -> IO {
+                metrics.notifyClientRejected(ClientRejectionReason.fromInvalidWireFrameError(err))
                 next.error(WireFrameException(err))
             }
             is MissingWireFrameBytes -> IO {

@@ -30,6 +30,7 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
+import org.onap.dcae.collectors.veshv.model.ClientRejectionReason
 
 
 /**
@@ -43,15 +44,20 @@ class MicrometerMetrics internal constructor(
     private val receivedBytes = registry.counter(name(DATA, RECEIVED, BYTES))
     private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED, COUNT))
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
-    private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT, TOTAL))
-    private val droppedCountTotal = registry.counter(name(MESSAGES, DROPPED, COUNT, TOTAL))
 
+    private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT, TOTAL))
     private val sentCount = { topic: String ->
         registry.counter(name(MESSAGES, SENT, COUNT, TOPIC), TOPIC, topic)
     }.memoize<String, Counter>()
 
+    private val droppedCountTotal = registry.counter(name(MESSAGES, DROPPED, COUNT, TOTAL))
     private val droppedCount = { cause: String ->
         registry.counter(name(MESSAGES, DROPPED, COUNT, CAUSE), CAUSE, cause)
+    }.memoize<String, Counter>()
+
+    private val clientsRejectedTotal = registry.counter(name(CLIENTS, REJECTED, COUNT, TOTAL))
+    private val clientsRejected = { cause: String ->
+        registry.counter(name(CLIENTS, REJECTED, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
 
     init {
@@ -64,6 +70,7 @@ class MicrometerMetrics internal constructor(
         ProcessorMetrics().bindTo(registry)
         JvmThreadMetrics().bindTo(registry)
     }
+
 
     val metricsProvider = MicrometerPrometheusMetricsProvider(registry)
 
@@ -86,6 +93,11 @@ class MicrometerMetrics internal constructor(
         droppedCount(cause.tag).increment()
     }
 
+    override fun notifyClientRejected(reason: ClientRejectionReason) {
+        clientsRejectedTotal.increment()
+        clientsRejected(reason.tag).increment()
+    }
+
     companion object {
         val INSTANCE = MicrometerMetrics()
         internal const val PREFIX = "hvves"
@@ -96,9 +108,11 @@ class MicrometerMetrics internal constructor(
         internal const val DATA = "data"
         internal const val SENT = "sent"
         internal const val PROCESSING = "processing"
+        internal const val CAUSE = "cause"
+        internal const val CLIENTS = "clients"
+        internal const val REJECTED = "rejected"
         internal const val TOPIC = "topic"
         internal const val DROPPED = "dropped"
-        internal const val CAUSE = "cause"
         internal const val TOTAL = "total"
 
         fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"

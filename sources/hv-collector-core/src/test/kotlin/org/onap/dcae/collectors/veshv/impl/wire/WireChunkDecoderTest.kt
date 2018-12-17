@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.wire
 
+import com.nhaarman.mockitokotlin2.mock
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.buffer.UnpooledByteBufAllocator
@@ -46,7 +47,7 @@ internal object WireChunkDecoderTest : Spek({
 
     fun WireChunkDecoder.decode(frame: WireFrameMessage) = decode(encoder.encode(frame))
 
-    fun createInstance() = WireChunkDecoder(WireFrameDecoder(WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES), ClientContext(alloc))
+    fun createInstance() = WireChunkDecoder(WireFrameDecoder(WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES), ClientContext(alloc), mock())
 
     fun verifyMemoryReleased(vararg byteBuffers: ByteBuf) {
         for (bb in byteBuffers) {
