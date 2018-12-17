@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.boundary
 
 import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.model.ClientRejectionReason
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
@@ -34,6 +35,7 @@ interface Metrics {
     fun notifyMessageReceived(size: Int)
     fun notifyMessageSent(topic: String)
     fun notifyMessageDropped(cause: MessageDropCause)
+    fun notifyClientRejected(reason: ClientRejectionReason)
 }
 
 @FunctionalInterface

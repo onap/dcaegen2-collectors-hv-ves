@@ -19,6 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
+import org.onap.dcae.collectors.veshv.domain.InvalidWireFrame
+import org.onap.dcae.collectors.veshv.domain.InvalidWireFrameMarker
+import org.onap.dcae.collectors.veshv.domain.PayloadSizeExceeded
+
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since December 2018
@@ -26,4 +30,17 @@ package org.onap.dcae.collectors.veshv.model
 enum class MessageDropCause(val tag: String) {
     ROUTE_NOT_FOUND("routing"),
     INVALID_MESSAGE("invalid")
+}
+
+enum class ClientRejectionReason(val tag: String) {
+    INVALID_WIRE_FRAME_MARKER("invalid_marker"),
+    PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE("too_big_payload");
+
+    companion object {
+        fun fromInvalidWireFrameError(err: InvalidWireFrame): ClientRejectionReason =
+                when (err) {
+                    is InvalidWireFrameMarker -> INVALID_WIRE_FRAME_MARKER
+                    is PayloadSizeExceeded -> PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
+                }
+    }
 }
