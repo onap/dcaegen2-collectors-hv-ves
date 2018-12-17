@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.model
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.getOrElse
+import arrow.core.toOption
 import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
 import java.net.InetAddress
@@ -32,27 +33,51 @@ import java.util.*
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since December 2018
  */
-data class ClientContext(
-        val alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT,
-        var clientAddress: Option<InetAddress> = None,
-        var clientCert: Option<X509Certificate> = None,
-        val requestId: String = UUID.randomUUID().toString(), // Should be somehow propagated to DMAAP
-        val invocationId: String = UUID.randomUUID().toString()) {
+class ClientContext constructor() {
+
+    var clientAddress: Option<InetAddress> = None
+    var clientCert: Option<X509Certificate> = None
+
+    var alloc: ByteBufAllocator = ByteBufAllocator.DEFAULT
+
+    val requestId: String = UUID.randomUUID().toString() // Should be somehow propagated to DMAAP
+    val invocationId: String = UUID.randomUUID().toString()
 
     val mdc: Map<String, String>
         get() = mapOf(
+                OnapMdc.CLIENT_IP to clientIp().getOrElse { DEFAULT_VALUE },
+                OnapMdc.CLIENT_NAME to clientDn().getOrElse { DEFAULT_VALUE },
                 OnapMdc.REQUEST_ID to requestId,
                 OnapMdc.INVOCATION_ID to invocationId,
-                OnapMdc.STATUS_CODE to DEFAULT_STATUS_CODE,
-                OnapMdc.CLIENT_NAME to clientDn().getOrElse { DEFAULT_VALUE },
-                OnapMdc.CLIENT_IP to clientIp().getOrElse { DEFAULT_VALUE }
+                OnapMdc.STATUS_CODE to DEFAULT_STATUS_CODE
         )
 
     val fullMdc: Map<String, String>
         get() = mdc + ServiceContext.mdc
 
-    private fun clientDn(): Option<String> = clientCert.map { it.subjectX500Principal.toString() }
-    private fun clientIp(): Option<String> = clientAddress.map(InetAddress::getHostAddress)
+    private var mdcOverride: Map<String, Option<Any>> = emptyMap()
+
+    constructor(alloc: ByteBufAllocator) : this() {
+        this.alloc = alloc
+    }
+
+    fun setMdc(map: Map<String, Option<Any>>) {
+        this.mdcOverride = map
+    }
+
+    private fun clientIp(): Option<String> {
+        return when (mdcOverride.containsKey(OnapMdc.CLIENT_IP)) {
+            true -> mdcOverride.getOrDefault(OnapMdc.CLIENT_IP, None).fold({ None }, { it.toString().toOption() })
+            else -> clientAddress.map(InetAddress::getHostAddress)
+        }
+    }
+
+    private fun clientDn(): Option<String> {
+        return when (mdcOverride.containsKey(OnapMdc.CLIENT_NAME)) {
+            true -> mdcOverride.getOrDefault(OnapMdc.CLIENT_NAME, None).fold({ None }, { it.toString().toOption() })
+            else -> clientCert.map { it.subjectX500Principal.toString() }
+        }
+    }
 
     companion object {
         const val DEFAULT_STATUS_CODE = "INPROGRESS"
