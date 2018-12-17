@@ -75,9 +75,11 @@ internal object ClientContextTest : Spek({
             val clientIp = "192.168.52.34"
             val cert: X509Certificate = mock()
             val principal: X500Principal = mock()
-            val cut = ClientContext(
-                    clientAddress = Some(InetAddress.getByName(clientIp)),
-                    clientCert = Some(cert))
+            val cut = ClientContext()
+            cut.setMdc(mapOf(OnapMdc.CLIENT_IP to Some(InetAddress.getByName(clientIp)),
+                    OnapMdc.CLIENT_NAME to Some(cert)))
+//                    clientAddress = Some(InetAddress.getByName(clientIp)),
+//                    clientCert = Some(cert))
 
             whenever(cert.subjectX500Principal).thenReturn(principal)
             whenever(principal.toString()).thenReturn(clientDn)
