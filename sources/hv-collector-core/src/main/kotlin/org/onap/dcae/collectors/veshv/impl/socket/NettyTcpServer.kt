@@ -22,31 +22,30 @@ package org.onap.dcae.collectors.veshv.impl.socket
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.getOrElse
-import arrow.core.toOption
 import arrow.effects.IO
 import arrow.syntax.collections.firstOption
 import io.netty.handler.ssl.SslHandler
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
+import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Server
-import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.info
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.debug
+import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.info
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withWarn
-import org.onap.dcae.collectors.veshv.utils.logging.Marker
+import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.ServerSslContextFactory
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.Marker
 import reactor.core.publisher.Mono
 import reactor.netty.ByteBufFlux
 import reactor.netty.Connection
 import reactor.netty.NettyInbound
 import reactor.netty.NettyOutbound
 import reactor.netty.tcp.TcpServer
-import java.time.Duration
-import java.lang.Exception
 import java.security.cert.X509Certificate
+import java.time.Duration
 import javax.net.ssl.SSLSession
 
 
@@ -56,15 +55,15 @@ import javax.net.ssl.SSLSession
  */
 internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                               private val sslContextFactory: ServerSslContextFactory,
-                              private val collectorProvider: CollectorProvider) : Server {
+                              private val collectorProvider: CollectorProvider,
+                              private val metrics: Metrics) : Server {
 
     override fun start(): IO<ServerHandle> = IO {
-        val tcpServer = TcpServer.create()
+        TcpServer.create()
                 .addressSupplier { serverConfig.serverListenAddress }
                 .configureSsl()
                 .handle(this::handleConnection)
-
-        NettyServerHandle(tcpServer.bindNow())
+                .let { NettyServerHandle(it.bindNow()) }
     }
 
     private fun TcpServer.configureSsl() =
@@ -79,13 +78,13 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                     }
 
     private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> {
+        metrics.notifyClientConnected()
         val clientContext = ClientContext(nettyOutbound.alloc())
         nettyInbound.withConnection {
             populateClientContext(clientContext, it)
             it.channel().pipeline().get(SslHandler::class.java)?.engine()?.session?.let { sslSession ->
                 sslSession.peerCertificates.firstOption().map { it as X509Certificate }.map { it.subjectDN.name }
             }
-
         }
 
         logger.debug(clientContext::fullMdc, Marker.Entry) { "Client connection request received" }
@@ -97,7 +96,8 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                 {
                     logger.info(clientContext::fullMdc) { "Handling new connection" }
                     nettyInbound.withConnection { conn ->
-                        conn.configureIdleTimeout(clientContext, serverConfig.idleTimeout)
+                        conn
+                                .configureIdleTimeout(clientContext, serverConfig.idleTimeout)
                                 .logConnectionClosed(clientContext)
                     }
                     it.handleConnection(createDataStream(nettyInbound))
@@ -152,12 +152,11 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
         }
     }
 
-    private fun Connection.logConnectionClosed(ctx: ClientContext): Connection {
-        onTerminate().subscribe {
-            // TODO: this code is never executed (at least with ssl-enabled, did not checked with ssl-disabled)
+    private fun Connection.logConnectionClosed(ctx: ClientContext): Connection = apply {
+        onDispose {
+            metrics.notifyClientDisconnected()
             logger.info(ctx::fullMdc, Marker.Exit) { "Connection has been closed" }
         }
-        return this
     }
 
     companion object {

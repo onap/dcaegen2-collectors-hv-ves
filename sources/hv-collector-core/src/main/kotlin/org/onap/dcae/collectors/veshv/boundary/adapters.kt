@@ -34,6 +34,8 @@ interface Metrics {
     fun notifyMessageReceived(size: Int)
     fun notifyMessageSent(topic: String)
     fun notifyMessageDropped(cause: MessageDropCause)
+    fun notifyClientDisconnected()
+    fun notifyClientConnected()
 }
 
 @FunctionalInterface

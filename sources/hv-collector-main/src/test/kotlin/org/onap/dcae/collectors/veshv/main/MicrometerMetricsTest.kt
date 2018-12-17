@@ -203,15 +203,47 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
+    describe("notifyClientConnected") {
+        on( "$PREFIX.connections.count.total") {
+            val counterName = "$PREFIX.connections.count.total"
+            it("should increment counter") {
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+                verifyAllCountersAreUnchangedBut(counterName)
+            }
+        }
+
+    }
+
+    describe("notifyClientDisconnected") {
+        on("$PREFIX.disconnections.count.total") {
+            val counterName ="$PREFIX.disconnections.count.total"
+            it("should increment counter") {
+                cut.notifyClientDisconnected()
+                cut.notifyClientDisconnected()
+
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+                verifyAllCountersAreUnchangedBut(counterName)
+            }
+        }
+
+    }
+
     describe("processing gauge") {
         it("should show difference between sent and received messages") {
-
+            val gaugeName = "$PREFIX.messages.processing.count"
             on("positive difference") {
                 cut.notifyMessageReceived(128)
                 cut.notifyMessageReceived(256)
                 cut.notifyMessageReceived(256)
                 cut.notifyMessageSent("perf3gpp")
-                verifyGauge("messages.processing.count") {
+                verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(2.0, doublePrecision)
                 }
             }
@@ -219,7 +251,7 @@ object MicrometerMetricsTest : Spek({
             on("zero difference") {
                 cut.notifyMessageReceived(128)
                 cut.notifyMessageSent("perf3gpp")
-                verifyGauge("messages.processing.count") {
+                verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
@@ -228,7 +260,32 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageReceived(128)
                 cut.notifyMessageSent("fault")
                 cut.notifyMessageSent("perf3gpp")
-                verifyGauge("messages.processing.count") {
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
+                }
+            }
+        }
+    }
+
+    describe("active clients gauge") {
+        it("should show difference between total connected and disconnected clients") {
+            val gaugeName = "$PREFIX.connections.count.active"
+            on("active clients") {
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(2.0, doublePrecision)
+                }
+            }
+
+            on("no active clients") {
+                cut.notifyClientConnected()
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }

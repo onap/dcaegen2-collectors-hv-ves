@@ -33,6 +33,9 @@ class FakeMetrics : Metrics {
     var messageBytesReceived: Int = 0
     var messagesSentCount: Int = 0
     var messagesDroppedCount: Int = 0
+    var connectionsTotal: Int = 0
+    var disconnectionsTotal: Int = 0
+    var activeConnections: Int = 0
 
     private val messagesSentToTopic: MutableMap<String, Int> = ConcurrentHashMap()
     private val messagesDroppedCause: MutableMap<MessageDropCause, Int> = ConcurrentHashMap()
@@ -53,6 +56,16 @@ class FakeMetrics : Metrics {
     override fun notifyMessageDropped(cause: MessageDropCause) {
         messagesDroppedCount++
         messagesDroppedCause.compute(cause) { k, _ -> messagesDroppedCause[k]?.inc() ?: 1 }
+    }
+
+    override fun notifyClientDisconnected() {
+        disconnectionsTotal++
+        activeConnections--
+    }
+
+    override fun notifyClientConnected() {
+        connectionsTotal++
+        activeConnections++
     }
 
     fun messagesOnTopic(topic: String) =
