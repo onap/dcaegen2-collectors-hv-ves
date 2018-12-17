@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_377c1383",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-17T14:09:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_372e5393",
+      "revId": "bcbe2d086867a64868d82668b38d3229a07ba69a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_77185b75",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
         "patchSetId": 6
@@ -47,6 +65,24 @@
       "writtenOn": "2018-12-17T14:00:18Z",
       "side": 1,
       "message": "Can be converted to reference now",
+      "revId": "bcbe2d086867a64868d82668b38d3229a07ba69a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d76ca7d2",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-17T14:09:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_77185b75",
       "revId": "bcbe2d086867a64868d82668b38d3229a07ba69a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
