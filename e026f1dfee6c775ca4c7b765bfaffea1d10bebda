@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_9704df4a",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/metrics.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-17T16:32:14Z",
+      "side": 1,
+      "message": "Wouldn\u0027t the Map\u003cClientRejectionCause, Int\u003e approach be better? It aggregates both these fields and allows better verification of what\u0027s actually happening.",
+      "revId": "e026f1dfee6c775ca4c7b765bfaffea1d10bebda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3768931c",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/metrics.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-17T16:32:14Z",
+      "side": 1,
+      "message": "Move this method above messageOnTopic",
+      "revId": "e026f1dfee6c775ca4c7b765bfaffea1d10bebda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
