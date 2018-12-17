@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_778b7b68",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/boundary/adapters.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-17T14:28:02Z",
+      "side": 1,
+      "message": "Align naming with MessageDropCause, eg. ClientRejectionCause or MessageDropReason",
+      "revId": "80bac5af4892f2211fe0aa6d2322bb3fa02dfce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d7f10702",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/wire/WireChunkDecoder.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-17T14:28:02Z",
+      "side": 1,
+      "message": "On this stage we do not know yet if client was rejected or not. The decision logic is in VesHvCollector class. Should be probably added to onErrorResume method.",
+      "revId": "80bac5af4892f2211fe0aa6d2322bb3fa02dfce3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
