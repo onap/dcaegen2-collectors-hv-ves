@@ -25,5 +25,5 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameDecodingError
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class WireFrameException(error: WireFrameDecodingError)
+class WireFrameException(val error: WireFrameDecodingError)
     : Exception("${error::class.simpleName}: ${error.message}")

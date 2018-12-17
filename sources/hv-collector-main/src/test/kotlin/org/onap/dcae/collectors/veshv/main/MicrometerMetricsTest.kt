@@ -36,6 +36,8 @@ import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics.Companion.PREFIX
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.INVALID_WIRE_FRAME_MARKER
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
@@ -60,7 +62,7 @@ object MicrometerMetricsTest : Spek({
         cut = MicrometerMetrics(registry)
     }
 
-    fun registrySearch() = RequiredSearch.`in`(registry)
+    fun registrySearch(counterName: String) = RequiredSearch.`in`(registry).name(counterName)
 
     fun <M, T> verifyMeter(search: RequiredSearch, map: (RequiredSearch) -> M, verifier: (M) -> T) =
             Try {
@@ -71,16 +73,16 @@ object MicrometerMetricsTest : Spek({
             )
 
     fun <T> verifyGauge(name: String, verifier: (Gauge) -> T) =
-            verifyMeter(registrySearch().name(name), RequiredSearch::gauge, verifier)
+            verifyMeter(registrySearch(name), RequiredSearch::gauge, verifier)
 
     fun <T> verifyTimer(name: String, verifier: (Timer) -> T) =
-            verifyMeter(registrySearch().name(name), RequiredSearch::timer, verifier)
+            verifyMeter(registrySearch(name), RequiredSearch::timer, verifier)
 
     fun <T> verifyCounter(search: RequiredSearch, verifier: (Counter) -> T) =
             verifyMeter(search, RequiredSearch::counter, verifier)
 
     fun <T> verifyCounter(name: String, verifier: (Counter) -> T) =
-            verifyCounter(registrySearch().name(name), verifier)
+            verifyCounter(registrySearch(name), verifier)
 
     fun verifyAllCountersAreUnchangedBut(vararg changedCounters: String) {
         registry.meters
@@ -173,11 +175,11 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageSent(routedMessage(topicName2))
                 cut.notifyMessageSent(routedMessage(topicName2))
 
-                verifyCounter(registrySearch().name(counterName).tag("topic", topicName1)) {
+                verifyCounter(registrySearch(counterName).tag("topic", topicName1)) {
                     assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
 
-                verifyCounter(registrySearch().name(counterName).tag("topic", topicName2)) {
+                verifyCounter(registrySearch(counterName).tag("topic", topicName2)) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
             }
@@ -224,11 +226,11 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageDropped(INVALID_MESSAGE)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
 
-                verifyCounter(registrySearch().name(counterName).tag("cause", ROUTE_NOT_FOUND.tag)) {
+                verifyCounter(registrySearch(counterName).tag("cause", ROUTE_NOT_FOUND.tag)) {
                     assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
 
-                verifyCounter(registrySearch().name(counterName).tag("cause", INVALID_MESSAGE.tag)) {
+                verifyCounter(registrySearch(counterName).tag("cause", INVALID_MESSAGE.tag)) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
             }
@@ -267,6 +269,38 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
+    describe("notifyClientRejected") {
+
+        on("$PREFIX.clients.rejected.cause") {
+            val counterName = "$PREFIX.clients.rejected.count.total"
+            it("should increment counter for each possible reason") {
+                cut.notifyClientRejected(INVALID_WIRE_FRAME_MARKER)
+                cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
+
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+                verifyAllCountersAreUnchangedBut(counterName, "$PREFIX.clients.rejected.cause")
+            }
+        }
+
+        on("$PREFIX.clients.rejected.cause counter") {
+            val counterName = "$PREFIX.clients.rejected.cause"
+            it("should handle counters for different rejection reasons") {
+                cut.notifyClientRejected(INVALID_WIRE_FRAME_MARKER)
+                cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
+                cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
+
+                verifyCounter(registrySearch(counterName).tag("cause", INVALID_WIRE_FRAME_MARKER.tag)) {
+                    assertThat(it.count()).isCloseTo(1.0, doublePrecision)
+                }
+
+                verifyCounter(registrySearch(counterName).tag("cause", PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE.tag)) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+            }
+        }
+    }
 })
 
 fun routedMessage(topic: String, partition: Int = 0) =
