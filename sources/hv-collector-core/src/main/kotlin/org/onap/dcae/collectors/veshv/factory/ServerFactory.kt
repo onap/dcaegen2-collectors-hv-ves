@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.factory
 
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
+import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.impl.socket.NettyTcpServer
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
@@ -30,6 +31,8 @@ import org.onap.dcae.collectors.veshv.ssl.boundary.ServerSslContextFactory
  * @since May 2018
  */
 object ServerFactory {
-    fun createNettyTcpServer(serverConfiguration: ServerConfiguration, collectorProvider: CollectorProvider): Server =
-            NettyTcpServer(serverConfiguration, ServerSslContextFactory(), collectorProvider)
+    fun createNettyTcpServer(serverConfiguration: ServerConfiguration,
+                             collectorProvider: CollectorProvider,
+                             metrics: Metrics): Server =
+            NettyTcpServer(serverConfiguration, ServerSslContextFactory(), collectorProvider, metrics)
 }

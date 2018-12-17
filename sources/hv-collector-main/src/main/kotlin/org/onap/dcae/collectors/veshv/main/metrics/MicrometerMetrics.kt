@@ -50,10 +50,13 @@ class MicrometerMetrics internal constructor(
     private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED, COUNT))
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
 
+    private val connectionsTotalCount = registry.counter(name(CONNECTIONS, TOTAL, COUNT))
+    private val disconnectionsCount = registry.counter(name(DISCONNECTIONS, COUNT))
+
     private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
     private val totalLatency = registry.timer(name(MESSAGES, LATENCY, TIME))
 
-    private val sentCountTotal = registry.counter(name(MESSAGES, SENT, COUNT))
+    private val sentCount = registry.counter(name(MESSAGES, SENT, COUNT))
     private val sentToTopicCount = { topic: String ->
         registry.counter(name(MESSAGES, SENT, TOPIC, COUNT), TOPIC, topic)
     }.memoize<String, Counter>()
@@ -70,15 +73,19 @@ class MicrometerMetrics internal constructor(
 
     init {
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
-            (receivedMsgCount.count() - sentCountTotal.count()).coerceAtLeast(0.0)
+            (receivedMsgCount.count() - sentCount.count()).coerceAtLeast(0.0)
         }
+
+        registry.gauge(name(CONNECTIONS, ACTIVE, COUNT), this) {
+            (connectionsTotalCount.count() - disconnectionsCount.count()).coerceAtLeast(0.0)
+        }
+
         ClassLoaderMetrics().bindTo(registry)
         JvmMemoryMetrics().bindTo(registry)
         JvmGcMetrics().bindTo(registry)
         ProcessorMetrics().bindTo(registry)
         JvmThreadMetrics().bindTo(registry)
     }
-
 
     val metricsProvider = MicrometerPrometheusMetricsProvider(registry)
 
@@ -93,7 +100,7 @@ class MicrometerMetrics internal constructor(
 
     override fun notifyMessageSent(msg: RoutedMessage) {
         val now = Instant.now()
-        sentCountTotal.increment()
+        sentCount.increment()
         sentToTopicCount(msg.topic).increment()
 
         processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, now))
@@ -110,11 +117,22 @@ class MicrometerMetrics internal constructor(
         clientsRejectedCauseCount(cause.tag).increment()
     }
 
+    override fun notifyClientConnected() {
+        connectionsTotalCount.increment()
+    }
+
+    override fun notifyClientDisconnected() {
+        disconnectionsCount.increment()
+    }
+
     companion object {
         val INSTANCE = MicrometerMetrics()
         internal const val PREFIX = "hvves"
         internal const val MESSAGES = "messages"
         internal const val RECEIVED = "received"
+        internal const val DISCONNECTIONS = "disconnections"
+        internal const val CONNECTIONS = "connections"
+        internal const val ACTIVE = "active"
         internal const val BYTES = "bytes"
         internal const val COUNT = "count"
         internal const val DATA = "data"
@@ -125,6 +143,7 @@ class MicrometerMetrics internal constructor(
         internal const val REJECTED = "rejected"
         internal const val TOPIC = "topic"
         internal const val DROPPED = "dropped"
+        internal const val TOTAL = "total"
         internal const val TIME = "time"
         internal const val LATENCY = "latency"
         internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"

@@ -175,7 +175,6 @@ object MetricsSpecification : Spek({
     }
 
     describe("clients rejected metrics") {
-
         given("rejection causes") {
             mapOf(
                     ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE to
@@ -192,7 +191,7 @@ object MetricsSpecification : Spek({
                         assertThat(metrics.clientRejectionCause.size)
                                 .describedAs("metrics were notified with only one rejection cause")
                                 .isOne()
-                        assertThat(metrics.clientRejectionCause.get(cause))
+                        assertThat(metrics.clientRejectionCause[cause])
                                 .describedAs("metrics were notified only once with correct client rejection cause")
                                 .isOne()
                     }
