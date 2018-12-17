@@ -19,6 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
+import org.onap.dcae.collectors.veshv.domain.InvalidWireFrameMarker
+import org.onap.dcae.collectors.veshv.domain.PayloadSizeExceeded
+import org.onap.dcae.collectors.veshv.impl.wire.WireFrameException
+
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since December 2018
@@ -26,4 +30,24 @@ package org.onap.dcae.collectors.veshv.model
 enum class MessageDropCause(val tag: String) {
     ROUTE_NOT_FOUND("routing"),
     INVALID_MESSAGE("invalid")
+}
+
+enum class ClientRejectionCause(val tag: String) {
+    INVALID_WIRE_FRAME_MARKER("invalid_marker"),
+    PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE("too_big_payload"),
+    UNEXPECTED_STREAM_ERROR("unexpected");
+
+    companion object {
+        fun fromThrowable(err: Throwable): ClientRejectionCause =
+                when (err) {
+                    is WireFrameException -> fromWireFrameException(err)
+                    else -> UNEXPECTED_STREAM_ERROR
+                }
+
+        private fun fromWireFrameException(err: WireFrameException) = when (err.error) {
+            is InvalidWireFrameMarker -> INVALID_WIRE_FRAME_MARKER
+            is PayloadSizeExceeded -> PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
+            else -> UNEXPECTED_STREAM_ERROR
+        }
+    }
 }

@@ -23,18 +23,23 @@ import com.google.protobuf.ByteString
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
+import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidListenerVersion
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHeader
+import org.onap.dcae.collectors.veshv.tests.utils.messageWithPayloadOfSize
 import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
 import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
 import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
@@ -153,7 +158,7 @@ object MetricsSpecification : Spek({
                     .isEqualTo(1)
         }
 
-        it("should gather summed metrics for dropped messages"){
+        it("should gather summed metrics for dropped messages") {
             val sut = vesHvWithNoOpSink(basicConfiguration)
 
             sut.handleConnection(
@@ -166,6 +171,33 @@ object MetricsSpecification : Spek({
             assertThat(metrics.messagesDroppedCount)
                     .describedAs("messagesDroppedCount metric")
                     .isEqualTo(2)
+        }
+    }
+
+    describe("clients rejected metrics") {
+
+        given("rejection causes") {
+            mapOf(
+                    ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE to
+                            messageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1),
+                    ClientRejectionCause.INVALID_WIRE_FRAME_MARKER to garbageFrame()
+            ).forEach { cause, vesMessage ->
+                on("cause $cause") {
+                    it("should notify correct metrics") {
+                        val sut = vesHvWithNoOpSink()
+
+                        sut.handleConnection(vesMessage)
+
+                        val metrics = sut.metrics
+                        assertThat(metrics.clientRejectionCause.size)
+                                .describedAs("metrics were notified with only one rejection cause")
+                                .isOne()
+                        assertThat(metrics.clientRejectionCause.get(cause))
+                                .describedAs("metrics were notified only once with correct client rejection cause")
+                                .isOne()
+                    }
+                }
+            }
         }
     }
 })

@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.boundary
 
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
@@ -35,6 +36,7 @@ interface Metrics {
     fun notifyMessageReceived(msg: WireFrameMessage)
     fun notifyMessageSent(msg: RoutedMessage)
     fun notifyMessageDropped(cause: MessageDropCause)
+    fun notifyClientRejected(cause: ClientRejectionCause)
 }
 
 @FunctionalInterface
