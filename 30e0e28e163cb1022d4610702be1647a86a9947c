@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_5c745c35",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-17T09:28:01Z",
+      "side": 1,
+      "message": "You can skip \"constructor\" phrase and leave just the brackets",
+      "revId": "30e0e28e163cb1022d4610702be1647a86a9947c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9ca5e4a3",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-17T09:28:01Z",
+      "side": 1,
+      "message": "What\u0027s the point of having two mdc storages? I\u0027m not sure but i think that this task was about replacing the current way of storing mdc\u0027s.",
+      "revId": "30e0e28e163cb1022d4610702be1647a86a9947c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_7c712043",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-17T09:28:01Z",
+      "side": 1,
+      "message": "Skip curly brakcets and return statement. Use \"when\" as a expression.",
+      "revId": "30e0e28e163cb1022d4610702be1647a86a9947c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_dc97ec38",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/ClientContext.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-17T09:28:01Z",
+      "side": 1,
+      "message": "Same as before",
+      "revId": "30e0e28e163cb1022d4610702be1647a86a9947c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
