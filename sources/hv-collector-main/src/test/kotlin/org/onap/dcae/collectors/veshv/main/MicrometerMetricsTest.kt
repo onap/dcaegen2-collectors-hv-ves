@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.main
 import arrow.core.Try
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
-import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.Timer
 import io.micrometer.core.instrument.search.RequiredSearch
 import io.micrometer.prometheus.PrometheusConfig
@@ -35,10 +34,10 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics.Companion.PREFIX
-import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.INVALID_WIRE_FRAME_MARKER
-import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.INVALID_WIRE_FRAME_MARKER
+import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
@@ -46,6 +45,8 @@ import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
 import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
 import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrameWithPayloadSize
 import java.time.Instant
+import io.micrometer.core.instrument.Meter
+
 import java.time.temporal.Temporal
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
@@ -56,7 +57,6 @@ import kotlin.reflect.KClass
  */
 object MicrometerMetricsTest : Spek({
     val doublePrecision = Percentage.withPercentage(0.5)
-    val alwaysChangedMeters = setOf("$PREFIX.messages.processing.time", "$PREFIX.messages.latency.time")
     lateinit var registry: PrometheusMeterRegistry
     lateinit var cut: MicrometerMetrics
 
@@ -87,6 +87,17 @@ object MicrometerMetricsTest : Spek({
     fun <T> verifyCounter(name: String, verifier: (Counter) -> T) =
             verifyCounter(registrySearch(name), verifier)
 
+    fun verifyAllCountersAreUnchangedBut(vararg changedCounters: String) {
+        registry.meters
+                .filter { it.id.name.startsWith(PREFIX) }
+                .filter { it is Counter }
+                .map { it as Counter }
+                .filterNot { it.id.name in changedCounters }
+                .forEach {
+                    assertThat(it.count()).describedAs(it.id.toString()).isCloseTo(0.0, doublePrecision)
+                }
+    }
+
     fun verifyCountersAndTimersAreUnchangedBut(vararg changedMeters: String) {
         fun <T : Meter> verifyAllMetersAreUnchangedBut(
                 clazz: KClass<T>,
@@ -98,7 +109,9 @@ object MicrometerMetricsTest : Spek({
                     .map { it as T }
                     .filterNot { it.id.name in changedCounters }
                     .forEach {
-                        assertThat(valueOf(it)).describedAs(it.id.toString()).isCloseTo(0.0, doublePrecision)
+                        assertThat(valueOf(it))
+                                .describedAs(it.id.toString())
+                                .isCloseTo(0.0, doublePrecision)
                     }
         }
 
@@ -108,8 +121,8 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("notifyBytesReceived") {
 
+    describe("notifyBytesReceived") {
         on("$PREFIX.data.received.bytes counter") {
             val counterName = "$PREFIX.data.received.bytes"
 
@@ -187,6 +200,7 @@ object MicrometerMetricsTest : Spek({
 
         on("$PREFIX.messages.sent.topic.count counter") {
             val counterName = "$PREFIX.messages.sent.topic.count"
+
             it("should handle counters for different topics") {
                 cut.notifyMessageSent(routedMessage(topicName1))
                 cut.notifyMessageSent(routedMessage(topicName2))
@@ -242,13 +256,12 @@ object MicrometerMetricsTest : Spek({
                         "$PREFIX.messages.processing.time")
             }
         }
-
     }
 
     describe("notifyMessageDropped") {
-
         on("$PREFIX.messages.dropped.count counter") {
             val counterName = "$PREFIX.messages.dropped.count"
+
             it("should increment counter") {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
@@ -262,6 +275,7 @@ object MicrometerMetricsTest : Spek({
 
         on("$PREFIX.messages.dropped.cause.count counter") {
             val counterName = "$PREFIX.messages.dropped.cause.count"
+
             it("should handle counters for different drop reasons") {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
@@ -278,36 +292,38 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("processing gauge") {
-        it("should show difference between sent and received messages") {
+    describe("notifyClientConnected") {
+        on("$PREFIX.connections.total.count counter") {
+            val counterName = "$PREFIX.connections.total.count"
 
-            on("positive difference") {
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
-                cut.notifyMessageSent(routedMessage("perf3gpp"))
-                verifyGauge("messages.processing.count") {
-                    assertThat(it.value()).isCloseTo(2.0, doublePrecision)
-                }
-            }
+            it("should increment counter") {
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
 
-            on("zero difference") {
-                cut.notifyMessageReceived(emptyWireProtocolFrame())
-                cut.notifyMessageSent(routedMessage("perf3gpp"))
-                verifyGauge("messages.processing.count") {
-                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
-            }
-
-            on("negative difference") {
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
-                cut.notifyMessageSent(routedMessage("fault"))
-                cut.notifyMessageSent(routedMessage("perf3gpp"))
-                verifyGauge("messages.processing.count") {
-                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
-                }
+                verifyCountersAndTimersAreUnchangedBut(counterName)
             }
         }
+
+    }
+
+    describe("notifyClientDisconnected") {
+        on("$PREFIX.disconnections.count counter") {
+            val counterName = "$PREFIX.disconnections.count"
+
+            it("should increment counter") {
+                cut.notifyClientDisconnected()
+                cut.notifyClientDisconnected()
+
+                verifyCounter(counterName) {
+                    assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+                verifyCountersAndTimersAreUnchangedBut(counterName)
+            }
+        }
+
     }
 
     describe("notifyClientRejected") {
@@ -338,6 +354,74 @@ object MicrometerMetricsTest : Spek({
 
                 verifyCounter(registrySearch(counterName).tag("cause", PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE.tag)) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
+                }
+            }
+        }
+    }
+
+    describe("$PREFIX.messages.processing.count gauge") {
+        val gaugeName = "$PREFIX.messages.processing.count"
+
+        on("message traffic") {
+            it("should calculate positive difference between sent and received messages") {
+                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
+                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
+                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
+                cut.notifyMessageSent(routedMessage("perf3gpp"))
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(2.0, doublePrecision)
+                }
+            }
+
+            it("should calculate no difference between sent and received messages") {
+                cut.notifyMessageSent(routedMessage("perf3gpp"))
+                cut.notifyMessageSent(routedMessage("fault"))
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
+                }
+            }
+
+            it("should calculate negative difference between sent and received messages") {
+                cut.notifyMessageSent(routedMessage("fault"))
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
+                }
+            }
+        }
+    }
+
+    describe("$PREFIX.connections.active.count gauge") {
+        val gaugeName = "$PREFIX.connections.active.count"
+
+        on("connection traffic") {
+            it("should calculate positive difference between connected and disconnected clients") {
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+                cut.notifyClientConnected()
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(2.0, doublePrecision)
+                }
+            }
+
+            it("should calculate no difference between connected and disconnected clients") {
+                cut.notifyClientDisconnected()
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
+                }
+            }
+
+            it("should calculate negative difference between connected and disconnected clients") {
+                cut.notifyClientDisconnected()
+
+                verifyGauge(gaugeName) {
+                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
         }
