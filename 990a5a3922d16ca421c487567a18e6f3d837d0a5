@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_915dca17",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/stream_interruption_cause.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-18T08:13:01Z",
+      "side": 1,
+      "message": "Extract this when to separate private fun",
+      "revId": "990a5a3922d16ca421c487567a18e6f3d837d0a5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
