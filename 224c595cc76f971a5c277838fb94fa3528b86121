@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_b1b1ee48",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-18T08:20:40Z",
+      "side": 1,
+      "message": "Is `apply` needed here?",
+      "revId": "224c595cc76f971a5c277838fb94fa3528b86121",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
