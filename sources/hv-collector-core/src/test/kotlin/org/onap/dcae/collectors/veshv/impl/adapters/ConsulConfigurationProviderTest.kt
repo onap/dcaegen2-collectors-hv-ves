@@ -66,8 +66,6 @@ internal object ConsulConfigurationProviderTest : Spek({
                     StepVerifier.create(consulConfigProvider().take(1))
                             .consumeNextWith {
 
-                                assertEquals("$kafkaAddress:9093", it.kafkaBootstrapServers)
-
                                 val route1 = it.routing.routes[0]
                                 assertThat(FAULT.domainName)
                                         .describedAs("routed domain 1")
@@ -139,12 +137,9 @@ private fun constructConsulConfigProvider(url: String,
     )
 }
 
-
-const val kafkaAddress = "message-router-kafka"
-
 fun constructConsulResponse(): String =
     """{
-    "dmaap.kafkaBootstrapServers": "$kafkaAddress:9093",
+    "whatever": "garbage",
     "collector.routing": [
             {
                 "fromDomain": "fault",

@@ -61,7 +61,6 @@ TOPIC=${2:-HV_VES_PERF3GPP}
 
 CONFIGURATION="
 {
-    \"dmaap.kafkaBootstrapServers\": \"message-router-kafka:9092\",
     \"collector.routing\":
         [{
             \"fromDomain\": \"${DOMAIN}\",

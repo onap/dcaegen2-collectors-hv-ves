@@ -25,7 +25,7 @@ import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkForClientProvider
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
@@ -46,7 +46,7 @@ class Sut(sink: Sink = StoringSink()) {
 
     private val collectorFactory = CollectorFactory(
             configurationProvider,
-            SinkProvider.just(sink),
+            SinkForClientProvider.just(sink),
             metrics,
             MAX_PAYLOAD_SIZE_BYTES,
             healthStateProvider)
