@@ -68,6 +68,24 @@
       "revId": "224c595cc76f971a5c277838fb94fa3528b86121",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f180d6f8",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-18T10:02:15Z",
+      "side": 1,
+      "message": "In case of connections it actually is. When it comes to disconnections - i agree.",
+      "parentUuid": "9adffdf1_f13f7685",
+      "revId": "224c595cc76f971a5c277838fb94fa3528b86121",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
