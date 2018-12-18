@@ -73,12 +73,17 @@ fun Sut.handleConnection(vararg packets: ByteBuf) {
     collector.handleConnection(Flux.fromArray(packets)).block(timeout)
 }
 
-fun vesHvWithNoOpSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
-        Sut(NoOpSink()).apply {
+fun vesHvWithAlwaysSuccessfulSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+        Sut(AlwaysSuccessfulSink()).apply {
+            configurationProvider.updateConfiguration(collectorConfiguration)
+        }
+
+fun vesHvWithAlwaysFailingSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+        Sut(AlwaysFailingSink()).apply {
             configurationProvider.updateConfiguration(collectorConfiguration)
         }
 
 fun vesHvWithDelayingSink(delay: Duration, collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
-        Sut(ProcessingSink { it.delayElements(delay) }).apply {
+        Sut(DelayingSink(delay)).apply {
             configurationProvider.updateConfiguration(collectorConfiguration)
         }

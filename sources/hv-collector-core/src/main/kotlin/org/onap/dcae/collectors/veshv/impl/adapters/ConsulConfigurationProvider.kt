@@ -25,6 +25,7 @@ import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.ServiceContext
+import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.Marker
 import reactor.core.publisher.Flux
@@ -107,12 +108,11 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
             Json.createReader(StringReader(responseString)).readObject()
 
     private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration {
-        val routing = configuration.getJsonArray("collector.routing")
+        val routingArray = configuration.getJsonArray("collector.routing")
 
         return CollectorConfiguration(
-                kafkaBootstrapServers = configuration.getString("dmaap.kafkaBootstrapServers"),
-                routing = org.onap.dcae.collectors.veshv.model.routing {
-                    for (route in routing) {
+                routing {
+                    for (route in routingArray) {
                         val routeObj = route.asJsonObject()
                         defineRoute {
                             fromDomain(routeObj.getString("fromDomain"))

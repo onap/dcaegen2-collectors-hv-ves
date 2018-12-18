@@ -27,10 +27,12 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
+import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_CONFIG_URL
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_SERVERS
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_FIRST_REQUEST_DELAY
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_REQUEST_INTERVAL
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.DUMMY_MODE
@@ -52,6 +54,7 @@ import java.time.Duration
 
 internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList = listOf(
+            KAFKA_SERVERS,
             HEALTH_CHECK_API_PORT,
             LISTEN_PORT,
             CONSUL_CONFIG_URL,
@@ -73,6 +76,7 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                         HEALTH_CHECK_API_PORT,
                         DefaultValues.HEALTH_CHECK_API_PORT
                 )
+                val kafkaServers = cmdLine.stringValue(KAFKA_SERVERS).bind()
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                 val idleTimeoutSec = cmdLine.longValue(IDLE_TIMEOUT_SEC, DefaultValues.IDLE_TIMEOUT_SEC)
                 val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES,
@@ -82,6 +86,7 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                 val configurationProviderParams = createConfigurationProviderParams(cmdLine).bind()
                 ServerConfiguration(
                         serverListenAddress = InetSocketAddress(listenPort),
+                        kafkaConfiguration = KafkaConfiguration(kafkaServers),
                         healthCheckApiListenAddress = InetSocketAddress(healthCheckApiPort),
                         configurationProviderParams = configurationProviderParams,
                         securityConfiguration = security,

@@ -20,64 +20,58 @@
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withDebug
 import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withWarn
-import org.onap.dcae.collectors.veshv.utils.logging.Marker
+import org.onap.dcae.collectors.veshv.model.ConsumedMessage
+import org.onap.dcae.collectors.veshv.model.FailedToConsumeMessage
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.SuccessfullyConsumedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.Marker
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import reactor.kafka.sender.KafkaSender
 import reactor.kafka.sender.SenderRecord
-import reactor.kafka.sender.SenderResult
-import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, VesMessage>,
+internal class KafkaSink(internal val sender: KafkaSender<CommonEventHeader, VesMessage>,
                          private val ctx: ClientContext) : Sink {
-    private val sentMessages = AtomicLong(0)
 
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
-        val records = messages.map(this::vesToKafkaRecord)
-        val result = sender.send(records)
-                .doOnNext {
-                    if (it.isSuccessful()) {
-                        Mono.just(it)
+    override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> =
+            messages.map(::vesToKafkaRecord).let { records ->
+                sender.send(records).map {
+                    val msg = it.correlationMetadata()
+                    if (it.exception() == null) {
+                        logger.trace(ctx::fullMdc, Marker.Invoke()) {
+                            "Message sent to Kafka with metadata: ${it.recordMetadata()}"
+                        }
+                        SuccessfullyConsumedMessage(msg)
                     } else {
-                        logger.withWarn(ctx) { log("Failed to send message to Kafka", it.exception()) }
-                        Mono.empty<SenderResult<RoutedMessage>>()
+                        logger.warn(ctx::fullMdc, Marker.Invoke()) {
+                            "Failed to send message to Kafka. Reason: ${it.exception().message}"
+                        }
+                        logger.withDebug(ctx) { log("Kafka send failure details", it.exception()) }
+                        FailedToConsumeMessage(msg, it.exception(), MessageDropCause.KAFKA_FAILURE)
                     }
                 }
-                .map { it.correlationMetadata() }
+            }
 
-        return result.doOnNext(::logSentMessage)
-    }
-
-    private fun vesToKafkaRecord(msg: RoutedMessage): SenderRecord<CommonEventHeader, VesMessage, RoutedMessage> {
-        return SenderRecord.create(
-                msg.topic,
-                msg.partition,
-                System.currentTimeMillis(),
-                msg.message.header,
-                msg.message,
-                msg)
-    }
-
-    private fun logSentMessage(sentMsg: RoutedMessage) {
-        logger.trace(ctx::fullMdc, Marker.Invoke()) {
-            val msgNum = sentMessages.incrementAndGet()
-            "Message #$msgNum has been sent to ${sentMsg.topic}:${sentMsg.partition}"
-        }
-    }
-
-    private fun SenderResult<out Any>.isSuccessful() = exception() == null
+    private fun vesToKafkaRecord(routed: RoutedMessage): SenderRecord<CommonEventHeader, VesMessage, RoutedMessage> =
+            SenderRecord.create(
+                    routed.topic,
+                    routed.partition,
+                    FILL_TIMESTAMP_LATER,
+                    routed.message.header,
+                    routed.message,
+                    routed)
 
     companion object {
-        val logger = Logger(KafkaSink::class)
+        private val FILL_TIMESTAMP_LATER: Long? = null
+        private val logger = Logger(KafkaSink::class)
     }
 }

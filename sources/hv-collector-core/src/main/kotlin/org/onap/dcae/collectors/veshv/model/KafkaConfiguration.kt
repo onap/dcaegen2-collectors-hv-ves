@@ -17,29 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
-
-import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
-import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
-import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
-import reactor.netty.http.client.HttpClient
+package org.onap.dcae.collectors.veshv.model
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since December 2018
  */
-object AdapterFactory {
-    fun sinkCreatorFactory(dummyMode: Boolean,
-                           kafkaConfig: KafkaConfiguration): SinkProvider =
-            if (dummyMode)
-                LoggingSinkProvider()
-            else
-                KafkaSinkProvider(kafkaConfig)
-
-    fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
-            ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
-
-    private fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
-}
+data class KafkaConfiguration(val bootstrapServers: String)
