@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_1180fa44",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-18T08:34:12Z",
+      "side": 1,
+      "message": "Hmm, shouldn\u0027t \u0027$PREFIX.messages.processing.time\u0027 also be changed (and analogous in above test, counter from this test should be changed) ?",
+      "revId": "ac74c2819695b9989b17e522c84ea9cc7c273ba3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
