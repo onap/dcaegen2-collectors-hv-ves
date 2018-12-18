@@ -84,10 +84,6 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="org.onap.dcae.collectors.veshv" level="TRACE"/>
-    <logger name="org.onap.dcae.collectors.veshv.impl.wire" level="TRACE"/>
-    <logger name="org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSink" level="TRACE"/>
-    <logger name="org.onap.dcae.collectors.veshv.impl.adapters.LoggingSinkProvider" level="TRACE"/>
     <logger name="reactor.netty" level="WARN"/>
     <logger name="io.netty" level="DEBUG"/>
     <logger name="io.netty.util" level="WARN"/>
