@@ -59,18 +59,20 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                     healthState.changeState(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(config::set)
+
         return { ctx: ClientContext ->
-            config.getOption().map { config -> createVesHvCollector(config, ctx) }
+            config.getOption().map { createVesHvCollector(it, ctx) }
         }
     }
 
-    private fun createVesHvCollector(config: CollectorConfiguration, ctx: ClientContext): Collector = VesHvCollector(
-            clientContext = ctx,
-            wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx),
-            protobufDecoder = VesDecoder(),
-            router = Router(config.routing, ctx),
-            sink = sinkProvider(config, ctx),
-            metrics = metrics)
+    private fun createVesHvCollector(config: CollectorConfiguration, ctx: ClientContext): Collector =
+            VesHvCollector(
+                    clientContext = ctx,
+                    wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx),
+                    protobufDecoder = VesDecoder(),
+                    router = Router(config.routing, ctx),
+                    sink = sinkProvider(ctx),
+                    metrics = metrics)
 
     companion object {
         private val logger = Logger(CollectorFactory::class)

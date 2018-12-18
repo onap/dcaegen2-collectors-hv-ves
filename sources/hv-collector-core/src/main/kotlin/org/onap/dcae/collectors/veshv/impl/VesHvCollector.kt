@@ -28,9 +28,11 @@ import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleR
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
+import org.onap.dcae.collectors.veshv.model.ConsumedMessage
+import org.onap.dcae.collectors.veshv.model.FailedToConsumeMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
-import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.SuccessfullyConsumedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
@@ -96,10 +98,10 @@ internal class VesHvCollector(
                         .doOnLeft { metrics.notifyMessageDropped(INVALID_MESSAGE) }
             }
 
-    private fun routeMessage(flux: Flux<VesMessage>): Flux<RoutedMessage> = flux
+    private fun routeMessage(flux: Flux<VesMessage>): Flux<ConsumedMessage> = flux
             .flatMap(this::findRoute)
             .compose(sink::send)
-            .doOnNext(metrics::notifyMessageSent)
+            .doOnNext(this::updateSinkMetrics)
 
     private fun findRoute(msg: VesMessage) = router
             .findDestination(msg)
@@ -107,6 +109,15 @@ internal class VesHvCollector(
             .filterEmptyWithLog(logger, clientContext::fullMdc,
                     { "Found route for message: ${it.topic}, partition: ${it.partition}" },
                     { "Could not find route for message" })
+
+    private fun updateSinkMetrics(consumedMessage: ConsumedMessage) {
+        when (consumedMessage) {
+            is SuccessfullyConsumedMessage ->
+                metrics.notifyMessageSent(consumedMessage.message)
+            is FailedToConsumeMessage ->
+                metrics.notifyMessageDropped(consumedMessage.cause)
+        }
+    }
 
     private fun releaseBuffersMemory() = wireChunkDecoder.release()
             .also { logger.debug { "Released buffer memory after handling message stream" } }

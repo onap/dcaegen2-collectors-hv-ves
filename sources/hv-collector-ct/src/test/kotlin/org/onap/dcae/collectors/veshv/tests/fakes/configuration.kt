@@ -36,7 +36,6 @@ const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "HV_VES_MEAS_FOR_VF_SCALING"
 const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
 
 val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
-        kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
                 fromDomain(PERF3GPP.domainName)
@@ -47,7 +46,6 @@ val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
 )
 
 val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfiguration(
-        kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
                 fromDomain(PERF3GPP.domainName)
@@ -69,7 +67,6 @@ val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfigu
 
 
 val configurationWithDifferentRouting: CollectorConfiguration = CollectorConfiguration(
-        kafkaBootstrapServers = "localhost:9969",
         routing = routing {
             defineRoute {
                 fromDomain(PERF3GPP.domainName)
@@ -81,7 +78,6 @@ val configurationWithDifferentRouting: CollectorConfiguration = CollectorConfigu
 
 
 val configurationWithoutRouting: CollectorConfiguration = CollectorConfiguration(
-        kafkaBootstrapServers = "localhost:9969",
         routing = routing {
         }.build()
 )
