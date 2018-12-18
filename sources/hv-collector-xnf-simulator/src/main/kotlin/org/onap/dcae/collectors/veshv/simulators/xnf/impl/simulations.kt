@@ -57,6 +57,10 @@ class OngoingSimulations(executor: Executor = Executors.newCachedThreadPool()) {
 
     fun status(id: UUID) = simulations.getOrDefault(id, StatusNotFound)
 
+    fun isAnySimulationPending() = simulations.any {
+        status(it.key) is StatusOngoing
+    }
+
     internal fun clear() {
         simulations.clear()
     }
