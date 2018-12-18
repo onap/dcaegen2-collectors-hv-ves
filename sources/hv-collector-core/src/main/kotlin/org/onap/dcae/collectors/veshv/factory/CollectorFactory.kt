@@ -23,7 +23,7 @@ import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.Metrics
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkForClientCreator
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicReference
  * @since May 2018
  */
 class CollectorFactory(val configuration: ConfigurationProvider,
-                       private val sinkProvider: SinkProvider,
+                       private val sinkCreator: SinkForClientCreator,
                        private val metrics: Metrics,
                        private val maximumPayloadSizeBytes: Int,
                        private val healthState: HealthState = HealthState.INSTANCE) {
@@ -59,18 +59,20 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                     healthState.changeState(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(config::set)
+
         return { ctx: ClientContext ->
-            config.getOption().map { config -> createVesHvCollector(config, ctx) }
+            config.getOption().map { createVesHvCollector(it, ctx) }
         }
     }
 
-    private fun createVesHvCollector(config: CollectorConfiguration, ctx: ClientContext): Collector = VesHvCollector(
-            clientContext = ctx,
-            wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx),
-            protobufDecoder = VesDecoder(),
-            router = Router(config.routing, ctx),
-            sink = sinkProvider(config, ctx),
-            metrics = metrics)
+    private fun createVesHvCollector(config: CollectorConfiguration, ctx: ClientContext): Collector =
+            VesHvCollector(
+                    clientContext = ctx,
+                    wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx),
+                    protobufDecoder = VesDecoder(),
+                    router = Router(config.routing, ctx),
+                    sink = sinkCreator(ctx),
+                    metrics = metrics)
 
     companion object {
         private val logger = Logger(CollectorFactory::class)

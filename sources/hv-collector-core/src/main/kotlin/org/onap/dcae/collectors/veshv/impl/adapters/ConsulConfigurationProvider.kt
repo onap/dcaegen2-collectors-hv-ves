@@ -110,7 +110,6 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
         val routing = configuration.getJsonArray("collector.routing")
 
         return CollectorConfiguration(
-                kafkaBootstrapServers = configuration.getString("dmaap.kafkaBootstrapServers"),
                 routing = org.onap.dcae.collectors.veshv.model.routing {
                     for (route in routing) {
                         val routeObj = route.asJsonObject()
