@@ -19,20 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import java.net.InetSocketAddress
-import java.time.Duration
+sealed class ConsumedMessage {
+    abstract val message: RoutedMessage
+}
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class ServerConfiguration(
-        val serverListenAddress: InetSocketAddress,
-        val kafkaConfiguration: KafkaConfiguration,
-        val configurationProviderParams: ConfigurationProviderParams,
-        val securityConfiguration: SecurityConfiguration,
-        val idleTimeout: Duration,
-        val healthCheckApiListenAddress: InetSocketAddress,
-        val maximumPayloadSizeBytes: Int,
-        val dummyMode: Boolean = false)
+data class SentMessage(override val message: RoutedMessage) : ConsumedMessage()
+
+data class FailedToSendMessage(override val message: RoutedMessage, val cause: Exception) : ConsumedMessage()

@@ -44,7 +44,6 @@ services:
     - consul-server
     restart: on-failure
     command: ["kv", "put", "-http-addr=http://consul-server:8500", "veshv-config", '{
-                                              "dmaap.kafkaBootstrapServers": "message-router-kafka:9092",
                                               "collector.routing": [
                                                 {
                                                   "fromDomain": "perf3gpp",
@@ -68,6 +67,7 @@ services:
     command: ["--listen-port", "6061",
               "--health-check-api-port", "6060",
               "--config-url", "http://consul-server:8500/v1/kv/veshv-config?raw=true",
+              "--kafka-bootstrap-servers", "message-router-kafka:9092",
               "--key-store-password", "onaponap",
               "--trust-store-password", "onaponap"]
     healthcheck:

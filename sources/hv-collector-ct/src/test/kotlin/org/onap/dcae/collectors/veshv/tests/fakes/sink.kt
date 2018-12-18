@@ -21,7 +21,9 @@ package org.onap.dcae.collectors.veshv.tests.fakes
 
 import arrow.core.identity
 import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.SentMessage
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import java.util.*
@@ -39,8 +41,8 @@ class StoringSink : Sink {
     val sentMessages: List<RoutedMessage>
         get() = sent.toList()
 
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
-        return messages.doOnNext(sent::addLast)
+    override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> {
+        return messages.doOnNext(sent::addLast).map(::SentMessage)
     }
 }
 
@@ -54,16 +56,17 @@ class CountingSink : Sink {
     val count: Long
         get() = atomicCount.get()
 
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
+    override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> {
         return messages.doOnNext {
             atomicCount.incrementAndGet()
-        }
+        }.map(::SentMessage)
     }
 }
 
 
-open class ProcessingSink(val transformer: (Flux<RoutedMessage>) -> Publisher<RoutedMessage>) : Sink {
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> = messages.transform(transformer)
+open class ProcessingSink(private val transformer: (Flux<RoutedMessage>) -> Publisher<RoutedMessage>) : Sink {
+    override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> =
+            messages.transform(transformer).map(::SentMessage)
 }
 
 class NoOpSink : ProcessingSink(::identity)
