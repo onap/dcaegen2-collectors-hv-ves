@@ -20,10 +20,12 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.core.Either
-import arrow.core.getOrElse
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfStatus.BUSY
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfStatus.DETAILED_STATUS_NODE
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfStatus.IDLE
 import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
 import org.onap.dcae.collectors.veshv.utils.http.Response
 import org.onap.dcae.collectors.veshv.utils.http.Responses
@@ -37,6 +39,7 @@ import ratpack.http.TypedData
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
 import java.util.*
+import javax.json.Json
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -59,10 +62,24 @@ internal class XnfApiServer(
                 .post("simulator/async", ::startSimulationHandler)
                 .get("simulator/:id", ::simulatorStatusHandler)
                 .get("healthcheck") { ctx ->
-                    logger.info { "Checking health" }
-                    ctx.response.status(HttpConstants.STATUS_OK).send()
+                    val healthCheckDetailedMessage = createHealthCheckDetailedMessage()
+                    val simulatorStatus = HttpConstants.STATUS_OK
+                    logger.info { "Returning simulator status: ${simulatorStatus} ${healthCheckDetailedMessage}" }
+                    ctx.response.status(simulatorStatus).send(healthCheckDetailedMessage)
                 }
     }
+
+    private fun createHealthCheckDetailedMessage() =
+            Json.createObjectBuilder()
+                    .add(DETAILED_STATUS_NODE,
+                            if (ongoingSimulations.isAnySimulationPending()) {
+                                BUSY
+                            } else {
+                                IDLE
+                            }
+                    )
+                    .build().toString()
+
 
     private fun startSimulationHandler(ctx: Context) {
         logger.info { "Attempting to start asynchronous scenario" }

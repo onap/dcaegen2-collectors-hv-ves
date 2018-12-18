@@ -65,7 +65,8 @@ if [ -n "${VERBOSE+x}" ]; then
     echo "Requesting xnf-simulator on port ${XNF_PORT} to send ${MESSAGES_AMOUNT} messages of type ${MESSAGES_TYPE}"
 fi
 
-REQUEST_ID=$(curl --request POST -s localhost:${XNF_PORT}/${XNF_ENDPOINT} -d "
+currentTimeMicros=$((`date +%s%N`/1000))
+REQUEST_ID=$(curl --request POST -s --header 'Content-Type: application/json' localhost:${XNF_PORT}/${XNF_ENDPOINT} -d "
 [
   {
     \"commonEventHeader\": {
@@ -77,7 +78,7 @@ REQUEST_ID=$(curl --request POST -s localhost:${XNF_PORT}/${XNF_ENDPOINT} -d "
       \"eventName\": \"sample-event-name\",
       \"eventType\": \"sample-event-type\",
       \"startEpochMicrosec\": 120034455,
-      \"lastEpochMicrosec\": 120034455,
+      \"lastEpochMicrosec\": $currentTimeMicros,
       \"nfNamingCode\": \"sample-nf-naming-code\",
       \"nfcNamingCode\": \"sample-nfc-naming-code\",
       \"reportingEntityId\": \"sample-reporting-entity-id\",
