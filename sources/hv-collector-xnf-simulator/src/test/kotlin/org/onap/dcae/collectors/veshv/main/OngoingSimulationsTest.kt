@@ -47,7 +47,7 @@ internal class OngoingSimulationsTest : Spek({
         given("not existing task task id") {
             val id = UUID.randomUUID()
 
-            on("status") {
+            on("asking for status") {
                 val result = cut.status(id)
 
                 it("should have 'not found' status") {
@@ -56,8 +56,16 @@ internal class OngoingSimulationsTest : Spek({
             }
         }
 
+        given("no tasks") {
+            on("quering about any pending task") {
+                it("should return false") {
+                    assertThat(cut.isAnySimulationPending()).isFalse()
+                }
+            }
+        }
+
         given("never ending task") {
-            val task = IO.async<Unit> { }
+            val task = neverendingTask()
 
             on("startAsynchronousSimulation") {
                 val result = cut.startAsynchronousSimulation(task)
@@ -65,33 +73,48 @@ internal class OngoingSimulationsTest : Spek({
                 it("should have ongoing status") {
                     assertThat(cut.status(result)).isEqualTo(StatusOngoing)
                 }
+
+                it("should return true when asked about any pending tasks") {
+                    assertThat(cut.isAnySimulationPending()).isTrue()
+                }
             }
         }
 
         given("failing task") {
-            val cause = RuntimeException("facepalm")
-            val task = IO.raiseError<Unit>(cause)
+            val (cause, task) = failingTask()
 
             on("startAsynchronousSimulation") {
-                val result = cut.startAsynchronousSimulation(task)
+                val taskID = cut.startAsynchronousSimulation(task)
 
                 it("should have failing status") {
                     waitUntilSucceeds {
-                        assertThat(cut.status(result)).isEqualTo(StatusFailure(cause))
+                        assertThat(cut.status(taskID)).isEqualTo(StatusFailure(cause))
+                    }
+                }
+
+                it("should return false when asked about any pending tasks") {
+                    waitUntilSucceeds {
+                        assertThat(cut.isAnySimulationPending()).isFalse()
                     }
                 }
             }
         }
 
         given("successful task") {
-            val task = IO { println("great success!") }
+            val task = succesfulTask()
 
             on("startAsynchronousSimulation") {
-                val result = cut.startAsynchronousSimulation(task)
+                val taskID = cut.startAsynchronousSimulation(task)
 
                 it("should have successful status") {
                     waitUntilSucceeds {
-                        assertThat(cut.status(result)).isEqualTo(StatusSuccess)
+                        assertThat(cut.status(taskID)).isEqualTo(StatusSuccess)
+                    }
+                }
+
+                it("should return false when asked about any pending tasks") {
+                    waitUntilSucceeds {
+                        assertThat(cut.isAnySimulationPending()).isFalse()
                     }
                 }
             }
@@ -104,3 +127,13 @@ internal class OngoingSimulationsTest : Spek({
 
     afterEachTest { cut.clear() }
 })
+
+private fun neverendingTask() = IO.async<Unit> { }
+
+private fun succesfulTask(): IO<Unit> = IO { println("great success!") }
+
+private fun failingTask(): Pair<RuntimeException, IO<Unit>> {
+    val cause = RuntimeException("facepalm")
+    val task = IO.raiseError<Unit>(cause)
+    return Pair(cause, task)
+}
