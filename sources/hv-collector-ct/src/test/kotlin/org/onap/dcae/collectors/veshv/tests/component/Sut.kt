@@ -25,7 +25,7 @@ import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkForClientProvider
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
@@ -46,7 +46,7 @@ class Sut(sink: Sink = StoringSink()) {
 
     private val collectorFactory = CollectorFactory(
             configurationProvider,
-            SinkProvider.just(sink),
+            SinkForClientProvider.just(sink),
             metrics,
             MAX_PAYLOAD_SIZE_BYTES,
             healthStateProvider)
@@ -73,12 +73,17 @@ fun Sut.handleConnection(vararg packets: ByteBuf) {
     collector.handleConnection(Flux.fromArray(packets)).block(timeout)
 }
 
-fun vesHvWithNoOpSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
-        Sut(NoOpSink()).apply {
+fun vesHvWithAlwaysSuccessfulSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+        Sut(AlwaysSuccessfulSink()).apply {
+            configurationProvider.updateConfiguration(collectorConfiguration)
+        }
+
+fun vesHvWithAlwaysFailingSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+        Sut(AlwaysFailingSink()).apply {
             configurationProvider.updateConfiguration(collectorConfiguration)
         }
 
 fun vesHvWithDelayingSink(delay: Duration, collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
-        Sut(ProcessingSink { it.delayElements(delay) }).apply {
+        Sut(DelayingSink(delay)).apply {
             configurationProvider.updateConfiguration(collectorConfiguration)
         }

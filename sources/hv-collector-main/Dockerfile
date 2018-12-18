@@ -11,7 +11,7 @@ RUN apt-get update \
 
 WORKDIR /opt/ves-hv-collector
 
-ENTRYPOINT ["entry.sh"]
+ENTRYPOINT ["./entry.sh"]
 
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./

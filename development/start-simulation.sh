@@ -25,7 +25,7 @@ curl --header 'Content-Type: application/json' --request POST \
                  "vesEventListenerVersion": "7.2"
                },
                "messageType": "VALID",
-               "messagesAmount": 1
+               "messagesAmount": 1000000
              }
            ]' \
     http://localhost:6062/simulator/async

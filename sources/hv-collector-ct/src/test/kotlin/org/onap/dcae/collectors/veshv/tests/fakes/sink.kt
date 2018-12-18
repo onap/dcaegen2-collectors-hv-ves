@@ -21,13 +21,17 @@ package org.onap.dcae.collectors.veshv.tests.fakes
 
 import arrow.core.identity
 import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.model.ConsumedMessage
+import org.onap.dcae.collectors.veshv.model.FailedToConsumeMessage
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.SuccessfullyConsumedMessage
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
+import java.time.Duration
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.atomic.AtomicLong
-import java.util.function.Function
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -39,8 +43,8 @@ class StoringSink : Sink {
     val sentMessages: List<RoutedMessage>
         get() = sent.toList()
 
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
-        return messages.doOnNext(sent::addLast)
+    override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> {
+        return messages.doOnNext(sent::addLast).map(::SuccessfullyConsumedMessage)
     }
 }
 
@@ -54,16 +58,23 @@ class CountingSink : Sink {
     val count: Long
         get() = atomicCount.get()
 
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> {
+    override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> {
         return messages.doOnNext {
             atomicCount.incrementAndGet()
-        }
+        }.map(::SuccessfullyConsumedMessage)
     }
 }
 
 
-open class ProcessingSink(val transformer: (Flux<RoutedMessage>) -> Publisher<RoutedMessage>) : Sink {
-    override fun send(messages: Flux<RoutedMessage>): Flux<RoutedMessage> = messages.transform(transformer)
+open class ProcessingSink(private val transformer: (Flux<RoutedMessage>) -> Publisher<ConsumedMessage>) : Sink {
+    override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> =
+            messages.transform(transformer)
 }
 
-class NoOpSink : ProcessingSink(::identity)
+class AlwaysSuccessfulSink : ProcessingSink({ it.map(::SuccessfullyConsumedMessage) })
+
+class AlwaysFailingSink : ProcessingSink({ stream ->
+    stream.map { FailedToConsumeMessage(it, null, MessageDropCause.KAFKA_FAILURE) }
+})
+
+class DelayingSink(delay: Duration) : ProcessingSink({ it.delayElements(delay).map(::SuccessfullyConsumedMessage) })
