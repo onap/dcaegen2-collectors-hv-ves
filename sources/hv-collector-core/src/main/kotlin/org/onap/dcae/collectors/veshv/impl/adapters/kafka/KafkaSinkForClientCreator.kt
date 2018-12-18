@@ -1,0 +1,64 @@
+/*
+ * ============LICENSE_START=======================================================
+ * dcaegen2-collectors-veshv
+ * ================================================================================
+ * Copyright (C) 2018 NOKIA
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+package org.onap.dcae.collectors.veshv.impl.adapters.kafka
+
+import org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG
+import org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG
+import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
+import org.apache.kafka.clients.producer.ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION
+import org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG
+import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
+import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.boundary.SinkForClientCreator
+import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
+import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import reactor.kafka.sender.KafkaSender
+import reactor.kafka.sender.SenderOptions
+
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since June 2018
+ */
+internal class KafkaSinkForClientCreator internal constructor(
+        private val kafkaSender: KafkaSender<CommonEventHeader, VesMessage>) : SinkForClientCreator {
+
+    constructor(config: KafkaConfiguration) : this(constructKafkaSender(config))
+
+    override fun invoke(ctx: ClientContext): Sink {
+        return KafkaSink(kafkaSender, ctx)
+    }
+
+    companion object {
+        private fun constructKafkaSender(config: KafkaConfiguration) =
+                KafkaSender.create(constructSenderOptions(config))
+
+        private fun constructSenderOptions(config: KafkaConfiguration) =
+                SenderOptions.create<CommonEventHeader, VesMessage>()
+                        .producerProperty(BOOTSTRAP_SERVERS_CONFIG, config.bootstrapServers)
+                        .producerProperty(KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
+                        .producerProperty(VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
+                        .producerProperty(MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
+                        .producerProperty(RETRIES_CONFIG, 1)
+                        .producerProperty(ACKS_CONFIG, "1")
+                        .stopOnError(false)
+    }
+}

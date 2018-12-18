@@ -36,10 +36,9 @@ object VesServer : ServerStarter() {
     override fun startServer(config: ServerConfiguration): IO<ServerHandle> = createVesServer(config).start()
 
     private fun createVesServer(config: ServerConfiguration): Server {
-        val sink = if (config.dummyMode) AdapterFactory.loggingSink() else AdapterFactory.kafkaSink()
         val collectorProvider = CollectorFactory(
                 AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
-                sink,
+                AdapterFactory.sinkCreatorFactory(config.dummyMode, config.kafkaConfiguration),
                 MicrometerMetrics.INSTANCE,
                 config.maximumPayloadSizeBytes
         ).createVesHvCollectorProvider()

@@ -73,7 +73,7 @@ class MicrometerMetrics internal constructor(
 
     init {
         registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
-            (receivedMsgCount.count() - sentCount.count()).coerceAtLeast(0.0)
+            (receivedMsgCount.count() - sentCount.count() - droppedCount.count()).coerceAtLeast(0.0)
         }
 
         registry.gauge(name(CONNECTIONS, ACTIVE, COUNT), this) {

@@ -28,9 +28,13 @@ import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleR
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
+import org.onap.dcae.collectors.veshv.model.ConsumedMessage
+import org.onap.dcae.collectors.veshv.model.FailedToSendMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.KAFKA_FAILURE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.SentMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
@@ -96,10 +100,17 @@ internal class VesHvCollector(
                         .doOnLeft { metrics.notifyMessageDropped(INVALID_MESSAGE) }
             }
 
-    private fun routeMessage(flux: Flux<VesMessage>): Flux<RoutedMessage> = flux
+    private fun routeMessage(flux: Flux<VesMessage>): Flux<ConsumedMessage> = flux
             .flatMap(this::findRoute)
             .compose(sink::send)
-            .doOnNext(metrics::notifyMessageSent)
+            .doOnNext {
+                when (it) {
+                    is SentMessage ->
+                        metrics.notifyMessageSent(it.message)
+                    is FailedToSendMessage ->
+                        metrics.notifyMessageDropped(KAFKA_FAILURE)
+                }
+            }
 
     private fun findRoute(msg: VesMessage) = router
             .findDestination(msg)
