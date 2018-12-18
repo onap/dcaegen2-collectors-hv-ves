@@ -20,9 +20,10 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkForClientProvider
+import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkForClientProvider
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
+import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
 import reactor.netty.http.client.HttpClient
 
 /**
@@ -30,8 +31,12 @@ import reactor.netty.http.client.HttpClient
  * @since May 2018
  */
 object AdapterFactory {
-    fun kafkaSink(): SinkProvider = KafkaSinkProvider()
-    fun loggingSink(): SinkProvider = LoggingSinkProvider()
+    fun sinkCreatorFactory(dummyMode: Boolean,
+                           kafkaConfig: KafkaConfiguration): SinkForClientProvider =
+            if (dummyMode)
+                LoggingSinkForClientProvider()
+            else
+                KafkaSinkForClientProvider(kafkaConfig)
 
     fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
             ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)

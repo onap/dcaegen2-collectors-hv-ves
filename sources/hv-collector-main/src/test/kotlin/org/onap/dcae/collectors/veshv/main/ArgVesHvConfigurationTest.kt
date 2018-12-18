@@ -39,6 +39,7 @@ import kotlin.test.assertNotNull
  */
 object ArgVesHvConfigurationTest : Spek({
     lateinit var cut: ArgVesHvConfiguration
+    val kafkaBootstrapServers = "dmaap-mr-wro:6666,dmaap-mr-gda:6666"
     val healthCheckApiPort = "6070"
     val configurationUrl = "http://test-address/test"
     val firstRequestDelay = "10"
@@ -57,6 +58,7 @@ object ArgVesHvConfigurationTest : Spek({
 
             beforeEachTest {
                 result = cut.parseExpectingSuccess(
+                        "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "--health-check-api-port", healthCheckApiPort,
                         "--listen-port", listenPort,
                         "--config-url", configurationUrl,
@@ -67,6 +69,10 @@ object ArgVesHvConfigurationTest : Spek({
                         "--key-store-password", keyStorePassword,
                         "--trust-store-password", trustStorePassword
                 )
+            }
+
+            it("should set proper kafka bootstrap servers") {
+                assertThat(result.kafkaConfiguration.bootstrapServers).isEqualTo(kafkaBootstrapServers)
             }
 
             it("should set proper listen port") {

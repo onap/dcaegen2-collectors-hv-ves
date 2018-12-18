@@ -29,7 +29,8 @@ import org.onap.dcae.collectors.veshv.impl.wire.WireFrameException
  */
 enum class MessageDropCause(val tag: String) {
     ROUTE_NOT_FOUND("routing"),
-    INVALID_MESSAGE("invalid")
+    INVALID_MESSAGE("invalid"),
+    KAFKA_FAILURE("kafka")
 }
 
 enum class ClientRejectionCause(val tag: String) {
