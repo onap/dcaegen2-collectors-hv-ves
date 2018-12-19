@@ -17,26 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.utils.logging
 
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
-import java.net.InetSocketAddress
-import java.time.Duration
+import arrow.core.Try
+import ch.qos.logback.classic.Level
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class ServerConfiguration(
-    val serverListenAddress: InetSocketAddress,
-    val kafkaConfiguration: KafkaConfiguration,
-    val configurationProviderParams: ConfigurationProviderParams,
-    val securityConfiguration: SecurityConfiguration,
-    val idleTimeout: Duration,
-    val healthCheckApiListenAddress: InetSocketAddress,
-    val maximumPayloadSizeBytes: Int,
-    val logLevel: LogLevel,
-    val dummyMode: Boolean = false
-)
+enum class LogLevel(private val logbackLevel: Level) {
+    ERROR(Level.ERROR),
+    WARN(Level.WARN),
+    INFO(Level.INFO),
+    DEBUG(Level.DEBUG),
+    TRACE(Level.TRACE);
 
+    operator fun invoke() = logbackLevel
+
+    companion object {
+        fun optionFromString(level: String) = Try {
+            valueOf(level.toUpperCase())
+        }.toOption()
+    }
+
+
+}

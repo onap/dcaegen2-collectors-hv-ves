@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.utils.logging
 
+import ch.qos.logback.classic.LoggerContext
 import kotlin.reflect.KClass
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -41,86 +42,92 @@ class Logger(logger: org.slf4j.Logger) {
     fun withError(block: AtLevelLogger.() -> Unit) = errorLogger.block()
 
     fun withError(mdc: MappedDiagnosticContext, block: AtLevelLogger.() -> Unit) =
-            errorLogger.withMdc(mdc, block)
+        errorLogger.withMdc(mdc, block)
 
     fun error(message: () -> String) = errorLogger.run {
         log(message())
     }
 
     fun error(mdc: MappedDiagnosticContext, message: () -> String) =
-            errorLogger.withMdc(mdc) { log(message()) }
+        errorLogger.withMdc(mdc) { log(message()) }
 
     fun error(mdc: MappedDiagnosticContext, marker: Marker, message: () -> String) =
-            errorLogger.withMdc(mdc) { log(marker, message()) }
+        errorLogger.withMdc(mdc) { log(marker, message()) }
 
     // WARN
 
     fun withWarn(block: AtLevelLogger.() -> Unit) = warnLogger.block()
 
     fun withWarn(mdc: MappedDiagnosticContext, block: AtLevelLogger.() -> Unit) =
-            warnLogger.withMdc(mdc, block)
+        warnLogger.withMdc(mdc, block)
 
     fun warn(message: () -> String) = warnLogger.run {
         log(message())
     }
 
     fun warn(mdc: MappedDiagnosticContext, message: () -> String) =
-            warnLogger.withMdc(mdc) { log(message()) }
+        warnLogger.withMdc(mdc) { log(message()) }
 
     fun warn(mdc: MappedDiagnosticContext, marker: Marker, message: () -> String) =
-            warnLogger.withMdc(mdc) { log(marker, message()) }
+        warnLogger.withMdc(mdc) { log(marker, message()) }
 
     // INFO
 
     fun withInfo(block: AtLevelLogger.() -> Unit) = infoLogger.block()
 
     fun withInfo(mdc: MappedDiagnosticContext, block: AtLevelLogger.() -> Unit) =
-            infoLogger.withMdc(mdc, block)
+        infoLogger.withMdc(mdc, block)
 
     fun info(message: () -> String) = infoLogger.run {
         log(message())
     }
 
     fun info(mdc: MappedDiagnosticContext, message: () -> String) =
-            infoLogger.withMdc(mdc) { log(message()) }
+        infoLogger.withMdc(mdc) { log(message()) }
 
     fun info(mdc: MappedDiagnosticContext, marker: Marker, message: () -> String) =
-            infoLogger.withMdc(mdc) { log(marker, message()) }
+        infoLogger.withMdc(mdc) { log(marker, message()) }
 
     // DEBUG
 
     fun withDebug(block: AtLevelLogger.() -> Unit) = debugLogger.block()
 
     fun withDebug(mdc: MappedDiagnosticContext, block: AtLevelLogger.() -> Unit) =
-            debugLogger.withMdc(mdc, block)
+        debugLogger.withMdc(mdc, block)
 
     fun debug(message: () -> String) = debugLogger.run {
         log(message())
     }
 
     fun debug(mdc: MappedDiagnosticContext, message: () -> String) =
-            debugLogger.withMdc(mdc) { log(message()) }
+        debugLogger.withMdc(mdc) { log(message()) }
 
     fun debug(mdc: MappedDiagnosticContext, marker: Marker, message: () -> String) =
-            debugLogger.withMdc(mdc) { log(marker, message()) }
+        debugLogger.withMdc(mdc) { log(marker, message()) }
 
     // TRACE
 
     fun withTrace(block: AtLevelLogger.() -> Unit) = traceLogger.block()
 
     fun withTrace(mdc: MappedDiagnosticContext, block: AtLevelLogger.() -> Unit) =
-            traceLogger.withMdc(mdc, block)
+        traceLogger.withMdc(mdc, block)
 
     fun trace(message: () -> String) = traceLogger.run {
         log(message())
     }
 
     fun trace(mdc: MappedDiagnosticContext, message: () -> String) =
-            traceLogger.withMdc(mdc) { log(message()) }
+        traceLogger.withMdc(mdc) { log(message()) }
 
     fun trace(mdc: MappedDiagnosticContext, marker: Marker, message: () -> String) =
-            traceLogger.withMdc(mdc) { log(marker, message()) }
+        traceLogger.withMdc(mdc) { log(marker, message()) }
 
+    companion object {
+        fun setLogLevel(packageName: String, level: LogLevel) {
+            val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
+            loggerContext.getLogger(packageName).level = level()
+        }
+    }
 }
 
 abstract class AtLevelLogger {
@@ -183,9 +190,9 @@ class ErrorLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
     }
 
     override fun log(marker: Marker, message: String) =
-            withAdditionalMdc(marker.mdc) {
-                logger.error(marker.slf4jMarker, message)
-            }
+        withAdditionalMdc(marker.mdc) {
+            logger.error(marker.slf4jMarker, message)
+        }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -199,9 +206,9 @@ class WarnLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
     }
 
     override fun log(marker: Marker, message: String) =
-            withAdditionalMdc(marker.mdc) {
-                logger.warn(marker.slf4jMarker, message)
-            }
+        withAdditionalMdc(marker.mdc) {
+            logger.warn(marker.slf4jMarker, message)
+        }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -215,9 +222,9 @@ class InfoLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
     }
 
     override fun log(marker: Marker, message: String) =
-            withAdditionalMdc(marker.mdc) {
-                logger.info(marker.slf4jMarker, message)
-            }
+        withAdditionalMdc(marker.mdc) {
+            logger.info(marker.slf4jMarker, message)
+        }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -231,9 +238,9 @@ class DebugLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
     }
 
     override fun log(marker: Marker, message: String) =
-            withAdditionalMdc(marker.mdc) {
-                logger.debug(marker.slf4jMarker, message)
-            }
+        withAdditionalMdc(marker.mdc) {
+            logger.debug(marker.slf4jMarker, message)
+        }
 }
 
 @Suppress("SuboptimalLoggerUsage")
@@ -247,7 +254,7 @@ class TraceLevelLogger(private val logger: org.slf4j.Logger) : AtLevelLogger() {
     }
 
     override fun log(marker: Marker, message: String) =
-            withAdditionalMdc(marker.mdc) {
-                logger.trace(marker.slf4jMarker, message)
-            }
+        withAdditionalMdc(marker.mdc) {
+            logger.trace(marker.slf4jMarker, message)
+        }
 }
