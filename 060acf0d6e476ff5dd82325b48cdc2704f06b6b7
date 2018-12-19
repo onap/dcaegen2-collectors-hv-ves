@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_facf4b27",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-19T08:57:31Z",
+      "side": 1,
+      "message": "Extract string to const and reuse in `logger` declaration (:34)",
+      "revId": "060acf0d6e476ff5dd82325b48cdc2704f06b6b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_badd43e2",
+        "filename": "sources/hv-collector-main/src/main/resources/logback.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-19T08:57:31Z",
+      "side": 1,
+      "message": "remove also this line",
+      "revId": "060acf0d6e476ff5dd82325b48cdc2704f06b6b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_3af1536b",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/LogLevel.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-19T08:57:31Z",
+      "side": 1,
+      "message": "1. Let\u0027s add `.toUpperCase()` to be more flexible\n2. Rename function to `fromString` - it\u0027s more natural to call LogLevel.fromString than LogLevel.getLogLevel (this looks like singleton call)\n3. I\u0027m not sure we want to simply catch this exception and provide \ndefault - it might be useful to log this information somewhere.\nWe can use Option for this:\n```\n        fun optionFromString(level: String) \u003d Try {\n            valueOf(level.toUpperCase())\n        }.toOption()\n```\n```ArgVesHvConfiguration\n\nlogLevel \u003d determineLoglevel(logLevel)\n\n    private fun determineLoglevel(logLevel: String) \u003d LogLevel.optionFromString(logLevel)\n            .getOrElse {\n                logger.warn {\n                    \"Failed to parse $logLevel as $LOG_LEVEL command line. \" +\n                            \"Using default log level (${LogLevel.INFO})\"\n                }\n                LogLevel.INFO\n            }\n```\nI\u0027m not convinced it\u0027s nice solution but at least we get log message :)",
+      "revId": "060acf0d6e476ff5dd82325b48cdc2704f06b6b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5af69764",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/Logger.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-19T08:57:31Z",
+      "side": 1,
+      "message": "`.level \u003d level.level`\nMaybe it\u0027s just me, but looks weird :) \n\nNot really insisting, but consider renaming `level` property to `logbackLevel` and maybe add `invoke` function to LogLevel and make property private.\n\n```.level \u003d level.logbackLevel```\n```.level \u003d level()\n\n    operator fun invoke() \u003d logbackLevel\n```",
+      "revId": "060acf0d6e476ff5dd82325b48cdc2704f06b6b7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
