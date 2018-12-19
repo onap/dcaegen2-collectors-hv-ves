@@ -30,6 +30,7 @@ import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
+import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.time.Duration
 import kotlin.test.assertNotNull
 
@@ -46,6 +47,7 @@ object ArgVesHvConfigurationTest : Spek({
     val listenPort = "6969"
     val keyStorePassword = "kspass"
     val trustStorePassword = "tspass"
+    val logLevel = "DEBUG"
 
     beforeEachTest {
         cut = ArgVesHvConfiguration()
@@ -57,15 +59,16 @@ object ArgVesHvConfigurationTest : Spek({
 
             beforeEachTest {
                 result = cut.parseExpectingSuccess(
-                        "--health-check-api-port", healthCheckApiPort,
-                        "--listen-port", listenPort,
-                        "--config-url", configurationUrl,
-                        "--first-request-delay", firstRequestDelay,
-                        "--request-interval", requestInterval,
-                        "--key-store", "/tmp/keys.p12",
-                        "--trust-store", "/tmp/trust.p12",
-                        "--key-store-password", keyStorePassword,
-                        "--trust-store-password", trustStorePassword
+                    "--health-check-api-port", healthCheckApiPort,
+                    "--listen-port", listenPort,
+                    "--config-url", configurationUrl,
+                    "--first-request-delay", firstRequestDelay,
+                    "--request-interval", requestInterval,
+                    "--key-store", "/tmp/keys.p12",
+                    "--trust-store", "/tmp/trust.p12",
+                    "--key-store-password", keyStorePassword,
+                    "--trust-store-password", trustStorePassword,
+                    "--log-level", logLevel
                 )
             }
 
@@ -88,17 +91,17 @@ object ArgVesHvConfigurationTest : Spek({
 
             it("should set proper first consul request delay") {
                 assertThat(result.configurationProviderParams.firstRequestDelay)
-                        .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
+                    .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
             }
 
             it("should set proper consul request interval") {
                 assertThat(result.configurationProviderParams.requestInterval)
-                        .isEqualTo(Duration.ofSeconds(requestInterval.toLong()))
+                    .isEqualTo(Duration.ofSeconds(requestInterval.toLong()))
             }
 
             it("should set proper config url") {
                 assertThat(result.configurationProviderParams.configurationUrl)
-                        .isEqualTo(configurationUrl)
+                    .isEqualTo(configurationUrl)
             }
 
             it("should set proper security configuration") {
@@ -110,27 +113,74 @@ object ArgVesHvConfigurationTest : Spek({
                 assertThat(keys.keyStorePassword).isEqualTo(keyStorePassword.toCharArray())
                 assertThat(keys.trustStorePassword).isEqualTo(trustStorePassword.toCharArray())
             }
+
+            it("should set proper log level") {
+                assertThat(result.logLevel == LogLevel.DEBUG).isTrue()
+            }
         }
 
         describe("required parameter is absent") {
             on("missing listen port") {
                 it("should throw exception") {
-                    assertThat(cut.parseExpectingFailure(
+                    assertThat(
+                        cut.parseExpectingFailure(
                             "--config-url", configurationUrl,
                             "--ssl-disable",
                             "--first-request-delay", firstRequestDelay,
-                            "--request-interval", requestInterval)
+                            "--request-interval", requestInterval
+                        )
                     ).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
             on("missing configuration url") {
                 it("should throw exception") {
-                    assertThat(cut.parseExpectingFailure(
+                    assertThat(
+                        cut.parseExpectingFailure(
                             "--listen-port", listenPort,
                             "--ssl-disable",
                             "--first-request-delay", firstRequestDelay,
-                            "--request-interval", requestInterval)
+                            "--request-interval", requestInterval
+                        )
                     ).isInstanceOf(WrongArgumentError::class.java)
+                }
+            }
+        }
+
+        describe("correct log level not provided"){
+            on("missing log level"){
+                it("should set default INFO value"){
+                    val config = cut.parseExpectingSuccess(
+                        "--health-check-api-port", healthCheckApiPort,
+                        "--listen-port", listenPort,
+                        "--config-url", configurationUrl,
+                        "--first-request-delay", firstRequestDelay,
+                        "--request-interval", requestInterval,
+                        "--key-store", "/tmp/keys.p12",
+                        "--trust-store", "/tmp/trust.p12",
+                        "--key-store-password", keyStorePassword,
+                        "--trust-store-password", trustStorePassword
+                    )
+
+                    assertThat(config.logLevel == LogLevel.INFO).isTrue()
+                }
+            }
+
+            on("incorrect log level"){
+                it("should set default INFO value"){
+                    val config = cut.parseExpectingSuccess(
+                        "--health-check-api-port", healthCheckApiPort,
+                        "--listen-port", listenPort,
+                        "--config-url", configurationUrl,
+                        "--first-request-delay", firstRequestDelay,
+                        "--request-interval", requestInterval,
+                        "--key-store", "/tmp/keys.p12",
+                        "--trust-store", "/tmp/trust.p12",
+                        "--key-store-password", keyStorePassword,
+                        "--trust-store-password", trustStorePassword,
+                        "--log-level", "1"
+                    )
+
+                    assertThat(config.logLevel == LogLevel.INFO).isTrue()
                 }
             }
         }

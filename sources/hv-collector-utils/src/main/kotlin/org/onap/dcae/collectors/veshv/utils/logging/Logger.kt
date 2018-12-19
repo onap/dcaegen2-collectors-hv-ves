@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.utils.logging
 
+import ch.qos.logback.classic.LoggerContext
 import kotlin.reflect.KClass
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -30,11 +31,19 @@ class Logger(logger: org.slf4j.Logger) {
     constructor(clazz: KClass<out Any>) : this(LoggerFactory.getLogger(clazz.java))
     constructor(name: String) : this(LoggerFactory.getLogger(name))
 
+    companion object{
+        fun setLogLevel(packageName: String, level: LogLevel) {
+            val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
+            loggerContext.getLogger(packageName).level = level.level
+        }
+    }
+
     private val errorLogger = if (logger.isErrorEnabled) ErrorLevelLogger(logger) else OffLevelLogger
     private val warnLogger = if (logger.isWarnEnabled) WarnLevelLogger(logger) else OffLevelLogger
     private val infoLogger = if (logger.isInfoEnabled) InfoLevelLogger(logger) else OffLevelLogger
     private val debugLogger = if (logger.isDebugEnabled) DebugLevelLogger(logger) else OffLevelLogger
     private val traceLogger = if (logger.isTraceEnabled) TraceLevelLogger(logger) else OffLevelLogger
+
 
     // ERROR
 

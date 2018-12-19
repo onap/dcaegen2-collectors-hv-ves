@@ -48,8 +48,10 @@ fun main(args: Array<String>) =
 
 private fun startAndAwaitServers(config: ServerConfiguration) =
         IO.monad().binding {
+            Logger.setLogLevel("org.onap.dcae.collectors.veshv", config.logLevel)
             logger.info { "Using configuration: $config" }
             HealthCheckServer.start(config).bind()
             VesServer.start(config).bind()
                     .await().bind()
         }.fix()
+
