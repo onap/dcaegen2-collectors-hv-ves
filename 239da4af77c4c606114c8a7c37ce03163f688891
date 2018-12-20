@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_602deea7",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/ArgVesHvConfiguration.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T07:12:27Z",
+      "side": 1,
+      "message": "Use DefaultValues.LOG_LEVEL in this function (both msg and result)",
+      "revId": "239da4af77c4c606114c8a7c37ce03163f688891",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_802a528e",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/ArgVesHvConfiguration.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T07:12:27Z",
+      "side": 1,
+      "message": "Use LogLevel.INFO.name()",
+      "revId": "239da4af77c4c606114c8a7c37ce03163f688891",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e010fe5a",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/ArgVesHvConfigurationTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T07:12:27Z",
+      "side": 1,
+      "message": "Use more specific assertions. The current one will print something like \"expected true, was false\" in case of failure, which is not very helpful ;). assertThat(xxx).isEqualTo(yyy) will print \"expected yyy, but was xxx\", so developer will know right away what\u0027s going on.\n\nApply to other assertions, too.",
+      "revId": "239da4af77c4c606114c8a7c37ce03163f688891",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c00b7a28",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/Logger.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T07:12:27Z",
+      "side": 1,
+      "message": "it is usually placed in the bottom part of the class",
+      "revId": "239da4af77c4c606114c8a7c37ce03163f688891",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
