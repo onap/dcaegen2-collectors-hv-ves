@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_8b011308",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T13:34:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_0b3f63d7",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_cb24fbc6",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-20T13:27:07Z",
       "side": 1,
       "message": "It would be nice to extract this to method.",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4607a219",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T13:34:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_cb24fbc6",
       "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_a6152e41",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/LoggingSinkForClientProvider.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T13:34:18Z",
+      "side": 1,
+      "message": "It was added here on purpose to make it clear that we are creating new Sink for every client. Normally it doesn\u0027t matter but here I wanted to be explicit and make \"future me\" thoroughly rethink any possible changes so we won\u0027t reintroduce the same bug.\n\nThat said I\u0027ll think of any method of testing this non-functional behavior.",
+      "parentUuid": "9adffdf1_0b168355",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_cb0b9b28",
         "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProviderTest.kt",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2018-12-20T13:27:07Z",
       "side": 1,
       "message": "Can we get rid of this?",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c612b256",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProviderTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T13:34:18Z",
+      "side": 1,
+      "message": "It was left on purpose. For now we skip any unsupported config fields. If this behavior changes we should update the test.",
+      "parentUuid": "9adffdf1_cb0b9b28",
       "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
