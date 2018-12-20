@@ -36,6 +36,42 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_2bf1076b",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T12:01:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_8b72730f",
+      "revId": "6c06b971d35849d62223f048542067bc39518f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4bf6cb64",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T12:01:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_eb58df8b",
+      "revId": "6c06b971d35849d62223f048542067bc39518f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_2b634743",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSink.kt",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2018-12-20T11:49:16Z",
       "side": 1,
       "message": "Why null?",
+      "revId": "6c06b971d35849d62223f048542067bc39518f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ab04174a",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSink.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-20T12:01:55Z",
+      "side": 1,
+      "message": "See Javadoc:\n\n```\n     * @param timestamp The timestamp of the record. If null, the current timestamp will be assigned by the producer.\n     *        The timestamp will be overwritten by the broker if the topic is configured with\n     *        {@link org.apache.kafka.common.record.TimestampType#LOG_APPEND_TIME}. The actual timestamp\n     *        used will be returned in {@link SenderResult#recordMetadata()}\n````",
+      "parentUuid": "9adffdf1_2b634743",
       "revId": "6c06b971d35849d62223f048542067bc39518f2c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
