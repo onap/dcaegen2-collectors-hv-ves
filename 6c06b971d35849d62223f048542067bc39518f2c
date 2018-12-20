@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_8b72730f",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-20T11:49:16Z",
+      "side": 1,
+      "message": "`routing \u003d` part can be omited now, also maybe we should rename routing val, to `routingArray` or similar:\n```\n        val routingArray \u003d configuration.getJsonArray(\"collector.routing\")\n\n        return CollectorConfiguration(routing {\n            for (route in routingArray) {\n```",
+      "revId": "6c06b971d35849d62223f048542067bc39518f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_eb58df8b",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-20T11:49:16Z",
+      "side": 1,
+      "message": "We can change also configuration sent in consul.sh script",
+      "revId": "6c06b971d35849d62223f048542067bc39518f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_2b634743",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSink.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-20T11:49:16Z",
+      "side": 1,
+      "message": "Why null?",
+      "revId": "6c06b971d35849d62223f048542067bc39518f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0b8763d8",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/SentMessage.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-20T11:49:16Z",
+      "side": 1,
+      "message": "As we are not using overridden message here, maybe we could drop abstract field and have \n```\nsealed class ConsumedMessage\n\ndata class SentMessage(val message: RoutedMessage) : ConsumedMessage()\n\ndata class FailedToSendMessage(val cause: Exception) : ConsumedMessage()\n```\n?",
+      "revId": "6c06b971d35849d62223f048542067bc39518f2c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
