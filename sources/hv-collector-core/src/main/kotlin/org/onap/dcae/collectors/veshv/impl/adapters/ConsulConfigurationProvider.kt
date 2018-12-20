@@ -54,11 +54,10 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
 
 ) : ConfigurationProvider {
     private val lastConfigurationHash: AtomicReference<ByteArray> = AtomicReference(byteArrayOf())
-    private val retry = retrySpec
-            .doOnRetry {
-                logger.withWarn(ServiceContext::mdc) { log("Could not get fresh configuration", it.exception()) }
-                healthState.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
-            }
+    private val retry = retrySpec.doOnRetry {
+        logger.withWarn(ServiceContext::mdc) { log("Could not load fresh configuration", it.exception()) }
+        healthState.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
+    }
 
     constructor(http: HttpAdapter,
                 params: ConfigurationProviderParams) : this(
@@ -96,7 +95,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
                         Mono.empty()
                     } else {
                         logger.info(ServiceContext::mdc, Marker.Invoke(configuration.invocationId)) {
-                            "Obtained new configuration from consul:\n${configurationString}"
+                            "Obtained new configuration from consul:\n$configurationString"
                         }
                         lastConfigurationHash.set(newHash)
                         Mono.just(configurationString)
@@ -107,28 +106,34 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
     private fun parseJsonResponse(responseString: String): JsonObject =
             Json.createReader(StringReader(responseString)).readObject()
 
-    private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration {
-        val routingArray = configuration.getJsonArray("collector.routing")
+    private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration =
+            try {
+                val routingArray = configuration.getJsonArray(ROUTING_CONFIGURATION_KEY)
+                CollectorConfiguration(
+                        routing {
+                            for (route in routingArray) {
+                                val routeObj = route.asJsonObject()
+                                defineRoute {
+                                    fromDomain(routeObj.getString(DOMAIN_CONFIGURATION_KEY))
+                                    toTopic(routeObj.getString(TOPIC_CONFIGURATION_KEY))
+                                    withFixedPartitioning()
+                                }
+                            }
+                        }.build()
+                )
+            } catch (e: NullPointerException) {
+                throw ParsingException("Failed to parse consul configuration")
+            }
 
-        return CollectorConfiguration(
-                routing {
-                    for (route in routingArray) {
-                        val routeObj = route.asJsonObject()
-                        defineRoute {
-                            fromDomain(routeObj.getString("fromDomain"))
-                            toTopic(routeObj.getString("toTopic"))
-                            withFixedPartitioning()
-                        }
-                    }
-                }.build()
-        )
-    }
 
     companion object {
+        private const val ROUTING_CONFIGURATION_KEY = "collector.routing"
+        private const val DOMAIN_CONFIGURATION_KEY = "fromDomain"
+        private const val TOPIC_CONFIGURATION_KEY = "toTopic"
+
         private const val MAX_RETRIES = 5L
         private const val BACKOFF_INTERVAL_FACTOR = 30L
         private val logger = Logger(ConsulConfigurationProvider::class)
-
         private fun String.sha256() =
                 MessageDigest
                         .getInstance("SHA-256")
