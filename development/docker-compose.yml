@@ -46,7 +46,7 @@ services:
     command: ["kv", "put", "-http-addr=http://consul-server:8500", "veshv-config", '{
                                               "collector.routing": [
                                                 {
-                                                  "fromDomain": "perf3gpp",
+                                                  "fromDomainh": "perf3gpp",
                                                   "toTopic": "HV_VES_PERF3GPP"
                                                 }
                                               ]
