@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_0b3f63d7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-20T13:27:07Z",
+      "side": 1,
+      "message": "A typo. \"Might be changed\"",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_cb24fbc6",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-20T13:27:07Z",
+      "side": 1,
+      "message": "It would be nice to extract this to method.",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_0b168355",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/LoggingSinkForClientProvider.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-20T13:27:07Z",
+      "side": 1,
+      "message": "Is this \"ForClient\" term actually needed here? Personally, i would skip it.",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_cb0b9b28",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProviderTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-20T13:27:07Z",
+      "side": 1,
+      "message": "Can we get rid of this?",
+      "revId": "e31fe9b72f76d4c36adc795909c9928104e25203",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
