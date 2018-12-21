@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_fa3e6627",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-21T08:27:05Z",
+      "side": 1,
+      "message": "Where does this exception come from? Can we avoid throwing it and instead do some pre-checks?\n\n* if we can, then let\u0027s do it\n* if we can\u0027t, then let\u0027s narrow the try-catch to actual invocation which throws + put it to separate function.",
+      "revId": "60a8619fc7d5174f4f5e44d81096224c0a0f6d4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9a471abc",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ParsingException.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-21T08:27:05Z",
+      "side": 1,
+      "message": "Let\u0027s change it to \u0027String\u0027",
+      "range": {
+        "startLine": 22,
+        "startChar": 32,
+        "endLine": 22,
+        "endChar": 39
+      },
+      "revId": "60a8619fc7d5174f4f5e44d81096224c0a0f6d4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_ba445eb7",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ParsingException.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-21T08:27:05Z",
+      "side": 1,
+      "message": "Let\u0027s also propagate parent exception (cause)",
+      "range": {
+        "startLine": 22,
+        "startChar": 43,
+        "endLine": 22,
+        "endChar": 57
+      },
+      "revId": "60a8619fc7d5174f4f5e44d81096224c0a0f6d4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
