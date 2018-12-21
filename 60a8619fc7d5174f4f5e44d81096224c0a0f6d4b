@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_da6fe229",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConsulConfigurationProvider.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-21T09:16:23Z",
+      "side": 1,
+      "message": "getString method returns null when the json key is missing. I know this is not the most elegant solution, but i found it better to just catch the np, than first valdidating routing array at the beginning of the method and then domain and topic inside the \"for\" loop.",
+      "parentUuid": "9adffdf1_fa3e6627",
+      "revId": "60a8619fc7d5174f4f5e44d81096224c0a0f6d4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_9a471abc",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ParsingException.kt",
         "patchSetId": 3
@@ -53,6 +71,54 @@
       "writtenOn": "2018-12-21T08:27:05Z",
       "side": 1,
       "message": "Let\u0027s also propagate parent exception (cause)",
+      "range": {
+        "startLine": 22,
+        "startChar": 43,
+        "endLine": 22,
+        "endChar": 57
+      },
+      "revId": "60a8619fc7d5174f4f5e44d81096224c0a0f6d4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_9a75dafb",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ParsingException.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-21T09:16:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_9a471abc",
+      "range": {
+        "startLine": 22,
+        "startChar": 32,
+        "endLine": 22,
+        "endChar": 39
+      },
+      "revId": "60a8619fc7d5174f4f5e44d81096224c0a0f6d4b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_fa6c2637",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ParsingException.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2018-12-21T09:16:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_ba445eb7",
       "range": {
         "startLine": 22,
         "startChar": 43,
