@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_338739d9",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-27T08:52:57Z",
+      "side": 1,
+      "message": "We didn\u0027t agree on changing this counter.",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_d36fcd29",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-27T08:52:57Z",
+      "side": 1,
+      "message": "This one should be changed, though.",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f36c5137",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-27T08:52:57Z",
+      "side": 1,
+      "message": "Make sure these descriptions were changed, too.",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
