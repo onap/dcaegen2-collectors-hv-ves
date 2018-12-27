@@ -47,37 +47,34 @@ class MicrometerMetrics internal constructor(
 ) : Metrics {
 
     private val receivedBytes = registry.counter(name(DATA, RECEIVED, BYTES))
-    private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED, COUNT))
-    private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
+    private val receivedMessages = registry.counter(name(MESSAGES, RECEIVED))
+    private val receivedMessagesPayloadBytes = registry.counter(name(MESSAGES, RECEIVED, PAYLOAD, BYTES))
 
-    private val connectionsTotalCount = registry.counter(name(CONNECTIONS, TOTAL, COUNT))
-    private val disconnectionsCount = registry.counter(name(DISCONNECTIONS, COUNT))
+    private val totalConnections = registry.counter(name(CONNECTIONS))
+    private val disconnections = registry.counter(name(DISCONNECTIONS))
 
     private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
-    private val totalLatency = registry.timer(name(MESSAGES, LATENCY, TIME))
+    private val totalLatency = registry.timer(name(MESSAGES, LATENCY))
 
-    private val sentCount = registry.counter(name(MESSAGES, SENT, COUNT))
-    private val sentToTopicCount = { topic: String ->
-        registry.counter(name(MESSAGES, SENT, TOPIC, COUNT), TOPIC, topic)
+    private val sentMessages = registry.counter(name(MESSAGES, SENT))
+    private val sentMessagesByTopic = { topic: String ->
+        registry.counter(name(MESSAGES, SENT, TOPIC), TOPIC, topic)
     }.memoize<String, Counter>()
 
-    private val droppedCount = registry.counter(name(MESSAGES, DROPPED, COUNT))
-    private val droppedCauseCount = { cause: String ->
-        registry.counter(name(MESSAGES, DROPPED, CAUSE, COUNT), CAUSE, cause)
+    private val droppedMessages = registry.counter(name(MESSAGES, DROPPED))
+    private val messagesDroppedByCause = { cause: String ->
+        registry.counter(name(MESSAGES, DROPPED, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
 
-    private val clientsRejectedCount = registry.counter(name(CLIENTS, REJECTED, COUNT))
-    private val clientsRejectedCauseCount = { cause: String ->
-        registry.counter(name(CLIENTS, REJECTED, CAUSE, COUNT), CAUSE, cause)
+    private val clientsRejected = registry.counter(name(CLIENTS, REJECTED))
+    private val clientsRejectedByCause = { cause: String ->
+        registry.counter(name(CLIENTS, REJECTED, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
 
     init {
-        registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
-            (receivedMsgCount.count() - sentCount.count() - droppedCount.count()).coerceAtLeast(0.0)
-        }
 
-        registry.gauge(name(CONNECTIONS, ACTIVE, COUNT), this) {
-            (connectionsTotalCount.count() - disconnectionsCount.count()).coerceAtLeast(0.0)
+        registry.gauge(name(CONNECTIONS, ACTIVE), this) {
+            (totalConnections.count() - disconnections.count()).coerceAtLeast(0.0)
         }
 
         ClassLoaderMetrics().bindTo(registry)
@@ -94,35 +91,35 @@ class MicrometerMetrics internal constructor(
     }
 
     override fun notifyMessageReceived(msg: WireFrameMessage) {
-        receivedMsgCount.increment()
-        receivedMsgBytes.increment(msg.payloadSize.toDouble())
+        receivedMessages.increment()
+        receivedMessagesPayloadBytes.increment(msg.payloadSize.toDouble())
     }
 
     override fun notifyMessageSent(msg: RoutedMessage) {
         val now = Instant.now()
-        sentCount.increment()
-        sentToTopicCount(msg.topic).increment()
+        sentMessages.increment()
+        sentMessagesByTopic(msg.topic).increment()
 
         processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, now))
         totalLatency.record(Duration.between(epochMicroToInstant(msg.message.header.lastEpochMicrosec), now))
     }
 
     override fun notifyMessageDropped(cause: MessageDropCause) {
-        droppedCount.increment()
-        droppedCauseCount(cause.tag).increment()
+        droppedMessages.increment()
+        messagesDroppedByCause(cause.tag).increment()
     }
 
     override fun notifyClientRejected(cause: ClientRejectionCause) {
-        clientsRejectedCount.increment()
-        clientsRejectedCauseCount(cause.tag).increment()
+        clientsRejected.increment()
+        clientsRejectedByCause(cause.tag).increment()
     }
 
     override fun notifyClientConnected() {
-        connectionsTotalCount.increment()
+        totalConnections.increment()
     }
 
     override fun notifyClientDisconnected() {
-        disconnectionsCount.increment()
+        disconnections.increment()
     }
 
     companion object {
@@ -134,7 +131,6 @@ class MicrometerMetrics internal constructor(
         internal const val CONNECTIONS = "connections"
         internal const val ACTIVE = "active"
         internal const val BYTES = "bytes"
-        internal const val COUNT = "count"
         internal const val DATA = "data"
         internal const val SENT = "sent"
         internal const val PROCESSING = "processing"
@@ -143,9 +139,9 @@ class MicrometerMetrics internal constructor(
         internal const val REJECTED = "rejected"
         internal const val TOPIC = "topic"
         internal const val DROPPED = "dropped"
-        internal const val TOTAL = "total"
         internal const val TIME = "time"
         internal const val LATENCY = "latency"
+        internal const val PAYLOAD = "payload"
         internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
