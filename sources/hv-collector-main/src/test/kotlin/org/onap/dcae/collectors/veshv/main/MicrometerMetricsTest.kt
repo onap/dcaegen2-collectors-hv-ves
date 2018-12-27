@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.main
 import arrow.core.Try
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
+import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.Timer
 import io.micrometer.core.instrument.search.RequiredSearch
 import io.micrometer.prometheus.PrometheusConfig
@@ -34,19 +35,16 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics.Companion.PREFIX
-import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
-import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.INVALID_WIRE_FRAME_MARKER
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
+import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
 import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
 import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
-import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrameWithPayloadSize
 import java.time.Instant
-import io.micrometer.core.instrument.Meter
-
 import java.time.temporal.Temporal
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
@@ -133,8 +131,8 @@ object MicrometerMetricsTest : Spek({
     }
 
     describe("notifyMessageReceived") {
-        on("$PREFIX.messages.received.count counter") {
-            val counterName = "$PREFIX.messages.received.count"
+        on("$PREFIX.messages.received counter") {
+            val counterName = "$PREFIX.messages.received"
 
             it("should increment counter") {
                 cut.notifyMessageReceived(emptyWireProtocolFrame())
@@ -145,8 +143,8 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.messages.received.bytes counter") {
-            val counterName = "$PREFIX.messages.received.bytes"
+        on("$PREFIX.messages.received.payload.bytes counter") {
+            val counterName = "$PREFIX.messages.received.payload.bytes"
 
             it("should increment counter") {
                 val bytes = 888
@@ -161,8 +159,8 @@ object MicrometerMetricsTest : Spek({
         it("should leave all other counters unchanged") {
             cut.notifyMessageReceived(emptyWireProtocolFrame().copy(payloadSize = 128))
             verifyCountersAndTimersAreUnchangedBut(
-                    "$PREFIX.messages.received.count",
-                    "$PREFIX.messages.received.bytes"
+                    "$PREFIX.messages.received",
+                    "$PREFIX.messages.received.payload.bytes"
             )
         }
     }
@@ -171,8 +169,8 @@ object MicrometerMetricsTest : Spek({
         val topicName1 = "PERF3GPP"
         val topicName2 = "CALLTRACE"
 
-        on("$PREFIX.messages.sent.count counter") {
-            val counterName = "$PREFIX.messages.sent.count"
+        on("$PREFIX.messages.sent counter") {
+            val counterName = "$PREFIX.messages.sent"
 
             it("should increment counter") {
                 cut.notifyMessageSent(routedMessage(topicName1))
@@ -182,14 +180,14 @@ object MicrometerMetricsTest : Spek({
                 }
                 verifyCountersAndTimersAreUnchangedBut(
                         counterName,
-                        "$PREFIX.messages.sent.topic.count",
+                        "$PREFIX.messages.sent.topic",
                         "$PREFIX.messages.processing.time",
-                        "$PREFIX.messages.latency.time")
+                        "$PREFIX.messages.latency")
             }
         }
 
         on("$PREFIX.messages.sent.topic.count counter") {
-            val counterName = "$PREFIX.messages.sent.topic.count"
+            val counterName = "$PREFIX.messages.sent.topic"
 
             it("should handle counters for different topics") {
                 cut.notifyMessageSent(routedMessage(topicName1))
@@ -219,14 +217,14 @@ object MicrometerMetricsTest : Spek({
                 }
                 verifyCountersAndTimersAreUnchangedBut(
                         counterName,
-                        "$PREFIX.messages.sent.topic.count",
-                        "$PREFIX.messages.sent.count",
-                        "$PREFIX.messages.latency.time")
+                        "$PREFIX.messages.sent.topic",
+                        "$PREFIX.messages.sent",
+                        "$PREFIX.messages.latency")
             }
         }
 
-        on("$PREFIX.messages.latency.time") {
-            val counterName = "$PREFIX.messages.latency.time"
+        on("$PREFIX.messages.latency") {
+            val counterName = "$PREFIX.messages.latency"
             val latencyMs = 1666L
 
             it("should update timer") {
@@ -241,16 +239,16 @@ object MicrometerMetricsTest : Spek({
                 }
                 verifyCountersAndTimersAreUnchangedBut(
                         counterName,
-                        "$PREFIX.messages.sent.topic.count",
-                        "$PREFIX.messages.sent.count",
+                        "$PREFIX.messages.sent.topic",
+                        "$PREFIX.messages.sent",
                         "$PREFIX.messages.processing.time")
             }
         }
     }
 
     describe("notifyMessageDropped") {
-        on("$PREFIX.messages.dropped.count counter") {
-            val counterName = "$PREFIX.messages.dropped.count"
+        on("$PREFIX.messages.dropped counter") {
+            val counterName = "$PREFIX.messages.dropped"
 
             it("should increment counter") {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
@@ -259,12 +257,12 @@ object MicrometerMetricsTest : Spek({
                 verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
-                verifyCountersAndTimersAreUnchangedBut(counterName, "$PREFIX.messages.dropped.cause.count")
+                verifyCountersAndTimersAreUnchangedBut(counterName, "$PREFIX.messages.dropped.cause")
             }
         }
 
-        on("$PREFIX.messages.dropped.cause.count counter") {
-            val counterName = "$PREFIX.messages.dropped.cause.count"
+        on("$PREFIX.messages.dropped.cause counter") {
+            val counterName = "$PREFIX.messages.dropped.cause"
 
             it("should handle counters for different drop reasons") {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
@@ -283,8 +281,8 @@ object MicrometerMetricsTest : Spek({
     }
 
     describe("notifyClientConnected") {
-        on("$PREFIX.connections.total.count counter") {
-            val counterName = "$PREFIX.connections.total.count"
+        on("$PREFIX.connections counter") {
+            val counterName = "$PREFIX.connections"
 
             it("should increment counter") {
                 cut.notifyClientConnected()
@@ -300,8 +298,8 @@ object MicrometerMetricsTest : Spek({
     }
 
     describe("notifyClientDisconnected") {
-        on("$PREFIX.disconnections.count counter") {
-            val counterName = "$PREFIX.disconnections.count"
+        on("$PREFIX.disconnections counter") {
+            val counterName = "$PREFIX.disconnections"
 
             it("should increment counter") {
                 cut.notifyClientDisconnected()
@@ -318,8 +316,8 @@ object MicrometerMetricsTest : Spek({
 
     describe("notifyClientRejected") {
 
-        on("$PREFIX.clients.rejected.count") {
-            val counterName = "$PREFIX.clients.rejected.count"
+        on("$PREFIX.clients.rejected") {
+            val counterName = "$PREFIX.clients.rejected"
             it("should increment counter for each possible reason") {
                 cut.notifyClientRejected(INVALID_WIRE_FRAME_MARKER)
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
@@ -327,12 +325,12 @@ object MicrometerMetricsTest : Spek({
                 verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
-                verifyCountersAndTimersAreUnchangedBut(counterName, "$PREFIX.clients.rejected.cause.count")
+                verifyCountersAndTimersAreUnchangedBut(counterName, "$PREFIX.clients.rejected.cause")
             }
         }
 
-        on("$PREFIX.clients.rejected.cause.count counter") {
-            val counterName = "$PREFIX.clients.rejected.cause.count"
+        on("$PREFIX.clients.rejected.cause counter") {
+            val counterName = "$PREFIX.clients.rejected.cause"
             it("should handle counters for different rejection reasons") {
                 cut.notifyClientRejected(INVALID_WIRE_FRAME_MARKER)
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
@@ -349,42 +347,8 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("$PREFIX.messages.processing.count gauge") {
-        val gaugeName = "$PREFIX.messages.processing.count"
-
-        on("message traffic") {
-            it("should calculate positive difference between sent and received messages") {
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(128))
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
-                cut.notifyMessageReceived(wireProtocolFrameWithPayloadSize(256))
-                cut.notifyMessageSent(routedMessage("perf3gpp"))
-
-                verifyGauge(gaugeName) {
-                    assertThat(it.value()).isCloseTo(2.0, doublePrecision)
-                }
-            }
-
-            it("should calculate no difference between sent and received messages") {
-                cut.notifyMessageSent(routedMessage("perf3gpp"))
-                cut.notifyMessageSent(routedMessage("fault"))
-
-                verifyGauge(gaugeName) {
-                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
-                }
-            }
-
-            it("should calculate negative difference between sent and received messages") {
-                cut.notifyMessageSent(routedMessage("fault"))
-
-                verifyGauge(gaugeName) {
-                    assertThat(it.value()).isCloseTo(0.0, doublePrecision)
-                }
-            }
-        }
-    }
-
-    describe("$PREFIX.connections.active.count gauge") {
-        val gaugeName = "$PREFIX.connections.active.count"
+    describe("$PREFIX.connections.active gauge") {
+        val gaugeName = "$PREFIX.connections.active"
 
         on("connection traffic") {
             it("should calculate positive difference between connected and disconnected clients") {
