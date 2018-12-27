@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_1359d58d",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2018-12-27T09:05:10Z",
+      "side": 1,
+      "message": "@jaszczyk @jdudycz @kjaniak\nMaybe we should also drop `Count` suffix from variables names?\n\nReorganized names to feel more natural:\nreceivedMsgCount        -\u003e receivedMessages\nconnectionsTotalCount -\u003e totalConnections\ndisconnectionsCount    -\u003e disconnections\nsentCount                     -\u003e sentMessages\nsentToTopicCount         -\u003e messagesSentToTopic\ndroppedCount              -\u003e droppedMessages\ndroppedCauseCount     -\u003e messagesDropCause\nclientsRejectedCount  -\u003e clientsRejected\nclientsRejectedCauseCount  -\u003e clientRejectionCause",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_d36fcd29",
         "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
         "patchSetId": 2
