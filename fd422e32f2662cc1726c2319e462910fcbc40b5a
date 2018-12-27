@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_33d5f9b8",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-27T09:56:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_338739d9",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_1359d58d",
         "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
         "patchSetId": 2
@@ -72,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_73f62165",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-27T09:56:51Z",
+      "side": 1,
+      "message": "To match pattern for similar \"mapped\" values we should name this as:\ndroppedCauseCount -\u003e messagesDroppedByCause\nWhat do you think?",
+      "parentUuid": "9adffdf1_d356ed5b",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_d36fcd29",
         "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
         "patchSetId": 2
@@ -83,6 +119,24 @@
       "writtenOn": "2018-12-27T08:52:57Z",
       "side": 1,
       "message": "This one should be changed, though.",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_13e795ad",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-27T09:56:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_d36fcd29",
       "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
