@@ -46,37 +46,34 @@ class MicrometerMetrics internal constructor(
         private val registry: PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 ) : Metrics {
 
-    private val receivedBytes = registry.counter(name(DATA, RECEIVED, BYTES))
-    private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED, COUNT))
+    private val receivedBytes = registry.counter(name(DATA, RECEIVED, PAYLOAD, BYTES))
+    private val receivedMsgCount = registry.counter(name(MESSAGES, RECEIVED))
     private val receivedMsgBytes = registry.counter(name(MESSAGES, RECEIVED, BYTES))
 
-    private val connectionsTotalCount = registry.counter(name(CONNECTIONS, TOTAL, COUNT))
-    private val disconnectionsCount = registry.counter(name(DISCONNECTIONS, COUNT))
+    private val connectionsTotalCount = registry.counter(name(CONNECTIONS))
+    private val disconnectionsCount = registry.counter(name(DISCONNECTIONS))
 
     private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
-    private val totalLatency = registry.timer(name(MESSAGES, LATENCY, TIME))
+    private val totalLatency = registry.timer(name(MESSAGES, LATENCY))
 
-    private val sentCount = registry.counter(name(MESSAGES, SENT, COUNT))
+    private val sentCount = registry.counter(name(MESSAGES, SENT))
     private val sentToTopicCount = { topic: String ->
-        registry.counter(name(MESSAGES, SENT, TOPIC, COUNT), TOPIC, topic)
+        registry.counter(name(MESSAGES, SENT, TOPIC), TOPIC, topic)
     }.memoize<String, Counter>()
 
-    private val droppedCount = registry.counter(name(MESSAGES, DROPPED, COUNT))
+    private val droppedCount = registry.counter(name(MESSAGES, DROPPED))
     private val droppedCauseCount = { cause: String ->
-        registry.counter(name(MESSAGES, DROPPED, CAUSE, COUNT), CAUSE, cause)
+        registry.counter(name(MESSAGES, DROPPED, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
 
-    private val clientsRejectedCount = registry.counter(name(CLIENTS, REJECTED, COUNT))
+    private val clientsRejectedCount = registry.counter(name(CLIENTS, REJECTED))
     private val clientsRejectedCauseCount = { cause: String ->
-        registry.counter(name(CLIENTS, REJECTED, CAUSE, COUNT), CAUSE, cause)
+        registry.counter(name(CLIENTS, REJECTED, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
 
     init {
-        registry.gauge(name(MESSAGES, PROCESSING, COUNT), this) {
-            (receivedMsgCount.count() - sentCount.count() - droppedCount.count()).coerceAtLeast(0.0)
-        }
 
-        registry.gauge(name(CONNECTIONS, ACTIVE, COUNT), this) {
+        registry.gauge(name(CONNECTIONS, ACTIVE), this) {
             (connectionsTotalCount.count() - disconnectionsCount.count()).coerceAtLeast(0.0)
         }
 
@@ -134,7 +131,6 @@ class MicrometerMetrics internal constructor(
         internal const val CONNECTIONS = "connections"
         internal const val ACTIVE = "active"
         internal const val BYTES = "bytes"
-        internal const val COUNT = "count"
         internal const val DATA = "data"
         internal const val SENT = "sent"
         internal const val PROCESSING = "processing"
@@ -143,9 +139,9 @@ class MicrometerMetrics internal constructor(
         internal const val REJECTED = "rejected"
         internal const val TOPIC = "topic"
         internal const val DROPPED = "dropped"
-        internal const val TOTAL = "total"
         internal const val TIME = "time"
         internal const val LATENCY = "latency"
+        internal const val PAYLOAD = "payload"
         internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
