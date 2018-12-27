@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_d356ed5b",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2018-12-27T09:11:58Z",
+      "side": 1,
+      "message": "+1 but\n\nsentToTopicCount -\u003e sentMessagesByTopic\nclientsRejectedCauseCount -\u003e clientsRejectedByCause\n\nto be more consistent and true ;)",
+      "parentUuid": "9adffdf1_1359d58d",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_d36fcd29",
         "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/metrics/MicrometerMetrics.kt",
         "patchSetId": 2
