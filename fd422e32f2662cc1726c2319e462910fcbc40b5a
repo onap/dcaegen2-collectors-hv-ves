@@ -175,6 +175,24 @@
       "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_f388d1c6",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2018-12-27T10:13:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_f36c5137",
+      "revId": "fd422e32f2662cc1726c2319e462910fcbc40b5a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
