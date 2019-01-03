@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_3b562bcf",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/status.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-03T10:16:21Z",
+      "side": 1,
+      "message": "Please create a teask for it so we won\u0027t forget about the issue.",
+      "revId": "88871ce8d9e069c7967734163c4406d78f91823d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
