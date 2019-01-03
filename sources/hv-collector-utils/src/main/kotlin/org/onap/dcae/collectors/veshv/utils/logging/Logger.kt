@@ -31,11 +31,21 @@ class Logger(logger: org.slf4j.Logger) {
     constructor(clazz: KClass<out Any>) : this(LoggerFactory.getLogger(clazz.java))
     constructor(name: String) : this(LoggerFactory.getLogger(name))
 
-    private val errorLogger = if (logger.isErrorEnabled) ErrorLevelLogger(logger) else OffLevelLogger
-    private val warnLogger = if (logger.isWarnEnabled) WarnLevelLogger(logger) else OffLevelLogger
-    private val infoLogger = if (logger.isInfoEnabled) InfoLevelLogger(logger) else OffLevelLogger
-    private val debugLogger = if (logger.isDebugEnabled) DebugLevelLogger(logger) else OffLevelLogger
-    private val traceLogger = if (logger.isTraceEnabled) TraceLevelLogger(logger) else OffLevelLogger
+    private val errorLogger by lazy {
+        if (logger.isErrorEnabled) ErrorLevelLogger(logger) else OffLevelLogger
+    }
+    private val warnLogger by lazy {
+        if (logger.isWarnEnabled) WarnLevelLogger(logger) else OffLevelLogger
+    }
+    private val infoLogger by lazy {
+        if (logger.isInfoEnabled) InfoLevelLogger(logger) else OffLevelLogger
+    }
+    private val debugLogger by lazy {
+        if (logger.isDebugEnabled) DebugLevelLogger(logger) else OffLevelLogger
+    }
+    private val traceLogger by lazy {
+        if (logger.isTraceEnabled) TraceLevelLogger(logger) else OffLevelLogger
+    }
 
     // ERROR
 
