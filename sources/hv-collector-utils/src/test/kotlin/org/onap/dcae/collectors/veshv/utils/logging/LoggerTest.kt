@@ -19,10 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.utils.logging
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -34,13 +31,7 @@ import org.jetbrains.spek.api.dsl.it
 object LoggerTest : Spek({
 
     lateinit var slf4jLogger: org.slf4j.Logger
-    fun cut() = Logger(slf4jLogger).also {
-        verify(slf4jLogger).isTraceEnabled
-        verify(slf4jLogger).isDebugEnabled
-        verify(slf4jLogger).isInfoEnabled
-        verify(slf4jLogger).isWarnEnabled
-        verify(slf4jLogger).isErrorEnabled
-    }
+    fun cut() = Logger(slf4jLogger)
 
     beforeEachTest {
         slf4jLogger = mock()
@@ -54,7 +45,26 @@ object LoggerTest : Spek({
         val message = "sample message"
         val exception = Exception("fail")
 
+        describe("before first use") {
+            it("should not initialize AtLeverLoggers") {
+                cut()
+                verify(slf4jLogger, never()).isTraceEnabled
+                verify(slf4jLogger, never()).isDebugEnabled
+                verify(slf4jLogger, never()).isInfoEnabled
+                verify(slf4jLogger, never()).isWarnEnabled
+                verify(slf4jLogger, never()).isErrorEnabled
+            }
+        }
+
         describe("debug levels") {
+            describe("after first use") {
+                it("should ") {
+                    whenever(slf4jLogger.isDebugEnabled).thenReturn(true)
+                    cut().debug { message }
+                    verify(slf4jLogger).isDebugEnabled
+                    verify(slf4jLogger).debug(message)
+                }
+            }
 
             describe("lazy logging message") {
 
