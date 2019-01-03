@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_fb40a3a6",
+        "filename": "sources/hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/logging/LoggerTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-03T14:27:16Z",
+      "side": 1,
+      "message": "Technically that is correct but I\u0027d rather write a separate test for this so it will be more visible what went wrong in case of any bug.",
+      "revId": "7b9cdd4483de20d989b535b8a80dece29759076a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
