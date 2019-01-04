@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_21e6fe15",
+        "filename": "sources/hv-collector-utils/src/test/kotlin/org/onap/dcae/collectors/veshv/utils/logging/LoggerTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-04T08:48:39Z",
+      "side": 1,
+      "message": "should what? :)",
+      "revId": "2e877dcf2f7fc27380b0cd8d6da6ab0719db1b12",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
