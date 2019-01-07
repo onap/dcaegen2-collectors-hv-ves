@@ -35,6 +35,7 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.ReplayProcessor
 import reactor.netty.NettyOutbound
 import reactor.netty.tcp.TcpClient
+import reactor.util.concurrent.Queues.XS_BUFFER_SIZE
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -81,7 +82,7 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
         val encoder = WireFrameEncoder(allocator)
         val frames = messages
                 .map(encoder::encode)
-                .window(MAX_BATCH_SIZE)
+                .window(XS_BUFFER_SIZE)
 
         return nettyOutbound
                 .logConnectionClosed()
@@ -106,6 +107,5 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
 
     companion object {
         private val logger = Logger(VesHvClient::class)
-        private const val MAX_BATCH_SIZE = 128
     }
 }
