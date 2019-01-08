@@ -56,11 +56,14 @@ while getopts "$optspec" arg; do
 done
 shift $((OPTIND-1))
 
+DEVELOPMENT_BIN_DIRECTORY=$(realpath $(dirname "$0"))
+source ${DEVELOPMENT_BIN_DIRECTORY}/constants.sh
+
 TOPIC=${1:-HV_VES_PERF3GPP}
 
 if [ -n "${VERBOSE+x}" ]; then
-    echo "Requesting DCAE app running on port 6063 to consume messages from topic: ${TOPIC}"
+    echo "Requesting DCAE app running on ${DCAE_APP_ADDRESS} to consume messages from topic: ${TOPIC}"
 fi
 
-curl --request PUT localhost:6063/configuration/topics -d ${TOPIC}
+curl --request PUT ${DCAE_APP_ADDRESS}/configuration/topics -d ${TOPIC}
 echo

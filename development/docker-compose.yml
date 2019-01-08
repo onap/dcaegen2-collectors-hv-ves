@@ -91,12 +91,20 @@ services:
     image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator
     ports:
     - "6062:6062/tcp"
+    - "6063:6063"
     command: ["--listen-port", "6062",
+              "--health-check-api-port", "6063",
               "--ves-host", "ves-hv-collector",
               "--ves-port", "6061",
               "--key-store", "/etc/ves-hv/client.p12",
               "--key-store-password", "onaponap",
               "--trust-store-password", "onaponap"]
+    healthcheck:
+      test: curl -f http://localhost:6063/health/ready || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     depends_on:
     - ves-hv-collector
     volumes:
@@ -105,8 +113,8 @@ services:
   dcae-app-simulator:
     image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator
     ports:
-    - "6063:6063/tcp"
-    command: ["--listen-port", "6063",
+    - "6064:6064/tcp"
+    command: ["--listen-port", "6064",
               "--kafka-bootstrap-servers", "message-router-kafka:9092",
               "--kafka-topics", "HV_VES_PERF3GPP"]
     depends_on:

@@ -57,6 +57,6 @@ private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
     val consumerFactory = ConsumerFactory(config.kafkaBootstrapServers)
     val messageStreamValidation = MessageStreamValidation(MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
     return DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))
-            .start(config.apiPort, config.kafkaTopics)
+            .start(config.apiAddress, config.kafkaTopics)
             .unit()
 }

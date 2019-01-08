@@ -39,8 +39,6 @@ import reactor.core.publisher.Mono
 import reactor.retry.Retry
 import reactor.test.StepVerifier
 import java.time.Duration
-import java.util.*
-import kotlin.test.assertEquals
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -108,7 +106,7 @@ internal object ConsulConfigurationProviderTest : Spek({
                 it("should update the health state") {
                     StepVerifier.create(healthStateProvider().take(iterationCount))
                             .expectNextCount(iterationCount - 1)
-                            .expectNext(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
+                            .expectNext(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
                             .verifyComplete()
                 }
             }

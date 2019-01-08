@@ -57,9 +57,12 @@ while getopts "$optspec" arg; do
 done
 shift $((OPTIND-1))
 
+DEVELOPMENT_BIN_DIRECTORY=$(realpath $(dirname "$0"))
+source ${DEVELOPMENT_BIN_DIRECTORY}/constants.sh
+
 if [ -n "${VERBOSE+x}" ]; then
-    echo "Requesting DCAE app running on port 6063 to reset messages count"
+    echo "Requesting DCAE app running on port ${DCAE_APP_PORT} to reset messages count"
 fi
 
-curl --request DELETE localhost:6063/messages
+curl --request DELETE ${DCAE_APP_ADDRESS}/messages
 echo
