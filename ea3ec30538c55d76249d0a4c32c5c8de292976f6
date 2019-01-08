@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_6784115e",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-01-08T12:05:48Z",
+      "side": 1,
+      "message": "run/let would be a good use here",
+      "revId": "ea3ec30538c55d76249d0a4c32c5c8de292976f6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
