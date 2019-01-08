@@ -26,6 +26,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
 
@@ -36,7 +37,8 @@ import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
 internal object KafkaSinkProviderTest : Spek({
     describe("non functional requirements") {
         given("sample configuration") {
-            val config = KafkaConfiguration("localhost:9090")
+            val config = KafkaConfiguration("localhost:9090",
+                    1024 * 1024)
             val cut = KafkaSinkProvider(config)
 
             on("sample clients") {
