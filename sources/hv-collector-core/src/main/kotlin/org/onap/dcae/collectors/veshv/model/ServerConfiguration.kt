@@ -35,7 +35,6 @@ data class ServerConfiguration(
     val securityConfiguration: SecurityConfiguration,
     val idleTimeout: Duration,
     val healthCheckApiListenAddress: InetSocketAddress,
-    val maximumPayloadSizeBytes: Int,
     val logLevel: LogLevel,
     val dummyMode: Boolean = false
 )

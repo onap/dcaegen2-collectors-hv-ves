@@ -91,12 +91,11 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
             val configurationProviderParams = createConfigurationProviderParams(cmdLine).bind()
             ServerConfiguration(
                 serverListenAddress = InetSocketAddress(listenPort),
-                kafkaConfiguration = KafkaConfiguration(kafkaServers),
+                kafkaConfiguration = KafkaConfiguration(kafkaServers, maxPayloadSizeBytes),
                 healthCheckApiListenAddress = InetSocketAddress(healthCheckApiPort),
                 configurationProviderParams = configurationProviderParams,
                 securityConfiguration = security,
                 idleTimeout = Duration.ofSeconds(idleTimeoutSec),
-                maximumPayloadSizeBytes = maxPayloadSizeBytes,
                 dummyMode = dummyMode,
                 logLevel = determineLogLevel(logLevel)
             )

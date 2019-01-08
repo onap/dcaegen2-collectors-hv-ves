@@ -40,7 +40,7 @@ object VesServer : ServerStarter() {
                 AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
                 AdapterFactory.sinkCreatorFactory(config.dummyMode, config.kafkaConfiguration),
                 MicrometerMetrics.INSTANCE,
-                config.maximumPayloadSizeBytes
+                config.kafkaConfiguration.maximumPayloadSizeBytes
         ).createVesHvCollectorProvider()
 
         return ServerFactory.createNettyTcpServer(config, collectorProvider, MicrometerMetrics.INSTANCE)
