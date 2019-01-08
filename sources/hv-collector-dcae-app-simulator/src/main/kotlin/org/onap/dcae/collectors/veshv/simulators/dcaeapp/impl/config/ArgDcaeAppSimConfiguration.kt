@@ -34,6 +34,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MAXIMUM_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.utils.commandline.intValue
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
+import java.net.InetSocketAddress
 
 class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList: List<CommandLineOption> = listOf(
@@ -59,7 +60,7 @@ class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration
                         .bind()
 
                 DcaeAppSimConfiguration(
-                        listenPort,
+                        InetSocketAddress(listenPort),
                         maxPayloadSizeBytes,
                         kafkaBootstrapServers,
                         kafkaTopics)

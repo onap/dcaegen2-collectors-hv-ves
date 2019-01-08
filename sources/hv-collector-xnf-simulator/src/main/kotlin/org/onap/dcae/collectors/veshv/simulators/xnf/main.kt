@@ -19,17 +19,25 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
+import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.instances.io.monad.monad
+import arrow.typeclasses.binding
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.XnfHealthCheckServer
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.ArgXnfSimulatorConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.XnfApiServer
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.SimulatorConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
-import org.onap.dcae.collectors.veshv.utils.arrow.unit
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
+import ratpack.server.RatpackServer
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.xnf"
 private val logger = Logger(PACKAGE_NAME)
@@ -41,15 +49,7 @@ const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
  */
 fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-        .map { config ->
-            logger.info { "Using configuration: $config" }
-            val xnfSimulator = XnfSimulator(
-                    VesHvClient(config),
-                    MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
-            XnfApiServer(xnfSimulator, OngoingSimulations())
-                    .start(config.listenPort)
-                    .unit()
-        }
+        .map(::startServers)
         .unsafeRunEitherSync(
                 { ex ->
                     logger.withError { log("Failed to start a server", ex) }
@@ -57,5 +57,18 @@ fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
                 },
                 {
                     logger.info { "Started xNF Simulator API server" }
+                    HealthState.INSTANCE.changeState(HealthDescription.IDLE)
                 }
         )
+
+private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
+        IO.monad().binding {
+            logger.info { "Using configuration: $config" }
+            XnfHealthCheckServer().startServer(config).bind()
+            val xnfSimulator = XnfSimulator(
+                    VesHvClient(config),
+                    MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
+            XnfApiServer(xnfSimulator, OngoingSimulations())
+                    .start(config.listenAddress)
+                    .bind()
+        }.fix()

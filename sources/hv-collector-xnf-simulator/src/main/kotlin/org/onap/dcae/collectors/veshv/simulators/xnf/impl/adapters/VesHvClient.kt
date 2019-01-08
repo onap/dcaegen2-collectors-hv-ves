@@ -43,8 +43,7 @@ import reactor.netty.tcp.TcpClient
 class VesHvClient(private val configuration: SimulatorConfiguration) {
 
     private val client: TcpClient = TcpClient.create()
-            .host(configuration.vesHost)
-            .port(configuration.vesPort)
+            .addressSupplier { configuration.hvVesAddress }
             .configureSsl()
 
     private fun TcpClient.configureSsl() =
@@ -61,14 +60,10 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
                 .handle { _, output -> handler(complete, messages, output) }
                 .connect()
                 .doOnError {
-                    logger.info {
-                        "Failed to connect to VesHvCollector on ${configuration.vesHost}:${configuration.vesPort}"
-                    }
+                    logger.info { "Failed to connect to VesHvCollector on ${configuration.hvVesAddress}" }
                 }
                 .subscribe {
-                    logger.info {
-                        "Connected to VesHvCollector on ${configuration.vesHost}:${configuration.vesPort}"
-                    }
+                    logger.info { "Connected to VesHvCollector on ${configuration.hvVesAddress}" }
                 }
         return complete.then()
     }

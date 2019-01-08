@@ -25,8 +25,11 @@ package org.onap.dcae.collectors.veshv.healthcheck.api
  * @since August 2018
  */
 enum class HealthDescription(val message: String, val status: HealthStatus) {
+    STARTING("Component is starting", HealthStatus.OUT_OF_SERVICE),
     HEALTHY("Healthy", HealthStatus.UP),
-    STARTING("Collector is starting", HealthStatus.OUT_OF_SERVICE),
-    RETRYING_FOR_CONSUL_CONFIGURATION("Consul configuration not available. Retrying.", HealthStatus.OUT_OF_SERVICE),
-    CONSUL_CONFIGURATION_NOT_FOUND("Consul configuration not found", HealthStatus.DOWN)
+    BUSY("Processing at least one request", HealthStatus.UP),
+    IDLE("No simulation is in progress at the moment", HealthStatus.UP),
+    /* Configuration related */
+    RETRYING_FOR_DYNAMIC_CONFIGURATION("Dynamic configuration not available. Retrying.", HealthStatus.OUT_OF_SERVICE),
+    DYNAMIC_CONFIGURATION_NOT_FOUND("Dynamic configuration not found", HealthStatus.DOWN)
 }

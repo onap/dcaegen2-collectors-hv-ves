@@ -35,17 +35,17 @@ object HealthStateProviderImplTest : Spek({
             val healthStateProviderImpl = HealthStateImpl()
             on("health state update") {
                 healthStateProviderImpl.changeState(HealthDescription.HEALTHY)
-                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
-                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
-                healthStateProviderImpl.changeState(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
+                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+                healthStateProviderImpl.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
 
                 it("should push new health state to the subscriber") {
                     StepVerifier
                             .create(healthStateProviderImpl().take(4))
                             .expectNext(HealthDescription.HEALTHY)
-                            .expectNext(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
-                            .expectNext(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
-                            .expectNext(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
+                            .expectNext(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+                            .expectNext(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+                            .expectNext(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
                             .verifyComplete()
                 }
             }
