@@ -56,9 +56,11 @@ while getopts "$optspec" arg; do
 done
 shift $((OPTIND-1))
 
+source constants.sh
+
 if [ -n "${VERBOSE+x}" ]; then
     echo "All messages count currently consumed by dcae app simulator: "
 fi
 
-curl --request GET localhost:6063/messages/all/count
+curl --request GET ${DCAE_APP_ADDRESS}/messages/all/count
 echo

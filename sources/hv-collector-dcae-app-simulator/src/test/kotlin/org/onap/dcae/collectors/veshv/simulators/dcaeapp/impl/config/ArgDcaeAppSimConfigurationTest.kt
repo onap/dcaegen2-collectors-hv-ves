@@ -54,7 +54,7 @@ internal class ArgDcaeAppSimConfigurationTest : Spek({
             }
 
             it("should set proper port") {
-                assertThat(result.apiPort).isEqualTo(listenPort.toInt())
+                assertThat(result.apiAddress.port).isEqualTo(listenPort.toInt())
             }
 
 
@@ -79,7 +79,7 @@ internal class ArgDcaeAppSimConfigurationTest : Spek({
             }
 
             it("should set proper port") {
-                assertThat(result.apiPort).isEqualTo(listenPort.toInt())
+                assertThat(result.apiAddress.port).isEqualTo(listenPort.toInt())
             }
 
             it("should set proper kafka bootstrap servers") {

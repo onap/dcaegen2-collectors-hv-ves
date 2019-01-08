@@ -56,7 +56,7 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
     private val lastConfigurationHash: AtomicReference<ByteArray> = AtomicReference(byteArrayOf())
     private val retry = retrySpec.doOnRetry {
         logger.withWarn(ServiceContext::mdc) { log("Could not load fresh configuration", it.exception()) }
-        healthState.changeState(HealthDescription.RETRYING_FOR_CONSUL_CONFIGURATION)
+        healthState.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
     }
 
     constructor(http: HttpAdapter,

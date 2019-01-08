@@ -314,7 +314,7 @@ object VesHvSpecification : Spek({
             it("should mark the application unhealthy ") {
                 assertThat(sut.healthStateProvider.currentHealth)
                         .describedAs("application health state")
-                        .isEqualTo(HealthDescription.CONSUL_CONFIGURATION_NOT_FOUND)
+                        .isEqualTo(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
             }
         }
     }

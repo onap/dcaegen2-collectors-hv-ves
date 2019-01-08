@@ -30,6 +30,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import ratpack.handling.Chain
 import ratpack.server.RatpackServer
 import ratpack.server.ServerConfig
+import java.net.InetSocketAddress
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -52,11 +53,13 @@ class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
     }
 
 
-    fun start(port: Int, kafkaTopics: Set<String>): IO<RatpackServer> =
+    fun start(socketAddress: InetSocketAddress, kafkaTopics: Set<String>): IO<RatpackServer> =
             simulator.listenToTopics(kafkaTopics).map {
                 RatpackServer.start { server ->
-                    server.serverConfig(ServerConfig.embedded().port(port))
-                            .handlers(::setupHandlers)
+                    server.serverConfig(
+                            ServerConfig.embedded()
+                                    .port(socketAddress.port)
+                    ).handlers(::setupHandlers)
                 }
             }
 
