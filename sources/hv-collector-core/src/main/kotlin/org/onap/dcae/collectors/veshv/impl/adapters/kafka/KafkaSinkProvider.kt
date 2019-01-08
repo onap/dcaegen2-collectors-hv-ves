@@ -19,13 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
-import org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION
-import org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
-import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.apache.kafka.clients.producer.ProducerConfig.*
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
@@ -52,6 +46,7 @@ internal class KafkaSinkProvider internal constructor(
         private fun constructSenderOptions(config: KafkaConfiguration) =
                 SenderOptions.create<CommonEventHeader, VesMessage>()
                         .producerProperty(BOOTSTRAP_SERVERS_CONFIG, config.bootstrapServers)
+                        .producerProperty(MAX_REQUEST_SIZE_CONFIG, config.maximumRequestSizeBytes)
                         .producerProperty(KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
                         .producerProperty(VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
                         .producerProperty(MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
