@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_047bc328",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-08T07:31:35Z",
+      "side": 1,
+      "message": "Well, it\u0027s rather \"Reactor queue size\".\n\nAdd also a comment that it should lessen the probability of OOM errors.",
+      "range": {
+        "startLine": 7,
+        "startChar": 31,
+        "endLine": 7,
+        "endChar": 46
+      },
+      "revId": "22a7c2f75799d2f7c6b27ce7506fec45bec9dd37",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
