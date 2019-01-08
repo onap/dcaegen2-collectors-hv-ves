@@ -25,7 +25,8 @@ import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CON
 import org.apache.kafka.clients.producer.ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION
 import org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
-import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.apache.kafka.clients.producer.ProducerConfig.MAX_REQUEST_SIZE_CONFIG
+import org.apache.kafka.clients.producer.ProducerConfig.BUFFER_MEMORY_CONFIG
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
@@ -46,12 +47,18 @@ internal class KafkaSinkProvider internal constructor(
     override fun invoke(ctx: ClientContext) = KafkaSink(kafkaSender, ctx)
 
     companion object {
+        private const val MAXIMAL_REQUEST_SIZE_MULTPLIER = 1.2f
+        private const val BUFFER_MEMORY_MULTIPLIER = 32
         private fun constructKafkaSender(config: KafkaConfiguration) =
                 KafkaSender.create(constructSenderOptions(config))
 
         private fun constructSenderOptions(config: KafkaConfiguration) =
                 SenderOptions.create<CommonEventHeader, VesMessage>()
                         .producerProperty(BOOTSTRAP_SERVERS_CONFIG, config.bootstrapServers)
+                        .producerProperty(MAX_REQUEST_SIZE_CONFIG,
+                                (MAXIMAL_REQUEST_SIZE_MULTPLIER * config.maximumPayloadSizeBytes).toInt())
+                        .producerProperty(BUFFER_MEMORY_CONFIG,
+                                BUFFER_MEMORY_MULTIPLIER * config.maximumPayloadSizeBytes)
                         .producerProperty(KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
                         .producerProperty(VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
                         .producerProperty(MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
