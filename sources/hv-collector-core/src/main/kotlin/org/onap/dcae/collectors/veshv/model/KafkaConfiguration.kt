@@ -23,4 +23,4 @@ package org.onap.dcae.collectors.veshv.model
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since December 2018
  */
-data class KafkaConfiguration(val bootstrapServers: String)
+data class KafkaConfiguration(val bootstrapServers: String, val maximalRequestSizeBytes: Int)

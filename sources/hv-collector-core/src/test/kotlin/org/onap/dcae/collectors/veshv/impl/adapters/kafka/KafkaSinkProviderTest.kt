@@ -36,7 +36,8 @@ import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
 internal object KafkaSinkProviderTest : Spek({
     describe("non functional requirements") {
         given("sample configuration") {
-            val config = KafkaConfiguration("localhost:9090")
+            val config = KafkaConfiguration("localhost:9090",
+                    1024 * 1024)
             val cut = KafkaSinkProvider(config)
 
             on("sample clients") {
