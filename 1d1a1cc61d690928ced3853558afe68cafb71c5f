@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_0488a3c3",
+        "filename": "development/bin/dcae-msgs.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-08T11:19:36Z",
+      "side": 1,
+      "message": "Will it work if $PWD is not development/bin?",
+      "revId": "1d1a1cc61d690928ced3853558afe68cafb71c5f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
