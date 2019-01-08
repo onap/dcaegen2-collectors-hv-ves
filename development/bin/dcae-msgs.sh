@@ -60,5 +60,5 @@ if [ -n "${VERBOSE+x}" ]; then
     echo "All messages count currently consumed by dcae app simulator: "
 fi
 
-curl --request GET localhost:6063/messages/all/count
+curl --request GET localhost:6064/messages/all/count
 echo

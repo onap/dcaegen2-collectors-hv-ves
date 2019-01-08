@@ -21,6 +21,8 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.effects.IO
 import kotlinx.coroutines.asCoroutineDispatcher
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.XnfApiServer
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.util.*
@@ -32,13 +34,15 @@ import java.util.concurrent.Executors
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class OngoingSimulations(executor: Executor = Executors.newCachedThreadPool()) {
+class OngoingSimulations(executor: Executor = Executors.newCachedThreadPool(),
+                         val healthState: HealthState = HealthState.INSTANCE) {
     private val asyncSimulationContext = executor.asCoroutineDispatcher()
     private val simulations = ConcurrentHashMap<UUID, Status>()
 
     fun startAsynchronousSimulation(simulationIo: IO<Unit>): UUID {
         val id = UUID.randomUUID()
         simulations[id] = StatusOngoing
+        checkForHealthStateUpdate()
 
         simulationIo.continueOn(asyncSimulationContext).unsafeRunAsync { result ->
             result.fold(
@@ -50,16 +54,23 @@ class OngoingSimulations(executor: Executor = Executors.newCachedThreadPool()) {
                         logger.info { "Finished sending messages" }
                         simulations[id] = StatusSuccess
                     }
-            )
+            ).also { checkForHealthStateUpdate() }
         }
         return id
     }
 
-    fun status(id: UUID) = simulations.getOrDefault(id, StatusNotFound)
+    private fun checkForHealthStateUpdate() = if (isAnySimulationPending()) {
+        healthState.changeState(HealthDescription.ONGOING_SIMULATION)
+    } else {
+        healthState.changeState(HealthDescription.IDLE)
+    }
+
 
     fun isAnySimulationPending() = simulations.any {
         status(it.key) is StatusOngoing
     }
+
+    fun status(id: UUID) = simulations.getOrDefault(id, StatusNotFound)
 
     internal fun clear() {
         simulations.clear()

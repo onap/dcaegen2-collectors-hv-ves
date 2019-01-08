@@ -28,17 +28,10 @@ import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_PASSWORD
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MAXIMUM_PAYLOAD_SIZE_BYTES
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.SSL_DISABLE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_PASSWORD
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_HOST
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_PORT
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.*
 import org.onap.dcae.collectors.veshv.utils.commandline.intValue
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
+import java.net.InetSocketAddress
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -49,6 +42,7 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
             VES_HV_PORT,
             VES_HV_HOST,
             LISTEN_PORT,
+            HEALTH_CHECK_API_PORT,
             MAXIMUM_PAYLOAD_SIZE_BYTES,
             SSL_DISABLE,
             KEY_STORE_FILE,
@@ -61,6 +55,8 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                 val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
                 val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
+                val healthCheckApiListenAddress = cmdLine.intValue(HEALTH_CHECK_API_PORT,
+                        DefaultValues.HEALTH_CHECK_API_PORT)
                 val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES,
                         WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
 
@@ -68,7 +64,12 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
                         listenPort,
                         vesHost,
                         vesPort,
+                        InetSocketAddress(healthCheckApiListenAddress),
                         maxPayloadSizeBytes,
                         createSecurityConfiguration(cmdLine).bind())
             }.fix()
+
+    internal object DefaultValues {
+        const val HEALTH_CHECK_API_PORT = 6063
+    }
 }
