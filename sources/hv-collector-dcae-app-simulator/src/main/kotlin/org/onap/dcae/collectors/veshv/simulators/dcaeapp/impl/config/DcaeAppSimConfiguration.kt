@@ -19,8 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config
 
+import java.net.InetSocketAddress
+
 data class DcaeAppSimConfiguration(
-        val apiPort: Int,
+        val apiAddress: InetSocketAddress,
         val maxPayloadSizeBytes: Int,
         val kafkaBootstrapServers: String,
         val kafkaTopics: Set<String>
