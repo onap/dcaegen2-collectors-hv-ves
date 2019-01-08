@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,34 +20,22 @@
 package org.onap.dcae.collectors.veshv.utils
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import reactor.netty.DisposableServer
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since January 2019
  */
-abstract class ServerHandle(val host: String, val port: Int) {
-    abstract fun shutdown(): IO<Unit>
-    abstract fun await(): IO<Unit>
+
+fun registerShutdownHook(job: () -> Unit) {
+    Runtime.getRuntime().addShutdownHook(object : Thread() {
+        override fun run() {
+            job()
+        }
+    })
 }
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
- */
-class NettyServerHandle(private val ctx: DisposableServer) : ServerHandle(ctx.host(), ctx.port()) {
-    override fun shutdown() = IO {
-        logger.info { "Graceful shutdown" }
-        ctx.disposeNow()
-        logger.info { "Server disposed" }
-    }
-
-    override fun await() = IO<Unit> {
-        ctx.channel().closeFuture().sync()
-    }
-
-    companion object {
-        val logger = Logger(NettyServerHandle::class)
+fun registerShutdownHook(job: IO<Unit>) = IO {
+    registerShutdownHook {
+        job.unsafeRunSync()
     }
 }
