@@ -58,8 +58,8 @@ done
 shift $((OPTIND-1))
 
 if [ -n "${VERBOSE+x}" ]; then
-    echo "Requesting DCAE app running on port 6063 to reset messages count"
+    echo "Requesting DCAE app running on port 6064 to reset messages count"
 fi
 
-curl --request DELETE localhost:6063/messages
+curl --request DELETE localhost:6064/messages
 echo

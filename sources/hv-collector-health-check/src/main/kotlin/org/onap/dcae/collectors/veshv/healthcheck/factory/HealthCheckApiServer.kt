@@ -59,7 +59,7 @@ class HealthCheckApiServer(private val healthState: HealthState,
 
     private fun readinessHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
             healthDescription.get().run {
-                logger.debug { "HV-VES status: $status, $message" }
+                logger.debug { "Component status: $status, $message" }
                 resp.status(status.httpResponseStatus.number).sendString(Flux.just(status.toString(), "\n", message))
             }
 

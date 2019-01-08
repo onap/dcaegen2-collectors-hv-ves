@@ -114,7 +114,7 @@ function wait_for_containers_startup_or_fail() {
 
 function start_simulation() {
     verbose_log "Simulation: every xNF will send ${MESSAGES_IN_BATCH} messages to hv-ves
-    ${MESSAGE_BATCHES_AMOUNT} times, once every ${MESSAGES_SENDING_INTERVAL}"
+    ${MESSAGE_BATCHES_AMOUNT} times, once every ${MESSAGES_SENDING_INTERVAL}s"
     for port in ${CREATED_XNF_SIMULATORS_PORTS[@]}; do
         start_single_simulation $port $MESSAGES_IN_BATCH &
     done

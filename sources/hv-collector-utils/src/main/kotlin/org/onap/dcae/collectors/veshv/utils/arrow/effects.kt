@@ -46,9 +46,8 @@ object ExitSuccess : ExitCode() {
 
 data class ExitFailure(override val code: Int) : ExitCode()
 
-fun Either<IO<Unit>, IO<Unit>>.unsafeRunEitherSync(onError: (Throwable) -> ExitCode, onSuccess: () -> Unit) =
+fun <A, B> Either<IO<A>, IO<B>>.unsafeRunEitherSync(onError: (Throwable) -> ExitCode, onSuccess: () -> Unit) =
         flatten().attempt().unsafeRunSync().fold({ onError(it).io().unsafeRunSync() }, { onSuccess() })
-
 
 fun IO<Any>.unit() = map { Unit }
 

@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import java.net.InetSocketAddress
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -29,5 +30,6 @@ data class SimulatorConfiguration(
         val listenPort: Int,
         val vesHost: String,
         val vesPort: Int,
+        val healthCheckApiListenAddress: InetSocketAddress,
         val maxPayloadSizeBytes: Int,
         val security: SecurityConfiguration)

@@ -59,8 +59,8 @@ shift $((OPTIND-1))
 TOPIC=${1:-HV_VES_PERF3GPP}
 
 if [ -n "${VERBOSE+x}" ]; then
-    echo "Requesting DCAE app running on port 6063 to consume messages from topic: ${TOPIC}"
+    echo "Requesting DCAE app running on port 6064 to consume messages from topic: ${TOPIC}"
 fi
 
-curl --request PUT localhost:6063/configuration/topics -d ${TOPIC}
+curl --request PUT localhost:6064/configuration/topics -d ${TOPIC}
 echo
