@@ -30,6 +30,7 @@ import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.registerShutdownHook
 
 private const val VESHV_PACKAGE = "org.onap.dcae.collectors.veshv"
 private val logger = Logger("$VESHV_PACKAGE.main")
@@ -44,7 +45,7 @@ fun main(args: Array<String>) =
                 logger.withError { log("Failed to start a server", ex) }
                 ExitFailure(1)
             },
-            { logger.info { "Gentle shutdown" } }
+            { logger.info { "Finished" } }
         )
 
 private fun startAndAwaitServers(config: ServerConfiguration) =
@@ -52,7 +53,8 @@ private fun startAndAwaitServers(config: ServerConfiguration) =
         Logger.setLogLevel(VESHV_PACKAGE, config.logLevel)
         logger.info { "Using configuration: $config" }
         HealthCheckServer.start(config).bind()
-        VesServer.start(config).bind()
-            .await().bind()
+        VesServer.start(config).bind().run {
+            registerShutdownHook(shutdown()).bind()
+            await().bind()
+        }
     }.fix()
-

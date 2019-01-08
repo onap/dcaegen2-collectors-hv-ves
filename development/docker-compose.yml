@@ -67,7 +67,9 @@ services:
               "--config-url", "http://consul-server:8500/v1/kv/veshv-config?raw=true",
               "--kafka-bootstrap-servers", "message-router-kafka:9092",
               "--key-store-password", "onaponap",
-              "--trust-store-password", "onaponap"]
+              "--trust-store-password", "onaponap",
+              "--first-request-delay", "2",
+              "--log-level", "DEBUG"]
     environment:
       JAVA_OPTS:  "-Dio.netty.leakDetection.level=paranoid"
     healthcheck:
