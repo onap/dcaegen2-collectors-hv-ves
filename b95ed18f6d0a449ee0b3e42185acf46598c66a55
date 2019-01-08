@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_a4aaf76e",
+        "filename": "development/bin/dcae-topic.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-08T07:56:58Z",
+      "side": 1,
+      "message": "Can we create a common file with all these ports assigned to variables? Then we could just source and use them. Can be done as separate MR.",
+      "range": {
+        "startLine": 65,
+        "startChar": 29,
+        "endLine": 65,
+        "endChar": 33
+      },
+      "revId": "b95ed18f6d0a449ee0b3e42185acf46598c66a55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c4a7fba5",
+        "filename": "sources/hv-collector-health-check/src/main/kotlin/org/onap/dcae/collectors/veshv/healthcheck/api/HealthDescription.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-08T07:56:58Z",
+      "side": 1,
+      "message": "Can we make these values a little less specific?\n\nconsul -\u003e dynamic\nongoing simulation -\u003e busy/processing/handling request\n\nDon\u0027t forget about the messages.",
+      "revId": "b95ed18f6d0a449ee0b3e42185acf46598c66a55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_84bd73b9",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/config/SimulatorConfiguration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-08T07:56:58Z",
+      "side": 1,
+      "message": "It would be nice to have these two wrapped inside InetSocketAddress, too.",
+      "range": {
+        "startLine": 31,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 25
+      },
+      "revId": "b95ed18f6d0a449ee0b3e42185acf46598c66a55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_24ae0782",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/simulations.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-08T07:56:58Z",
+      "side": 1,
+      "message": "Rename to something more like \"updateHealthState\"",
+      "range": {
+        "startLine": 62,
+        "startChar": 16,
+        "endLine": 62,
+        "endChar": 43
+      },
+      "revId": "b95ed18f6d0a449ee0b3e42185acf46598c66a55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_e4cb1f51",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/simulations.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-08T07:56:58Z",
+      "side": 1,
+      "message": "Not sure if it looks better but might be changed to:\n\nhealthState.changeState(if(isAnySimulationPending) ONGOING else IDLE)\n\nwhich becomes\n\nhealthState.changeState(currentState())\n\nafter extracting private function.",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 12
+      },
+      "revId": "b95ed18f6d0a449ee0b3e42185acf46598c66a55",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
