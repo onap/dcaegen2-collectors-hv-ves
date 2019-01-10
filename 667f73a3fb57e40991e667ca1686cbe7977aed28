@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_c952ac34",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-01-10T08:55:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_c98dccd4",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_896a64ec",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2019-01-10T08:27:37Z",
       "side": 1,
       "message": "Let\u0027s set this property to max(32MB, BUFF_MEM_MULT  * conf.mPSB) to disable scaling down",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_c9294c9c",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-01-10T08:55:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_896a64ec",
       "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9adffdf1_a903a80e",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/KafkaConfiguration.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-01-10T08:55:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_09af542b",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9adffdf1_4970fcdb",
         "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProviderTest.kt",
         "patchSetId": 6
@@ -64,6 +118,24 @@
       "writtenOn": "2019-01-10T08:28:13Z",
       "side": 1,
       "message": "Do not depend on WireFrameMessage - this yields spaghetti dependencies between classes and packages. In test you may safely hardcode whatever value you want (might be the same).",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_095d1447",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProviderTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-01-10T08:55:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_4970fcdb",
       "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
