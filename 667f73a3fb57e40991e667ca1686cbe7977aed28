@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_c98dccd4",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-01-10T08:27:37Z",
+      "side": 1,
+      "message": "- rename first word to maximUM\n- typo in MULT I PLIER",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_896a64ec",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-01-10T08:27:37Z",
+      "side": 1,
+      "message": "Let\u0027s set this property to max(32MB, BUFF_MEM_MULT  * conf.mPSB) to disable scaling down",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_09af542b",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/KafkaConfiguration.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-01-10T08:27:37Z",
+      "side": 1,
+      "message": "Rename maximumPayloadSizeBytes to maximumRequestSize in this class",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
