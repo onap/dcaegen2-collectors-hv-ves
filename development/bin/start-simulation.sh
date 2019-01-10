@@ -23,21 +23,25 @@ set -euo pipefail
 function usage() {
     echo ""
     echo "Send messages to hv-ves from multiple xNF simulators"
-    echo "Usage: $0 [-h|--help] [-v|--verbose] [--messages-in-batch] [--docker-network] [--xnf-logs-directory]"
+    echo "Usage: $0 [-h|--help] [-v|--verbose] [--ssl-disable]"
+    echo "              [--messages-in-batch=ARG] [--docker-network=ARG] [--xnf-logs-directory=ARG]"
     echo "              <hv ves hostname> <hv ves port> <simulators amount> <messages batches amount per simulator> <messages sending interval>"
     echo ""
     echo "  - hv ves hostname : HighVolume VES Collector network hostname"
     echo "  - hv ves port : HighVolume VES Collector network port"
     echo "  - simulators amount : Amount of xNF simulators to be launched"
-    echo "  - messages amount per simulator : Amount of messages to be sent from each xNF simulator to HV-VES"
-    echo "  - messages sending interval : interval in seconds between sending messages from xNFs"
+    echo "  - messages batches amount per simulator : Amount of batches of messages to be sent from each xNF simulator to HV-VES"
+    echo "  - messages sending interval : interval in seconds between sending batches of messages from xNFs"
     echo "Optional parameters:"
+    echo "  - ssl-disable : Should xNF simulator be configured without using SSL/TLS connections"
     echo "  - messages-in-batch : Amount of messages sent on each request"
     echo "  - docker-network : Docker network to which xNF simulators should be added"
     echo "  - xnf-logs-directory : Path to directory where logs from all xNF simulators should be stored"
     echo "Example invocations:"
     echo "./start-simulation.sh --messages-in-batch=5 --docker-network=development_default ves-hv-collector 6061 10 20 0.5"
     echo "./start-simulation.sh --messages-in-batch=5 --xnf-logs-directory=/tmp/xnf-simulation localhost 6061 10 20 0.5"
+    echo "Invocation with remote HV-VES host (Kubernetes slave IP given with default K8S NodePort for HV-VES service):"
+    echo "./start-simulation.sh --ssl-disable --xnf-logs-directory=/tmp/xnf-simulation 10.183.36.78 30222 5 100 5"
     exit 1
 }
 
@@ -56,10 +60,12 @@ function create_logs_dir() {
 }
 
 function create_xNFs_simulators() {
+    echo "Creating ${XNFS_AMOUNT} xNFs simulators"
+    [ -n "${SSL_DISABLE+x}" ] && verbose_log "--ssl-disable flag will be set inside containers."
     for i in $(seq 1 ${XNFS_AMOUNT}); do
         local XNF_PORT=$(get_unoccupied_port 32000 65000)
         verbose_log "Starting xNF simulator container on port ${XNF_PORT} using run-xnf-simulator script"
-        XNF_CONTAINER_ID=$(${DEVELOPMENT_BIN_DIRECTORY}/run-xnf-simulator.sh $XNF_PORT ${DOCKER_NETWORK:-})
+        XNF_CONTAINER_ID=$(${DEVELOPMENT_BIN_DIRECTORY}/run-xnf-simulator.sh ${SSL_DISABLE} $XNF_PORT ${HV_VES_HOSTNAME} ${HV_VES_PORT} ${DOCKER_NETWORK:-})
         CREATED_XNF_SIMULATORS_PORTS+=(${XNF_PORT})
         verbose_log "Container id: ${XNF_CONTAINER_ID}"
         CREATED_XNF_SIMULATORS_IDS+=(${XNF_CONTAINER_ID})
@@ -80,19 +86,20 @@ function get_unoccupied_port() {
 }
 
 function wait_for_containers_startup_or_fail() {
-    local seconds_to_wait=10
+    local intervals_amount=30
+    local wait_interval=5
     local all_containers_healthy=1
 
-    verbose_log "Waiting ${seconds_to_wait}s for containers startup"
+    verbose_log "Waiting up to ${intervals_amount} times with interval of ${wait_interval}s for containers startup"
     set +e
-    for i in $(seq 1 ${seconds_to_wait}); do
+    for i in $(seq 1 ${intervals_amount}); do
         verbose_log "Try no. ${i}"
         all_containers_healthy=1
-        for port in ${CREATED_XNF_SIMULATORS_PORTS[@]}; do
-            verbose_log "Checking container on port ${port}"
-            local status_code=$(curl -s -o /dev/null -I -w "%{http_code}" localhost:${port}/healthcheck)
-            if [ $status_code -ne 200 ]; then
-                verbose_log "Container on port ${port} is unhealthy "
+        for id in ${CREATED_XNF_SIMULATORS_IDS[@]}; do
+            verbose_log "Checking container with id ${id}"
+            health=$(docker inspect --format='{{json .State.Health.Status}}' ${id})
+            if [ ${health} != "\"healthy\"" ]; then
+                verbose_log "Container ${id} is not in healthy state. Actual status: ${health}"
                 all_containers_healthy=0
                 break
             fi
@@ -100,7 +107,8 @@ function wait_for_containers_startup_or_fail() {
         if [ $all_containers_healthy -eq 1 ]; then
             break
         fi
-        sleep 1
+        verbose_log "Sleeping for ${wait_interval}s"
+        sleep $wait_interval
     done
     set -e
 
@@ -113,8 +121,8 @@ function wait_for_containers_startup_or_fail() {
 }
 
 function start_simulation() {
-    verbose_log "Simulation: every xNF will send ${MESSAGES_IN_BATCH} messages to hv-ves
-    ${MESSAGE_BATCHES_AMOUNT} times, once every ${MESSAGES_SENDING_INTERVAL}s"
+    verbose_log "Simulation: every xNF will send ${MESSAGES_IN_BATCH} messages to hv-ves ( running on
+    ${HV_VES_HOSTNAME}:${HV_VES_PORT} ) ${MESSAGE_BATCHES_AMOUNT} times, once every ${MESSAGES_SENDING_INTERVAL}s"
     for port in ${CREATED_XNF_SIMULATORS_PORTS[@]}; do
         start_single_simulation $port $MESSAGES_IN_BATCH &
     done
@@ -144,11 +152,12 @@ function wait_for_simulators_to_finish_sending_messages() {
     for i in $(seq 1 ${seconds_to_wait}); do
         verbose_log "Wait no. ${i}"
         all_containers_finished=1
-        for port in ${CREATED_XNF_SIMULATORS_PORTS[@]}; do
-            local container_status=$(curl --request GET -s localhost:${port}/healthcheck | jq -r '.["Detailed status"]')
+        for id in ${CREATED_XNF_SIMULATORS_IDS[@]}; do
+            verbose_log "Checking container ${id}"
+            local container_status=$(docker inspect --format='{{json .State.Health.Log }}' ${id} | jq '.[-1] | .Output')
 
-            verbose_log "Container on port ${port} status:  ${container_status}"
-            if [ "${container_status}" = "Busy" ]; then
+            verbose_log "Container ${id} status:  ${container_status}"
+            if [ "${container_status}" != "\"UP\\nNo simulation is in progress at the moment\"" ]; then
                 all_containers_finished=0
                 break
             fi
@@ -157,8 +166,18 @@ function wait_for_simulators_to_finish_sending_messages() {
             echo "All containers finished sending messages"
             break
         fi
+        verbose_log "Sleeping for 1s"
         sleep 1
     done
+
+
+    if [ $all_containers_finished -ne 1 ]; then
+        echo "[ERROR] Some xNFs simulators failed to finish sending messages - simulation probably failed"
+        echo "For debug output rerun simulation with -v and --xnf-logs-directory command line options"
+        cleanup
+        echo "Exitting..."
+        exit 3
+    fi
 }
 
 function cleanup() {
@@ -170,7 +189,7 @@ function cleanup() {
         if [ -n "${XNF_LOGS_DIRECTORY+x}" ]; then
             local log_file=${XNF_LOGS_DIRECTORY}/${container_id}.log
             verbose_log "Writing container logs to: ${log_file}"
-            docker logs ${container_id} > $log_file
+            docker logs ${container_id} &> $log_file
         fi
         verbose_log "Removing container: ${container_id}"
         docker rm $container_id > /dev/null
@@ -202,6 +221,8 @@ while getopts "$optspec" arg; do
             case "${OPTARG}" in
                 verbose)
                     VERBOSE=True ;;
+                ssl-disable)
+                    SSL_DISABLE="--ssl-disable" ;;
                 help)
                     usage ;;
                 *)
@@ -239,14 +260,14 @@ MESSAGE_BATCHES_AMOUNT=${4}
 MESSAGES_SENDING_INTERVAL=${5}
 
 # set defaults if absent
-[ -z "${MESSAGES_IN_BATCH}" ] && MESSAGES_IN_BATCH=1
+[ -z "${MESSAGES_IN_BATCH+x}" ] && MESSAGES_IN_BATCH=1
+[ -z "${SSL_DISABLE+x}" ] && SSL_DISABLE=""
 
 create_logs_dir
 
 
 CREATED_XNF_SIMULATORS_PORTS=()
 CREATED_XNF_SIMULATORS_IDS=()
-echo "Creating ${XNFS_AMOUNT} xNFs simulators"
 trap cleanup SIGINT SIGTERM
 create_xNFs_simulators
 
@@ -259,6 +280,7 @@ assure_all_xNFs_requests_were_sent
 
 assumed_message_sending_time=$(echo ";0.00025 * $XNFS_AMOUNT" | bc)
 seconds_to_wait=$(echo ";$assumed_message_sending_time * $MESSAGE_BATCHES_AMOUNT * $MESSAGES_IN_BATCH" | bc)
+seconds_to_wait=$(echo ";if($seconds_to_wait > 2) $seconds_to_wait else 2" | bc)
 wait_for_simulators_to_finish_sending_messages $seconds_to_wait
 # there might be network lag between moment when xNF finished sending messages and they actually are received by hv-ves
 # thus we cannot start removing xNFs immediately to prevent closing socket channels
