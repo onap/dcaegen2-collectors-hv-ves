@@ -50,6 +50,23 @@
       "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_4970fcdb",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProviderTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-10T08:28:13Z",
+      "side": 1,
+      "message": "Do not depend on WireFrameMessage - this yields spaghetti dependencies between classes and packages. In test you may safely hardcode whatever value you want (might be the same).",
+      "revId": "667f73a3fb57e40991e667ca1686cbe7977aed28",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
