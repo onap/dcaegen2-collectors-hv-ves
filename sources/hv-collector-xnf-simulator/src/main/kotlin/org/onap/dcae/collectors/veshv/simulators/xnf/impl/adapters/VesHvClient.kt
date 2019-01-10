@@ -95,7 +95,7 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
 
     private fun NettyOutbound.logConnectionClosed() =
             withConnection { conn ->
-                conn.onTerminate().subscribe {
+                conn.onDispose {
                     logger.info { "Connection to ${conn.address()} has been closed" }
                 }
             }

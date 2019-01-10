@@ -21,7 +21,7 @@ set -euo pipefail
 
 usage() {
     echo "Start xnf-simulator container on given port and inside of given docker-network"
-    echo "Usage: $0 [-h|--help] [-v|--verbose] <xnf listen port> [<hv ves docker network>]"
+    echo "Usage: $0 [-h|--help] [-v|--verbose] <xnf listen port> [<hv ves hostname> <hv ves port> <hv ves docker network>]"
     exit 1
 }
 
@@ -53,8 +53,10 @@ shift $((OPTIND-1))
 
 
 LISTEN_PORT=$1
-if [ $# -gt 1 ]; then
-    HV_VES_NETWORK=${2}
+HV_VES_HOSTNAME=${2:-ves-hv-collector}
+HV_VES_PORT=${3:-6061}
+if [ $# -gt 3 ]; then
+    HV_VES_NETWORK=${4}
 fi
 
 PORTS="${LISTEN_PORT}:${LISTEN_PORT}/tcp"
@@ -67,11 +69,17 @@ fi
 
 XNF_CONTAINER_ID=$(docker run -d \
            -v ${HV_VES_REPO_HOME}/ssl/:/etc/ves-hv/ \
+           --health-cmd='curl -s -f http://localhost:6063/health/ready || exit 1' \
+           --health-interval=5s \
+           --health-retries=3 \
+           --health-start-period='10s' \
            -p ${PORTS} \
            onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator \
                     --listen-port ${LISTEN_PORT} \
-                    --ves-host ves-hv-collector \
-                    --ves-port 6061 \
+                    --health-check-api-port 6063 \
+                    --ves-host ${HV_VES_HOSTNAME} \
+                    --ves-port ${HV_VES_PORT} \
+                    --ssl-disable \
                     --key-store-password onaponap \
                     --trust-store-password onaponap)
 
