@@ -71,7 +71,7 @@ services:
               "--first-request-delay", "2",
               "--log-level", "DEBUG"]
     environment:
-      JAVA_OPTS:  "-Dio.netty.leakDetection.level=paranoid"
+      JAVA_OPTS:  "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
     healthcheck:
       test: curl -f http://localhost:6060/health/ready || exit 1
       interval: 10s
@@ -83,6 +83,7 @@ services:
     - consul-config
     volumes:
     - ./ssl/:/etc/ves-hv/
+    - ./logs:/var/log/ONAP/dcae-hv-ves-collector
 
 
   #

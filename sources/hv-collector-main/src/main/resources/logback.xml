@@ -20,22 +20,23 @@
 -->
 <configuration>
     <property name="COMPONENT_NAME"
-              value="dcae-hv-ves-collector"/>
+            value="dcae-hv-ves-collector"/>
     <property name="COMPONENT_SHORT_NAME"
-              value="hv-ves"/>
+            value="hv-ves"/>
 
     <property name="LOG_FILENAME" value="${COMPONENT_SHORT_NAME}"/>
     <property name="LOG_PATH" value="/var/log/ONAP/${COMPONENT_NAME}"/>
     <property name="ARCHIVE" value="${LOG_PATH}/archive"/>
 
-    <property name="p_tim" value="%date{&quot;yyyy-MM-dd'T'HH:mm:ss.SSSXXX&quot;, UTC}"/>
-    <property name="p_thr" value="%thread"/>
-    <property name="p_lvl" value="%highlight(%-5level)"/>
-    <property name="p_log" value="%50.50logger"/>
-    <property name="p_mdc" value="%replace(%replace(%mdc){'\t', '\\\\t'}){'\n', '\\\\n'}"/>
+    <property name="p_log" value="%logger"/>
+    <property name="p_tim" value="%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC}"/>
+    <property name="p_lvl" value="%level"/>
     <property name="p_msg" value="%replace(%replace(%msg){'\t', '\\\\t'}){'\n','\\\\n'}"/>
+    <property name="p_mdc" value="%replace(%replace(%mdc){'\t', '\\\\t'}){'\n', '\\\\n'}"/>
     <property name="p_exc" value="%replace(%replace(%rootException){'\t', '\\\\t'}){'\n','\\\\n'}"/>
     <property name="p_mak" value="%replace(%replace(%marker){'\t', '\\\\t'}){'\n','\\\\n'}"/>
+    <property name="p_thr" value="%thread"/>
+
     <property name="SIMPLE_LOG_PATTERN" value="
 %nopexception
 | ${p_tim}\t
@@ -43,6 +44,7 @@
 | ${p_lvl}\t
 | %msg\t
 | %rootException%n"/>
+
     <property name="READABLE_LOG_PATTERN" value="
 %nopexception
 | ${p_tim}\t
@@ -53,16 +55,18 @@
 | %rootException\t
 | ${p_mdc}\t
 | ${p_thr}%n"/>
-    <property name="ONAP_LOG_PATTERN" value="
-%nopexception
-| ${p_tim}\t
-| ${p_thr}\t
-| ${p_lvl}\t
-| ${p_log}\t
-| ${p_mdc}\t
-| ${p_msg}\t
-| ${p_exc}\t
-| ${p_mak}%n"/>
+
+    <property name="ONAP_LOG_PATTERN" value="%nopexception${p_log}|${p_tim}|${p_lvl}|${p_msg}|${p_mdc}|${p_exc}|${p_mak}|${p_thr}%n"/>
+
+    <property name="ONAP_LOG_PATTERN_FROM_WIKI" value="%nopexception%logger
+|%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC}
+|%level
+|%replace(%replace(%replace(%message){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}
+|%replace(%replace(%replace(%mdc){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}
+|%replace(%replace(%replace(%rootException){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}
+|%replace(%replace(%replace(%marker){'\t','\\\\t'}){'\n','\\\\n'}){'|','\\\\|'}
+|%thread
+|%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -71,7 +75,7 @@
     </appender>
 
     <appender name="ROLLING-FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
         <encoder>
             <pattern>${ONAP_LOG_PATTERN}</pattern>
         </encoder>
