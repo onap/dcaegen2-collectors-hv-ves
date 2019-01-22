@@ -30,7 +30,7 @@ import java.util.*
  */
 object ServiceContext {
     val instanceId = UUID.randomUUID().toString()
-    val serverFqdn = getHost().hostName
+    val serverFqdn = getHost().hostName!!
 
     val mdc = mapOf(
             OnapMdc.INSTANCE_ID to instanceId,

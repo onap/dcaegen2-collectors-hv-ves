@@ -26,6 +26,7 @@ import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.utils.arrow.Closeable
 import reactor.core.publisher.Flux
 
 interface Sink {
@@ -42,16 +43,8 @@ interface Metrics {
     fun notifyClientRejected(cause: ClientRejectionCause)
 }
 
-interface SinkProvider {
+interface SinkProvider: Closeable {
     operator fun invoke(ctx: ClientContext): Sink
-
-    companion object {
-        fun just(sink: Sink): SinkProvider =
-                object : SinkProvider {
-                    override fun invoke(
-                            ctx: ClientContext): Sink = sink
-                }
-    }
 }
 
 interface ConfigurationProvider {

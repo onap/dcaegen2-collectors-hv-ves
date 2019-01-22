@@ -29,6 +29,7 @@ import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.netty.DisposableServer
 import reactor.netty.http.server.HttpServer
 import reactor.netty.http.server.HttpServerRequest
 import reactor.netty.http.server.HttpServerResponse
@@ -48,7 +49,10 @@ class HealthCheckApiServer(private val healthState: HealthState,
     fun start(): IO<ServerHandle> = IO {
         healthState().subscribe(healthDescription::set)
         val ctx = HttpServer.create()
-                .tcpConfiguration { it.addressSupplier { listenAddress } }
+                .tcpConfiguration {
+                    it.addressSupplier { listenAddress }
+                            .doOnUnbound { logClose() }
+                }
                 .route { routes ->
                     routes.get("/health/ready", ::readinessHandler)
                     routes.get("/health/alive", ::livenessHandler)
@@ -70,8 +74,13 @@ class HealthCheckApiServer(private val healthState: HealthState,
     private fun monitoringHandler(_req: HttpServerRequest, resp: HttpServerResponse) =
             resp.sendString(monitoring.lastStatus())
 
+    private fun logClose() {
+        logger.info { "Health Check API closed" }
+    }
+
     companion object {
         private val logger = Logger(HealthCheckApiServer::class)
+
     }
 
 }

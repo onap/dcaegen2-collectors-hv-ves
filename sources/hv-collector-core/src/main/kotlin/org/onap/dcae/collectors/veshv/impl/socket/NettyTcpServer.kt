@@ -33,6 +33,7 @@ import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.info
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withWarn
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.ssl.boundary.ServerSslContextFactory
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
@@ -63,6 +64,10 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                 .addressSupplier { serverConfig.serverListenAddress }
                 .configureSsl()
                 .handle(this::handleConnection)
+                .doOnUnbound {
+                    logger.info(ServiceContext::mdc) { "Netty TCP Server closed" }
+                    collectorProvider.close().unsafeRunSync()
+                }
                 .let { NettyServerHandle(it.bindNow()) }
     }
 

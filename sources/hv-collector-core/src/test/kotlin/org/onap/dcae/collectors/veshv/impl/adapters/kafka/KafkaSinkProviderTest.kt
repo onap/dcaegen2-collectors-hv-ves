@@ -20,6 +20,8 @@
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import arrow.syntax.collections.tail
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -28,6 +30,9 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
+import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.ves.VesEventOuterClass
+import reactor.kafka.sender.KafkaSender
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -58,6 +63,19 @@ internal object KafkaSinkProviderTest : Spek({
                                 .describedAs("$sink.kafkaSender should be same as $firstSink.kafkaSender")
                                 .isTrue()
                     }
+                }
+            }
+        }
+
+        given("dummy KafkaSender") {
+            val kafkaSender: KafkaSender<VesEventOuterClass.CommonEventHeader, VesMessage> = mock()
+            val cut = KafkaSinkProvider(kafkaSender)
+
+            on("close") {
+                cut.close().unsafeRunSync()
+
+                it("should close KafkaSender") {
+                    verify(kafkaSender).close()
                 }
             }
         }
