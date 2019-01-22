@@ -22,18 +22,19 @@ package org.onap.dcae.collectors.veshv.boundary
 import arrow.core.Option
 import arrow.effects.IO
 import io.netty.buffer.ByteBuf
-import io.netty.buffer.ByteBufAllocator
 import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.utils.Closeable
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.util.*
 
 interface Collector {
     fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void>
 }
 
-typealias CollectorProvider = (ClientContext) -> Option<Collector>
+interface CollectorProvider : Closeable {
+    operator fun invoke(ctx: ClientContext): Option<Collector>
+}
 
 interface Server {
     fun start(): IO<ServerHandle>

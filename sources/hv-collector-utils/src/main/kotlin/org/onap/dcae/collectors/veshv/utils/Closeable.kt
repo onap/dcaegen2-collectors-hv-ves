@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.servers
+package org.onap.dcae.collectors.veshv.utils
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.model.ServiceContext
-import org.onap.dcae.collectors.veshv.utils.ServerHandle
-import org.onap.dcae.collectors.veshv.utils.arrow.then
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import arrow.effects.fix
+import arrow.effects.instances.io.monadError.monadError
+import arrow.typeclasses.binding
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since January 2019
  */
-abstract class ServerStarter {
-    fun start(config: ServerConfiguration): IO<ServerHandle> =
-            startServer(config)
-                    .then { logger.info(ServiceContext::mdc) { serverStartedMessage(it) } }
-
-    protected abstract fun startServer(config: ServerConfiguration): IO<ServerHandle>
-    protected abstract fun serverStartedMessage(handle: ServerHandle): String
+interface Closeable {
+    fun close(): IO<Unit> = IO.unit
 
     companion object {
-        private val logger = Logger(ServerStarter::class)
+        fun closeAll(closeables: Iterable<Closeable>) =
+                IO.monadError().binding {
+                    closeables.forEach { it.close().bind() }
+                }.fix()
     }
 }

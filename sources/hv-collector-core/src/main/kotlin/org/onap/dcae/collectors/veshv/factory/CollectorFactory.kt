@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.factory
 
+import arrow.core.Option
+import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
@@ -60,8 +62,11 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                 }
                 .subscribe(config::set)
 
-        return { ctx: ClientContext ->
-            config.getOption().map { createVesHvCollector(it, ctx) }
+        return object : CollectorProvider {
+            override fun invoke(ctx: ClientContext): Option<Collector> =
+                config.getOption().map { createVesHvCollector(it, ctx) }
+
+            override fun close() = sinkProvider.close()
         }
     }
 
