@@ -61,6 +61,14 @@ object VesHvSpecification : Spek({
                     .describedAs("should send all events")
                     .hasSize(2)
         }
+
+        it("should close sink when closing collector provider") {
+            val (sut, _) = vesHvWithStoringSink()
+
+            sut.close()
+
+            assertThat(sut.sinkProvider.closed).isTrue()
+        }
     }
 
     describe("Memory management") {

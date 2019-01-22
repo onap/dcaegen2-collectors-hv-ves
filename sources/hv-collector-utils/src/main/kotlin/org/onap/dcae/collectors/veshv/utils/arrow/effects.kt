@@ -23,6 +23,9 @@ import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
 import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.instances.io.monadError.monadError
+import arrow.typeclasses.binding
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import kotlin.system.exitProcess
@@ -46,7 +49,7 @@ object ExitSuccess : ExitCode() {
 
 data class ExitFailure(override val code: Int) : ExitCode()
 
-fun <A, B> Either<IO<A>, IO<B>>.unsafeRunEitherSync(onError: (Throwable) -> ExitCode, onSuccess: () -> Unit) =
+inline fun <A, B> Either<IO<A>, IO<B>>.unsafeRunEitherSync(onError: (Throwable) -> ExitCode, onSuccess: () -> Unit) =
         flatten().attempt().unsafeRunSync().fold({ onError(it).io().unsafeRunSync() }, { onSuccess() })
 
 fun IO<Any>.unit() = map { Unit }
@@ -65,4 +68,10 @@ fun <T> Flux<IO<T>>.evaluateIo(): Flux<T> =
                     { Flux.error<T>(it) },
                     { Flux.just<T>(it) }
             )
+        }
+
+inline fun <T> IO<T>.then(crossinline block: (T) -> Unit): IO<T> =
+        map {
+            block(it)
+            it
         }
