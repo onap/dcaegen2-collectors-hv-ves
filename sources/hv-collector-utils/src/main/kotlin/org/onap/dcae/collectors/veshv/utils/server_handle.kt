@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.utils
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.arrow.Closeable
 import reactor.netty.DisposableServer
 import java.time.Duration
 
@@ -28,8 +28,7 @@ import java.time.Duration
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-abstract class ServerHandle(val host: String, val port: Int) {
-    abstract fun shutdown(): IO<Unit>
+abstract class ServerHandle(val host: String, val port: Int) : Closeable {
     abstract fun await(): IO<Unit>
 }
 
@@ -38,10 +37,8 @@ abstract class ServerHandle(val host: String, val port: Int) {
  * @since August 2018
  */
 class NettyServerHandle(private val ctx: DisposableServer) : ServerHandle(ctx.host(), ctx.port()) {
-    override fun shutdown() = IO {
-        logger.info { "Graceful shutdown" }
+    override fun close() = IO {
         ctx.disposeNow(SHUTDOWN_TIMEOUT)
-        logger.info { "Server disposed" }
     }
 
     override fun await() = IO<Unit> {
@@ -49,7 +46,6 @@ class NettyServerHandle(private val ctx: DisposableServer) : ServerHandle(ctx.ho
     }
 
     companion object {
-        val logger = Logger(NettyServerHandle::class)
         private val SHUTDOWN_TIMEOUT = Duration.ofSeconds(10)
     }
 }

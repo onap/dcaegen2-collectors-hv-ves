@@ -90,9 +90,9 @@
     </appender>
 
     <logger name="reactor.netty" level="WARN"/>
-    <logger name="io.netty" level="DEBUG"/>
+    <logger name="io.netty" level="INFO"/>
     <logger name="io.netty.util" level="WARN"/>
-    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.apache.kafka" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
