@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.main.metrics
 
 import arrow.syntax.function.memoize
 import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Timer
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
@@ -53,8 +54,12 @@ class MicrometerMetrics internal constructor(
     private val totalConnections = registry.counter(name(CONNECTIONS))
     private val disconnections = registry.counter(name(DISCONNECTIONS))
 
-    private val processingTime = registry.timer(name(MESSAGES, PROCESSING, TIME))
-    private val totalLatency = registry.timer(name(MESSAGES, LATENCY))
+    private val processingTime = Timer.builder(name(MESSAGES, PROCESSING, TIME))
+            .publishPercentileHistogram(true)
+            .register(registry)
+    private val totalLatency = Timer.builder(name(MESSAGES, LATENCY))
+            .publishPercentileHistogram(true)
+            .register(registry)
 
     private val sentMessages = registry.counter(name(MESSAGES, SENT))
     private val sentMessagesByTopic = { topic: String ->
