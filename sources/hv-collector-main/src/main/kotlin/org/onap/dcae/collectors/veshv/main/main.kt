@@ -22,10 +22,13 @@ package org.onap.dcae.collectors.veshv.main
 import arrow.effects.IO
 import arrow.effects.fix
 import arrow.effects.instances.io.monad.monad
+import arrow.effects.instances.io.monadError.monadError
 import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
 import org.onap.dcae.collectors.veshv.main.servers.VesServer
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.ServiceContext
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
@@ -37,24 +40,30 @@ private val logger = Logger("$VESHV_PACKAGE.main")
 private const val PROGRAM_NAME = "java $VESHV_PACKAGE.main.MainKt"
 
 fun main(args: Array<String>) =
-    ArgVesHvConfiguration().parse(args)
-        .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-        .map(::startAndAwaitServers)
-        .unsafeRunEitherSync(
-            { ex ->
-                logger.withError { log("Failed to start a server", ex) }
-                ExitFailure(1)
-            },
-            { logger.info { "Finished" } }
-        )
+        ArgVesHvConfiguration().parse(args)
+                .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
+                .map(::startAndAwaitServers)
+                .unsafeRunEitherSync(
+                        { ex ->
+                            logger.withError(ServiceContext::mdc) { log("Failed to start a server", ex) }
+                            ExitFailure(1)
+                        },
+                        { logger.info(ServiceContext::mdc) { "Finished" } }
+                )
 
 private fun startAndAwaitServers(config: ServerConfiguration) =
-    IO.monad().binding {
-        Logger.setLogLevel(VESHV_PACKAGE, config.logLevel)
-        logger.info { "Using configuration: $config" }
-        HealthCheckServer.start(config).bind()
-        VesServer.start(config).bind().run {
-            registerShutdownHook(shutdown()).bind()
-            await().bind()
-        }
-    }.fix()
+        IO.monad().binding {
+            Logger.setLogLevel(VESHV_PACKAGE, config.logLevel)
+            logger.info { "Using configuration: $config" }
+            HealthCheckServer.start(config).bind()
+            VesServer.start(config).bind().let { handle ->
+                registerShutdownHook(closeVesServer(handle)).bind()
+                handle.await().bind()
+            }
+        }.fix()
+
+private fun closeVesServer(handle: ServerHandle): IO<Unit> =
+        IO.monadError().binding {
+            logger.info(ServiceContext::mdc) { "Graceful shutdown of the service" }
+            handle.close().bind()
+        }.fix()

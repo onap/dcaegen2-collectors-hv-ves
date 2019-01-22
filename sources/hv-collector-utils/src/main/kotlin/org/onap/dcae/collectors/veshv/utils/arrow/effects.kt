@@ -23,6 +23,11 @@ import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
 import arrow.effects.IO
+import arrow.effects.IOOf
+import arrow.effects.fix
+import arrow.effects.instances.io.monad.monad
+import arrow.effects.instances.io.monadError.monadError
+import arrow.typeclasses.binding
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import kotlin.system.exitProcess
@@ -66,3 +71,7 @@ fun <T> Flux<IO<T>>.evaluateIo(): Flux<T> =
                     { Flux.just<T>(it) }
             )
         }
+
+interface Closeable {
+    fun close(): IO<Unit> = IO.unit
+}

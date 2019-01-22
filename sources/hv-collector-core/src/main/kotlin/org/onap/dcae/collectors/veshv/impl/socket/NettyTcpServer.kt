@@ -63,6 +63,9 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                 .addressSupplier { serverConfig.serverListenAddress }
                 .configureSsl()
                 .handle(this::handleConnection)
+                .doOnUnbound {
+                    collectorProvider.close().unsafeRunSync()
+                }
                 .let { NettyServerHandle(it.bindNow()) }
     }
 
