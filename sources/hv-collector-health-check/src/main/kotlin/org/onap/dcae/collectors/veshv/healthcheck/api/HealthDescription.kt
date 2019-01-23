@@ -28,6 +28,7 @@ enum class HealthDescription(val message: String, val status: HealthStatus) {
     STARTING("Component is starting", HealthStatus.OUT_OF_SERVICE),
     HEALTHY("Healthy", HealthStatus.UP),
     BUSY("Processing at least one request", HealthStatus.UP),
+    SHUTTING_DOWN("Component is scheduled to shut down", HealthStatus.OUT_OF_SERVICE),
     IDLE("No simulation is in progress at the moment", HealthStatus.UP),
     /* Configuration related */
     RETRYING_FOR_DYNAMIC_CONFIGURATION("Dynamic configuration not available. Retrying.", HealthStatus.OUT_OF_SERVICE),

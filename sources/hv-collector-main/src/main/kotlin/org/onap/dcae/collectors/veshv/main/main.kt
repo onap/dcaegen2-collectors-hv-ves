@@ -22,7 +22,10 @@ package org.onap.dcae.collectors.veshv.main
 import arrow.effects.IO
 import arrow.effects.fix
 import arrow.effects.instances.io.monad.monad
+import arrow.effects.instances.io.monadError.monadError
 import arrow.typeclasses.binding
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
+import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
 import org.onap.dcae.collectors.veshv.main.servers.VesServer
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
@@ -63,7 +66,9 @@ private fun startAndAwaitServers(config: ServerConfiguration) =
             }
         }.fix()
 
-private fun closeServers(vararg handles: ServerHandle): IO<Unit> =
-        Closeable.closeAll(handles.asIterable()).then {
+internal fun closeServers(vararg handles: ServerHandle, healthState: HealthState = HealthState.INSTANCE): IO<Unit> =
+        IO.monadError().binding {
+            healthState.changeState(HealthDescription.SHUTTING_DOWN)
+            Closeable.closeAll(handles.asIterable()).bind()
             logger.info(ServiceContext::mdc) { "Graceful shutdown completed" }
-        }
+        }.fix()
