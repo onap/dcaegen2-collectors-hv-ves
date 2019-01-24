@@ -73,7 +73,7 @@ services:
     environment:
       JAVA_OPTS:  "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
     healthcheck:
-      test: curl -f http://localhost:6060/health/ready || exit 1
+      test: ./healthcheck.sh || exit 1
       interval: 10s
       timeout: 3s
       retries: 3
