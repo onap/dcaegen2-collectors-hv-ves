@@ -16,6 +16,24 @@
       "revId": "6161b51e4f5cc3cf27da303fcdf872ed8884cdac",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_afa4e707",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-01-24T13:56:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9adffdf1_0c38a1ed",
+      "revId": "6161b51e4f5cc3cf27da303fcdf872ed8884cdac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
