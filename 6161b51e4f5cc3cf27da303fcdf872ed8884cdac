@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_0c38a1ed",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-01-24T12:26:28Z",
+      "side": 1,
+      "message": "You don\u0027t have create a new variable for this. Although if your intention was being more explicit for better readability i\u0027m ok with that. One note though. Remove explicit type declaration. According to kotlin code guidelines, you should not use explicit type declarations in method\u0027s body.",
+      "revId": "6161b51e4f5cc3cf27da303fcdf872ed8884cdac",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
