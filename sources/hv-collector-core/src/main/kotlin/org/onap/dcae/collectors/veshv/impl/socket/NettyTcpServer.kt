@@ -19,12 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.impl.socket
 
-import arrow.core.None
-import arrow.core.Option
+import arrow.core.Try
 import arrow.core.getOrElse
 import arrow.effects.IO
-import arrow.syntax.collections.firstOption
-import io.netty.handler.ssl.SslHandler
+import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Server
@@ -45,9 +43,8 @@ import reactor.netty.Connection
 import reactor.netty.NettyInbound
 import reactor.netty.NettyOutbound
 import reactor.netty.tcp.TcpServer
-import java.security.cert.X509Certificate
+import java.net.InetAddress
 import java.time.Duration
-import javax.net.ssl.SSLSession
 
 
 /**
@@ -82,60 +79,67 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                         this
                     }
 
-    private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> {
-        metrics.notifyClientConnected()
-        val clientContext = ClientContext(nettyOutbound.alloc())
-        nettyInbound.withConnection {
-            populateClientContext(clientContext, it)
-            it.channel().pipeline().get(SslHandler::class.java)?.engine()?.session?.let { sslSession ->
-                sslSession.peerCertificates.firstOption().map { it as X509Certificate }.map { it.subjectDN.name }
-            }
-        }
+    private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> =
+            withNewClientContextFrom(nettyInbound, nettyOutbound)
+            { clientContext ->
+                logger.debug(clientContext::fullMdc, Marker.Entry) { "Client connection request received" }
 
-        logger.debug(clientContext::fullMdc, Marker.Entry) { "Client connection request received" }
+                clientContext.clientAddress.map { address ->
+                    acknowledgeIfNotLocalConnection(address, clientContext, nettyInbound)
+                }.getOrElse {
+                    logger.warn(clientContext::fullMdc) {
+                        "Client address could not be resolved. Discarding connection"
+                    }
+                    nettyInbound.closeConnectionAndReturn(Mono.empty())
+                }
+            }
+
+    private inline fun withNewClientContextFrom(nettyInbound: NettyInbound,
+                                                nettyOutbound: NettyOutbound,
+                                                reactiveTask: (ClientContext) -> Mono<Void>) =
+            ClientContext(nettyOutbound.alloc())
+                    .also { populateClientContextFromInbound(it, nettyInbound) }
+                    .run(reactiveTask)
+
+    private fun populateClientContextFromInbound(clientContext: ClientContext, nettyInbound: NettyInbound) =
+            withConnectionFrom(nettyInbound) { connection ->
+                clientContext.clientAddress = Try { connection.address().address }.toOption()
+                clientContext.clientCert = connection.getSslSession().flatMap { it.findClientCert() }
+            }
+
+    private fun acknowledgeIfNotLocalConnection(address: InetAddress,
+                                                clientContext: ClientContext,
+                                                nettyInbound: NettyInbound): Mono<Void> =
+            if (address.isLocalClientAddress()) {
+                logger.debug(clientContext) {
+                    "Client address resolved to localhost. Discarding connection as suspected healthcheck"
+                }
+                nettyInbound.closeConnectionAndReturn(Mono.empty<Void>())
+            } else {
+                acknowledgeClientConnection(clientContext, nettyInbound)
+            }
+
+    private fun acknowledgeClientConnection(clientContext: ClientContext, nettyInbound: NettyInbound): Mono<Void> {
+        metrics.notifyClientConnected()
+        logger.info(clientContext::fullMdc) { "Handling new client connection" }
         return collectorProvider(clientContext).fold(
                 {
-                    logger.warn(clientContext::fullMdc) { "Collector not ready. Closing connection..." }
-                    Mono.empty()
+                    logger.warn(clientContext::fullMdc) { "Collector is not ready. Closing connection" }
+                    nettyInbound.closeConnectionAndReturn(Mono.empty<Void>())
                 },
-                {
-                    logger.info(clientContext::fullMdc) { "Handling new connection" }
-                    nettyInbound.withConnection { conn ->
-                        conn
-                                .configureIdleTimeout(clientContext, serverConfig.idleTimeout)
-                                .logConnectionClosed(clientContext)
-                    }
-                    it.handleConnection(createDataStream(nettyInbound))
-                }
-        )
+                acceptClient(clientContext, nettyInbound))
     }
 
-    private fun populateClientContext(clientContext: ClientContext, connection: Connection) {
-        clientContext.clientAddress = try {
-            Option.fromNullable(connection.address().address)
-        } catch (ex: Exception) {
-            None
-        }
-        clientContext.clientCert = getSslSession(connection).flatMap(::findClientCert)
-    }
-
-    private fun getSslSession(connection: Connection) = Option.fromNullable(
+    private fun acceptClient(clientContext: ClientContext,
+                             nettyInbound: NettyInbound): (Collector) -> Mono<Void> = { collector ->
+        withConnectionFrom(nettyInbound) { connection ->
             connection
-                    .channel()
-                    .pipeline()
-                    .get(SslHandler::class.java)
-                    ?.engine()
-                    ?.session)
-
-    private fun findClientCert(sslSession: SSLSession): Option<X509Certificate> =
-            sslSession
-                    .peerCertificates
-                    .firstOption()
-                    .flatMap { Option.fromNullable(it as? X509Certificate) }
-
-    private fun createDataStream(nettyInbound: NettyInbound): ByteBufFlux = nettyInbound
-            .receive()
-            .retain()
+                    .configureIdleTimeout(clientContext, serverConfig.idleTimeout)
+                    .logConnectionClosed(clientContext)
+        }.run {
+            collector.handleConnection(nettyInbound.createDataStream())
+        }
+    }
 
     private fun Connection.configureIdleTimeout(ctx: ClientContext, timeout: Duration): Connection =
             onReadIdle(timeout.toMillis()) {
@@ -145,9 +149,8 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                 disconnectClient(ctx)
             }
 
-
     private fun Connection.disconnectClient(ctx: ClientContext) {
-        channel().close().addListener {
+        closeChannelAnd {
             logger.debug(ctx::fullMdc, Marker.Exit) { "Closing client channel." }
             if (it.isSuccess)
                 logger.debug(ctx) { "Channel closed successfully." }
