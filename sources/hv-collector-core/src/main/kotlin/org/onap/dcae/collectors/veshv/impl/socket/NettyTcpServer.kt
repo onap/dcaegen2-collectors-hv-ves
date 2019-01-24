@@ -93,7 +93,7 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
         }
 
         logger.debug(clientContext::fullMdc, Marker.Entry) { "Client connection request received" }
-        return collectorProvider(clientContext).fold(
+        val messageHandlingSubscription: Mono<Void> = collectorProvider(clientContext).fold(
                 {
                     logger.warn(clientContext::fullMdc) { "Collector not ready. Closing connection..." }
                     Mono.empty()
@@ -108,6 +108,9 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                     it.handleConnection(createDataStream(nettyInbound))
                 }
         )
+
+        messageHandlingSubscription.subscribe()
+        return nettyOutbound.neverComplete()
     }
 
     private fun populateClientContext(clientContext: ClientContext, connection: Connection) {
