@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_1da9a923",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-01-25T12:27:18Z",
+      "side": 1,
+      "message": "Replace return statement with \"\u003d\" and remove method\u0027s curly braces",
+      "revId": "1725af2b4af8c1fb9bdb9717a1c62a6ea7417c34",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
