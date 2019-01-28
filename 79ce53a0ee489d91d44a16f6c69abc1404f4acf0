@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_a1115353",
+        "filename": "development/docker-compose.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-28T14:09:53Z",
+      "side": 1,
+      "message": "TODO: Revert changes in this file.",
+      "revId": "79ce53a0ee489d91d44a16f6c69abc1404f4acf0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_6117eb45",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/adapters/VesHvClient.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-28T14:09:53Z",
+      "side": 1,
+      "message": "TODO: Remove this import",
+      "revId": "79ce53a0ee489d91d44a16f6c69abc1404f4acf0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
