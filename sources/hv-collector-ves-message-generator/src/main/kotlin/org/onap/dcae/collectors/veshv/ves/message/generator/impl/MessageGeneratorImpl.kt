@@ -69,13 +69,13 @@ class MessageGeneratorImpl internal constructor(
     private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): WireFrameMessage =
             when (messageType) {
                 VALID ->
-                    WireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
+                    WireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayloadWithRandomData()))
                 TOO_BIG_PAYLOAD ->
                     WireFrameMessage(vesEvent(commonEventHeader, oversizedPayload()))
                 FIXED_PAYLOAD ->
                     WireFrameMessage(vesEvent(commonEventHeader, fixedPayload()))
                 INVALID_WIRE_FRAME -> {
-                    val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
+                    val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayloadWithRandomData()))
                     WireFrameMessage(
                             payload,
                             UNSUPPORTED_VERSION,
@@ -98,10 +98,10 @@ class MessageGeneratorImpl internal constructor(
                     .build()
 
     private fun oversizedPayload() =
-            payloadGenerator.generateRawPayload(maxPayloadSizeBytes + 1)
+            payloadGenerator.generatePayloadWithNulls(maxPayloadSizeBytes + 1)
 
     private fun fixedPayload() =
-            payloadGenerator.generateRawPayload(MessageGenerator.FIXED_PAYLOAD_SIZE)
+            payloadGenerator.generatePayloadWithNulls(MessageGenerator.FIXED_PAYLOAD_SIZE)
 
     companion object {
         private const val UNSUPPORTED_VERSION: Short = 2

@@ -49,7 +49,7 @@ fun main(args: Array<String>) =
                             logger.withError(ServiceContext::mdc) { log("Failed to start a server", ex) }
                             ExitFailure(1)
                         },
-                        { logger.debug(ServiceContext::mdc) { "Finished" } }
+                        { logger.debug(ServiceContext::mdc) { "server.await() has finished" } }
                 )
 
 private fun startAndAwaitServers(config: ServerConfiguration) =

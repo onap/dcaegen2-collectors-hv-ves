@@ -32,7 +32,7 @@ object PayloadGeneratorTest : Spek({
 
         on("raw payload generation") {
             val size = 100
-            val generatedPayload = payloadGenerator.generateRawPayload(size)
+            val generatedPayload = payloadGenerator.generatePayloadWithNulls(size)
 
             it("should generate sequence of zeros") {
                 assertThat(generatedPayload.size()).isEqualTo(size)
@@ -41,8 +41,8 @@ object PayloadGeneratorTest : Spek({
         }
 
         on("two generated payloads") {
-            val generatedPayload0 = payloadGenerator.generatePayload()
-            val generatedPayload1 = payloadGenerator.generatePayload()
+            val generatedPayload0 = payloadGenerator.generatePayloadWithRandomData()
+            val generatedPayload1 = payloadGenerator.generatePayloadWithRandomData()
             it("should be different") {
                 assertThat(generatedPayload0 != generatedPayload1).isTrue()
             }

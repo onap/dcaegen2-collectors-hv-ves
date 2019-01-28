@@ -93,6 +93,8 @@
     <logger name="io.netty" level="INFO"/>
     <logger name="io.netty.util" level="WARN"/>
     <logger name="org.apache.kafka" level="INFO"/>
+    <logger name="org.onap.dcae.collectors.veshv.impl.socket" level="TRACE"/>
+    <logger name="reactor.netty.channel" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

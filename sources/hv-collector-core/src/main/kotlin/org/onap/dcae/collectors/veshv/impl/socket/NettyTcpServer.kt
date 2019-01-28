@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,18 @@ import arrow.core.Option
 import arrow.core.getOrElse
 import arrow.effects.IO
 import arrow.syntax.collections.firstOption
+import arrow.syntax.function.invoke
+import io.netty.bootstrap.ServerBootstrap
+import io.netty.buffer.ByteBuf
+import io.netty.channel.ChannelOption
 import io.netty.handler.ssl.SslHandler
+import io.netty.util.concurrent.Future
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.debug
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.info
+import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withDebug
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withWarn
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
@@ -39,14 +45,17 @@ import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.Marker
+import reactor.core.Disposable
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.netty.ByteBufFlux
+import reactor.core.publisher.ReplayProcessor
 import reactor.netty.Connection
 import reactor.netty.NettyInbound
 import reactor.netty.NettyOutbound
 import reactor.netty.tcp.TcpServer
 import java.security.cert.X509Certificate
 import java.time.Duration
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.net.ssl.SSLSession
 
 
@@ -58,17 +67,43 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                               private val sslContextFactory: ServerSslContextFactory,
                               private val collectorProvider: CollectorProvider,
                               private val metrics: Metrics) : Server {
+    private val serverStatus = ServerStatus()
 
     override fun start(): IO<ServerHandle> = IO {
         TcpServer.create()
+//                .observe { connection, newState ->
+//                    if (newState == ConnectionObserver.State.CONNECTED) {
+//                        logger.info {"++++++++ Adding shutdown handler"}
+//                        connection.addHandlerFirst(ServerShutdownHandler(serverStatus))
+//                    }
+//                }
                 .addressSupplier { serverConfig.serverListenAddress }
+                .setupSocketOptions()
                 .configureSsl()
                 .handle(this::handleConnection)
                 .doOnUnbound {
-                    logger.info(ServiceContext::mdc) { "Netty TCP Server closed" }
-                    collectorProvider.close().unsafeRunSync()
+                    logger.info(ServiceContext::mdc) {
+                        "Netty TCP Server is going to be closed. Closing all client connections."
+                    }
+                    serverStatus.markAsClosed()
                 }
-                .let { NettyServerHandle(it.bindNow()) }
+                .let {
+                    NettyServerHandle(it.bindNow(), collectorProvider.close())
+                }
+    }
+
+    private fun TcpServer.setupSocketOptions() =
+            bootstrap {
+                it.childOption(ChannelOption.SO_SNDBUF, SEND_BUFFER_SIZE).also(::logChildOptions)
+            }
+
+    private fun logChildOptions(bootstrap: ServerBootstrap) {
+        logger.withTrace(ServiceContext::mdc) {
+            val stringifiedOptions = bootstrap.config().childOptions().map { (k, v) ->
+                "  $k = $v"
+            }.joinToString("\n")
+            log("ServerBootstrap.childOptions:\n$stringifiedOptions")
+        }
     }
 
     private fun TcpServer.configureSsl() =
@@ -85,34 +120,63 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
     private fun handleConnection(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> {
         metrics.notifyClientConnected()
         val clientContext = ClientContext(nettyOutbound.alloc())
-        nettyInbound.withConnection {
-            populateClientContext(clientContext, it)
-            it.channel().pipeline().get(SslHandler::class.java)?.engine()?.session?.let { sslSession ->
-                sslSession.peerCertificates.firstOption().map { it as X509Certificate }.map { it.subjectDN.name }
-            }
-        }
+        nettyInbound.withConnection((::populateClientContext)(clientContext))
+        nettyInbound.withConnection { conn ->
+            var channelTerminator: Disposable? = null
 
-        logger.debug(clientContext::fullMdc, Marker.Entry) { "Client connection request received" }
+            val cancelChannelTerminator: (Future<in Void>) -> Unit = {
+                logger.info { "Canceling channel terminator" }
+                channelTerminator?.dispose()
+            }
+
+            channelTerminator = serverStatus.serverClosed().doOnTerminate {
+                conn.channel().closeFuture().removeListener(cancelChannelTerminator)
+                conn.disconnectClient(clientContext)
+            }.subscribe()
+
+            conn.channel().closeFuture().addListener(cancelChannelTerminator)
+        }
+        logger.info(clientContext::fullMdc, Marker.Entry) { "Client connected" }
         messageHandlingStream(clientContext, nettyInbound).subscribe()
         return nettyOutbound.neverComplete()
+                .log(NettyTcpServer::class.qualifiedName + ".outbound")
+                .doFinally { sig ->
+                    logger.trace(clientContext::fullMdc) { "Outbound finished. Reason: $sig" }
+                }
     }
 
+//    private fun closeChannel(conn: Connection) {
+//        if (conn.channel().isOpen) {
+//            logger.info { "Closing channel" }
+//            conn.channel().close().addListener {
+//                logger.withInfo {
+//                    if (it.isSuccess)
+//                        log("Channel has been closed")
+//                    else
+//                        log("Failed to close the channel. Reason: ${it.cause().message}", it.cause())
+//                }
+//            }
+//        } else {
+//            logger.info { "Chanel already closed" }
+//        }
+//    }
+
     private fun messageHandlingStream(clientContext: ClientContext, nettyInbound: NettyInbound): Mono<Void> =
-        collectorProvider(clientContext).fold(
-                {
-                    logger.warn(clientContext::fullMdc) { "Collector not ready. Closing connection..." }
-                    Mono.empty()
-                },
-                {
-                    logger.info(clientContext::fullMdc) { "Handling new connection" }
-                    nettyInbound.withConnection { conn ->
-                        conn
-                                .configureIdleTimeout(clientContext, serverConfig.idleTimeout)
-                                .logConnectionClosed(clientContext)
+            collectorProvider(clientContext).fold(
+                    {
+                        logger.warn(clientContext::fullMdc) { "Collector not ready. Closing connection..." }
+                        Mono.empty()
+                    },
+                    {
+                        logger.info(clientContext::fullMdc) { "Handling new connection" }
+                        nettyInbound.withConnection { conn ->
+                            conn
+                                    .configureIdleTimeout(clientContext, serverConfig.idleTimeout)
+                                    .logConnectionClosed(clientContext)
+                        }
+                        it.handleConnection(createDataStream(clientContext, nettyInbound))
                     }
-                    it.handleConnection(createDataStream(nettyInbound))
-                }
-        )
+            )
 
     private fun populateClientContext(clientContext: ClientContext, connection: Connection) {
         clientContext.clientAddress = try {
@@ -137,9 +201,13 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                     .firstOption()
                     .flatMap { Option.fromNullable(it as? X509Certificate) }
 
-    private fun createDataStream(nettyInbound: NettyInbound): ByteBufFlux = nettyInbound
+    private fun createDataStream(clientContext: ClientContext, nettyInbound: NettyInbound): Flux<ByteBuf> = nettyInbound
             .receive()
             .retain()
+            .log(NettyTcpServer::class.qualifiedName + ".inbound")
+            .doFinally { sig ->
+                logger.trace(clientContext::fullMdc) { "Inbound finished. Reason: $sig" }
+            }
 
     private fun Connection.configureIdleTimeout(ctx: ClientContext, timeout: Duration): Connection =
             onReadIdle(timeout.toMillis()) {
@@ -151,12 +219,21 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
 
 
     private fun Connection.disconnectClient(ctx: ClientContext) {
-        channel().close().addListener {
-            logger.debug(ctx::fullMdc, Marker.Exit) { "Closing client channel." }
-            if (it.isSuccess)
-                logger.debug(ctx) { "Channel closed successfully." }
-            else
-                logger.withWarn(ctx) { log("Channel close failed", it.cause()) }
+        if (channel().isOpen) {
+            markPersistent(false)
+            channel().flush()
+            logger.debug(ctx) { "Closing client channel." }
+            channel().close().addListener {
+                channel().flush()
+                if (it.isSuccess)
+                    logger.info(ctx::fullMdc, Marker.Exit) { "Channel closed successfully." }
+                else {
+                    logger.withWarn(ctx) { log(Marker.Exit, "Channel close failed. Reason: ${it.cause().message}") }
+                    logger.withDebug(ctx) { log("Channel close failed", it.cause()) }
+                }
+            }
+        } else {
+            logger.debug(ctx) { "Channel already closed successfully." }
         }
     }
 
@@ -168,5 +245,20 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
 
     companion object {
         private val logger = Logger(NettyTcpServer::class)
+        private const val SEND_BUFFER_SIZE = 128
     }
+}
+
+internal class ServerStatus {
+    private val serverClosedProcessor = ReplayProcessor.cacheLast<Void>()
+    private val serverClosed = AtomicBoolean(false)
+
+    fun markAsClosed() {
+        serverClosedProcessor.sink().complete()
+        serverClosed.set(true)
+    }
+
+    fun isServerClosed() = serverClosed.get()
+
+    fun serverClosed() = serverClosedProcessor.then()
 }

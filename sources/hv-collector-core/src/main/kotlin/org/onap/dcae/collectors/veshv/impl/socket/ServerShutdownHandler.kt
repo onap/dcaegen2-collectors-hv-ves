@@ -17,30 +17,33 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils
+package org.onap.dcae.collectors.veshv.impl.socket
 
-import arrow.effects.IO
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.ChannelInboundHandlerAdapter
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @author <a href="mailto:piotr.jaszczyk@nokia.com">Piotr Jaszczyk</a>
  * @since January 2019
  */
+class ServerShutdownHandler internal constructor(private val serverStatus: ServerStatus) : ChannelInboundHandlerAdapter() {
 
-fun registerShutdownHook(job: () -> Unit) {
-    Runtime.getRuntime().addShutdownHook(object : Thread() {
-        override fun run() {
-            job()
+    override fun channelRead(ctx: ChannelHandlerContext, msg: Any?) {
+        if (serverStatus.isServerClosed()) {
+            logger.info { "LAST MESSAGE" }
+            super.channelRead(ctx, msg)
+
+            logger.info { "WE ARE CLOSING" }
+            ctx.channel().parent().disconnect().addListener {
+                logger.info { "WE ARE CLOSED NOW" }
+            }
+        } else {
+            super.channelRead(ctx, msg)
         }
-    })
-}
+    }
 
-//fun registerShutdownHook(job: IO<Unit>) = IO.async<Unit> {
-//    Thread.sleep(30_000)
-//    job.unsafeRunSync()
-//}
-
-fun registerShutdownHook(job: IO<Unit>) = IO {
-    registerShutdownHook {
-        job.unsafeRunSync()
+    companion object {
+        private val logger = Logger(ServerShutdownHandler::class)
     }
 }

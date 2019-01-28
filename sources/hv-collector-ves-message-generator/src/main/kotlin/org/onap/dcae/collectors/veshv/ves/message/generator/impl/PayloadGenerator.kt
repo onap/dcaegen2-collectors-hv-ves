@@ -20,21 +20,34 @@
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import com.google.protobuf.ByteString
+import java.nio.ByteBuffer
 import java.util.*
-import kotlin.streams.asSequence
+import java.util.concurrent.atomic.AtomicLong
 
 internal class PayloadGenerator {
-
+    private val counter = AtomicLong(0)
     private val randomGenerator = Random()
 
-    fun generateRawPayload(size: Int): ByteString =
+    fun generatePayloadWithNulls(size: Int): ByteString =
             ByteString.copyFrom(ByteArray(size))
 
-    fun generatePayload(numOfCountMeasurements: Long = 2): ByteString =
-            ByteString.copyFrom(
-                    randomGenerator.ints(numOfCountMeasurements, 0, 256)
-                            .asSequence()
-                            .toString()
-                            .toByteArray()
-            )
+
+    fun generatePayloadWithRandomData(numberOfCounters: Int = 2): ByteString {
+        val separator = 0xFF.toByte()
+        return ByteArray(numberOfCounters * AVG_SIZE_OF_ONE_COUNTER)
+                .let {
+                    randomGenerator.nextBytes(it)
+                    ByteBuffer.wrap(it)
+                            .put(separator)
+                            .put(separator)
+                            .putLong(counter.incrementAndGet())
+                            .put(separator)
+                            .put(separator)
+                    ByteString.copyFrom(it)
+                }
+    }
+
+    companion object {
+        private const val AVG_SIZE_OF_ONE_COUNTER = 2 * java.lang.Long.BYTES
+    }
 }

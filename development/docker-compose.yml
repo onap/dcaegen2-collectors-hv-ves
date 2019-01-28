@@ -60,18 +60,18 @@ services:
   ves-hv-collector:
     image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:latest
     ports:
+    - "5005:5005"
     - "6060:6060"
     - "6061:6061/tcp"
     command: ["--listen-port", "6061",
               "--health-check-api-port", "6060",
               "--config-url", "http://consul-server:8500/v1/kv/veshv-config?raw=true",
               "--kafka-bootstrap-servers", "message-router-kafka:9092",
-              "--key-store-password", "onaponap",
-              "--trust-store-password", "onaponap",
+              "--ssl-disable",
               "--first-request-delay", "2",
               "--log-level", "DEBUG"]
     environment:
-      JAVA_OPTS:  "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
+      JAVA_OPTS:  "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
     healthcheck:
       test: curl -f http://localhost:6060/health/ready || exit 1
       interval: 10s
@@ -99,9 +99,7 @@ services:
               "--health-check-api-port", "6063",
               "--ves-host", "ves-hv-collector",
               "--ves-port", "6061",
-              "--key-store", "/etc/ves-hv/client.p12",
-              "--key-store-password", "onaponap",
-              "--trust-store-password", "onaponap"]
+              "--ssl-disable"]
     healthcheck:
       test: curl -f http://localhost:6063/health/ready || exit 1
       interval: 10s

@@ -51,12 +51,15 @@ internal class KafkaSinkProvider internal constructor(
     override fun invoke(ctx: ClientContext) = KafkaSink(kafkaSender, ctx)
 
     override fun close() = IO {
+        logger.info(ServiceContext::mdc) { "Will close KafkaSender in $SLEEP_TIME_MS ms" }
+        Thread.sleep(SLEEP_TIME_MS)
         kafkaSender.close()
-        logger.info(ServiceContext::mdc) { "KafkaSender flushed and closed" }
+        logger.info(ServiceContext::mdc) { "KafkaSender closed" }
     }
 
     companion object {
         private val logger = Logger(KafkaSinkProvider::class)
+        private const val SLEEP_TIME_MS = 2_500L
         private const val MAXIMUM_REQUEST_SIZE_MULTIPLIER = 1.2f
         private const val BUFFER_MEMORY_MULTIPLIER = 32
         private const val MINIMUM_BUFFER_MEMORY = 32 * 1024 * 1024

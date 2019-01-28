@@ -20,6 +20,9 @@
 package org.onap.dcae.collectors.veshv.utils
 
 import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.instances.io.monadError.monadError
+import arrow.typeclasses.binding
 import reactor.netty.DisposableServer
 import java.time.Duration
 
@@ -27,16 +30,30 @@ import java.time.Duration
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-abstract class ServerHandle(val host: String, val port: Int) : Closeable {
+abstract class ServerHandle(
+        val host: String,
+        val port: Int,
+        private val onClosed: IO<Unit>) : Closeable {
+
     abstract fun await(): IO<Unit>
+
+    final override fun close() = IO.monadError().binding {
+        stop().bind()
+        onClosed.bind()
+    }.fix()
+
+    protected abstract fun stop(): IO<Unit>
 }
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class NettyServerHandle(private val ctx: DisposableServer) : ServerHandle(ctx.host(), ctx.port()) {
-    override fun close() = IO {
+class NettyServerHandle(
+        private val ctx: DisposableServer,
+        onClosed: IO<Unit> = IO.unit) : ServerHandle(ctx.host(), ctx.port(), onClosed) {
+
+    override fun stop() = IO {
         ctx.disposeNow(SHUTDOWN_TIMEOUT)
     }
 
