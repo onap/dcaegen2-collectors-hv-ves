@@ -16,6 +16,24 @@
       "revId": "68a3cf84da13b6f97628c8a0cee86c3323c780ce",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_867f8514",
+        "filename": "build/hv-collector-analysis/src/main/resources/onap-detekt-config.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-28T09:46:55Z",
+      "side": 1,
+      "message": "Will be fixed in https://gerrit.onap.org/r/#/c/76272/",
+      "parentUuid": "9adffdf1_265499fd",
+      "revId": "68a3cf84da13b6f97628c8a0cee86c3323c780ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
