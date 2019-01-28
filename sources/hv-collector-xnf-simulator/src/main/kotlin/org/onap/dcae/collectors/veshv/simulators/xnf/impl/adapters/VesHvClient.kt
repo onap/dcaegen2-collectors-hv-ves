@@ -36,6 +36,7 @@ import reactor.core.publisher.ReplayProcessor
 import reactor.netty.NettyOutbound
 import reactor.netty.tcp.TcpClient
 import reactor.util.concurrent.Queues.XS_BUFFER_SIZE
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -72,7 +73,6 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
     private fun handler(complete: ReplayProcessor<Void>,
                         messages: Flux<WireFrameMessage>,
                         nettyOutbound: NettyOutbound): Publisher<Void> {
-
         val allocator = nettyOutbound.alloc()
         val encoder = WireFrameEncoder(allocator)
         val frames = messages

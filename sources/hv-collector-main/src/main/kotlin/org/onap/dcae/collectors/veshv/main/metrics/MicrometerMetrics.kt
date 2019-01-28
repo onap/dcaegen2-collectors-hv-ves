@@ -34,7 +34,9 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.TimeUtils.epochMicroToInstant
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.time.Duration
 import java.time.Instant
 
@@ -97,6 +99,7 @@ class MicrometerMetrics internal constructor(
 
     override fun notifyMessageReceived(msg: WireFrameMessage) {
         receivedMessages.increment()
+        logger.trace(ServiceContext::mdc)  { "Received messages: ${receivedMessages.count()}" }
         receivedMessagesPayloadBytes.increment(msg.payloadSize.toDouble())
     }
 
@@ -104,9 +107,11 @@ class MicrometerMetrics internal constructor(
         val now = Instant.now()
         sentMessages.increment()
         sentMessagesByTopic(msg.topic).increment()
+        logger.trace(ServiceContext::mdc) { "Sent messages count: ${sentMessages.count()}" }
 
         processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, now))
         totalLatency.record(Duration.between(epochMicroToInstant(msg.message.header.lastEpochMicrosec), now))
+
     }
 
     override fun notifyMessageDropped(cause: MessageDropCause) {
@@ -128,6 +133,7 @@ class MicrometerMetrics internal constructor(
     }
 
     companion object {
+        private val logger = Logger(MicrometerMetrics::class)
         val INSTANCE = MicrometerMetrics()
         internal const val PREFIX = "hvves"
         internal const val MESSAGES = "messages"
