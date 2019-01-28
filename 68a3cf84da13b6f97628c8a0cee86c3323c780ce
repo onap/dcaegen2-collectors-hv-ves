@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_265499fd",
+        "filename": "build/hv-collector-analysis/src/main/resources/onap-detekt-config.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-28T07:07:36Z",
+      "side": 1,
+      "message": "I cannot agree to this change. Too many private functions is a sign of too big class which probably needs to be refactored \u0026 split to smaller ones.\n\nIf a warning occurs in one of the changed classes please refactor. Or we may agree to add SupressWarning there and refactor in a separate MR.",
+      "revId": "68a3cf84da13b6f97628c8a0cee86c3323c780ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
