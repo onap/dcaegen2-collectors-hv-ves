@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_17dadd4b",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-29T10:34:43Z",
+      "side": 1,
+      "message": "\"accept\" seems more natural in this context. \"acknowledge\" suggests some low-level TCP ACK handling.",
+      "range": {
+        "startLine": 114,
+        "startChar": 16,
+        "endLine": 114,
+        "endChar": 27
+      },
+      "revId": "0b188deef8a8ab00ae402df5c7a1d713d760838a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_b7dc3147",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/NettyTcpServer.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-29T10:34:43Z",
+      "side": 1,
+      "message": "After rename suggested above, this can be changed ie. to handleClient.",
+      "range": {
+        "startLine": 138,
+        "startChar": 16,
+        "endLine": 138,
+        "endChar": 22
+      },
+      "revId": "0b188deef8a8ab00ae402df5c7a1d713d760838a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9adffdf1_5714e5e7",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/socket/networking.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-01-29T10:34:43Z",
+      "side": 1,
+      "message": "And -\u003e AndThen",
+      "range": {
+        "startLine": 54,
+        "startChar": 36,
+        "endLine": 54,
+        "endChar": 39
+      },
+      "revId": "0b188deef8a8ab00ae402df5c7a1d713d760838a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
