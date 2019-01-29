@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9adffdf1_d73d35de",
+        "filename": "build/hv-collector-analysis/src/main/resources/onap-detekt-config.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-01-29T11:14:22Z",
+      "side": 0,
+      "message": "Maybe keep this option, but with \"false\" value? Just to be more explicit.",
+      "revId": "68a3cf84da13b6f97628c8a0cee86c3323c780ce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
