@@ -30,6 +30,9 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
+import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.HvVesProducer
+import org.onap.ves.VesEventOuterClass
+import reactor.core.publisher.Flux
 import java.io.InputStream
 import javax.json.Json
 
@@ -38,7 +41,7 @@ import javax.json.Json
  * @since August 2018
  */
 class XnfSimulator(
-        private val vesClient: VesHvClient,
+        private val hvVesProducer: HvVesProducer,
         private val messageGenerator: MessageGenerator,
         private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {
 
@@ -47,7 +50,7 @@ class XnfSimulator(
                 val json = parseJsonArray(messageParameters).bind()
                 val parsed = messageParametersParser.parse(json).bind()
                 val generatedMessages = messageGenerator.createMessageFlux(parsed)
-                vesClient.sendIo(generatedMessages)
+                hvVesProducer.send(generatedMessages)
             }.fix()
 
     private fun parseJsonArray(jsonStream: InputStream) =

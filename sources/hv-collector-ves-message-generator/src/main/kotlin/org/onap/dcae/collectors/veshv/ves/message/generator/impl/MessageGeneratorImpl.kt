@@ -20,15 +20,11 @@
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import com.google.protobuf.ByteString
-import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.PayloadContentType
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.FIXED_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_GPB_DATA
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_WIRE_FRAME
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.TOO_BIG_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
@@ -46,11 +42,11 @@ class MessageGeneratorImpl internal constructor(
         private val maxPayloadSizeBytes: Int
 ) : MessageGenerator {
 
-    override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<WireFrameMessage> = Flux
+    override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<VesEvent> = Flux
             .fromIterable(messageParameters)
             .flatMap { createMessageFlux(it) }
 
-    private fun createMessageFlux(parameters: MessageParameters): Flux<WireFrameMessage> =
+    private fun createMessageFlux(parameters: MessageParameters): Flux<VesEvent> =
             Mono.fromCallable { createMessage(parameters.commonEventHeader, parameters.messageType) }
                     .let {
                         when {
@@ -66,25 +62,27 @@ class MessageGeneratorImpl internal constructor(
                         }
                     }
 
-    private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): WireFrameMessage =
+    private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): VesEvent =
             when (messageType) {
                 VALID ->
-                    WireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
+                    createVesEvent(commonEventHeader, payloadGenerator.generatePayload())
                 TOO_BIG_PAYLOAD ->
-                    WireFrameMessage(vesEvent(commonEventHeader, oversizedPayload()))
+                    createVesEvent(commonEventHeader, oversizedPayload())
                 FIXED_PAYLOAD ->
-                    WireFrameMessage(vesEvent(commonEventHeader, fixedPayload()))
-                INVALID_WIRE_FRAME -> {
+                    createVesEvent(commonEventHeader, fixedPayload())
+//               Note that Lib need to provide api to change Header fields at least for test purposes
+                /*
+                 INVALID_WIRE_FRAME -> {
                     val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
-                    WireFrameMessage(
+                    createVesEvent(
                             payload,
                             UNSUPPORTED_VERSION,
                             UNSUPPORTED_VERSION,
                             PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
                             payload.size())
-                }
+                }*/
                 INVALID_GPB_DATA ->
-                    WireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
+                    VesEvent.parseFrom("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
     private fun vesEvent(commonEventHeader: CommonEventHeader, eventFields: ByteString): ByteArray {

@@ -27,6 +27,6 @@ enum class MessageType {
     VALID,
     TOO_BIG_PAYLOAD,
     FIXED_PAYLOAD,
-    INVALID_WIRE_FRAME,
+//    INVALID_WIRE_FRAME,
     INVALID_GPB_DATA,
 }
