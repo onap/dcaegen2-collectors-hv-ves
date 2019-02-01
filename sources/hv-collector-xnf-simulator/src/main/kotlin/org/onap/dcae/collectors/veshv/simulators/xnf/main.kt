@@ -19,10 +19,12 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
+import arrow.core.getOrElse
 import arrow.effects.IO
 import arrow.effects.fix
 import arrow.effects.instances.io.monad.monad
 import arrow.typeclasses.binding
+import io.vavr.collection.HashSet
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
@@ -37,7 +39,21 @@ import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
+import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.HvVesProducer
+import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.impl.HvVesProducerFactoryImpl
 import ratpack.server.RatpackServer
+import java.net.InetSocketAddress
+import io.vavr.collection.Set
+import io.vavr.collection.SortedMap
+import io.vavr.collection.SortedSet
+import io.vavr.collection.TreeSet
+import io.vavr.control.Try
+import org.jetbrains.annotations.Nullable
+import org.onap.dcae.collectors.veshv.domain.JdkKeys
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.domain.SslKeys
+import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options.*
+import java.nio.file.Paths
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.xnf"
 private val logger = Logger(PACKAGE_NAME)
@@ -64,11 +80,16 @@ fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
 private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
         IO.monad().binding {
             logger.info { "Using configuration: $config" }
+            val producerOptions: ProducerOptions = ImmutableProducerOptions.builder()
+                    .collectorAddresses(HashSet.of(config.hvVesAddress))
+                    .securityKeys(config.security)
+                    .build()
             XnfHealthCheckServer().startServer(config).bind()
             val xnfSimulator = XnfSimulator(
-                    VesHvClient(config),
+                    HvVesProducerFactoryImpl.create(producerOptions),
                     MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
             XnfApiServer(xnfSimulator, OngoingSimulations())
                     .start(config.listenAddress)
                     .bind()
         }.fix()
+
