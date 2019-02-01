@@ -87,7 +87,7 @@ class MessageStreamValidation(
 
     private fun generateEvents(parameters: List<MessageParameters>): IO<List<VesEventOuterClass.VesEvent>> =
             messageGenerator.createMessageFlux(parameters)
-                    .map(WireFrameMessage::payload)
+                    .map(VesEventOuterClass.VesEvent::payload)
                     .map(ByteData::unsafeAsArray)
                     .map(VesEventOuterClass.VesEvent::parseFrom)
                     .collectList()

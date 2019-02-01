@@ -19,7 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
+import org.jetbrains.annotations.NotNull
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
+import org.onap.ves.VesEventOuterClass
 import reactor.core.publisher.Flux
 
 /**
@@ -27,7 +29,7 @@ import reactor.core.publisher.Flux
  * @since June 2018
  */
 interface MessageGenerator {
-    fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<WireFrameMessage>
+    fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<VesEventOuterClass.VesEvent>
 
     companion object {
         const val FIXED_PAYLOAD_SIZE = 100

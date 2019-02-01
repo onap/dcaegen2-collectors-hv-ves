@@ -20,12 +20,19 @@
 package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import arrow.core.Option
+import arrow.core.getOrElse
 import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
 import io.netty.handler.ssl.SslContextBuilder
 import org.onap.dcae.collectors.veshv.domain.JdkKeys
 import org.onap.dcae.collectors.veshv.domain.OpenSslKeys
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.domain.SslKeys
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
+import org.onap.dcaegen2.services.sdk.security.ssl.Password
+import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
+import org.onap.dcaegen2.services.sdk.security.ssl.SslFactory
+import java.nio.file.Paths
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -36,22 +43,29 @@ abstract class SslContextFactory {
             if (secConfig.sslDisable) {
                 Option.empty()
             } else {
-                createSslContextWithConfiguredCerts(secConfig)
-                        .map { builder ->
-                            builder.clientAuth(ClientAuth.REQUIRE)
-                                    .build()
-                        }
+                Option.fromNullable(
+                        SslFactory().createSecureContext(extractSecurity(secConfig)).get())
             }
 
-    protected open fun createSslContextWithConfiguredCerts(
-            secConfig: SecurityConfiguration
-    ): Option<SslContextBuilder> =
-            secConfig.keys.map { keys ->
-                when (keys) {
-                    is JdkKeys -> jdkContext(keys)
-                    is OpenSslKeys -> openSslContext(keys)
-                }
-            }
+    /*private fun extractSecurity(config: SecurityConfiguration): SecurityKeys? {
+//    Problem here is that SecurityKeys need a Paths to stores however SecurityConfiguration holds
+//    InputStreams
+        return if (config.sslDisable) {
+            null
+        } else {
+            val securityKeys: SslKeys? = config.keys.getOrElse { null }
+            if (securityKeys as? JdkKeys != null)
+                ImmutableSecurityKeys.builder()
+                        .keyStore(securityKeys.keyStore)
+                        .keyStorePassword(Password(securityKeys.keyStorePassword))
+                        .trustStore(securityKeys.trustStore)
+                        .trustStorePassword(Password(securityKeys.trustStorePassword))
+                        .build()
+            else null
+
+        }
+
+    }*/
 
     protected abstract fun openSslContext(openSslKeys: OpenSslKeys): SslContextBuilder
     protected abstract fun jdkContext(jdkKeys: JdkKeys): SslContextBuilder

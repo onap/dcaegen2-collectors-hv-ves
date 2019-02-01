@@ -19,7 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
+import org.jetbrains.annotations.Nullable
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.net.InetSocketAddress
 
 /**
