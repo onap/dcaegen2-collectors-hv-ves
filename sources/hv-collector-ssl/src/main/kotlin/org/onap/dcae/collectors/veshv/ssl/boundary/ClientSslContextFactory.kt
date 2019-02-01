@@ -16,7 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- */
+ *//*
+
 package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import io.netty.handler.ssl.SslContextBuilder
@@ -26,10 +27,12 @@ import org.onap.dcae.collectors.veshv.domain.OpenSslKeys
 import org.onap.dcae.collectors.veshv.ssl.impl.SslFactories.keyManagerFactory
 import org.onap.dcae.collectors.veshv.ssl.impl.SslFactories.trustManagerFactory
 
+*/
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since September 2018
- */
+ *//*
+
 open class ClientSslContextFactory : SslContextFactory() {
 
     override fun openSslContext(openSslKeys: OpenSslKeys) = SslContextBuilder.forClient()
@@ -37,7 +40,8 @@ open class ClientSslContextFactory : SslContextFactory() {
             .trustManager(openSslKeys.trustedCert.toFile())
             .sslProvider(SslProvider.OPENSSL)!!
 
-    override fun jdkContext(jdkKeys: JdkKeys) =
+    */
+/*override fun jdkContext(jdkKeys: JdkKeys) =
             try {
                 val kmf = keyManagerFactory(jdkKeys)
                 val tmf = trustManagerFactory(jdkKeys)
@@ -48,5 +52,7 @@ open class ClientSslContextFactory : SslContextFactory() {
             } finally {
                 jdkKeys.forgetPasswords()
             }
+*//*
 
 }
+*/

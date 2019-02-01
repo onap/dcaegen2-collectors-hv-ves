@@ -35,6 +35,7 @@ import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.JdkKeys
 import org.onap.dcae.collectors.veshv.domain.OpenSslKeys
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import java.net.URI
 import java.nio.file.Paths
 import kotlin.test.assertTrue
 
@@ -109,9 +110,9 @@ object ServerSslContextFactoryTest : Spek({
 
     describe("SslContextFactory (JDK)") {
         val keys = JdkKeys(
-                keyStore = resourceStreamProvider("/ssl/server.ks.pkcs12"),
+                keyStore = Paths.get("/ssl/server.ks.pkcs12"),
                 keyStorePassword = PASSWORD.toCharArray(),
-                trustStore = resourceStreamProvider("/ssl/trust.pkcs12"),
+                trustStore = Paths.get("/ssl/trust.pkcs12"),
                 trustStorePassword = PASSWORD.toCharArray()
         )
 

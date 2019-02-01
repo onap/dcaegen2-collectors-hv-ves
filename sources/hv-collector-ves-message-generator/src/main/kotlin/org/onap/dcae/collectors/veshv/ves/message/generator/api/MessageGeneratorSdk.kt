@@ -19,14 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
-/**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since July 2018
- */
-enum class MessageType {
-    VALID,
-    TOO_BIG_PAYLOAD,
-    FIXED_PAYLOAD,
-//    INVALID_WIRE_FRAME,
-    INVALID_GPB_DATA,
+import org.onap.ves.VesEventOuterClass
+import reactor.core.publisher.Flux
+
+interface MessageGeneratorSdk {
+    fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<VesEventOuterClass.VesEvent>
+
+    companion object {
+        const val FIXED_PAYLOAD_SIZE = 100
+    }
 }

@@ -17,16 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.api
+package org.onap.dcae.collectors.veshv.ves.message.generator.factory
+
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGeneratorSdk
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageGeneratorSdkImpl
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since July 2018
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since October 2018
  */
-enum class MessageType {
-    VALID,
-    TOO_BIG_PAYLOAD,
-    FIXED_PAYLOAD,
-//    INVALID_WIRE_FRAME,
-    INVALID_GPB_DATA,
+object MessageGeneratorSdkFactory {
+    fun create(maxPayloadSizeBytes: Int): MessageGeneratorSdk =
+            MessageGeneratorSdkImpl(PayloadGenerator(), maxPayloadSizeBytes)
 }

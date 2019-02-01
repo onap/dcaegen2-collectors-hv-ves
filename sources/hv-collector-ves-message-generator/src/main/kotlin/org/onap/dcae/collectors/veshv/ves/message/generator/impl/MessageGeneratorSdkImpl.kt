@@ -20,16 +20,16 @@
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
 import com.google.protobuf.ByteString
-import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.PayloadContentType
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
+import org.jetbrains.annotations.NotNull
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGeneratorSdk
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.FIXED_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.INVALID_GPB_DATA
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.TOO_BIG_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
+import org.onap.ves.VesEventOuterClass
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
@@ -40,16 +40,16 @@ import java.nio.charset.Charset
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-class MessageGeneratorImpl internal constructor(
+class MessageGeneratorSdkImpl internal constructor(
         private val payloadGenerator: PayloadGenerator,
         private val maxPayloadSizeBytes: Int
-) : MessageGenerator {
+) : MessageGeneratorSdk {
 
-    override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<WireFrameMessage> = Flux
+    override fun createMessageFlux(messageParameters: List<MessageParameters>): Flux<VesEventOuterClass.VesEvent> = Flux
             .fromIterable(messageParameters)
             .flatMap { createMessageFlux(it) }
 
-    private fun createMessageFlux(parameters: MessageParameters): Flux<WireFrameMessage> =
+    private fun createMessageFlux(parameters: MessageParameters): Flux<VesEventOuterClass.VesEvent> =
             Mono.fromCallable { createMessage(parameters.commonEventHeader, parameters.messageType) }
                     .let {
                         when {
@@ -65,34 +65,35 @@ class MessageGeneratorImpl internal constructor(
                         }
                     }
 
-    private fun createMessage(commonEventHeader: CommonEventHeader, messageType: MessageType): WireFrameMessage =
+    private fun createMessage(commonEventHeader: VesEventOuterClass.CommonEventHeader, messageType: MessageType): VesEventOuterClass.VesEvent =
             when (messageType) {
-                VALID ->
-                    WireFrameMessage(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
-                TOO_BIG_PAYLOAD ->
-                    WireFrameMessage(vesEvent(commonEventHeader, oversizedPayload()))
-                FIXED_PAYLOAD ->
-                    WireFrameMessage(vesEvent(commonEventHeader, fixedPayload()))
-                /*
-                INVALID_WIRE_FRAME -> {
-                    val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
-                    createVesEvent(
-                            payload,
-                            UNSUPPORTED_VERSION,
-                            UNSUPPORTED_VERSION,
-                            PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
-                            payload.size())
-                }*/
-                INVALID_GPB_DATA ->
-                    WireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
+                MessageType.VALID ->
+                    createVesEvent(commonEventHeader, payloadGenerator.generatePayload())
+                MessageType.TOO_BIG_PAYLOAD ->
+                    createVesEvent(commonEventHeader, oversizedPayload())
+                MessageType.FIXED_PAYLOAD ->
+                    createVesEvent(commonEventHeader, fixedPayload())
+                /*Note that Lib need to provide api to change Header fields at least for test purposes
+                  or sdk need to provide message generation of concrete type
+                  INVALID_WIRE_FRAME -> {
+                     val payload = ByteData(vesEvent(commonEventHeader, payloadGenerator.generatePayload()))
+                     createVesEvent(
+                             payload,
+                             UNSUPPORTED_VERSION,
+                             UNSUPPORTED_VERSION,
+                             PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                             payload.size())
+                 }*/
+                MessageType.INVALID_GPB_DATA ->
+                    VesEventOuterClass.VesEvent.parseFrom("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
-    private fun vesEvent(commonEventHeader: CommonEventHeader, eventFields: ByteString): ByteArray {
+    private fun vesEvent(commonEventHeader: VesEventOuterClass.CommonEventHeader, eventFields: ByteString): ByteArray {
         return createVesEvent(commonEventHeader, eventFields).toByteArray()
     }
 
-    private fun createVesEvent(commonEventHeader: CommonEventHeader, payload: ByteString): VesEvent =
-            VesEvent.newBuilder()
+    private fun createVesEvent(commonEventHeader: VesEventOuterClass.CommonEventHeader, payload: ByteString): VesEventOuterClass.VesEvent =
+            VesEventOuterClass.VesEvent.newBuilder()
                     .setCommonEventHeader(commonEventHeader)
                     .setEventFields(payload)
                     .build()

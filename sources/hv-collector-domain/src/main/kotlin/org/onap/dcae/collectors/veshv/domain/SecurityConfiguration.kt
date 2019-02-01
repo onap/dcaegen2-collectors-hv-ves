@@ -36,10 +36,10 @@ sealed class SslKeys
 data class OpenSslKeys(val privateKey: Path,
                        val cert: Path,
                        val trustedCert: Path) : SslKeys()
-
-data class JdkKeys(val keyStore: StreamProvider,
+// StreamProviders need to be replaced with Paths to work with current implementation of SDk
+data class JdkKeys(val keyStore: Path,
                    val keyStorePassword: CharArray,
-                   val trustStore: StreamProvider,
+                   val trustStore: Path,
                    val trustStorePassword: CharArray) : SslKeys() {
     fun forgetPasswords() {
         keyStorePassword.fill('x')

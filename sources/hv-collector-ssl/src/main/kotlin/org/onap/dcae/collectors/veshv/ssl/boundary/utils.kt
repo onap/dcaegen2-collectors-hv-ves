@@ -19,19 +19,22 @@
  */
 package org.onap.dcae.collectors.veshv.ssl.boundary
 
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.fix
+import arrow.core.*
 import arrow.instances.option.monad.monad
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.onap.dcae.collectors.veshv.domain.JdkKeys
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.domain.SslKeys
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.utils.commandline.hasOption
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
+import org.onap.dcaegen2.services.sdk.security.ssl.Password
+import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.io.File
+import java.net.URI
+import java.nio.file.Paths
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -46,6 +49,26 @@ fun createSecurityConfiguration(cmdLine: CommandLine): Option<SecurityConfigurat
     val sslDisable = cmdLine.hasOption(CommandLineOption.SSL_DISABLE)
 
     return if (sslDisable) disabledSecurityConfiguration(sslDisable) else enabledSecurityConfiguration(cmdLine)
+}
+
+fun extractSecurity(config: SecurityConfiguration): SecurityKeys? {
+//    Problem here is that SecurityKeys need a Paths to stores however SecurityConfiguration holds
+//    InputStreams
+    return if (config.sslDisable) {
+        null
+    } else {
+        val securityKeys: SslKeys? = config.keys.getOrElse { null }
+        if (securityKeys as? JdkKeys != null)
+            ImmutableSecurityKeys.builder()
+                    .keyStore(securityKeys.keyStore)
+                    .keyStorePassword(Password(securityKeys.keyStorePassword))
+                    .trustStore(securityKeys.trustStore)
+                    .trustStorePassword(Password(securityKeys.trustStorePassword))
+                    .build()
+        else null
+
+    }
+
 }
 
 private fun disabledSecurityConfiguration(sslDisable: Boolean): Some<SecurityConfiguration> {
@@ -63,9 +86,9 @@ private fun enabledSecurityConfiguration(cmdLine: CommandLine): Option<SecurityC
         val tsPass = cmdLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD).bind()
 
         val keys = JdkKeys(
-                keyStore = streamFromFile(ksFile),
+                keyStore = Paths.get(ksFile),
                 keyStorePassword = ksPass.toCharArray(),
-                trustStore = streamFromFile(tsFile),
+                trustStore = Paths.get(tsFile),
                 trustStorePassword = tsPass.toCharArray()
         )
 
