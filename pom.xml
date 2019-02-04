@@ -18,7 +18,8 @@
   ~ limitations under the License.
   ~ ============LICENSE_END=========================================================
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -55,6 +56,7 @@
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.2</jacoco.version>
         <detekt.version>1.0.0-RC11</detekt.version>
+        <sdk.version>1.1.1-SNAPSHOT</sdk.version>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.6.1</protobuf.version>
@@ -71,6 +73,7 @@
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
         <skipAnalysis>true</skipAnalysis>
         <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
+        <skipEnforcer>true</skipEnforcer>
 
         <!-- Docker -->
         <skipDocker>false</skipDocker>
@@ -106,6 +109,13 @@
                     <artifactId>maven-deploy-plugin</artifactId>
                     <configuration>
                         <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <configuration>
+                        <skip>${skipEnforcer}</skip>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -579,6 +589,17 @@
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>1.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.onap.dcaegen2.services.sdk</groupId>
+                <artifactId>hvvesclient-producer-impl</artifactId>
+                <version>${sdk.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.onap.dcaegen2.services.sdk</groupId>
+                <artifactId>hvvesclient-producer-api</artifactId>
+                <version>${sdk.version}</version>
             </dependency>
 
             <!-- Test dependencies -->
