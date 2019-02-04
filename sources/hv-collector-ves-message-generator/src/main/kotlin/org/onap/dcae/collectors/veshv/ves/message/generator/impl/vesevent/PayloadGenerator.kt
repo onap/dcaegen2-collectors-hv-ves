@@ -17,25 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.api
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent
 
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import com.google.protobuf.ByteString
+import java.util.*
+import kotlin.streams.asSequence
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
- */
-abstract class MessageGenerator<K : MessageParameters, T> {
-    abstract fun createMessageFlux(parameters: K): Flux<T>
+internal class PayloadGenerator {
 
-    protected fun repeatMessage(message: Mono<T>, amount: Long): Flux<T> = when {
-        // repeat forever
-        amount < 0 -> message.repeat()
-        // do not generate any message
-        amount == 0L -> Flux.empty()
-        // send original message and additional amount-1 messages
-        else -> message.repeat(amount - 1)
+    private val randomGenerator = Random()
+
+    fun generateRawPayload(size: Int): ByteString =
+            ByteString.copyFrom(ByteArray(size))
+
+    fun generatePayload(numOfCountMeasurements: Long = 2): ByteString =
+            ByteString.copyFrom(
+                    randomGenerator
+                            .ints(numOfCountMeasurements, MIN_BYTE_VALUE, MAX_BYTE_VALUE)
+                            .asSequence()
+                            .toString()
+                            .toByteArray()
+            )
+
+    companion object {
+        private const val MIN_BYTE_VALUE = 0
+        private const val MAX_BYTE_VALUE = 256
     }
 }
-
