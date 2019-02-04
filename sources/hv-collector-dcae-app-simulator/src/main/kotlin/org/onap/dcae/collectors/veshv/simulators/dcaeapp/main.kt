@@ -20,15 +20,15 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppSimConfiguration
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.MessageStreamValidation
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.DcaeAppApiServer
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppSimConfiguration
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
-import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.arrow.unit
+import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
@@ -51,11 +51,11 @@ fun main(args: Array<String>) =
                         }
                 )
 
-
 private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
     logger.info { "Using configuration: $config" }
     val consumerFactory = ConsumerFactory(config.kafkaBootstrapServers)
-    val messageStreamValidation = MessageStreamValidation(MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
+    val generatorFactory = MessageGeneratorFactory(config.maxPayloadSizeBytes)
+    val messageStreamValidation = MessageStreamValidation(generatorFactory.createVesEventGenerator())
     return DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))
             .start(config.apiAddress, config.kafkaTopics)
             .unit()

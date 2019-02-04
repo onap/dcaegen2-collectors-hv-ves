@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.domain
 import arrow.core.Either
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
 import org.jetbrains.spek.api.Spek
@@ -273,8 +274,8 @@ private fun assertBufferIntact(buff: ByteBuf) {
     assertThat(buff.readerIndex()).describedAs("buffer reader index should be intact").isEqualTo(0)
 }
 
-private fun <A, B> Either<A, B>.assertFailedWithError(assertj: (ObjectAssert<A>) -> Unit) {
-    fold({ assertj(assertThat(it)) }, { fail("Error expected") })
+fun <A, B> Either<A, B>.assertFailedWithError(assertj: (ObjectAssert<A>) -> Unit) {
+    fold({ assertj(Assertions.assertThat(it)) }, { fail("Error expected") })
 }
 
 private fun Either<WireFrameDecodingError, WireFrameMessage>.getMessageOrFail(): WireFrameMessage =
