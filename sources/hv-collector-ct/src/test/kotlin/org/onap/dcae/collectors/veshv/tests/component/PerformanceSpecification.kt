@@ -20,22 +20,22 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import arrow.syntax.function.partially1
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.ByteBufAllocator
-import io.netty.buffer.CompositeByteBuf
-import io.netty.buffer.Unpooled
-import io.netty.buffer.UnpooledByteBufAllocator
+import io.netty.buffer.*
+import io.netty.handler.codec.protobuf.ProtobufEncoder
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
+import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
+import org.onap.dcae.collectors.veshv.tests.component.Sut.Companion.MAX_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType.VALID
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.vesevent.VesEventParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.vesevent.VesEventType
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 import reactor.core.publisher.Flux
 import reactor.math.sum
@@ -61,9 +61,9 @@ object PerformanceSpecification : Spek({
             val runs = 4
             val timeout = Duration.ofMinutes((1 + (runs / 2)).toLong())
 
-            val params = MessageParameters(
+            val params = VesEventParameters(
                     commonEventHeader = commonHeader(PERF3GPP),
-                    messageType = VALID,
+                    messageType = VesEventType.VALID,
                     amount = numMessages
             )
 
@@ -91,9 +91,9 @@ object PerformanceSpecification : Spek({
             val numMessages: Long = 100_000
             val timeout = Duration.ofSeconds(30)
 
-            val params = MessageParameters(
+            val params = VesEventParameters(
                     commonEventHeader = commonHeader(PERF3GPP),
-                    messageType = VALID,
+                    messageType = VesEventType.VALID,
                     amount = numMessages
             )
 
@@ -158,8 +158,9 @@ object PerformanceSpecification : Spek({
 
 
 private const val ONE_MILION = 1_000_000.0
-
 private val rand = Random()
+private val generatorsFactory = MessageGeneratorFactory(MAX_PAYLOAD_SIZE_BYTES)
+
 private fun randomByteArray(size: Int): ByteArray {
     val bytes = ByteArray(size)
     rand.nextBytes(bytes)
@@ -171,10 +172,11 @@ fun dropWhenIndex(predicate: (Long) -> Boolean, stream: Flux<ByteBuf>): Flux<Byt
                 .filter { predicate(it.t1) }
                 .map { it.t2 }
 
-private fun generateDataStream(alloc: ByteBufAllocator, params: MessageParameters): Flux<ByteBuf> =
+private fun generateDataStream(alloc: ByteBufAllocator, params: VesEventParameters): Flux<ByteBuf> =
         WireFrameEncoder(alloc).let { encoder ->
-            MessageGeneratorFactory.create(Sut.MAX_PAYLOAD_SIZE_BYTES)
-                    .createMessageFlux(listOf(params))
+            generatorsFactory.createVesEventGenerator()
+                    .createMessageFlux(params)
+                    .map { WireFrameMessage(it.toByteArray()) }
                     .map(encoder::encode)
                     .transform { simulateRemoteTcp(alloc, 1000, it) }
         }

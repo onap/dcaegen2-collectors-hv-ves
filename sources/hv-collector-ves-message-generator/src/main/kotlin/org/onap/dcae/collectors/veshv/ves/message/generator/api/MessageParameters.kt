@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,25 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import org.onap.ves.VesEventOuterClass
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-data class MessageParameters(val commonEventHeader: CommonEventHeader,
-                             val messageType: MessageType,
-                             val amount: Long = -1)
+abstract class MessageParameters(val amount: Long = -1)
+
+/**
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since February 2019
+ */
+class WireFrameParameters(val messageType: WireFrameType,
+                          amount: Long = -1) : MessageParameters(amount)
+
+/**
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since February 2019
+ */
+class VesEventParameters(val commonEventHeader: VesEventOuterClass.CommonEventHeader,
+                         val messageType: VesEventType,
+                         amount: Long = -1) : MessageParameters(amount)
