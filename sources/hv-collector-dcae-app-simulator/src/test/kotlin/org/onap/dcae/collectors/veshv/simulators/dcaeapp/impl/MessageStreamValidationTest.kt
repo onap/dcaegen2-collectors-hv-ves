@@ -19,23 +19,22 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
-import arrow.core.Either
 import arrow.core.Right
 import com.google.protobuf.ByteString
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.mockito.ArgumentMatchers.anyList
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import org.onap.dcae.collectors.veshv.tests.utils.assertFailedWithError
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.FIXED_PAYLOAD
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.VALID
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.VesEventGenerator
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
@@ -47,7 +46,7 @@ import javax.json.stream.JsonParsingException
  */
 internal class MessageStreamValidationTest : Spek({
     lateinit var messageParametersParser: MessageParametersParser
-    lateinit var messageGenerator: MessageGenerator
+    lateinit var messageGenerator: VesEventGenerator
     lateinit var cut: MessageStreamValidation
 
     beforeEachTest {
@@ -67,10 +66,7 @@ internal class MessageStreamValidationTest : Spek({
             val result = cut.validate("[{invalid json}]".byteInputStream(), listOf()).attempt().unsafeRunSync()
 
             // then
-            when(result) {
-                is Either.Left -> assertThat(result.a).isInstanceOf(JsonParsingException::class.java)
-                else -> fail("validation should fail")
-            }
+            result.assertFailedWithError { it is JsonParsingException }
         }
 
         it("should return error when message param list is empty") {
@@ -81,7 +77,7 @@ internal class MessageStreamValidationTest : Spek({
             val result = cut.validate(sampleJsonAsStream(), listOf()).attempt().unsafeRunSync()
 
             // then
-            assertThat(result.isLeft()).isTrue()
+            result.assertFailedWithError { it is IllegalArgumentException }
         }
 
         describe("when validating headers only") {
@@ -89,11 +85,10 @@ internal class MessageStreamValidationTest : Spek({
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val event = vesEvent()
-                val generatedWireProtocolFrame = WireFrameMessage(event.toByteArray())
                 val receivedMessageBytes = event.toByteArray()
 
-                givenParsedMessageParameters(MessageParameters(event.commonEventHeader, MessageType.VALID, 1))
-                whenever(messageGenerator.createMessageFlux(anyList())).thenReturn(Flux.just(generatedWireProtocolFrame))
+                givenParsedMessageParameters(VesEventParameters(event.commonEventHeader, VALID, 1))
+                whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(event))
 
                 // when
                 val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
@@ -107,11 +102,11 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent(payload = "payload A")
                 val receivedEvent = vesEvent(payload = "payload B")
-                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
+
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
-                givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.VALID, 1))
-                whenever(messageGenerator.createMessageFlux(anyList())).thenReturn(Flux.just(generatedWireProtocolFrame))
+                givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, VALID, 1))
+                whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
                 // when
                 val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
@@ -125,11 +120,10 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent()
                 val receivedEvent = vesEvent(eventId = "bbb")
-                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
-                givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.VALID, 1))
-                whenever(messageGenerator.createMessageFlux(anyList())).thenReturn(Flux.just(generatedWireProtocolFrame))
+                givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, VALID, 1))
+                whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
                 // when
                 val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
@@ -144,11 +138,10 @@ internal class MessageStreamValidationTest : Spek({
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val event = vesEvent()
-                val generatedWireProtocolFrame = WireFrameMessage(event.toByteArray())
                 val receivedMessageBytes = event.toByteArray()
 
-                givenParsedMessageParameters(MessageParameters(event.commonEventHeader, MessageType.FIXED_PAYLOAD, 1))
-                whenever(messageGenerator.createMessageFlux(anyList())).thenReturn(Flux.just(generatedWireProtocolFrame))
+                givenParsedMessageParameters(VesEventParameters(event.commonEventHeader, FIXED_PAYLOAD, 1))
+                whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(event))
 
                 // when
                 val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
@@ -162,11 +155,10 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent(payload = "payload A")
                 val receivedEvent = vesEvent(payload = "payload B")
-                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
-                givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.FIXED_PAYLOAD, 1))
-                whenever(messageGenerator.createMessageFlux(anyList())).thenReturn(Flux.just(generatedWireProtocolFrame))
+                givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, FIXED_PAYLOAD, 1))
+                whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
                 // when
                 val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
@@ -180,11 +172,10 @@ internal class MessageStreamValidationTest : Spek({
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent()
                 val receivedEvent = vesEvent("bbb")
-                val generatedWireProtocolFrame = WireFrameMessage(generatedEvent.toByteArray())
                 val receivedMessageBytes = receivedEvent.toByteArray()
 
-                givenParsedMessageParameters(MessageParameters(generatedEvent.commonEventHeader, MessageType.FIXED_PAYLOAD, 1))
-                whenever(messageGenerator.createMessageFlux(anyList())).thenReturn(Flux.just(generatedWireProtocolFrame))
+                givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, FIXED_PAYLOAD, 1))
+                whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
                 // when
                 val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
@@ -197,9 +188,9 @@ internal class MessageStreamValidationTest : Spek({
 })
 
 
-
 private const val DUMMY_EVENT_ID = "aaa"
 private const val DUMMY_PAYLOAD = "payload"
+private const val sampleJsonArray = """["headersOnly"]"""
 
 private fun vesEvent(eventId: String = DUMMY_EVENT_ID, payload: String = DUMMY_PAYLOAD): VesEvent {
     return VesEvent.newBuilder()
@@ -208,7 +199,5 @@ private fun vesEvent(eventId: String = DUMMY_EVENT_ID, payload: String = DUMMY_P
             .setEventFields(ByteString.copyFrom(payload.toByteArray()))
             .build()
 }
-
-private const val sampleJsonArray = """["headersOnly"]"""
 
 private fun sampleJsonAsStream() = sampleJsonArray.byteInputStream()
