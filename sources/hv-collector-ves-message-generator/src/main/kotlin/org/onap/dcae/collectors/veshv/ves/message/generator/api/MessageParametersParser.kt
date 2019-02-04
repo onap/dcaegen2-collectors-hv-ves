@@ -28,9 +28,7 @@ interface MessageParametersParser {
     fun parse(request: JsonArray): Either<ParsingError, List<MessageParameters>>
 
     companion object {
-        val INSTANCE: MessageParametersParser by lazy {
-            MessageParametersParserImpl()
-        }
+        val INSTANCE: MessageParametersParser by lazy { MessageParametersParserImpl() }
     }
 }
 

@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.factory
 
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.MessageGeneratorImpl
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.PayloadGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.VesEventGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.wireframe.WireFrameGenerator
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since October 2018
  */
-object MessageGeneratorFactory {
-    fun create(maxPayloadSizeBytes: Int): MessageGenerator =
-            MessageGeneratorImpl(PayloadGenerator(), maxPayloadSizeBytes)
+class MessageGeneratorFactory(private val maxPayloadSizeBytes: Int) {
+    fun createVesEventGenerator() = VesEventGenerator(PayloadGenerator(), maxPayloadSizeBytes)
+
+    fun createWireFrameGenerator() = WireFrameGenerator()
 }

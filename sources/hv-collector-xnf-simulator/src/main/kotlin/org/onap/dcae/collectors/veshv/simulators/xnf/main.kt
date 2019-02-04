@@ -27,10 +27,10 @@ import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.XnfApiServer
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.XnfHealthCheckServer
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.ArgXnfSimulatorConfiguration
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.XnfApiServer
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.SimulatorConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
@@ -67,7 +67,8 @@ private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
             XnfHealthCheckServer().startServer(config).bind()
             val xnfSimulator = XnfSimulator(
                     VesHvClient(config),
-                    MessageGeneratorFactory.create(config.maxPayloadSizeBytes))
+                    MessageGeneratorFactory(config.maxPayloadSizeBytes)
+            )
             XnfApiServer(xnfSimulator, OngoingSimulations())
                     .start(config.listenAddress)
                     .bind()
