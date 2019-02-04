@@ -29,6 +29,7 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.STATE_CHANGE
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.CommonEventHeaderParser
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import java.io.ByteArrayInputStream
 import javax.json.Json

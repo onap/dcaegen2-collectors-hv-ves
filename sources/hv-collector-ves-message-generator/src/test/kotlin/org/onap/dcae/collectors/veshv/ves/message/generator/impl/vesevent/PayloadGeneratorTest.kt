@@ -24,6 +24,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.PayloadGenerator
 
 object PayloadGeneratorTest : Spek({
 
