@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -28,11 +28,11 @@ import org.jetbrains.spek.api.dsl.on
 object PayloadGeneratorTest : Spek({
 
     given("payload factory object") {
-        val payloadGenerator = PayloadGenerator()
+        val cut = PayloadGenerator()
 
         on("raw payload generation") {
             val size = 100
-            val generatedPayload = payloadGenerator.generateRawPayload(size)
+            val generatedPayload = cut.generateRawPayload(size)
 
             it("should generate sequence of zeros") {
                 assertThat(generatedPayload.size()).isEqualTo(size)
@@ -41,8 +41,8 @@ object PayloadGeneratorTest : Spek({
         }
 
         on("two generated payloads") {
-            val generatedPayload0 = payloadGenerator.generatePayload()
-            val generatedPayload1 = payloadGenerator.generatePayload()
+            val generatedPayload0 = cut.generatePayload()
+            val generatedPayload1 = cut.generatePayload()
             it("should be different") {
                 assertThat(generatedPayload0 != generatedPayload1).isTrue()
             }

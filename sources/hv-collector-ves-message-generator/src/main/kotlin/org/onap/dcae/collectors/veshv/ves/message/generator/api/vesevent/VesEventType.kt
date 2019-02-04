@@ -17,31 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.api
+package org.onap.dcae.collectors.veshv.ves.message.generator.api.vesevent
 
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import arrow.core.Try
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since January 2019
  */
-abstract class MessageGenerator<K : MessageParameters, T> {
-    abstract fun createMessageFlux(parameters: K): Flux<T>
-
-    protected fun repeatMessage(message: Mono<T>, amount: Long): Flux<T> {
-        return when {
-            // repeat forever
-            amount < 0 -> message.repeat()
-            // do not generate any message
-            amount == 0L -> Flux.empty()
-            // send original message and additional amount-1 messages
-            else -> message.repeat(amount - 1)
-        }
-    }
+enum class VesEventType {
+    VALID,
+    TOO_BIG_PAYLOAD,
+    FIXED_PAYLOAD;
 
     companion object {
-        const val FIXED_PAYLOAD_SIZE = 100
+        fun isVesEventType(str: String): Boolean = Try { VesEventType.valueOf(str) }.isSuccess()
     }
 }
-

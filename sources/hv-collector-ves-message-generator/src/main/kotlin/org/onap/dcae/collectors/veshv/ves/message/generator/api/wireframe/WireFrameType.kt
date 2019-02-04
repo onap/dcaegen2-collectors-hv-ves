@@ -17,24 +17,19 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.api.wireframe
 
-import com.google.protobuf.ByteString
-import java.util.*
-import kotlin.streams.asSequence
+import arrow.core.Try
 
-internal class PayloadGenerator {
+/**
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since January 2019
+ */
+enum class WireFrameType {
+    INVALID_WIRE_FRAME,
+    INVALID_GPB_DATA;
 
-    private val randomGenerator = Random()
-
-    fun generateRawPayload(size: Int): ByteString =
-            ByteString.copyFrom(ByteArray(size))
-
-    fun generatePayload(numOfCountMeasurements: Long = 2): ByteString =
-            ByteString.copyFrom(
-                    randomGenerator.ints(numOfCountMeasurements, 0, 256)
-                            .asSequence()
-                            .toString()
-                            .toByteArray()
-            )
+    companion object {
+        fun isWireFrameType(str: String): Boolean = Try { WireFrameType.valueOf(str) }.isSuccess()
+    }
 }

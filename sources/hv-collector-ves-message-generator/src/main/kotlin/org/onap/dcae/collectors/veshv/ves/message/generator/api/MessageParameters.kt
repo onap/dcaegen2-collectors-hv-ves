@@ -19,12 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
-
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-data class MessageParameters(val commonEventHeader: CommonEventHeader,
-                             val messageType: MessageType,
-                             val amount: Long = -1)
+abstract class MessageParameters(val amount: Long = -1)

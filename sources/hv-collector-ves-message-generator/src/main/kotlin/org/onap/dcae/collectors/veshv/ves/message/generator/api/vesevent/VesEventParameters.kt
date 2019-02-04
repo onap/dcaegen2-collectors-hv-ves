@@ -17,34 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.api.vesevent
 
-import arrow.core.Option
-import com.google.protobuf.util.JsonFormat
-import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
-import javax.json.JsonObject
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since July 2018
+ * @since January 2019
  */
-class CommonEventHeaderParser {
-    fun parse(json: JsonObject): Option<CommonEventHeader> =
-            Option.fromNullable(
-                    CommonEventHeader.newBuilder()
-                            .apply { JsonFormat.parser().merge(json.toString(), this) }
-                            .build()
-                            .takeUnless { !isValid(it) }
-            )
-
-
-    private fun isValid(header: CommonEventHeader): Boolean {
-        return allMandatoryFieldsArePresent(header)
-    }
-
-    private fun allMandatoryFieldsArePresent(header: CommonEventHeader) =
-            headerRequiredFieldDescriptors
-                    .all { fieldDescriptor -> header.hasField(fieldDescriptor) }
-
-}
+class VesEventParameters(val commonEventHeader: CommonEventHeader,
+                         val messageType: VesEventType,
+                         amount: Long = -1) : MessageParameters(amount)

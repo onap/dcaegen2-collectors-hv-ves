@@ -19,15 +19,24 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
+import arrow.core.Either
 import arrow.core.Option
 import arrow.core.Try
 import arrow.core.identity
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.vesevent.VesEventParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.vesevent.VesEventType
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.vesevent.VesEventType.Companion.isVesEventType
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.wireframe.WireFrameParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.wireframe.WireFrameType
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.wireframe.WireFrameType.Companion.isWireFrameType
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.CommonEventHeaderParser
 import javax.json.JsonArray
+import javax.json.JsonObject
+import javax.json.JsonValue
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -37,28 +46,41 @@ internal class MessageParametersParserImpl(
         private val commonEventHeaderParser: CommonEventHeaderParser = CommonEventHeaderParser()
 ) : MessageParametersParser {
 
-    override fun parse(request: JsonArray) =
-            Try {
-                request
-                        .map { it.asJsonObject() }
-                        .onEach { logger.info { "Parsing MessageParameters body: $it" } }
-                        .map { json ->
-                            val commonEventHeader = commonEventHeaderParser
-                                    .parse(json.getJsonObject("commonEventHeader"))
-                                    .fold({ throw IllegalStateException("Invalid common header") }, ::identity)
-                            val messageType = MessageType.valueOf(json.getString("messageType"))
-                            val messagesAmount = json.getJsonNumber("messagesAmount")?.longValue()
-                                    ?: throw NullPointerException("\"messagesAmount\" could not be parsed.")
-                            MessageParameters(commonEventHeader, messageType, messagesAmount)
-                        }
-            }.toEither().mapLeft { ex ->
-                ParsingError(
-                        ex.message ?: "Unable to parse message parameters",
-                        Option.fromNullable(ex))
+    override fun parse(request: JsonArray): Either<ParsingError, List<MessageParameters>> =
+            Try { parseArray(request) }
+                    .toEither()
+                    .mapLeft { ex ->
+                        ParsingError(
+                                ex.message ?: "Unable to parse message parameters",
+                                Option.fromNullable(ex))
+                    }
+
+    private fun parseArray(array: JsonArray) = array
+            .map(JsonValue::asJsonObject)
+            .onEach { logger.info { "Parsing MessageParameters body: $it" } }
+            .map(::parseParameters)
+
+    private fun parseParameters(json: JsonObject): MessageParameters {
+        val messagesAmount = json.getJsonNumber("messagesAmount")?.longValue()
+                ?: throw NullPointerException("\"messagesAmount\" could not be parsed.")
+
+        val messageType = json.getString("messageType")
+
+        return when {
+            isVesEventType(messageType) -> {
+                val commonEventHeader = commonEventHeaderParser
+                        .parse(json.getJsonObject("commonEventHeader"))
+                        .fold({ throw IllegalStateException("Invalid common header") }, ::identity)
+
+                VesEventParameters(commonEventHeader, VesEventType.valueOf(messageType), messagesAmount)
             }
+            isWireFrameType(messageType) ->
+                WireFrameParameters(WireFrameType.valueOf(messageType), messagesAmount)
+            else -> throw IllegalStateException("Invalid message type")
+        }
+    }
 
     companion object {
         private val logger = Logger(MessageParametersParserImpl::class)
     }
-
 }
