@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "536691bd_b908588e",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-05T12:10:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6689bd5_77dc1426",
+      "range": {
+        "startLine": 117,
+        "startChar": 30,
+        "endLine": 117,
+        "endChar": 34
+      },
+      "revId": "063564468ed51c8ebd80e75ffb6f1030116adc4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f1d7a993_d8e76e5a",
         "filename": "pom.xml",
         "patchSetId": 3
