@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6689bd5_77dc1426",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-05T09:17:46Z",
+      "side": 1,
+      "message": "extract it to a property \"skipEnforcer\" with default value \u003d true so we can manually run the build with -DskipEnforcer\u003dfalse",
+      "range": {
+        "startLine": 117,
+        "startChar": 30,
+        "endLine": 117,
+        "endChar": 34
+      },
+      "revId": "063564468ed51c8ebd80e75ffb6f1030116adc4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1d7a993_d8e76e5a",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-05T09:17:46Z",
+      "side": 1,
+      "message": "Add default scope as runtime",
+      "revId": "063564468ed51c8ebd80e75ffb6f1030116adc4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
