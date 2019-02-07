@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ed8d3a8_3a3a9a3e",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/Sut.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T08:15:04Z",
+      "side": 1,
+      "message": "Two lines of space is enough. Remove one",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96c3d95f_65946338",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidationTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T08:15:04Z",
+      "side": 1,
+      "message": "Clean up import list.",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "517051f8_b4ff0042",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidationTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T08:15:04Z",
+      "side": 1,
+      "message": "Test here if error is of expected class IllegalArgumentException.\nlike this:\n```\n            when(result) {\n                is Either.Left -\u003e assertThat(result.a).isInstanceOf(IllegalArgumentException::class.java)\n                else -\u003e fail(\"validation should fail\")\n            }\n```",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46e9e53d_17037a72",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/MessageGenerator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T08:15:04Z",
+      "side": 1,
+      "message": "Since this is specific to VesEvents move it to VesEventGenerator",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
