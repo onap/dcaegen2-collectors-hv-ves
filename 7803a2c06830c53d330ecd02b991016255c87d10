@@ -104,6 +104,24 @@
     },
     {
       "key": {
+        "uuid": "11db9b79_485b6e23",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/wireframe/WireFrameType.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T09:40:49Z",
+      "side": 1,
+      "message": "ok, Clarified.",
+      "parentUuid": "813e8c8b_417f86aa",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9867db41_f628e6a3",
         "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
         "patchSetId": 2
@@ -183,6 +201,24 @@
       "writtenOn": "2019-02-07T09:16:31Z",
       "side": 1,
       "message": "no VALID option? :)",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9361ae97_4fab01c8",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/wireframe/WireFrameGenerator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T09:40:49Z",
+      "side": 1,
+      "message": "Ok, clarified",
+      "parentUuid": "dc8769f9_14a9f06f",
       "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
