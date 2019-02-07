@@ -67,6 +67,80 @@
       "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f4a72d5c_07716177",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/MessageParameters.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-07T08:59:39Z",
+      "side": 1,
+      "message": "These classes (MessageParameters, VesEventP, WFP) are so small, that they could be kept in single file - what do you think?",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46358435_132cecf6",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/wireframe/WireFrameGenerator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-07T08:59:39Z",
+      "side": 1,
+      "message": "Please update year in the license (2018 vs 2019) - also in other added files with @since",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a70272d0_1ab5e9bf",
+        "filename": "sources/hv-collector-ves-message-generator/src/test/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-07T08:59:39Z",
+      "side": 1,
+      "message": "It would be nicer to have separate tests:\n1. for parsing VesEventParams \n2. for parsing WireFrameParams \n3. for parsing multiple at once (without asserting all fields, just successful mapping to correct types in order)",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "123e45d5_0d3850ed",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/XnfSimulator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-07T08:59:39Z",
+      "side": 1,
+      "message": "We should avoid creation of these generators at every request to xNF - maybe just pass references in constructor?",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 50
+      },
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
