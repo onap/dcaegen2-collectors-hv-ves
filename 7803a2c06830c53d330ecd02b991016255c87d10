@@ -87,6 +87,74 @@
     },
     {
       "key": {
+        "uuid": "813e8c8b_417f86aa",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/wireframe/WireFrameType.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T09:01:26Z",
+      "side": 1,
+      "message": "Dont we need VALID_FRAME sometimes ? :D",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9867db41_f628e6a3",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T09:01:26Z",
+      "side": 1,
+      "message": "add test for this if possible",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5e93d1d_37a2a6de",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T09:01:26Z",
+      "side": 1,
+      "message": "extract private method here.",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9dca3ba_689d81a9",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-07T09:01:26Z",
+      "side": 1,
+      "message": "Add test also for this case",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46358435_132cecf6",
         "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/wireframe/WireFrameGenerator.kt",
         "patchSetId": 2
