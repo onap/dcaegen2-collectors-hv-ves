@@ -59,6 +59,24 @@
     },
     {
       "key": {
+        "uuid": "b86a176d_6940bca2",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/MessageGenerator.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "These comments were here before, i just copied the method from other file. Anyway i think it would be an overkill to extract these really short oneliners to separate methods. Maybe it would be better to just remove the comments? I don\u0027t know if its necessary to explain generic reactor methods. If someone doesn\u0027t know how they work, they can always check in reactor docs",
+      "parentUuid": "6ee36f51_2ce25a61",
+      "revId": "8a148964ec7218827d6564606505c86b070a91da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "587dec50_1d99256e",
         "filename": "sources/hv-collector-ves-message-generator/src/test/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserTest.kt",
         "patchSetId": 6
