@@ -286,6 +286,30 @@
       "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ea486f19_dd52482d",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/XnfSimulator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-13T12:05:41Z",
+      "side": 1,
+      "message": "I guess it\u0027s fine for now.",
+      "parentUuid": "326b2f93_2dde9985",
+      "range": {
+        "startLine": 71,
+        "startChar": 24,
+        "endLine": 71,
+        "endChar": 50
+      },
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
