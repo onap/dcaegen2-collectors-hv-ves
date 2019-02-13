@@ -3,7 +3,7 @@
   ~ ============LICENSE_START=======================================================
   ~ dcaegen2-collectors-veshv
   ~ ================================================================================
-  ~ Copyright (C) 2018 NOKIA
+  ~ Copyright (C) 2018-2019 NOKIA
   ~ ================================================================================
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -56,13 +56,10 @@
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.2</jacoco.version>
         <detekt.version>1.0.0-RC11</detekt.version>
-        <sdk.version>1.1.1-SNAPSHOT</sdk.version>
+        <sdk.version>1.1.2-SNAPSHOT</sdk.version>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.6.1</protobuf.version>
-        <protoc-jar-maven-plugin.version>3.6.0.1</protoc-jar-maven-plugin.version>
-        <protobuf-generated-files.directory>${project.build.directory}/generated-sources/proto/main/java/
-        </protobuf-generated-files.directory>
 
         <!-- Testing and code analysis -->
         <junit-platform.version>1.2.0-RC1</junit-platform.version>
@@ -147,30 +144,6 @@
                                 <sourceDirs>
                                     <source>${project.build.testSourceDirectory}</source>
                                 </sourceDirs>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>com.github.os72</groupId>
-                    <artifactId>protoc-jar-maven-plugin</artifactId>
-                    <version>${protoc-jar-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>${build-helper-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>add-source</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>add-source</goal>
-                            </goals>
-                            <configuration>
-                                <sources>
-                                    <source>${protobuf-generated-files.directory}</source>
-                                </sources>
                             </configuration>
                         </execution>
                     </executions>
@@ -548,11 +521,6 @@
                 <classifier>${os.detected.classifier}</classifier>
             </dependency>
             -->
-            <dependency>
-                <groupId>com.google.protobuf</groupId>
-                <artifactId>protobuf-java</artifactId>
-                <version>${protobuf.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java-util</artifactId>
