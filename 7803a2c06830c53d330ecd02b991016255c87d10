@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1b178cd0_71809eef",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/Sut.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4ed8d3a8_3a3a9a3e",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "96c3d95f_65946338",
         "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidationTest.kt",
         "patchSetId": 2
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "1ba5975a_199b6e8b",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidationTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "That\u0027s actually not related to my changes, but ok. Done",
+      "parentUuid": "517051f8_b4ff0042",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46e9e53d_17037a72",
         "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/MessageGenerator.kt",
         "patchSetId": 2
@@ -81,6 +117,24 @@
       "writtenOn": "2019-02-07T08:59:39Z",
       "side": 1,
       "message": "These classes (MessageParameters, VesEventP, WFP) are so small, that they could be kept in single file - what do you think?",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4849ae44_a91c7722",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/MessageParameters.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f4a72d5c_07716177",
       "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -139,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "a294d3c9_4ac16525",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "Again, these aren\u0027t changes from my commit, but i can test that anyway.",
+      "parentUuid": "9867db41_f628e6a3",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f5e93d1d_37a2a6de",
         "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
         "patchSetId": 2
@@ -150,6 +222,24 @@
       "writtenOn": "2019-02-07T09:01:26Z",
       "side": 1,
       "message": "extract private method here.",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f4e264e_7bef92f8",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5e93d1d_37a2a6de",
       "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -173,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "3a01b925_b9d3467d",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserImpl.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "This is already tested, but i\u0027m gonna refactor MessageParametersParserTest anyway.",
+      "parentUuid": "d9dca3ba_689d81a9",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46358435_132cecf6",
         "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/wireframe/WireFrameGenerator.kt",
         "patchSetId": 2
@@ -184,6 +292,24 @@
       "writtenOn": "2019-02-07T08:59:39Z",
       "side": 1,
       "message": "Please update year in the license (2018 vs 2019) - also in other added files with @since",
+      "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6ccc5e6_122e45b7",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/wireframe/WireFrameGenerator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-13T12:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46358435_132cecf6",
       "revId": "7803a2c06830c53d330ecd02b991016255c87d10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
