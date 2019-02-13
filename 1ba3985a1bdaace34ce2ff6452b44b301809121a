@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5c3bc1d_c245b0a5",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-13T13:29:17Z",
+      "side": 1,
+      "message": "@Jaszczur: shouldnt we use 1.1.2-SNAPSHOT?\n```\n \u003cgroupId\u003eorg.onap.dcaegen2.services.sdk\u003c/groupId\u003e\n  \u003cartifactId\u003ehvvesclient-protobuf\u003c/artifactId\u003e\n  \u003cversion\u003e1.1.2-SNAPSHOT\u003c/version\u003e\n```",
+      "revId": "1ba3985a1bdaace34ce2ff6452b44b301809121a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
