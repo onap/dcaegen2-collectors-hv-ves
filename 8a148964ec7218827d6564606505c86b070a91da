@@ -77,6 +77,24 @@
     },
     {
       "key": {
+        "uuid": "5e00b7ec_5b1712b4",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/MessageGenerator.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-13T12:45:36Z",
+      "side": 1,
+      "message": "I leave it up to you - comments are not needed here.\n\nPersonally I don\u0027t see overkill in wrapping simple functions in \"better-named\" ones if main function readability increases by doing so :)",
+      "parentUuid": "b86a176d_6940bca2",
+      "revId": "8a148964ec7218827d6564606505c86b070a91da",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "587dec50_1d99256e",
         "filename": "sources/hv-collector-ves-message-generator/src/test/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/MessageParametersParserTest.kt",
         "patchSetId": 6
