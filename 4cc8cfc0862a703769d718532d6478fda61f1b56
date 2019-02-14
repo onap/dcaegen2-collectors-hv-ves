@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "274eff19_92dbab9a",
+        "filename": "sources/hv-collector-domain/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-14T07:21:14Z",
+      "side": 1,
+      "message": "Let\u0027s define the version in dependencymanagement of parent pom. Also `compile` scope is default, i believe, so we can skip it.",
+      "revId": "4cc8cfc0862a703769d718532d6478fda61f1b56",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
