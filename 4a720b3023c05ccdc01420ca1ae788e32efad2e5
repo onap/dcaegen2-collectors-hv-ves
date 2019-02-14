@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31b692f0_016ff8c5",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-14T08:34:05Z",
+      "side": 1,
+      "message": "remove asterisk imports\nalso unused import:\n```\nimport org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType\n```",
+      "revId": "4a720b3023c05ccdc01420ca1ae788e32efad2e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9dde125_c52f0adc",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidationTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-14T08:34:05Z",
+      "side": 1,
+      "message": "The same like MessageStreamValidation",
+      "revId": "4a720b3023c05ccdc01420ca1ae788e32efad2e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "384218b3_35a6cdf4",
+        "filename": "sources/hv-collector-domain/src/test/kotlin/org/onap/dcae/collectors/veshv/domain/WireFrameCodecsTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-02-14T08:34:05Z",
+      "side": 1,
+      "message": "Code duplicate -\u003e remove function. Add mvn dependency for hv-collector-test-utils and use here defined there function.\n```\nimport org.onap.dcae.collectors.veshv.tests.utils.assertFailedWithError\n```",
+      "revId": "4a720b3023c05ccdc01420ca1ae788e32efad2e5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
