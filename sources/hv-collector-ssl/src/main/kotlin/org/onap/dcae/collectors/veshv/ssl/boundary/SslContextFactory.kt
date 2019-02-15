@@ -20,39 +20,18 @@
 package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import arrow.core.Option
-import io.netty.handler.ssl.ClientAuth
 import io.netty.handler.ssl.SslContext
-import io.netty.handler.ssl.SslContextBuilder
-import org.onap.dcae.collectors.veshv.domain.JdkKeys
-import org.onap.dcae.collectors.veshv.domain.OpenSslKeys
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcaegen2.services.sdk.security.ssl.SslFactory
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since September 2018
  */
-abstract class SslContextFactory {
-    fun createSslContext(secConfig: SecurityConfiguration): Option<SslContext> =
-            if (secConfig.sslDisable) {
-                Option.empty()
-            } else {
-                createSslContextWithConfiguredCerts(secConfig)
-                        .map { builder ->
-                            builder.clientAuth(ClientAuth.REQUIRE)
-                                    .build()
-                        }
-            }
+class SslContextFactory(private val sslFactory: SslFactory = SslFactory()) {
+    fun createServerContext(secConfig: SecurityConfiguration): Option<SslContext> =
+            secConfig.keys.map { sslFactory.createSecureServerContext(it) }
+    fun createClientContext(secConfig: SecurityConfiguration): Option<SslContext> =
+            secConfig.keys.map { sslFactory.createSecureClientContext(it) }
 
-    protected open fun createSslContextWithConfiguredCerts(
-            secConfig: SecurityConfiguration
-    ): Option<SslContextBuilder> =
-            secConfig.keys.map { keys ->
-                when (keys) {
-                    is JdkKeys -> jdkContext(keys)
-                    is OpenSslKeys -> openSslContext(keys)
-                }
-            }
-
-    protected abstract fun openSslContext(openSslKeys: OpenSslKeys): SslContextBuilder
-    protected abstract fun jdkContext(jdkKeys: JdkKeys): SslContextBuilder
 }

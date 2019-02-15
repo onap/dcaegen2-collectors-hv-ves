@@ -20,60 +20,49 @@
 package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import arrow.core.None
-import arrow.core.Option
 import arrow.core.Some
-import arrow.core.fix
-import arrow.instances.option.monad.monad
-import arrow.typeclasses.binding
+import arrow.core.Try
+import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
-import org.onap.dcae.collectors.veshv.domain.JdkKeys
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.utils.commandline.hasOption
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
-import java.io.File
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
+import org.onap.dcaegen2.services.sdk.security.ssl.Passwords
+import java.nio.file.Path
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since September 2018
  */
 
-
 const val KEY_STORE_FILE = "/etc/ves-hv/server.p12"
 const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
 
-fun createSecurityConfiguration(cmdLine: CommandLine): Option<SecurityConfiguration> {
-    val sslDisable = cmdLine.hasOption(CommandLineOption.SSL_DISABLE)
+fun createSecurityConfiguration(cmdLine: CommandLine): Try<SecurityConfiguration> =
+        if (cmdLine.hasOption(CommandLineOption.SSL_DISABLE))
+            Try { disabledSecurityConfiguration() }
+        else
+            enabledSecurityConfiguration(cmdLine)
 
-    return if (sslDisable) disabledSecurityConfiguration(sslDisable) else enabledSecurityConfiguration(cmdLine)
+private fun disabledSecurityConfiguration() = SecurityConfiguration(keys = None)
+
+private fun enabledSecurityConfiguration(cmdLine: CommandLine) = Try {
+    val ksFile = cmdLine.stringValue(CommandLineOption.KEY_STORE_FILE, KEY_STORE_FILE)
+    val ksPass = cmdLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD).getOrElse { "" }
+    val tsFile = cmdLine.stringValue(CommandLineOption.TRUST_STORE_FILE, TRUST_STORE_FILE)
+    val tsPass = cmdLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD).getOrElse { "" }
+
+    val keys = ImmutableSecurityKeys.builder()
+            .keyStore(ImmutableSecurityKeysStore.of(pathFromFile(ksFile)))
+            .keyStorePassword(Passwords.fromString(ksPass))
+            .trustStore(ImmutableSecurityKeysStore.of(pathFromFile(tsFile)))
+            .trustStorePassword(Passwords.fromString(tsPass))
+            .build()
+
+    SecurityConfiguration(keys = Some(keys))
 }
 
-private fun disabledSecurityConfiguration(sslDisable: Boolean): Some<SecurityConfiguration> {
-    return Some(SecurityConfiguration(
-            sslDisable = sslDisable,
-            keys = None
-    ))
-}
-
-private fun enabledSecurityConfiguration(cmdLine: CommandLine): Option<SecurityConfiguration> {
-    return Option.monad().binding {
-        val ksFile = cmdLine.stringValue(CommandLineOption.KEY_STORE_FILE, KEY_STORE_FILE)
-        val ksPass = cmdLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD).bind()
-        val tsFile = cmdLine.stringValue(CommandLineOption.TRUST_STORE_FILE, TRUST_STORE_FILE)
-        val tsPass = cmdLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD).bind()
-
-        val keys = JdkKeys(
-                keyStore = streamFromFile(ksFile),
-                keyStorePassword = ksPass.toCharArray(),
-                trustStore = streamFromFile(tsFile),
-                trustStorePassword = tsPass.toCharArray()
-        )
-
-        SecurityConfiguration(
-                sslDisable = false,
-                keys = Some(keys)
-        )
-    }.fix()
-}
-
-private fun streamFromFile(file: String) = { File(file).inputStream() }
+private fun pathFromFile(file: String) = Path.of(file)
