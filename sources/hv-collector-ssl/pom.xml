@@ -75,12 +75,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-tcnative-boringssl-static</artifactId>
-            <classifier>${os.detected.classifier}</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.arrow-kt</groupId>
             <artifactId>arrow-core</artifactId>
         </dependency>

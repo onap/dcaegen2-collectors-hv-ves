@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.impl.socket
 
-import arrow.core.Try
 import arrow.core.getOrElse
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.boundary.Collector
@@ -31,7 +30,7 @@ import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.info
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.model.ServiceContext
-import org.onap.dcae.collectors.veshv.ssl.boundary.ServerSslContextFactory
+import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -50,7 +49,7 @@ import java.time.Duration
  * @since May 2018
  */
 internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
-                              private val sslContextFactory: ServerSslContextFactory,
+                              private val sslContextFactory: SslContextFactory,
                               private val collectorProvider: CollectorProvider,
                               private val metrics: Metrics) : Server {
 
@@ -68,7 +67,7 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
 
     private fun TcpServer.configureSsl() =
             sslContextFactory
-                    .createSslContext(serverConfig.securityConfiguration)
+                    .createServerContext(serverConfig.securityConfiguration)
                     .map { sslContext ->
                         logger.info { "Collector configured with SSL enabled" }
                         this.secure { b -> b.sslContext(sslContext) }

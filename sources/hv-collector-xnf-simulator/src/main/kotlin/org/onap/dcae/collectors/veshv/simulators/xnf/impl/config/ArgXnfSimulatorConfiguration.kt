@@ -27,6 +27,7 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
+import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
 import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_PORT
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.VES_HV_HOST
@@ -40,6 +41,7 @@ import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_PASSWORD
 import org.onap.dcae.collectors.veshv.utils.commandline.intValue
 import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.net.InetSocketAddress
 
 /**
@@ -69,15 +71,28 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
                 val maxPayloadSizeBytes = cmdLine.intValue(MAXIMUM_PAYLOAD_SIZE_BYTES,
                         WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
 
+                val security = createSecurityConfiguration(cmdLine)
+                    .doOnFailure { ex ->
+                        logger.withError {
+                            log("Could not read security keys", ex)
+                        }
+                    }
+                    .toOption()
+                    .bind()
+
                 SimulatorConfiguration(
                         InetSocketAddress(listenPort),
                         InetSocketAddress(healthCheckApiListenAddress),
                         InetSocketAddress(vesHost, vesPort),
                         maxPayloadSizeBytes,
-                        createSecurityConfiguration(cmdLine).bind())
+                        security)
             }.fix()
 
     internal object DefaultValues {
         const val HEALTH_CHECK_API_PORT = 6063
+    }
+
+    companion object {
+        private val logger = Logger(ArgXnfSimulatorConfiguration::class)
     }
 }
