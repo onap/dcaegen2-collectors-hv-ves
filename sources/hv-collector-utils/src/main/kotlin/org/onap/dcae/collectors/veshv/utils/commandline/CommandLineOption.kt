@@ -106,11 +106,11 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
             .build()
     ),
     KEY_STORE_PASSWORD(
-        Option.builder("kp")
-            .longOpt("key-store-password")
-            .hasArg()
-            .desc("Key store password")
-            .build()
+            Option.builder("kp")
+                    .longOpt("key-store-password")
+                    .hasArg()
+                    .desc("Key store password")
+                    .build()
     ),
     TRUST_STORE_FILE(
         Option.builder("t")
