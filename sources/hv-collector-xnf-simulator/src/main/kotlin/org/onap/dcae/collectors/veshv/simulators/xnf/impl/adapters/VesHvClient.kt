@@ -26,7 +26,7 @@ import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.SimulatorConfiguration
-import org.onap.dcae.collectors.veshv.ssl.boundary.ClientSslContextFactory
+import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
 import org.onap.dcae.collectors.veshv.utils.arrow.asIo
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.reactivestreams.Publisher
@@ -91,7 +91,7 @@ class VesHvClient(private val configuration: SimulatorConfiguration) {
     }
 
     private fun createSslContext(config: SecurityConfiguration): Option<SslContext> =
-            ClientSslContextFactory().createSslContext(config)
+            SslContextFactory().createClientContext(config)
 
     private fun NettyOutbound.logConnectionClosed() =
             withConnection { conn ->

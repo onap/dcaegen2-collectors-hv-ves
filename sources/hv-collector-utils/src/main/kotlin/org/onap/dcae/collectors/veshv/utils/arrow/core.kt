@@ -52,4 +52,8 @@ fun <A, B> Either<A, B>.doOnLeft(action: () -> Unit): Either<A, B> = apply { if 
 
 fun <A> Option<A>.doOnEmpty(action: () -> Unit): Option<A> = apply { if (isEmpty()) action() }
 
-fun <A> Try<A>.doOnFailure(action: () -> Unit): Try<A> = apply { if (isFailure()) action() }
+fun <A> Try<A>.doOnFailure(action: (Throwable) -> Unit): Try<A> = apply {
+    if (this is Try.Failure) {
+        action(exception)
+    }
+}

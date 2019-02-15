@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 import io.netty.handler.codec.http.HttpStatusClass
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
-import org.slf4j.LoggerFactory
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
 import java.util.*

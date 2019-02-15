@@ -25,12 +25,12 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.domain.JdkKeys
 import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
+import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.time.Duration
 import kotlin.test.assertNotNull
 
@@ -60,17 +60,17 @@ object ArgVesHvConfigurationTest : Spek({
 
             beforeEachTest {
                 result = cut.parseExpectingSuccess(
-                    "--kafka-bootstrap-servers", kafkaBootstrapServers,
-                    "--health-check-api-port", healthCheckApiPort,
-                    "--listen-port", listenPort,
-                    "--config-url", configurationUrl,
-                    "--first-request-delay", firstRequestDelay,
-                    "--request-interval", requestInterval,
-                    "--key-store", "/tmp/keys.p12",
-                    "--trust-store", "/tmp/trust.p12",
-                    "--key-store-password", keyStorePassword,
-                    "--trust-store-password", trustStorePassword,
-                    "--log-level", logLevel
+                        "--kafka-bootstrap-servers", kafkaBootstrapServers,
+                        "--health-check-api-port", healthCheckApiPort,
+                        "--listen-port", listenPort,
+                        "--config-url", configurationUrl,
+                        "--first-request-delay", firstRequestDelay,
+                        "--request-interval", requestInterval,
+                        "--key-store", "/tmp/keys.p12",
+                        "--trust-store", "/tmp/trust.p12",
+                        "--key-store-password", keyStorePassword,
+                        "--trust-store-password", trustStorePassword,
+                        "--log-level", logLevel
                 )
             }
 
@@ -97,27 +97,32 @@ object ArgVesHvConfigurationTest : Spek({
 
             it("should set proper first consul request delay") {
                 assertThat(result.configurationProviderParams.firstRequestDelay)
-                    .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
+                        .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
             }
 
             it("should set proper consul request interval") {
                 assertThat(result.configurationProviderParams.requestInterval)
-                    .isEqualTo(Duration.ofSeconds(requestInterval.toLong()))
+                        .isEqualTo(Duration.ofSeconds(requestInterval.toLong()))
             }
 
             it("should set proper config url") {
                 assertThat(result.configurationProviderParams.configurationUrl)
-                    .isEqualTo(configurationUrl)
+                        .isEqualTo(configurationUrl)
             }
 
             it("should set proper security configuration") {
-                assertThat(result.securityConfiguration.sslDisable).isFalse()
+                assertThat(result.securityConfiguration.keys.isEmpty()).isFalse()
 
-                val keys = result.securityConfiguration.keys.orNull() as JdkKeys
-                assertNotNull(keys.keyStore)
-                assertNotNull(keys.trustStore)
-                assertThat(keys.keyStorePassword).isEqualTo(keyStorePassword.toCharArray())
-                assertThat(keys.trustStorePassword).isEqualTo(trustStorePassword.toCharArray())
+                val keys = result.securityConfiguration.keys.orNull() as SecurityKeys
+                assertNotNull(keys.keyStore())
+                assertNotNull(keys.trustStore())
+                keys.keyStorePassword().useChecked {
+                    assertThat(it).isEqualTo(keyStorePassword.toCharArray())
+
+                }
+                keys.trustStorePassword().useChecked {
+                    assertThat(it).isEqualTo(trustStorePassword.toCharArray())
+                }
             }
 
             it("should set proper log level") {
@@ -129,24 +134,24 @@ object ArgVesHvConfigurationTest : Spek({
             on("missing listen port") {
                 it("should throw exception") {
                     assertThat(
-                        cut.parseExpectingFailure(
-                            "--config-url", configurationUrl,
-                            "--ssl-disable",
-                            "--first-request-delay", firstRequestDelay,
-                            "--request-interval", requestInterval
-                        )
+                            cut.parseExpectingFailure(
+                                    "--config-url", configurationUrl,
+                                    "--ssl-disable",
+                                    "--first-request-delay", firstRequestDelay,
+                                    "--request-interval", requestInterval
+                            )
                     ).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
             on("missing configuration url") {
                 it("should throw exception") {
                     assertThat(
-                        cut.parseExpectingFailure(
-                            "--listen-port", listenPort,
-                            "--ssl-disable",
-                            "--first-request-delay", firstRequestDelay,
-                            "--request-interval", requestInterval
-                        )
+                            cut.parseExpectingFailure(
+                                    "--listen-port", listenPort,
+                                    "--ssl-disable",
+                                    "--first-request-delay", firstRequestDelay,
+                                    "--request-interval", requestInterval
+                            )
                     ).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
@@ -156,16 +161,16 @@ object ArgVesHvConfigurationTest : Spek({
             on("missing log level") {
                 it("should set default INFO value") {
                     val config = cut.parseExpectingSuccess(
-                        "--kafka-bootstrap-servers", kafkaBootstrapServers,
-                        "--health-check-api-port", healthCheckApiPort,
-                        "--listen-port", listenPort,
-                        "--config-url", configurationUrl,
-                        "--first-request-delay", firstRequestDelay,
-                        "--request-interval", requestInterval,
-                        "--key-store", "/tmp/keys.p12",
-                        "--trust-store", "/tmp/trust.p12",
-                        "--key-store-password", keyStorePassword,
-                        "--trust-store-password", trustStorePassword
+                            "--kafka-bootstrap-servers", kafkaBootstrapServers,
+                            "--health-check-api-port", healthCheckApiPort,
+                            "--listen-port", listenPort,
+                            "--config-url", configurationUrl,
+                            "--first-request-delay", firstRequestDelay,
+                            "--request-interval", requestInterval,
+                            "--key-store", "/tmp/keys.p12",
+                            "--trust-store", "/tmp/trust.p12",
+                            "--key-store-password", keyStorePassword,
+                            "--trust-store-password", trustStorePassword
                     )
 
                     assertThat(config.logLevel).isEqualTo(LogLevel.INFO)
@@ -175,17 +180,17 @@ object ArgVesHvConfigurationTest : Spek({
             on("incorrect log level") {
                 it("should set default INFO value") {
                     val config = cut.parseExpectingSuccess(
-                        "--kafka-bootstrap-servers", kafkaBootstrapServers,
-                        "--health-check-api-port", healthCheckApiPort,
-                        "--listen-port", listenPort,
-                        "--config-url", configurationUrl,
-                        "--first-request-delay", firstRequestDelay,
-                        "--request-interval", requestInterval,
-                        "--key-store", "/tmp/keys.p12",
-                        "--trust-store", "/tmp/trust.p12",
-                        "--key-store-password", keyStorePassword,
-                        "--trust-store-password", trustStorePassword,
-                        "--log-level", "1"
+                            "--kafka-bootstrap-servers", kafkaBootstrapServers,
+                            "--health-check-api-port", healthCheckApiPort,
+                            "--listen-port", listenPort,
+                            "--config-url", configurationUrl,
+                            "--first-request-delay", firstRequestDelay,
+                            "--request-interval", requestInterval,
+                            "--key-store", "/tmp/keys.p12",
+                            "--trust-store", "/tmp/trust.p12",
+                            "--key-store-password", keyStorePassword,
+                            "--trust-store-password", trustStorePassword,
+                            "--log-level", "1"
                     )
 
                     assertThat(config.logLevel).isEqualTo(LogLevel.INFO)
