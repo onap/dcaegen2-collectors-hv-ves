@@ -20,8 +20,11 @@
 package org.onap.dcae.collectors.veshv.tests.utils
 
 import arrow.core.Either
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.ObjectAssert
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.time.Duration
+import kotlin.test.fail
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -33,7 +36,6 @@ private val logger = Logger("org.onap.dcae.collectors.veshv.tests.utils")
 object Assertions : org.assertj.core.api.Assertions() {
     fun <A, B> assertThat(actual: Either<A, B>) = EitherAssert(actual)
 }
-
 
 fun waitUntilSucceeds(action: () -> Unit) = waitUntilSucceeds(50, Duration.ofMillis(10), action)
 
@@ -52,4 +54,8 @@ fun waitUntilSucceeds(retries: Int, sleepTime: Duration, action: () -> Unit) {
                 Thread.sleep(sleepTime.toMillis())
         }
     }
+}
+
+fun <A, B> Either<A, B>.assertFailedWithError(assertj: (ObjectAssert<A>) -> Unit) {
+    fold({ assertj(Assertions.assertThat(it)) }, { fail("Error expected") })
 }

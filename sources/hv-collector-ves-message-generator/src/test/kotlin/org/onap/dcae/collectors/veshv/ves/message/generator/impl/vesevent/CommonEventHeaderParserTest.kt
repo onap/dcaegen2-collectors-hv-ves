@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent
 
 import arrow.core.Option
 import arrow.core.identity
@@ -37,7 +37,7 @@ import kotlin.test.fail
 class CommonEventHeaderParserTest : Spek({
 
     describe("Common event header parser") {
-        val parser = CommonEventHeaderParser()
+        val cut = CommonEventHeaderParser()
 
         given("valid header in JSON format") {
             val commonEventHeader = commonHeader(
@@ -47,7 +47,7 @@ class CommonEventHeaderParserTest : Spek({
 
             it("should parse common event header") {
                 val result =
-                        parser.parse(jsonObject(json))
+                        cut.parse(jsonObject(json))
                                 .fold({ fail() }, ::identity)
 
                 assertThat(result).describedAs("common event header").isEqualTo(commonEventHeader)
@@ -58,7 +58,7 @@ class CommonEventHeaderParserTest : Spek({
             val json = "{}".byteInputStream()
 
             it("should throw exception") {
-                val result = parser.parse(jsonObject(json))
+                val result = cut.parse(jsonObject(json))
 
                 assertFailed(result)
             }
@@ -68,7 +68,7 @@ class CommonEventHeaderParserTest : Spek({
             val json = "{}}}}".byteInputStream()
 
             it("should throw exception") {
-                val result = parser.parse(jsonObject(json))
+                val result = cut.parse(jsonObject(json))
 
                 assertFailed(result)
             }

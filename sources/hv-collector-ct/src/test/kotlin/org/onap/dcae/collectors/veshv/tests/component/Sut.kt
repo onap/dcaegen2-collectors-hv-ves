@@ -69,6 +69,7 @@ class Sut(sink: Sink = StoringSink()): AutoCloseable {
     }
 }
 
+
 class DummySinkProvider(private val sink: Sink) : SinkProvider {
     private val active = AtomicBoolean(true)
 

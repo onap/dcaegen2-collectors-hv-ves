@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
+import arrow.core.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.jetbrains.spek.api.Spek
@@ -26,9 +27,13 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageType
+import org.onap.dcae.collectors.veshv.tests.utils.assertFailedWithError
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.VALID
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType.INVALID_GPB_DATA
 
-private const val EXPECTED_MESSAGES_AMOUNT = 25000L
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -36,27 +41,66 @@ private const val EXPECTED_MESSAGES_AMOUNT = 25000L
  */
 object MessageParametersParserTest : Spek({
     describe("Messages parameters parser") {
-        val messageParametersParser = MessageParametersParserImpl()
+        val cut = MessageParametersParserImpl()
 
         given("parameters json array") {
             on("valid parameters json") {
-                it("should parse MessagesParameters object successfully") {
-                    val result = messageParametersParser.parse(validMessagesParametesJson())
 
-                    result.fold({ fail("should have succeeded") }) { rightResult ->
+                it("should parse VesEventParameters") {
+                    val result = cut.parse(validVesEventParameters())
+
+                    result.fold({ fail("parsing VesEventParameters should have succeeded") }) { rightResult ->
+                        assertThat(rightResult).hasSize(1)
+
+                        val vesEventParams = rightResult.first()
+                        val expectedVesEventCount = 25000L
+
+                        assertThat(vesEventParams is VesEventParameters)
+                        vesEventParams as VesEventParameters
+                        assertThat(vesEventParams.messageType).isEqualTo(VALID)
+                        assertThat(vesEventParams.amount).isEqualTo(expectedVesEventCount)
+                    }
+                }
+
+                it("should parse WireFrameParameters") {
+                    val result = cut.parse(validWireFrameParameters())
+
+                    result.fold({ fail("parsing WireFrameParameters should have succeeded") }) { rightResult ->
+                        assertThat(rightResult).hasSize(1)
+
+                        val wireFrameParams = rightResult.first()
+                        val expectedWireFrameCount = 100L
+
+                        assertThat(wireFrameParams is WireFrameParameters)
+                        wireFrameParams as WireFrameParameters
+                        assertThat(wireFrameParams.messageType).isEqualTo(INVALID_GPB_DATA)
+                        assertThat(wireFrameParams.amount).isEqualTo(expectedWireFrameCount)
+                    }
+                }
+
+
+                it("should parse multiple types of MessageParameters") {
+                    val result = cut.parse(multipleMessageParameters())
+
+                    result.fold({ fail("parsing multiple types of MessageParameters should have succeeded") }) { rightResult ->
                         assertThat(rightResult).hasSize(2)
-                        val firstMessage = rightResult.first()
-                        assertThat(firstMessage.messageType).isEqualTo(MessageType.VALID)
-                        assertThat(firstMessage.amount).isEqualTo(EXPECTED_MESSAGES_AMOUNT)
-
+                        assertThat(rightResult[0] is VesEventParameters)
+                        assertThat(rightResult[1] is WireFrameParameters)
                     }
                 }
             }
 
             on("invalid parameters json") {
-                it("should throw exception") {
-                    val result = messageParametersParser.parse(invalidMessagesParametesJson())
-                    assertThat(result.isLeft()).describedAs("is left").isTrue()
+                it("should verify messageAmount") {
+                    cut
+                            .parse(nonNumberMessageAmountParameters())
+                            .assertFailedWithError { it.isInstanceOf(ParsingError::class.java) }
+                }
+
+                it("should verify messageType") {
+                    cut
+                            .parse(missingMessageTypeParameters())
+                            .assertFailedWithError { it.isInstanceOf(ParsingError::class.java) }
                 }
             }
         }
