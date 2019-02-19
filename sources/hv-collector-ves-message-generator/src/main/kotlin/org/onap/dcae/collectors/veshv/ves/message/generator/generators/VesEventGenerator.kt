@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent
+package org.onap.dcae.collectors.veshv.ves.message.generator.generators
 
 import com.google.protobuf.ByteString
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.FIXED_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.TOO_BIG_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.VALID
+import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux

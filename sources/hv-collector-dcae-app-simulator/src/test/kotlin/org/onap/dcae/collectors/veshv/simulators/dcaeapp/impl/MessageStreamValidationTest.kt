@@ -34,7 +34,7 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameter
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.FIXED_PAYLOAD
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.VALID
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.VesEventGenerator
+import org.onap.dcae.collectors.veshv.ves.message.generator.generators.VesEventGenerator
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
