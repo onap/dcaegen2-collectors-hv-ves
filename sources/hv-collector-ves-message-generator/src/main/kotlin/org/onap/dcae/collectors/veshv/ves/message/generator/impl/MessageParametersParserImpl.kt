@@ -33,7 +33,6 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.Com
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType.Companion.isWireFrameType
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent.CommonEventHeaderParser
 import javax.json.JsonArray
 import javax.json.JsonObject
 import javax.json.JsonValue

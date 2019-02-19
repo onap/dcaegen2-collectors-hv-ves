@@ -110,10 +110,6 @@
             <artifactId>hvvesclient-producer-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.onap.dcaegen2.services.sdk</groupId>
-            <artifactId>hvvesclient-producer-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-test-utils</artifactId>
             <version>${project.parent.version}</version>

@@ -17,12 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl.wireframe
+package org.onap.dcae.collectors.veshv.ves.message.generator.generators
 
-import org.onap.dcae.collectors.veshv.domain.ByteData
-import org.onap.dcae.collectors.veshv.domain.PayloadContentType
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageGenerator
+import io.netty.buffer.Unpooled
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType.INVALID_GPB_DATA
@@ -30,37 +27,29 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType.IN
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since February 2019
  */
-class WireFrameGenerator : MessageGenerator<WireFrameParameters, WireFrameMessage>() {
+class RawMessageGenerator : MessageGenerator<WireFrameParameters, ByteBuffer>() {
 
-    override fun createMessageFlux(parameters: WireFrameParameters): Flux<WireFrameMessage> =
+    override fun createMessageFlux(parameters: WireFrameParameters): Flux<ByteBuffer> =
             parameters.run {
                 Mono
                         .fromCallable { createMessage(messageType) }
                         .let { repeatMessage(it, amount) }
             }
 
-    private fun createMessage(messageType: WireFrameType): WireFrameMessage =
+    private fun createMessage(messageType: WireFrameType): ByteBuffer =
             when (messageType) {
-                INVALID_WIRE_FRAME -> {
-                    val payload = ByteData(VesEvent.getDefaultInstance().toByteArray())
-                    WireFrameMessage(
-                            payload,
-                            UNSUPPORTED_VERSION,
-                            UNSUPPORTED_VERSION,
-                            PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
-                            payload.size())
-                }
-                INVALID_GPB_DATA ->
-                    WireFrameMessage("invalid vesEvent".toByteArray(Charset.defaultCharset()))
+                INVALID_WIRE_FRAME -> wrap(VesEvent.getDefaultInstance().toByteArray())
+                INVALID_GPB_DATA -> wrap("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
 
-    companion object {
-        private const val UNSUPPORTED_VERSION: Short = 2
-    }
+    private fun wrap(bytes: ByteArray) = Unpooled.wrappedBuffer(bytes).nioBuffer()
+
+
 }

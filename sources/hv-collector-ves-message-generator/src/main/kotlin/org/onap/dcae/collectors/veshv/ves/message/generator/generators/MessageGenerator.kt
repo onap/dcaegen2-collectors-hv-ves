@@ -17,30 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent
+package org.onap.dcae.collectors.veshv.ves.message.generator.generators
 
-import com.google.protobuf.ByteString
-import java.util.*
-import kotlin.streams.asSequence
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
-internal class PayloadGenerator {
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since June 2018
+ */
+abstract class MessageGenerator<K : MessageParameters, T> {
+    abstract fun createMessageFlux(parameters: K): Flux<T>
 
-    private val randomGenerator = Random()
-
-    fun generateRawPayload(size: Int): ByteString =
-            ByteString.copyFrom(ByteArray(size))
-
-    fun generatePayload(numOfCountMeasurements: Long = 2): ByteString =
-            ByteString.copyFrom(
-                    randomGenerator
-                            .ints(numOfCountMeasurements, MIN_BYTE_VALUE, MAX_BYTE_VALUE)
-                            .asSequence()
-                            .toString()
-                            .toByteArray()
-            )
-
-    companion object {
-        private const val MIN_BYTE_VALUE = 0
-        private const val MAX_BYTE_VALUE = 256
+    protected fun repeatMessage(message: Mono<T>, amount: Long): Flux<T> = when {
+        amount < 0 -> repeatForever(message)
+        amount == 0L -> emptyMessageStream()
+        else -> repeatNTimes(message, amount)
     }
+
+    private fun repeatForever(message: Mono<T>) = message.repeat()
+
+    private fun emptyMessageStream() = Flux.empty<T>()
+
+    private fun repeatNTimes(message: Mono<T>, amount: Long) = message.repeat(amount - 1)
 }
+

@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.api
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import io.vavr.collection.Set
+import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import java.net.InetSocketAddress
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since February 2019
  */
-abstract class MessageGenerator<K : MessageParameters, T> {
-    abstract fun createMessageFlux(parameters: K): Flux<T>
-
-    protected fun repeatMessage(message: Mono<T>, amount: Long): Flux<T> = when {
-        amount < 0 -> repeatForever(message)
-        amount == 0L -> emptyMessageStream()
-        else -> repeatNTimes(message, amount)
-    }
-
-    private fun repeatForever(message: Mono<T>) = message.repeat()
-
-    private fun emptyMessageStream() = Flux.empty<T>()
-
-    private fun repeatNTimes(message: Mono<T>, amount: Long) = message.repeat(amount - 1)
-}
-
+data class ClientConfiguration(val collectorAddresses: Set<InetSocketAddress>,
+                               val security: SecurityConfiguration)
