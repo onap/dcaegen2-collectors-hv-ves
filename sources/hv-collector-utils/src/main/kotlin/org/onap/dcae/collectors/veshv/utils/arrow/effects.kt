@@ -23,11 +23,10 @@ import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
 import arrow.effects.IO
-import arrow.effects.fix
-import arrow.effects.instances.io.monadError.monadError
-import arrow.typeclasses.binding
+import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.publisher.toMono
 import kotlin.system.exitProcess
 
 /**
@@ -61,6 +60,9 @@ fun <T> Mono<T>.asIo() = IO.async<T> { callback ->
         callback(Left(it))
     })
 }
+
+fun <T> Publisher<T>.then(callback: () -> Unit): Mono<Unit> =
+        toMono().then(Mono.fromCallable(callback))
 
 fun <T> Flux<IO<T>>.evaluateIo(): Flux<T> =
         flatMap { io ->

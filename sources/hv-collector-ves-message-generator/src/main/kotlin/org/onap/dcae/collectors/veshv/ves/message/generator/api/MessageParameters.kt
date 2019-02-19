@@ -19,20 +19,36 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.api
 
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType.INVALID_WIRE_FRAME
+import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options.ImmutableWireFrameVersion
+import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options.WireFrameVersion
 import org.onap.ves.VesEventOuterClass
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-abstract class MessageParameters(val amount: Long = -1)
+sealed class MessageParameters
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since February 2019
  */
 class WireFrameParameters(val messageType: WireFrameType,
-                          amount: Long = -1) : MessageParameters(amount)
+                          val amount: Long = -1) : MessageParameters() {
+
+    val wireFrameVersion: WireFrameVersion
+        get() = ImmutableWireFrameVersion.builder().let {
+            if (messageType == INVALID_WIRE_FRAME)
+                it.major(UNSUPPORTED_MAJOR_VERSION)
+            else
+                it
+        }.build()
+
+    companion object {
+        private const val UNSUPPORTED_MAJOR_VERSION: Short = 2
+    }
+}
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -40,4 +56,4 @@ class WireFrameParameters(val messageType: WireFrameType,
  */
 class VesEventParameters(val commonEventHeader: VesEventOuterClass.CommonEventHeader,
                          val messageType: VesEventType,
-                         amount: Long = -1) : MessageParameters(amount)
+                         val amount: Long = -1) : MessageParameters()

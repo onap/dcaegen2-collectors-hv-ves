@@ -17,18 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ves.message.generator.factory
+package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 
-import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
-import org.onap.dcae.collectors.veshv.ves.message.generator.generators.VesEventGenerator
-import org.onap.dcae.collectors.veshv.ves.message.generator.generators.RawMessageGenerator
+import com.google.protobuf.ByteString
+import java.util.*
+import kotlin.streams.asSequence
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since October 2018
- */
-class MessageGeneratorFactory(private val maxPayloadSizeBytes: Int) {
-    fun createVesEventGenerator() = VesEventGenerator(PayloadGenerator(), maxPayloadSizeBytes)
+internal class PayloadGenerator {
 
-    fun createWireFrameGenerator() = RawMessageGenerator()
+    private val randomGenerator = Random()
+
+    fun generateRawPayload(size: Int): ByteString =
+            ByteString.copyFrom(ByteArray(size))
+
+    fun generatePayload(numOfCountMeasurements: Long = 2): ByteString =
+            ByteString.copyFrom(
+                    randomGenerator
+                            .ints(numOfCountMeasurements, MIN_BYTE_VALUE, MAX_BYTE_VALUE)
+                            .asSequence()
+                            .toString()
+                            .toByteArray()
+            )
+
+    companion object {
+        private const val MIN_BYTE_VALUE = 0
+        private const val MAX_BYTE_VALUE = 256
+    }
 }

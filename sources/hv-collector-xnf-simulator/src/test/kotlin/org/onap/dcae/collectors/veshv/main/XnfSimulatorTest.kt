@@ -21,18 +21,28 @@ package org.onap.dcae.collectors.veshv.main
 
 import arrow.core.Left
 import arrow.core.None
+import arrow.core.Right
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.VesHvClient
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.HvVesClient
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
 import org.onap.dcae.collectors.veshv.tests.utils.Assertions.assertThat
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
+import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
+import org.onap.dcae.collectors.veshv.ves.message.generator.generators.VesEventGenerator
+import org.onap.ves.VesEventOuterClass
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.io.ByteArrayInputStream
 
 /**
@@ -41,15 +51,15 @@ import java.io.ByteArrayInputStream
  */
 internal class XnfSimulatorTest : Spek({
     lateinit var cut: XnfSimulator
-    lateinit var vesClient: VesHvClient
+    lateinit var clientFactory: ClientFactory
     lateinit var messageParametersParser: MessageParametersParser
     lateinit var generatorFactory: MessageGeneratorFactory
 
     beforeEachTest {
-        vesClient = mock()
+        clientFactory = mock()
         messageParametersParser = mock()
         generatorFactory = mock()
-        cut = XnfSimulator(vesClient, generatorFactory, messageParametersParser)
+        cut = XnfSimulator(clientFactory, generatorFactory, messageParametersParser)
     }
 
     describe("startSimulation") {
@@ -89,22 +99,34 @@ internal class XnfSimulatorTest : Spek({
             assertThat(result).left().isEqualTo(cause)
         }
 
-        // TODO uncomment and fix this test after introducing HvVesProducer from onap SDK in XnfSimulator
-//        it("should return generated messages") {
-//            // given
-//            val json = "[true]".byteInputStream()
-//            val messageParams = listOf<MessageParameters>()
-//            val generatedMessages = Flux.empty<WireFrameMessage>()
-//            val sendingIo = IO {}
-//            whenever(messageParametersParser.parse(any())).thenReturn(Right(messageParams))
-//            whenever(messageGenerator.createMessageFlux(messageParams)).thenReturn(generatedMessages)
-//            whenever(vesClient.sendIo(generatedMessages)).thenReturn(sendingIo)
-//
-//            // when
-//            val result = cut.startSimulation(json)
-//
-//            // then
-//            assertThat(result).right().isSameAs(sendingIo)
-//        }
+        it("should return generated ves messages") {
+            // given
+            val vesEventGenerator: VesEventGenerator = mock()
+            val vesClient: HvVesClient = mock()
+
+            val json = "[true]".byteInputStream()
+
+            val vesEventParams = VesEventParameters(
+                    CommonEventHeader.getDefaultInstance(),
+                    VesEventType.VALID,
+                    1
+            )
+            val messageParams = listOf(vesEventParams)
+
+            val generatedMessages = Flux.empty<VesEventOuterClass.VesEvent>()
+
+
+            whenever(messageParametersParser.parse(any())).thenReturn(Right(messageParams))
+            whenever(generatorFactory.createVesEventGenerator()).thenReturn(vesEventGenerator)
+            whenever(vesEventGenerator.createMessageFlux(vesEventParams)).thenReturn(generatedMessages)
+            whenever(clientFactory.create()).thenReturn(vesClient)
+            whenever(vesClient.sendVesEvents(generatedMessages)).thenReturn(Mono.just(Unit))
+
+            // when
+            cut.startSimulation(json).map { it.unsafeRunSync() }
+
+            // then
+            verify(vesClient).sendVesEvents(generatedMessages)
+        }
     }
 })
