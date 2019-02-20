@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0ea8d48c_68b834ab",
+        "filename": "sources/hv-collector-ves-message-generator/src/main/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/api/MessageParameters.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-20T08:57:04Z",
+      "side": 1,
+      "message": "Rename to USNUPPORTED_MAJOR_VERSION",
+      "range": {
+        "startLine": 49,
+        "startChar": 55,
+        "endLine": 49,
+        "endChar": 56
+      },
+      "revId": "25b020613914f23bbeb5f16c69193bf4a840891b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7398e0d2_2fb6e7a1",
+        "filename": "sources/hv-collector-ves-message-generator/src/test/kotlin/org/onap/dcae/collectors/veshv/ves/message/generator/impl/raw/RawMessageGeneratorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-20T08:57:04Z",
+      "side": 1,
+      "message": "Change test object name to reflect CUT",
+      "range": {
+        "startLine": 40,
+        "startChar": 7,
+        "endLine": 40,
+        "endChar": 29
+      },
+      "revId": "25b020613914f23bbeb5f16c69193bf4a840891b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b91a5b5_31818e96",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/factory/ClientFactory.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-20T08:57:04Z",
+      "side": 1,
+      "message": "Extract this to a function and use it here and below.",
+      "range": {
+        "startLine": 36,
+        "startChar": 16,
+        "endLine": 38,
+        "endChar": 77
+      },
+      "revId": "25b020613914f23bbeb5f16c69193bf4a840891b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4c934c8_7aa506b9",
+        "filename": "sources/hv-collector-xnf-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/main/HvVesClientTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-20T08:57:04Z",
+      "side": 1,
+      "message": "Reorganize these tests so it complies with Spek given/on/it template",
+      "revId": "25b020613914f23bbeb5f16c69193bf4a840891b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c687c029_744afbb6",
+        "filename": "sources/hv-collector-xnf-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/main/XnfSimulatorTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-20T08:57:04Z",
+      "side": 1,
+      "message": "IMO we should check that generatedMessages are the same instance (\"\u003d\u003d\" instead of \"equals\").",
+      "revId": "25b020613914f23bbeb5f16c69193bf4a840891b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
