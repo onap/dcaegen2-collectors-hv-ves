@@ -129,6 +129,24 @@
     },
     {
       "key": {
+        "uuid": "491fb0a5_25a301f5",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/factory/ClientFactory.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-21T11:55:16Z",
+      "side": 1,
+      "message": "Due to testing issues i had to modify it a bit",
+      "parentUuid": "839f5690_1cdfa2d1",
+      "revId": "25b020613914f23bbeb5f16c69193bf4a840891b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b4c934c8_7aa506b9",
         "filename": "sources/hv-collector-xnf-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/main/HvVesClientTest.kt",
         "patchSetId": 1
