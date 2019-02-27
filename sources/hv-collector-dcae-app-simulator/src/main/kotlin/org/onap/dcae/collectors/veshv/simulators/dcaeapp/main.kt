@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
 import arrow.effects.IO
+import org.onap.dcae.collectors.veshv.configuration.cmd.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.MessageStreamValidation
@@ -29,7 +30,6 @@ import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimC
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unit
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
-import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 
