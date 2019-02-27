@@ -29,7 +29,7 @@ data class Routing(val routes: List<Route>) {
             Option.fromNullable(routes.find { it.applies(commonHeader) })
 }
 
-data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int) {
+data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int = {0}) {
 
     fun applies(commonHeader: CommonEventHeader) = commonHeader.domain == domain
 
@@ -67,15 +67,15 @@ class RouteBuilder {
     private lateinit var targetTopic: String
     private lateinit var partitioning: (CommonEventHeader) -> Int
 
-    fun fromDomain(domain: String) {
+    fun fromDomain(domain: String) : RouteBuilder = apply {
         this.domain = domain
     }
 
-    fun toTopic(targetTopic: String) {
+    fun toTopic(targetTopic: String) : RouteBuilder = apply {
         this.targetTopic = targetTopic
     }
 
-    fun withFixedPartitioning(num: Int = 0) {
+    fun withFixedPartitioning(num: Int = 0) : RouteBuilder = apply {
         partitioning = { num }
     }
 
