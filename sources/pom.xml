@@ -120,6 +120,7 @@
     </build>
 
     <modules>
+        <module>hv-collector-commandline</module>
         <module>hv-collector-core</module>
         <module>hv-collector-ct</module>
         <module>hv-collector-dcae-app-simulator</module>
