@@ -16,6 +16,24 @@
       "revId": "ae2424d0ff0f310ab1f0567491311955fac9b38a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c926a352_3af37909",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/XnfSimulator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-02-27T13:51:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22209a10_c885706d",
+      "revId": "ae2424d0ff0f310ab1f0567491311955fac9b38a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
