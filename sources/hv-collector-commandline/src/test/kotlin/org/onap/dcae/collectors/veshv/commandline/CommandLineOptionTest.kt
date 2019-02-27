@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.commandline
+package org.onap.dcae.collectors.veshv.commandline
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -25,6 +25,8 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.DUMMY_MODE
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.KAFKA_SERVERS
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -34,7 +36,7 @@ class CommandLineOptionTest : Spek({
     describe("command line options enum") {
         describe("environment variables") {
             given("sample option and prefix") {
-                val opt = CommandLineOption.KAFKA_SERVERS
+                val opt = KAFKA_SERVERS
                 val prefix = "CONFIG"
 
                 on("calling environmentVariableName") {
@@ -47,7 +49,7 @@ class CommandLineOptionTest : Spek({
             }
 
             given("sample option without prefix") {
-                val opt = CommandLineOption.DUMMY_MODE
+                val opt = DUMMY_MODE
 
                 on("calling environmentVariableName") {
                     val result = opt.environmentVariableName()
