@@ -26,6 +26,26 @@ import arrow.instances.option.monad.monad
 import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
+import org.onap.dcae.collectors.veshv.configuration.cmd.ArgBasedConfiguration
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.CONSUL_CONFIG_URL
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.CONSUL_FIRST_REQUEST_DELAY
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.CONSUL_REQUEST_INTERVAL
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.DUMMY_MODE
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.HEALTH_CHECK_API_PORT
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.IDLE_TIMEOUT_SEC
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.KAFKA_SERVERS
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.KEY_STORE_FILE
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.KEY_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.LISTEN_PORT
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.LOG_LEVEL
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.MAXIMUM_PAYLOAD_SIZE_BYTES
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.SSL_DISABLE
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.TRUST_STORE_FILE
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.TRUST_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.configuration.cmd.hasOption
+import org.onap.dcae.collectors.veshv.configuration.cmd.intValue
+import org.onap.dcae.collectors.veshv.configuration.cmd.longValue
+import org.onap.dcae.collectors.veshv.configuration.cmd.stringValue
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
@@ -33,22 +53,6 @@ import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
-import org.onap.dcae.collectors.veshv.utils.commandline.*
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_CONFIG_URL
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_SERVERS
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_FIRST_REQUEST_DELAY
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_REQUEST_INTERVAL
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.DUMMY_MODE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.IDLE_TIMEOUT_SEC
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KEY_STORE_PASSWORD
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LISTEN_PORT
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.MAXIMUM_PAYLOAD_SIZE_BYTES
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.SSL_DISABLE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_FILE
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.TRUST_STORE_PASSWORD
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.LOG_LEVEL
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.net.InetSocketAddress
@@ -110,7 +114,6 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                         logLevel = determineLogLevel(logLevel)
                 )
             }.fix()
-
 
     private fun createConfigurationProviderParams(cmdLine: CommandLine): Option<ConfigurationProviderParams> =
             Option.monad().binding {
