@@ -24,10 +24,13 @@ import arrow.core.Some
 import arrow.core.Try
 import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.KEY_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.SSL_DISABLE
+import org.onap.dcae.collectors.veshv.configuration.cmd.CommandLineOption.TRUST_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.configuration.cmd.hasOption
+import org.onap.dcae.collectors.veshv.configuration.cmd.stringValue
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
-import org.onap.dcae.collectors.veshv.utils.commandline.hasOption
-import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
 import org.onap.dcaegen2.services.sdk.security.ssl.Passwords
@@ -42,7 +45,7 @@ const val KEY_STORE_FILE = "/etc/ves-hv/server.p12"
 const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
 
 fun createSecurityConfiguration(cmdLine: CommandLine): Try<SecurityConfiguration> =
-        if (cmdLine.hasOption(CommandLineOption.SSL_DISABLE))
+        if (cmdLine.hasOption(SSL_DISABLE))
             Try { disabledSecurityConfiguration() }
         else
             enabledSecurityConfiguration(cmdLine)
@@ -51,9 +54,9 @@ private fun disabledSecurityConfiguration() = SecurityConfiguration(keys = None)
 
 private fun enabledSecurityConfiguration(cmdLine: CommandLine) = Try {
     val ksFile = cmdLine.stringValue(CommandLineOption.KEY_STORE_FILE, KEY_STORE_FILE)
-    val ksPass = cmdLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD).getOrElse { "" }
+    val ksPass = cmdLine.stringValue(KEY_STORE_PASSWORD).getOrElse { "" }
     val tsFile = cmdLine.stringValue(CommandLineOption.TRUST_STORE_FILE, TRUST_STORE_FILE)
-    val tsPass = cmdLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD).getOrElse { "" }
+    val tsPass = cmdLine.stringValue(TRUST_STORE_PASSWORD).getOrElse { "" }
 
     val keys = ImmutableSecurityKeys.builder()
             .keyStore(ImmutableSecurityKeysStore.of(pathFromFile(ksFile)))
