@@ -66,7 +66,7 @@ class XnfSimulator(
 
     private fun simulationFrom(parameters: List<MessageParameters>): IO<Unit> = parameters
             .toFlux()
-            .map(::simulate)
+            .flatMap(::simulate)
             .then(Mono.just(Unit))
             .asIo()
 
