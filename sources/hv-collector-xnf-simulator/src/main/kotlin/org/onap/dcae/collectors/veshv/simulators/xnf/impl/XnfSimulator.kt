@@ -28,12 +28,14 @@ import arrow.instances.either.monad.monad
 import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
 import org.onap.dcae.collectors.veshv.utils.arrow.asIo
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
+import reactor.core.Disposable
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toFlux
 import java.io.InputStream
@@ -70,17 +72,17 @@ class XnfSimulator(
             .then(Mono.just(Unit))
             .asIo()
 
-    private fun simulate(parameters: MessageParameters): Mono<Unit> =
+    private fun simulate(parameters: MessageParameters): Disposable =
             when (parameters) {
                 is VesEventParameters -> {
                     val messages = vesEventGenerator.createMessageFlux(parameters)
                     val client = clientFactory.create()
-                    client.sendVesEvents(messages)
+                    client.sendVesEvents(messages).subscribe()
                 }
                 is WireFrameParameters -> {
                     val messages = wireFrameGenerator.createMessageFlux(parameters)
                     val client = clientFactory.create(parameters.wireFrameVersion)
-                    client.sendRawPayload(messages)
+                    client.sendRawPayload(messages).subscribe()
                 }
             }
 }
