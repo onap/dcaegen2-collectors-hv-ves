@@ -1,0 +1,25 @@
+{
+  "healthCheckApiPort" : 5000,
+  "listenPort" : 6000,
+  "configConsulUrl" : "127.0.0.1",
+  "consulFirstRequestDelaySec" : 7,
+  "consulRequestIntervalSec" : 900,
+  "vesHvAddress" : "192.168.255.1:8000",
+  "sslDisable" : false,
+  "keyStoreFile" : "test.ks",
+  "keyStorePassword" : "changeMe",
+  "trustStoreFile" : "trust.ks",
+  "trustStorePassword" : "changeMeToo",
+  "idleTimeoutSec" : 1200,
+  "maximumPayloadSizeBytes" : 512000,
+  "logLevel" : "ERROR",
+  "dummyMode" : false,
+  "kafkaServers" : ["192.168.255.1:5005", "192.168.255.1:5006"],
+  "kafkaTopics" : ["test", "test2"],
+  "routing" : [
+    {
+      "fromDomain": "perf3gpp",
+      "toTopic": "HV_VES_PERF3GPP"
+    }
+  ]
+}
