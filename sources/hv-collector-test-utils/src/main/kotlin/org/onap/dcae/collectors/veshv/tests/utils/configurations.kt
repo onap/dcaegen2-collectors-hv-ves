@@ -20,8 +20,8 @@
 package org.onap.dcae.collectors.veshv.tests.utils
 
 import arrow.core.identity
-import org.onap.dcae.collectors.veshv.utils.commandline.ArgBasedConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
+import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
+import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
 
 
 fun <T> ArgBasedConfiguration<T>.parseExpectingSuccess(vararg cmdLine: String): T =

@@ -24,10 +24,10 @@ import arrow.core.Some
 import arrow.core.Try
 import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption
+import org.onap.dcae.collectors.veshv.commandline.hasOption
+import org.onap.dcae.collectors.veshv.commandline.stringValue
 import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption
-import org.onap.dcae.collectors.veshv.utils.commandline.hasOption
-import org.onap.dcae.collectors.veshv.utils.commandline.stringValue
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
 import org.onap.dcaegen2.services.sdk.security.ssl.Passwords

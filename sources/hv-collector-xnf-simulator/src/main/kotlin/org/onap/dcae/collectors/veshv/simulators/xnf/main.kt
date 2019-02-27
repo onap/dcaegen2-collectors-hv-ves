@@ -24,6 +24,7 @@ import arrow.effects.fix
 import arrow.effects.instances.io.monad.monad
 import arrow.typeclasses.binding
 import io.vavr.collection.HashSet
+import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
@@ -36,7 +37,6 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.SimulatorConfig
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
-import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 import ratpack.server.RatpackServer
