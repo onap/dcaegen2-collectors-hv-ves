@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6cadd085_9d91b619",
+        "filename": "sources/hv-collector-configuration/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-28T08:42:23Z",
+      "side": 1,
+      "message": "It\u0027s rather hv-collector-cmdline-params, hv-collector-cmdline, hv-collector-commandline or similar.\n\nMain means of configuration would be that CSIT JSON.",
+      "range": {
+        "startLine": 12,
+        "startChar": 14,
+        "endLine": 12,
+        "endChar": 40
+      },
+      "revId": "83c776827c37efdc0cc5f047484aa3641a4aebf2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e85b9ba_5723b81f",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/configuration/cmd/ArgBasedConfiguration.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-02-28T08:42:23Z",
+      "side": 1,
+      "message": "here also reflect the artifact name change. May be cmdlineparams or similar.",
+      "range": {
+        "startLine": 20,
+        "startChar": 39,
+        "endLine": 20,
+        "endChar": 56
+      },
+      "revId": "83c776827c37efdc0cc5f047484aa3641a4aebf2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
