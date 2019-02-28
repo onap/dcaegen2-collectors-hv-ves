@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.onap.dcae.collectors.veshv.impl.VesHvCollector
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.util.concurrent.atomic.AtomicReference
@@ -53,18 +54,19 @@ class CollectorFactory(val configuration: ConfigurationProvider,
         val config: AtomicReference<CollectorConfiguration> = AtomicReference()
         configuration()
                 .doOnNext {
-                    logger.info { "Using updated configuration for new connections" }
+                    logger.info(ServiceContext::mdc) { "Using updated configuration for new connections" }
                     healthState.changeState(HealthDescription.HEALTHY)
                 }
                 .doOnError {
-                    logger.error { "Failed to acquire configuration from consul" }
+                    logger.error(ServiceContext::mdc) { "Failed to acquire configuration ${it.message}" }
+                    logger.debug(ServiceContext::mdc) { "Detailed stack trace: $it" }
                     healthState.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(config::set)
 
         return object : CollectorProvider {
             override fun invoke(ctx: ClientContext): Option<Collector> =
-                config.getOption().map { createVesHvCollector(it, ctx) }
+                    config.getOption().map { createVesHvCollector(it, ctx) }
 
             override fun close() = sinkProvider.close()
         }
