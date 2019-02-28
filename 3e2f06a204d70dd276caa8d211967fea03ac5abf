@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ba3f3e4_92606dbc",
+        "filename": "sources/hv-collector-main/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-28T13:34:08Z",
+      "side": 1,
+      "message": "We could remove this dependency as it\u0027s transitive from core-\u003essl-\u003ecmdline and we most likely won\u0027t use this module in near future.",
+      "revId": "3e2f06a204d70dd276caa8d211967fea03ac5abf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f72595a4_d1b455b9",
+        "filename": "sources/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-02-28T13:34:08Z",
+      "side": 1,
+      "message": "Lexicographical order please :)",
+      "revId": "3e2f06a204d70dd276caa8d211967fea03ac5abf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
