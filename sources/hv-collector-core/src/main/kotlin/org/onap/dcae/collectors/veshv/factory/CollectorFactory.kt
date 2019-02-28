@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                     healthState.changeState(HealthDescription.HEALTHY)
                 }
                 .doOnError {
-                    logger.error { "Failed to acquire configuration from consul" }
+                    logger.error { "Failed to acquire configuration ${it.localizedMessage}" }
                     healthState.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(config::set)

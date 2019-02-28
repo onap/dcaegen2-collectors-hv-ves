@@ -3,7 +3,7 @@
   ~ ============LICENSE_START=======================================================
   ~ dcaegen2-collectors-veshv
   ~ ================================================================================
-  ~ Copyright (C) 2018 NOKIA
+  ~ Copyright (C) 2018-2019 NOKIA
   ~ ================================================================================
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -99,6 +99,11 @@
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-commandline</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -125,6 +130,11 @@
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-main</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-ssl</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
