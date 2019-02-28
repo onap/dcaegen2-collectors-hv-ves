@@ -37,7 +37,7 @@ object VesServer : ServerStarter() {
 
     private fun createVesServer(config: ServerConfiguration): Server {
         val collectorProvider = CollectorFactory(
-                AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
+                AdapterFactory.configurationProvider(config.configurationProviderParams),
                 AdapterFactory.sinkCreatorFactory(config.dummyMode, config.kafkaConfiguration),
                 MicrometerMetrics.INSTANCE,
                 config.maximumPayloadSizeBytes

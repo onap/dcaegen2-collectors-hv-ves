@@ -38,26 +38,18 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
             .build(),
         required = true
     ),
-    CONSUL_CONFIG_URL(
-        Option.builder("c")
-            .longOpt("config-url")
-            .hasArg()
-            .desc("URL of ves configuration on consul")
-            .build(),
-        required = true
-    ),
-    CONSUL_FIRST_REQUEST_DELAY(
+    CONFIGURATION_FIRST_REQUEST_DELAY(
         Option.builder("d")
             .longOpt("first-request-delay")
             .hasArg()
-            .desc("Delay of first request to consul in seconds")
+            .desc("Delay of first request for configuration in seconds")
             .build()
     ),
-    CONSUL_REQUEST_INTERVAL(
+    CONFIGURATION_REQUEST_INTERVAL(
         Option.builder("I")
             .longOpt("request-interval")
             .hasArg()
-            .desc("Interval of consul configuration requests in seconds")
+            .desc("Interval of configuration requests in seconds")
             .build()
     ),
     VES_HV_PORT(

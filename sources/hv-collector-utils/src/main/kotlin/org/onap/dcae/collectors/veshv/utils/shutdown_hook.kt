@@ -33,9 +33,3 @@ fun registerShutdownHook(job: () -> Unit) {
         }
     })
 }
-
-fun registerShutdownHook(job: IO<Unit>) = IO {
-    registerShutdownHook {
-        job.unsafeRunSync()
-    }
-}

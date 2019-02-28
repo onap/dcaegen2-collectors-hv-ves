@@ -57,7 +57,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                     healthState.changeState(HealthDescription.HEALTHY)
                 }
                 .doOnError {
-                    logger.error { "Failed to acquire configuration from consul" }
+                    logger.error { "Failed to acquire configuration" + it.localizedMessage }
                     healthState.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
                 }
                 .subscribe(config::set)
