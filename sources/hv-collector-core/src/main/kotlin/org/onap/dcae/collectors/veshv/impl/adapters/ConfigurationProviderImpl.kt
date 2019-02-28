@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters
 
+import com.google.gson.JsonObject
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
@@ -27,42 +28,33 @@ import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.model.routing
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.dcae.collectors.veshv.utils.logging.Marker
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
+import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.retry.Jitter
 import reactor.retry.Retry
-import java.io.StringReader
-import java.security.MessageDigest
 import java.time.Duration
-import java.util.*
-import java.util.concurrent.atomic.AtomicReference
-import javax.json.Json
-import javax.json.JsonObject
 
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-internal class ConsulConfigurationProvider(private val http: HttpAdapter,
-                                           private val url: String,
-                                           private val firstRequestDelay: Duration,
-                                           private val requestInterval: Duration,
-                                           private val healthState: HealthState,
-                                           retrySpec: Retry<Any>
+internal class ConfigurationProviderImpl(private val cbsclientMono: Mono<CbsClient>,
+                                         private val firstRequestDelay: Duration,
+                                         private val requestInterval: Duration,
+                                         private val healthState: HealthState,
+                                         retrySpec: Retry<Any>
 
 ) : ConfigurationProvider {
-    private val lastConfigurationHash: AtomicReference<ByteArray> = AtomicReference(byteArrayOf())
     private val retry = retrySpec.doOnRetry {
         logger.withWarn(ServiceContext::mdc) { log("Could not load fresh configuration", it.exception()) }
         healthState.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
     }
 
-    constructor(http: HttpAdapter,
-                params: ConfigurationProviderParams) : this(
-            http,
-            params.configurationUrl,
+    constructor(cbsclientMono: Mono<CbsClient>, params: ConfigurationProviderParams) : this(
+            cbsclientMono,
             params.firstRequestDelay,
             params.requestInterval,
             HealthState.INSTANCE,
@@ -73,49 +65,28 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
     )
 
     override fun invoke(): Flux<CollectorConfiguration> =
-            Flux.interval(firstRequestDelay, requestInterval)
-                    .concatMap { askForConfig() }
-                    .flatMap(::filterDifferentValues)
-                    .map(::parseJsonResponse)
-                    .map(::createCollectorConfiguration)
-                    .retryWhen(retry)
+            Flux.from(cbsclientMono)
+                    .flatMap(::handleUpdates)
 
-    private fun askForConfig(): Mono<BodyWithInvocationId> = Mono.defer {
-        val invocationId = UUID.randomUUID()
-        http.get(url, invocationId).map { BodyWithInvocationId(it, invocationId) }
-    }
-
-    private fun filterDifferentValues(configuration: BodyWithInvocationId) =
-            configuration.body.let { configurationString ->
-                configurationString.sha256().let { newHash ->
-                    if (newHash contentEquals lastConfigurationHash.get()) {
-                        logger.trace(ServiceContext::mdc, Marker.Invoke(configuration.invocationId)) {
-                            "No change detected in consul configuration"
-                        }
-                        Mono.empty()
-                    } else {
-                        logger.info(ServiceContext::mdc, Marker.Invoke(configuration.invocationId)) {
-                            "Obtained new configuration from consul:\n$configurationString"
-                        }
-                        lastConfigurationHash.set(newHash)
-                        Mono.just(configurationString)
-                    }
-                }
-            }
-
-    private fun parseJsonResponse(responseString: String): JsonObject =
-            Json.createReader(StringReader(responseString)).readObject()
+    private fun handleUpdates(cbsClient: CbsClient): Flux<CollectorConfiguration> = cbsClient
+            .updates(RequestDiagnosticContext.create(),
+                    firstRequestDelay,
+                    requestInterval)
+            .doOnNext { logger.info { "Received new configuration: " + it } }
+            .map(::createCollectorConfiguration)
+            .doOnError { logger.error { "Error while creating configuration: ${it.localizedMessage}" } }
+            .retryWhen(retry)
 
     private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration =
             try {
-                val routingArray = configuration.getJsonArray(ROUTING_CONFIGURATION_KEY)
+                val routingArray = configuration.getAsJsonArray(ROUTING_CONFIGURATION_KEY)
                 CollectorConfiguration(
                         routing {
                             for (route in routingArray) {
-                                val routeObj = route.asJsonObject()
+                                val routeObj = route.asJsonObject
                                 defineRoute {
-                                    fromDomain(routeObj.getString(DOMAIN_CONFIGURATION_KEY))
-                                    toTopic(routeObj.getString(TOPIC_CONFIGURATION_KEY))
+                                    fromDomain(routeObj.getAsJsonPrimitive(DOMAIN_CONFIGURATION_KEY).asString)
+                                    toTopic(routeObj.getAsJsonPrimitive(TOPIC_CONFIGURATION_KEY).asString)
                                     withFixedPartitioning()
                                 }
                             }
@@ -133,13 +104,6 @@ internal class ConsulConfigurationProvider(private val http: HttpAdapter,
 
         private const val MAX_RETRIES = 5L
         private const val BACKOFF_INTERVAL_FACTOR = 30L
-        private val logger = Logger(ConsulConfigurationProvider::class)
-        private fun String.sha256() =
-                MessageDigest
-                        .getInstance("SHA-256")
-                        .digest(toByteArray())
-
+        private val logger = Logger(ConfigurationProviderImpl::class)
     }
-
-    private data class BodyWithInvocationId(val body: String, val invocationId: UUID)
 }

@@ -25,6 +25,5 @@ import java.time.Duration
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since July 2018
  */
-data class ConfigurationProviderParams(val configurationUrl: String,
-                                       val firstRequestDelay: Duration,
+data class ConfigurationProviderParams(val firstRequestDelay: Duration,
                                        val requestInterval: Duration)

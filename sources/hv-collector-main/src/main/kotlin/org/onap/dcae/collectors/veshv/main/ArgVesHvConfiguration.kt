@@ -34,10 +34,9 @@ import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
 import org.onap.dcae.collectors.veshv.utils.commandline.*
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_CONFIG_URL
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.KAFKA_SERVERS
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_FIRST_REQUEST_DELAY
-import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONSUL_REQUEST_INTERVAL
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONFIGURATION_FIRST_REQUEST_DELAY
+import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.CONFIGURATION_REQUEST_INTERVAL
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.DUMMY_MODE
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
 import org.onap.dcae.collectors.veshv.utils.commandline.CommandLineOption.IDLE_TIMEOUT_SEC
@@ -60,9 +59,8 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
             KAFKA_SERVERS,
             HEALTH_CHECK_API_PORT,
             LISTEN_PORT,
-            CONSUL_CONFIG_URL,
-            CONSUL_FIRST_REQUEST_DELAY,
-            CONSUL_REQUEST_INTERVAL,
+            CONFIGURATION_FIRST_REQUEST_DELAY,
+            CONFIGURATION_REQUEST_INTERVAL,
             SSL_DISABLE,
             KEY_STORE_FILE,
             KEY_STORE_PASSWORD,
@@ -114,17 +112,15 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
 
     private fun createConfigurationProviderParams(cmdLine: CommandLine): Option<ConfigurationProviderParams> =
             Option.monad().binding {
-                val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL).bind()
                 val firstRequestDelay = cmdLine.longValue(
-                        CONSUL_FIRST_REQUEST_DELAY,
+                        CONFIGURATION_FIRST_REQUEST_DELAY,
                         DefaultValues.CONSUL_FIRST_REQUEST_DELAY
                 )
                 val requestInterval = cmdLine.longValue(
-                        CONSUL_REQUEST_INTERVAL,
+                        CONFIGURATION_REQUEST_INTERVAL,
                         DefaultValues.CONSUL_REQUEST_INTERVAL
                 )
                 ConfigurationProviderParams(
-                        configUrl,
                         Duration.ofSeconds(firstRequestDelay),
                         Duration.ofSeconds(requestInterval)
                 )

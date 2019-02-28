@@ -61,14 +61,15 @@ private fun startAndAwaitServers(config: ServerConfiguration) =
             logger.info { "Using configuration: $config" }
             val healthCheckServerHandle = HealthCheckServer.start(config).bind()
             VesServer.start(config).bind().let { handle ->
-                registerShutdownHook(closeServers(handle, healthCheckServerHandle)).bind()
+                registerShutdownHook(closeServers(handle, healthCheckServerHandle))
                 handle.await().bind()
             }
         }.fix()
 
-internal fun closeServers(vararg handles: ServerHandle, healthState: HealthState = HealthState.INSTANCE): IO<Unit> =
-        IO.monadError().binding {
-            healthState.changeState(HealthDescription.SHUTTING_DOWN)
-            Closeable.closeAll(handles.asIterable()).bind()
-            logger.info(ServiceContext::mdc) { "Graceful shutdown completed" }
-        }.fix()
+internal fun closeServers(vararg handles: ServerHandle,
+                          healthState: HealthState = HealthState.INSTANCE) = IO {
+    logger.debug(ServiceContext::mdc) { "Graceful shutdown started" }
+    healthState.changeState(HealthDescription.SHUTTING_DOWN)
+    Closeable.closeAll(handles.asIterable())
+    logger.info(ServiceContext::mdc) { "Graceful shutdown completed" }
+}
