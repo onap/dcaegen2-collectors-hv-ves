@@ -72,3 +72,19 @@ fun <T> Flux<T>.filterFailedWithLog(logger: Logger,
                 Mono.just<T>(t)
             })
         }
+
+
+fun <T> Mono<T>.onErrorLog(logger: Logger,
+                           mdc: () -> Map<String, String>,
+                           msg: () -> String) =
+        doOnError { logException(logger, mdc, msg, it) }
+
+fun <T> Flux<T>.onErrorLog(logger: Logger,
+                           mdc: () -> Map<String, String>,
+                           msg: () -> String) =
+        doOnError { logException(logger, mdc, msg, it) }
+
+private fun logException(logger: Logger, mdc: () -> Map<String, String>, msg: () -> String, it: Throwable) {
+    logger.error(mdc) { "${msg()}: ${it.message}" }
+    logger.debug(mdc) { "Detailed stack trace: ${it}" }
+}

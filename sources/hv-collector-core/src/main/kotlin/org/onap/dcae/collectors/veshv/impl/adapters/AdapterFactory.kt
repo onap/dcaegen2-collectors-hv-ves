@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
 import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
-import reactor.netty.http.client.HttpClient
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClientFactory
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.EnvProperties
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -38,8 +39,8 @@ object AdapterFactory {
             else
                 KafkaSinkProvider(kafkaConfig)
 
-    fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
-            ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
-
-    private fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
+    fun configurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
+            ConfigurationProviderImpl(
+                    CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
+                    configurationProviderParams)
 }

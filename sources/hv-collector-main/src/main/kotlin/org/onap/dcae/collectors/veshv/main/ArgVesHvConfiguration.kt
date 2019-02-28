@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,8 @@ import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONSUL_CONFIG_URL
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONSUL_FIRST_REQUEST_DELAY
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONSUL_REQUEST_INTERVAL
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONFIGURATION_REQUEST_INTERVAL
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONFIGURATION_FIRST_REQUEST_DELAY
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.DUMMY_MODE
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.IDLE_TIMEOUT_SEC
@@ -64,9 +63,8 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
             KAFKA_SERVERS,
             HEALTH_CHECK_API_PORT,
             LISTEN_PORT,
-            CONSUL_CONFIG_URL,
-            CONSUL_FIRST_REQUEST_DELAY,
-            CONSUL_REQUEST_INTERVAL,
+            CONFIGURATION_FIRST_REQUEST_DELAY,
+            CONFIGURATION_REQUEST_INTERVAL,
             SSL_DISABLE,
             KEY_STORE_FILE,
             KEY_STORE_PASSWORD,
@@ -117,17 +115,15 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
 
     private fun createConfigurationProviderParams(cmdLine: CommandLine): Option<ConfigurationProviderParams> =
             Option.monad().binding {
-                val configUrl = cmdLine.stringValue(CONSUL_CONFIG_URL).bind()
                 val firstRequestDelay = cmdLine.longValue(
-                        CONSUL_FIRST_REQUEST_DELAY,
-                        DefaultValues.CONSUL_FIRST_REQUEST_DELAY
+                        CONFIGURATION_FIRST_REQUEST_DELAY,
+                        DefaultValues.CONFIGURATION_FIRST_REQUEST_DELAY
                 )
                 val requestInterval = cmdLine.longValue(
-                        CONSUL_REQUEST_INTERVAL,
-                        DefaultValues.CONSUL_REQUEST_INTERVAL
+                        CONFIGURATION_REQUEST_INTERVAL,
+                        DefaultValues.CONFIGURATION_REQUEST_INTERVAL
                 )
                 ConfigurationProviderParams(
-                        configUrl,
                         Duration.ofSeconds(firstRequestDelay),
                         Duration.ofSeconds(requestInterval)
                 )
@@ -145,8 +141,8 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
 
     internal object DefaultValues {
         const val HEALTH_CHECK_API_PORT = 6060
-        const val CONSUL_FIRST_REQUEST_DELAY = 10L
-        const val CONSUL_REQUEST_INTERVAL = 5L
+        const val CONFIGURATION_FIRST_REQUEST_DELAY = 10L
+        const val CONFIGURATION_REQUEST_INTERVAL = 5L
         const val IDLE_TIMEOUT_SEC = 60L
         const val MAX_PAYLOAD_SIZE_BYTES = WireFrameMessage.DEFAULT_MAX_PAYLOAD_SIZE_BYTES
         val LOG_LEVEL = LogLevel.INFO.name

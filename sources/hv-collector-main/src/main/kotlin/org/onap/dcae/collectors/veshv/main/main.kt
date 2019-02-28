@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.main
 import arrow.effects.IO
 import arrow.effects.fix
 import arrow.effects.instances.io.monad.monad
-import arrow.effects.instances.io.monadError.monadError
 import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
@@ -51,23 +50,25 @@ fun main(args: Array<String>) =
                             logger.withError(ServiceContext::mdc) { log("Failed to start a server", ex) }
                             ExitFailure(1)
                         },
-                        { logger.debug(ServiceContext::mdc) { "Finished" } }
+                        { logger.debug(ServiceContext::mdc) { "High Volume VES Collector execution finished" } }
                 )
 
 private fun startAndAwaitServers(config: ServerConfiguration) =
         IO.monad().binding {
             Logger.setLogLevel(VESHV_PACKAGE, config.logLevel)
             logger.info { "Using configuration: $config" }
+
             val healthCheckServerHandle = HealthCheckServer.start(config).bind()
-            VesServer.start(config).bind().let { handle ->
-                registerShutdownHook(closeServers(handle, healthCheckServerHandle)).bind()
-                handle.await().bind()
-            }
+            val hvVesHandle = VesServer.start(config).bind()
+
+            registerShutdownHook(closeServers(hvVesHandle, healthCheckServerHandle))
+            hvVesHandle.await().bind()
         }.fix()
 
-internal fun closeServers(vararg handles: ServerHandle, healthState: HealthState = HealthState.INSTANCE): IO<Unit> =
-        IO.monadError().binding {
-            healthState.changeState(HealthDescription.SHUTTING_DOWN)
-            Closeable.closeAll(handles.asIterable()).bind()
-            logger.info(ServiceContext::mdc) { "Graceful shutdown completed" }
-        }.fix()
+internal fun closeServers(vararg handles: ServerHandle,
+                          healthState: HealthState = HealthState.INSTANCE) = {
+    logger.debug(ServiceContext::mdc) { "Graceful shutdown started" }
+    healthState.changeState(HealthDescription.SHUTTING_DOWN)
+    Closeable.closeAll(handles.asIterable()).unsafeRunSync()
+    logger.info(ServiceContext::mdc) { "Graceful shutdown completed" }
+}
