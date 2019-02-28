@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ object VesServer : ServerStarter() {
 
     private fun createVesServer(config: ServerConfiguration): Server {
         val collectorProvider = CollectorFactory(
-                AdapterFactory.consulConfigurationProvider(config.configurationProviderParams),
+                AdapterFactory.configurationProvider(config.configurationProviderParams),
                 AdapterFactory.sinkCreatorFactory(config.dummyMode, config.kafkaConfiguration),
                 MicrometerMetrics.INSTANCE,
                 config.maximumPayloadSizeBytes

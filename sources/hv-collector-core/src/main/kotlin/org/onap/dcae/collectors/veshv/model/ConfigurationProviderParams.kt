@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,5 @@ import java.time.Duration
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since July 2018
  */
-data class ConfigurationProviderParams(val configurationUrl: String,
-                                       val firstRequestDelay: Duration,
+data class ConfigurationProviderParams(val firstRequestDelay: Duration,
                                        val requestInterval: Duration)
