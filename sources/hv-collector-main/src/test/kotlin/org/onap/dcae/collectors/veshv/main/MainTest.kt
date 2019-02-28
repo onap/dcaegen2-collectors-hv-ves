@@ -51,7 +51,7 @@ internal object MainTest : Spek({
             val healthState: HealthState = mock()
 
             on("closeServers") {
-                closeServers(handle, healthState = healthState).unsafeRunSync()
+                closeServers(handle, healthState = healthState).invoke()
 
                 it("should close all handles") {
                     assertThat(closed).isTrue()
