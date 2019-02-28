@@ -126,8 +126,6 @@ private fun constructConsulConfigProvider(url: String,
     val retry = Retry.onlyIf<Any> { it.iteration() <= iterationCount }.fixedBackoff(Duration.ofNanos(1))
 
     return ConsulConfigurationProvider(
-            httpAdapter,
-            url,
             firstRequestDelay,
             requestInterval,
             healthState,
@@ -136,7 +134,7 @@ private fun constructConsulConfigProvider(url: String,
 }
 
 fun constructConsulResponse(): String =
-    """{
+        """{
     "whatever": "garbage",
     "collector.routing": [
             {

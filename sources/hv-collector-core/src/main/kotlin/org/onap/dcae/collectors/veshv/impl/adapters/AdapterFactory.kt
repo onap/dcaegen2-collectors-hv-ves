@@ -39,7 +39,5 @@ object AdapterFactory {
                 KafkaSinkProvider(kafkaConfig)
 
     fun consulConfigurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
-            ConsulConfigurationProvider(httpAdapter(), configurationProviderParams)
-
-    private fun httpAdapter(): HttpAdapter = HttpAdapter(HttpClient.create())
+            ConsulConfigurationProvider(configurationProviderParams)
 }

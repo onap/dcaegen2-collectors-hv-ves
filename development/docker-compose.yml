@@ -36,7 +36,9 @@ services:
     image: docker.io/consul:1.0.6
     ports:
     - "8500:8500"
-    command: ["agent","-bootstrap", "-client=0.0.0.0", "-server", "-ui"]
+    command: ["agent","-bootstrap", "-client=0.0.0.0", "-server", "-ui", "-config-dir=/consul/consul.d"]
+    volumes:
+      - ./consul.d/:/consul/consul.d
 
   consul-config:
     image: consul
@@ -50,7 +52,8 @@ services:
                                                   "toTopic": "HV_VES_PERF3GPP"
                                                 }
                                               ]
-                                            }']
+                                            }'
+  ]
 
 
   #
@@ -68,10 +71,13 @@ services:
               "--kafka-bootstrap-servers", "message-router-kafka:9092",
               "--key-store-password", "onaponap",
               "--trust-store-password", "onaponap",
-              "--first-request-delay", "2",
+              "--first-request-delay", "10",
               "--log-level", "DEBUG"]
     environment:
       JAVA_OPTS:  "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
+      CONSUL_HOST: "consul-server"
+      CONFIG_BINDING_SERVICE: "cbs"
+      HOSTNAME: "veshv-config"
     healthcheck:
       test: ./healthcheck.sh || exit 1
       interval: 10s

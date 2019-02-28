@@ -1,0 +1,1 @@
+{"service": {"name": "cbs", "tags": ["cbs"], "port": 8500, "address":  "consul-server"}}
