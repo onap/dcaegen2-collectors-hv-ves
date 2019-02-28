@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ object ArgVesHvConfigurationTest : Spek({
     lateinit var cut: ArgVesHvConfiguration
     val kafkaBootstrapServers = "dmaap-mr-wro:6666,dmaap-mr-gda:6666"
     val healthCheckApiPort = "6070"
-    val configurationUrl = "http://test-address/test"
     val firstRequestDelay = "10"
     val requestInterval = "5"
     val listenPort = "6969"
@@ -63,7 +62,6 @@ object ArgVesHvConfigurationTest : Spek({
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "--health-check-api-port", healthCheckApiPort,
                         "--listen-port", listenPort,
-                        "--config-url", configurationUrl,
                         "--first-request-delay", firstRequestDelay,
                         "--request-interval", requestInterval,
                         "--key-store", "/tmp/keys.p12",
@@ -95,19 +93,14 @@ object ArgVesHvConfigurationTest : Spek({
                 assertThat(result.healthCheckApiListenAddress.address.hostAddress).isEqualTo("0.0.0.0")
             }
 
-            it("should set proper first consul request delay") {
+            it("should set proper first request delay") {
                 assertThat(result.configurationProviderParams.firstRequestDelay)
                         .isEqualTo(Duration.ofSeconds(firstRequestDelay.toLong()))
             }
 
-            it("should set proper consul request interval") {
+            it("should set proper request interval") {
                 assertThat(result.configurationProviderParams.requestInterval)
                         .isEqualTo(Duration.ofSeconds(requestInterval.toLong()))
-            }
-
-            it("should set proper config url") {
-                assertThat(result.configurationProviderParams.configurationUrl)
-                        .isEqualTo(configurationUrl)
             }
 
             it("should set proper security configuration") {
@@ -135,7 +128,6 @@ object ArgVesHvConfigurationTest : Spek({
                 it("should throw exception") {
                     assertThat(
                             cut.parseExpectingFailure(
-                                    "--config-url", configurationUrl,
                                     "--ssl-disable",
                                     "--first-request-delay", firstRequestDelay,
                                     "--request-interval", requestInterval
@@ -164,7 +156,6 @@ object ArgVesHvConfigurationTest : Spek({
                             "--kafka-bootstrap-servers", kafkaBootstrapServers,
                             "--health-check-api-port", healthCheckApiPort,
                             "--listen-port", listenPort,
-                            "--config-url", configurationUrl,
                             "--first-request-delay", firstRequestDelay,
                             "--request-interval", requestInterval,
                             "--key-store", "/tmp/keys.p12",
@@ -183,7 +174,6 @@ object ArgVesHvConfigurationTest : Spek({
                             "--kafka-bootstrap-servers", kafkaBootstrapServers,
                             "--health-check-api-port", healthCheckApiPort,
                             "--listen-port", listenPort,
-                            "--config-url", configurationUrl,
                             "--first-request-delay", firstRequestDelay,
                             "--request-interval", requestInterval,
                             "--key-store", "/tmp/keys.p12",

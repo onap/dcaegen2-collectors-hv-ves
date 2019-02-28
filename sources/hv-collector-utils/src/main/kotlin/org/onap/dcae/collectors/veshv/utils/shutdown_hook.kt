@@ -19,23 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.utils
 
-import arrow.effects.IO
-
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since January 2019
  */
-
-fun registerShutdownHook(job: () -> Unit) {
-    Runtime.getRuntime().addShutdownHook(object : Thread() {
-        override fun run() {
-            job()
-        }
-    })
-}
-
-fun registerShutdownHook(job: IO<Unit>) = IO {
-    registerShutdownHook {
-        job.unsafeRunSync()
-    }
-}
+fun registerShutdownHook(job: () -> Unit) =
+        Runtime.getRuntime()
+                .addShutdownHook(Thread({ job() }, "GracefulShutdownThread"))
