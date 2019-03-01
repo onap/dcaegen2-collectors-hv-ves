@@ -23,6 +23,7 @@ import arrow.core.Left
 import arrow.core.None
 import arrow.core.Right
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -39,6 +40,7 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParamete
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 import org.onap.dcae.collectors.veshv.ves.message.generator.generators.VesEventGenerator
+import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options.PayloadType
 import org.onap.ves.VesEventOuterClass
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.core.publisher.Flux
@@ -120,13 +122,14 @@ internal class XnfSimulatorTest : Spek({
             whenever(generatorFactory.createVesEventGenerator()).thenReturn(vesEventGenerator)
             whenever(vesEventGenerator.createMessageFlux(vesEventParams)).thenReturn(generatedMessages)
             whenever(clientFactory.create()).thenReturn(vesClient)
-            whenever(vesClient.sendVesEvents(generatedMessages)).thenReturn(Mono.just(Unit))
+
+            whenever(vesClient.sendRawPayload(any(), eq(PayloadType.PROTOBUF))).thenReturn(Mono.just(Unit))
 
             // when
             cut.startSimulation(json).map { it.unsafeRunSync() }
 
             // then
-            verify(vesClient).sendVesEvents(generatedMessages)
+            verify(vesClient).sendRawPayload(any(), eq(PayloadType.PROTOBUF))
         }
     }
 })
