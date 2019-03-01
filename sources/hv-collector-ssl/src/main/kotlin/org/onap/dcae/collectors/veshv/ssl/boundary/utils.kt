@@ -42,14 +42,22 @@ const val KEY_STORE_FILE = "/etc/ves-hv/server.p12"
 const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
 
 fun createSecurityConfiguration(cmdLine: CommandLine): Try<SecurityConfiguration> =
-        if (cmdLine.hasOption(CommandLineOption.SSL_DISABLE))
+        if (shouldDisableSsl(cmdLine))
             Try { disabledSecurityConfiguration() }
         else
-            enabledSecurityConfiguration(cmdLine)
+            Try { enabledSecurityConfiguration(cmdLine) }
+
+fun createSecurityConfigurationProvider(cmdLine: CommandLine): Try<() -> SecurityConfiguration> =
+        if (shouldDisableSsl(cmdLine))
+            Try { { disabledSecurityConfiguration() } }
+        else
+            Try { { enabledSecurityConfiguration(cmdLine) } }
+
+private fun shouldDisableSsl(cmdLine: CommandLine) = cmdLine.hasOption(CommandLineOption.SSL_DISABLE)
 
 private fun disabledSecurityConfiguration() = SecurityConfiguration(keys = None)
 
-private fun enabledSecurityConfiguration(cmdLine: CommandLine) = Try {
+private fun enabledSecurityConfiguration(cmdLine: CommandLine): SecurityConfiguration {
     val ksFile = cmdLine.stringValue(CommandLineOption.KEY_STORE_FILE, KEY_STORE_FILE)
     val ksPass = cmdLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD).getOrElse { "" }
     val tsFile = cmdLine.stringValue(CommandLineOption.TRUST_STORE_FILE, TRUST_STORE_FILE)
@@ -62,7 +70,8 @@ private fun enabledSecurityConfiguration(cmdLine: CommandLine) = Try {
             .trustStorePassword(Passwords.fromString(tsPass))
             .build()
 
-    SecurityConfiguration(keys = Some(keys))
+    return SecurityConfiguration(keys = Some(keys))
 }
+
 
 private fun pathFromFile(file: String) = Paths.get(file)

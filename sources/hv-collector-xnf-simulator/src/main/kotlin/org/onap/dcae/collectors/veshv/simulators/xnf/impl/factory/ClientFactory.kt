@@ -29,22 +29,27 @@ import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since February 2019
  */
-class ClientFactory(configuration: ClientConfiguration) {
-
-    private val partialConfig = ImmutableProducerOptions
-            .builder()
-            .collectorAddresses(configuration.collectorAddresses)
-            .let { producerOptions ->
-                configuration.security.keys.fold(
-                        { producerOptions },
-                        { producerOptions.securityKeys(it) })
-            }
+class ClientFactory(private val configuration: ClientConfiguration) {
 
     fun create(wireFrameVersion: WireFrameVersion): HvVesClient =
-            buildClient(partialConfig.wireFrameVersion(wireFrameVersion))
+            buildClient(createPartialConfiguration().wireFrameVersion(wireFrameVersion))
 
+    fun create(): HvVesClient = buildClient(createPartialConfiguration())
 
-    fun create(): HvVesClient = buildClient(partialConfig)
+    /*
+        TODO: REMOVE COMMENTS AFTER REVIEW
+        I decided to create whole partial config at every "create" function call rather than keeping
+        part of it as a field and then applying the security part dynamically,
+        because found it more readable. In this case the overhead difference is minimal.
+    */
+    private fun createPartialConfiguration() = ImmutableProducerOptions
+            .builder()
+            .collectorAddresses(configuration.collectorAddresses)
+            .let { options ->
+                configuration.securityProvider().keys.fold(
+                        { options },
+                        { options.securityKeys(it) })
+            }
 
     private fun buildClient(config: ImmutableProducerOptions.Builder) =
             HvVesClient(HvVesProducerFactory.create(config.build()))
