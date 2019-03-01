@@ -44,17 +44,6 @@ internal class HvVesClientTest : Spek({
         val hvVesProducer: HvVesProducer = mock()
         val cut = HvVesClient(hvVesProducer)
 
-        describe("handling ves events stream") {
-
-            val vesEvents = Flux.empty<VesEventOuterClass.VesEvent>()
-            whenever(hvVesProducer.send(any())).thenReturn(Mono.empty())
-            cut.sendVesEvents(vesEvents)
-
-            it("should perform sending operation") {
-                verify(hvVesProducer).send(vesEvents)
-            }
-        }
-
         describe("handling raw message stream") {
 
             val rawMessages = Flux.empty<ByteBuffer>()

@@ -29,23 +29,25 @@ import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since February 2019
  */
-class ClientFactory(configuration: ClientConfiguration) {
+class ClientFactory(private val configuration: ClientConfiguration) {
 
-    private val partialConfig = ImmutableProducerOptions
+    fun create() = hvVesClient(partialConfiguration().build())
+
+    fun create(wireFrameVersion: WireFrameVersion) = hvVesClient(
+            partialConfiguration()
+                    .wireFrameVersion(wireFrameVersion)
+                    .build())
+
+    private fun partialConfiguration() = ImmutableProducerOptions
             .builder()
             .collectorAddresses(configuration.collectorAddresses)
-            .let { producerOptions ->
-                configuration.security.keys.fold(
-                        { producerOptions },
-                        { producerOptions.securityKeys(it) })
+            .let { options ->
+                configuration.securityProvider().keys.fold(
+                        { options },
+                        { options.securityKeys(it) })
             }
 
-    fun create(wireFrameVersion: WireFrameVersion): HvVesClient =
-            buildClient(partialConfig.wireFrameVersion(wireFrameVersion))
+    private fun hvVesClient(producerOptions: ImmutableProducerOptions) =
+            HvVesClient(HvVesProducerFactory.create(producerOptions))
 
-
-    fun create(): HvVesClient = buildClient(partialConfig)
-
-    private fun buildClient(config: ImmutableProducerOptions.Builder) =
-            HvVesClient(HvVesProducerFactory.create(config.build()))
 }

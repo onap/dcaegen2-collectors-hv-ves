@@ -23,10 +23,10 @@ import org.onap.dcae.collectors.veshv.utils.arrow.then
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.HvVesProducer
 import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options.PayloadType
-import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.nio.ByteBuffer
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -34,14 +34,10 @@ import java.nio.ByteBuffer
  */
 class HvVesClient(private val producer: HvVesProducer) {
 
-    fun sendVesEvents(messages: Flux<VesEvent>): Mono<Unit> =
-            producer.send(messages)
-                    .then { logger.info { "Ves Events have been sent" } }
+    fun sendRawPayload(messages: Flux<ByteBuffer>, payloadType: PayloadType = PayloadType.UNDEFINED): Mono<Unit> =
+            producer.sendRaw(messages, payloadType)
+                    .then { logger.info { "Producer sent raw messages with payload type ${payloadType}" } }
 
-
-    fun sendRawPayload(messages: Flux<ByteBuffer>): Mono<Unit> =
-            producer.sendRaw(messages, PayloadType.UNDEFINED)
-                    .then { logger.info { "Raw messages have been sent" } }
 
     companion object {
         private val logger = Logger(HvVesClient::class)

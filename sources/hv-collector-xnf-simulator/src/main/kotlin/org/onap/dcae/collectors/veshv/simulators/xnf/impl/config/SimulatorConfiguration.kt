@@ -31,4 +31,4 @@ data class SimulatorConfiguration(
         val healthCheckApiListenAddress: InetSocketAddress,
         val hvVesAddress: InetSocketAddress,
         val maxPayloadSizeBytes: Int,
-        val security: SecurityConfiguration)
+        val securityProvider: () -> SecurityConfiguration)

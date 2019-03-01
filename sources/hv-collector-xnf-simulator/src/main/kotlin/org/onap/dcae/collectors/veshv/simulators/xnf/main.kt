@@ -67,7 +67,7 @@ private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
         IO.monad().binding {
             logger.info { "Using configuration: $config" }
             XnfHealthCheckServer().startServer(config).bind()
-            val clientConfig = ClientConfiguration(HashSet.of(config.hvVesAddress), config.security)
+            val clientConfig = ClientConfiguration(HashSet.of(config.hvVesAddress), config.securityProvider)
             val xnfSimulator = XnfSimulator(
                     ClientFactory(clientConfig),
                     MessageGeneratorFactory(config.maxPayloadSizeBytes)

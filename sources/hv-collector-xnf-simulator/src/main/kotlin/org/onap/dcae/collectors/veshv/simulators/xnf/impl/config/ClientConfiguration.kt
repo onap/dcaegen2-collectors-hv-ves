@@ -28,4 +28,4 @@ import java.net.InetSocketAddress
  * @since February 2019
  */
 data class ClientConfiguration(val collectorAddresses: Set<InetSocketAddress>,
-                               val security: SecurityConfiguration)
+                               val securityProvider: () -> SecurityConfiguration)
