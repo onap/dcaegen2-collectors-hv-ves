@@ -164,7 +164,9 @@
             <groupId>io.ratpack</groupId>
             <artifactId>ratpack-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
     </dependencies>
-
-
 </project>
