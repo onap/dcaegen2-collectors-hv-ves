@@ -17,7 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.model.configuration
+
+import org.onap.dcae.collectors.veshv.model.Routing
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
