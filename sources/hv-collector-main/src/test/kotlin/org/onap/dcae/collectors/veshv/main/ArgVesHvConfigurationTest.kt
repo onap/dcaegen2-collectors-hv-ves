@@ -25,7 +25,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.model.configuration.ServerConfiguration
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import org.onap.dcae.collectors.veshv.utils.commandline.WrongArgumentError
