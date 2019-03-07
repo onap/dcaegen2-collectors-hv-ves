@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd749aa8_90b7df0f",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/model/routing.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:02:01Z",
+      "side": 1,
+      "message": "This builder methods can be implemented in a more \"kotlinish\" way:\n    fun fromDomain(domain: String): RouteBuilder \u003d apply {\n        this.domain \u003d domain\n    }",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6167db5_37d23312",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/ConfigFactory.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:02:01Z",
+      "side": 1,
+      "message": "Change this field name to gson and apply \"create\" method at the end of building chain, instead of calling \"create\" on every \"loadConfig\" call",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3091a52_2be908d5",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/PartialConfiguration.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:02:01Z",
+      "side": 1,
+      "message": "These names can be misleading. Use PartialCbsConfig or something similar, to indicate that its config class, not actual Cbs or Kafka or w/e",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e37817da_238655c4",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/adapters/AddressAdapter.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:02:01Z",
+      "side": 1,
+      "message": "This should be defined as \"const\" inside companion object. I\u0027m not sure though if we should use default port in this case at all. It can bring confusion at runtime. I would opt for just failing if the port is not provided.",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ce49f5c_31b78a95",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/adapters/AddressAdapter.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:02:01Z",
+      "side": 1,
+      "message": "This ifelse statement can be simplified eg like this:\n\noverride fun deserialize(\n            json: JsonElement?,\n            typeOfT: Type?,\n            context: JsonDeserializationContext?): InetSocketAddress \u003d\n\n            json?.let {\n                val address \u003d it.asString\n                val parts \u003d address.split(\":\")\n                when {\n                    parts.size \u003d\u003d 2 -\u003e InetSocketAddress(parts[0], parts[1].toInt())\n                    parts.size \u003d\u003d 1 -\u003e InetSocketAddress(parts[0], defaultPort)\n                    else -\u003e throw InvalidAddressException(\"Cannot parse \u0027$address\u0027 to address\")\n                }\n            } ?: throw InvalidAddressException(\"Missing address\")\n\nAlso \"when\" statement is probably redundant - look at the comment about default port",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9a7abac_b60d5a0b",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/adapters/SecurityKeysAdapter.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:02:01Z",
+      "side": 1,
+      "message": "You can skip local variable declaration",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
