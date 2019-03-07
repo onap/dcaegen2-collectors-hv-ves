@@ -101,6 +101,108 @@
       "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2a2692c_c217bfe9",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/adapters/SecurityKeysAdapter.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:28:09Z",
+      "side": 1,
+      "message": "You can create extension function for JsonElement that would return key value as string, since its called 3 times in this method",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c5699bd_955f19c6",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/ConfigFactoryTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:28:09Z",
+      "side": 1,
+      "message": "Use \"val\" everywhere",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "443efdbe_e5aa9eb5",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/ConfigFactoryTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:28:09Z",
+      "side": 1,
+      "message": "You can change this assertion as follows, if you find it for readable:\n\nassertThat(addresses)\n                .isEqualTo(arrayOf(\n                        InetSocketAddress(\"192.168.255.1\", 5005),\n                        InetSocketAddress(\"192.168.255.26\", 5006)\n                ))",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab4938b7_5d85b07c",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/ConfigFactoryTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:28:09Z",
+      "side": 1,
+      "message": "Rename to \"routing\"",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a01e7656_ea443897",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/ConfigFactoryTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:28:09Z",
+      "side": 1,
+      "message": "You can use \"run\" extension function to get rid of some duplication:\n\n routing.run {\n            assertThat(routes.size).isEqualTo(1)\n            assertThat(routes[0].domain).isEqualTo(\"perf3gpp\")\n            assertThat(routes[0].targetTopic).isEqualTo(\"HV_VES_PERF3GPP\")\n        }\n\nConsider using this method in all other assertions",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d19462e2_415f3339",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/ConfigFactoryTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-07T15:28:09Z",
+      "side": 1,
+      "message": "Rename this \"result\" variable to \"config\" in all places. I guess it will be more readable",
+      "revId": "00f91ee1faf83f6e19de64236a64592a28fa1ed2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
