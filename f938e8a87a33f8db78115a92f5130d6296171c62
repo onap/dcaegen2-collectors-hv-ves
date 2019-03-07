@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Izabela Zawadzka <izabela.zawadzka@nokia.com>
+Code-Review+1: Filip Krzywka <filip.krzywka@nokia.com>
+Code-Review+2: Piotr Wielebski <piotr.wielebski@nokia.com>
+Submitted-by: Piotr Wielebski <piotr.wielebski@nokia.com>
+Submitted-at: Thu, 07 Mar 2019 12:13:29 +0000
+Reviewed-on: https://gerrit.onap.org/r/79716
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
