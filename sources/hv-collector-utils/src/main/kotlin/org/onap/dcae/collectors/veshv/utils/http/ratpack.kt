@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,6 @@ import javax.json.Json
 
 private val logger = Logger("org.onap.dcae.collectors.veshv.utils.arrow.ratpack")
 
-fun ratpack.http.Response.sendOrError(action: IO<Unit>) {
-    sendAndHandleErrors(action.map {
-        Response(
-                HttpStatus.OK,
-                Content(
-                        ContentType.JSON,
-                        Json.createObjectBuilder().add("response", "Request accepted").build()))
-    })
-}
 
 fun <A> ratpack.http.Response.sendEitherErrorOrResponse(response: Either<A, Response>) {
     when (response) {
