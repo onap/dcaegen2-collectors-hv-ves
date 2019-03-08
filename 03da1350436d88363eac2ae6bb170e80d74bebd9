@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e7b7639_1ba9e2e7",
+        "filename": "development/docker-compose.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Isn\u0027t specifying consul host in cbs container enough?",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "985b15e9_0d2d3959",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/factory/CollectorFactory.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Add \" \" after first part of the message. Also you can use string interpolation.",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "917daf1c_b927c29a",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Use camelCase",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24feb966_d8d310c0",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Same",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a69ab514_b032d43a",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Use toFlux mono extension function",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd3e6998_dffa2c95",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Successfully",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a1dbd89_1563dbf2",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Intellij is screaming to use string interpolation here ;]",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "184613bc_ba96cd37",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Extract this logic somewhere",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d277794_8676b2d3",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Extract getAsJsonPrimitive.asString to a extension function \"getString\"",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1d8cabe_7830881a",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Last time i wrote some tests we established with Piotr that we will use new spek test specification style in new tests basing on \"describe\" and \"it\": https://spekframework.org/specification/",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d8c6e2dc_64a1899b",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MainTest.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "Use \"()\" instead of invoke",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e31d025e_29594918",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/shutdown_hook.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-08T10:16:59Z",
+      "side": 1,
+      "message": "That should work just fine and it looks better\n\nfun registerShutdownHook(job: () -\u003e Unit) \u003d\n        Runtime.getRuntime().addShutdownHook(Thread { job() })",
+      "revId": "03da1350436d88363eac2ae6bb170e80d74bebd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
