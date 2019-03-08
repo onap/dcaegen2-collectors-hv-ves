@@ -21,16 +21,15 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
 
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
-import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
-import org.onap.dcae.collectors.veshv.utils.http.HttpStatus
-import org.onap.dcae.collectors.veshv.utils.http.Responses
-import org.onap.dcae.collectors.veshv.utils.http.sendAndHandleErrors
-import org.onap.dcae.collectors.veshv.utils.http.sendOrError
+import org.onap.dcae.collectors.veshv.utils.http.*
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import ratpack.handling.Chain
-import ratpack.server.RatpackServer
-import ratpack.server.ServerConfig
+import reactor.core.publisher.Mono
+import reactor.netty.http.server.HttpServer
+import reactor.netty.http.server.HttpServerRoutes
+import java.io.ByteArrayInputStream
 import java.net.InetSocketAddress
+import java.nio.charset.StandardCharsets
+import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -39,62 +38,70 @@ import java.net.InetSocketAddress
 class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
     private val responseValid by lazy {
         Responses.statusResponse(
-                name = "valid",
-                message = VALID_RESPONSE_MESSAGE
+            name = "valid",
+            message = VALID_RESPONSE_MESSAGE
         )
     }
 
     private val responseInvalid by lazy {
         Responses.statusResponse(
-                name = "invalid",
-                message = INVALID_RESPONSE_MESSAGE,
-                httpStatus = HttpStatus.BAD_REQUEST
+            name = "invalid",
+            message = INVALID_RESPONSE_MESSAGE,
+            httpStatus = HttpStatus.BAD_REQUEST
         )
     }
 
 
-    fun start(socketAddress: InetSocketAddress, kafkaTopics: Set<String>): IO<RatpackServer> =
-            simulator.listenToTopics(kafkaTopics).map {
-                RatpackServer.start { server ->
-                    server.serverConfig(
-                            ServerConfig.embedded()
-                                    .port(socketAddress.port)
-                    ).handlers(::setupHandlers)
-                }
-            }
+    fun start(socketAddress: InetSocketAddress, kafkaTopics: Set<String>): IO<Unit> {
+        val fiveSeconds: Long = 5
 
-    private fun setupHandlers(chain: Chain) {
-        chain
-                .put("configuration/topics") { ctx ->
-                    ctx.request.body.then { body ->
-                        val operation = simulator.listenToTopics(body.text)
-                        ctx.response.sendOrError(operation)
+        return simulator.listenToTopics(kafkaTopics).map {
+            HttpServer.create()
+                .host(socketAddress.hostName)
+                .port(socketAddress.port)
+                .route(::setRoutes)
+                .bindUntilJavaShutdown(Duration.ofSeconds(fiveSeconds)) {
+                    logger.info { "Server started" }
+                }
+        }
+    }
+
+    private fun setRoutes(route: HttpServerRoutes) {
+        route
+            .put("/configuration/topics") { req, res ->
+                req
+                    .receive().aggregate().asString()
+                    .flatMap {
+                        val option = simulator.listenToTopics(it)
+                        res.sendOrError(option).then()
                     }
-
-                }
-                .delete("messages") { ctx ->
-                    ctx.response.contentType(CONTENT_TEXT)
-                    logger.info { "Resetting simulator state" }
-                    ctx.response.sendOrError(simulator.resetState())
-                }
-                .get("messages/all/count") { ctx ->
-                    logger.info { "Processing request for count of received messages" }
-                    simulator.state().fold(
-                            {
-                                ctx.response.status(HttpConstants.STATUS_NOT_FOUND)
-                                logger.warn { "Error - number of messages could not be specified" }
-                            },
-                            {
-                                logger.info { "Returned number of received messages: ${it.messagesCount}" }
-                                ctx.response
-                                        .contentType(CONTENT_TEXT)
-                                        .send(it.messagesCount.toString())
-                            })
-                }
-                .post("messages/all/validate") { ctx ->
-                    ctx.request.body.then { body ->
+            }
+            .delete("/messages") { _, res ->
+                logger.info { "Resetting simulator state" }
+                res
+                    .header("Content-type", CONTENT_TEXT)
+                    .sendOrError(simulator.resetState())
+            }
+            .get("/messages/all/count") { _, res ->
+                logger.info { "Processing request for count of received messages" }
+                simulator.state().fold(
+                    {
+                        logger.warn { "Error - number of messages could not be specified" }
+                        res.status(HttpConstants.STATUS_NOT_FOUND)
+                    },
+                    {
+                        logger.info { "Returned number of received messages: ${it.messagesCount}" }
+                        res.sendString(Mono.just(it.messagesCount.toString()))
+                    }
+                )
+            }
+            .post("/messages/all/validate") { req, res ->
+                req
+                    .receive().aggregate().asString()
+                    .flatMap { body ->
                         logger.info { "Processing request for message validation" }
-                        val response = simulator.validate(body.inputStream)
+                        val response =
+                            simulator.validate(ByteArrayInputStream(StandardCharsets.UTF_8.encode(body).array()))
                                 .map { isValid ->
                                     if (isValid) {
                                         logger.info { "Comparison result: $VALID_RESPONSE_MESSAGE" }
@@ -104,14 +111,14 @@ class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
                                         responseInvalid
                                     }
                                 }
-                        ctx.response.sendAndHandleErrors(response)
+                        res.sendAndHandleErrors(response).then()
                     }
-                }
-                .get("healthcheck") { ctx ->
-                    val status = HttpConstants.STATUS_OK
-                    logger.info { "Healthcheck OK, returning status: $status" }
-                    ctx.response.status(status).send()
-                }
+            }
+            .get("/healthcheck") { _, res ->
+                val status = HttpConstants.STATUS_OK
+                logger.info { "Healthcheck OK, returning status: $status" }
+                res.status(status).send()
+            }
     }
 
     companion object {
