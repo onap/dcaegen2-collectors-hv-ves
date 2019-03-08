@@ -31,15 +31,6 @@ import javax.json.Json
 
 private val logger = Logger("org.onap.dcae.collectors.veshv.utils.arrow.ratpack")
 
-fun ratpack.http.Response.sendOrError(action: IO<Unit>) {
-    sendAndHandleErrors(action.map {
-        Response(
-                HttpStatus.OK,
-                Content(
-                        ContentType.JSON,
-                        Json.createObjectBuilder().add("response", "Request accepted").build()))
-    })
-}
 
 fun <A> ratpack.http.Response.sendEitherErrorOrResponse(response: Either<A, Response>) {
     when (response) {

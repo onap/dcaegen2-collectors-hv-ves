@@ -27,7 +27,6 @@ import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.DcaeAppAp
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
-import org.onap.dcae.collectors.veshv.utils.arrow.unit
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -38,18 +37,18 @@ private val logger = Logger(PACKAGE_NAME)
 const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
 
 fun main(args: Array<String>) =
-        ArgDcaeAppSimConfiguration().parse(args)
-                .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-                .map(::startApp)
-                .unsafeRunEitherSync(
-                        { ex ->
-                            logger.withError { log("Failed to start a server", ex) }
-                            ExitFailure(1)
-                        },
-                        {
-                            logger.info { "Started DCAE-APP Simulator API server" }
-                        }
-                )
+    ArgDcaeAppSimConfiguration().parse(args)
+        .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
+        .map(::startApp)
+        .unsafeRunEitherSync(
+            { ex ->
+                logger.withError { log("Failed to start a server", ex) }
+                ExitFailure(1)
+            },
+            {
+                logger.info { "Started DCAE-APP Simulator API server" }
+            }
+        )
 
 private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
     logger.info { "Using configuration: $config" }
@@ -57,6 +56,5 @@ private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
     val generatorFactory = MessageGeneratorFactory(config.maxPayloadSizeBytes)
     val messageStreamValidation = MessageStreamValidation(generatorFactory.createVesEventGenerator())
     return DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))
-            .start(config.apiAddress, config.kafkaTopics)
-            .unit()
+        .start(config.apiAddress, config.kafkaTopics).flatMap { it.await() }
 }
