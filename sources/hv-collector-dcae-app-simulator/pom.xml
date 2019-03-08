@@ -117,10 +117,6 @@
             <artifactId>arrow-syntax</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.ratpack</groupId>
-            <artifactId>ratpack-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.projectreactor.kafka</groupId>
             <artifactId>reactor-kafka</artifactId>
         </dependency>
