@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49ad2c2f_699d2b24",
+        "filename": "sources/hv-collector-main/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-11T09:29:27Z",
+      "side": 1,
+      "message": "version should be defined in top-level pom in dependencyManagement section.",
+      "range": {
+        "startLine": 139,
+        "startChar": 12,
+        "endLine": 139,
+        "endChar": 36
+      },
+      "revId": "94e343fa7b507be3212b73f9a3e9674d88ccab95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a637f800_2a9af16d",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/PartialConfiguration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-11T09:29:27Z",
+      "side": 1,
+      "message": "Lets put theses classes on same level so we avoid calls to them as `PartialConfig.PartialSomething`. \n\nOr if we want to keep them nested, then we could omit \"Partial\" prefix (it\u0027s implicit) - the calls would then\nbe `PartialConfig.Something`",
+      "revId": "94e343fa7b507be3212b73f9a3e9674d88ccab95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
