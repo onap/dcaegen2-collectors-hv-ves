@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a83ebd8_d12848a2",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-11T12:33:41Z",
+      "side": 1,
+      "message": "Now, when i think about it \"resolveValidationResponse\" would be better. Sorry. Also you did\u0027n remove ratpack dependency from pom",
+      "revId": "356546f24459374e39431c0644e1ad8893caddf1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
