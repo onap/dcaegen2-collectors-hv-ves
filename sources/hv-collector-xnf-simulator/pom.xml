@@ -40,10 +40,6 @@
     <artifactId>hv-collector-xnf-simulator</artifactId>
     <description>VES HighVolume Collector :: XNF simulator</description>
 
-    <properties>
-        <skipAnalysis>false</skipAnalysis>
-    </properties>
-
     <build>
         <plugins>
             <plugin>

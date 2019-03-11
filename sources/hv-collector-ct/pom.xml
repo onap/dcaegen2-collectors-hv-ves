@@ -43,6 +43,7 @@
     <properties>
         <failIfMissingUnitTests>false</failIfMissingUnitTests>
         <failIfMissingComponentTests>true</failIfMissingComponentTests>
+        <skipAnalysis>true</skipAnalysis>
     </properties>
 
     <build>

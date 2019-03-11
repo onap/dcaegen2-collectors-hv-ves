@@ -90,6 +90,7 @@
                     <arguments>
                         <argument>target/site/jacoco-aggregate/jacoco.xml</argument>
                         <argument>${jacoco.minimum.coverage}</argument>
+                        <argument>${project.parent.parent.basedir}/sources/pom.xml</argument>
                     </arguments>
                 </configuration>
             </plugin>
@@ -97,6 +98,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-commandline</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-core</artifactId>
@@ -125,6 +131,16 @@
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-main</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-ssl</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-test-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
