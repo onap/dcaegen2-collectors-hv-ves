@@ -39,6 +39,23 @@
       "revId": "94e343fa7b507be3212b73f9a3e9674d88ccab95",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d72e6f4a_2cf5487a",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/config/adapters/SecurityKeysAdapter.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-11T09:42:59Z",
+      "side": 1,
+      "message": "Check in GSON JavaDoc if these parameters can be null. If not then remove \u0027?\u0027 from method declaration + remove coresponding \u0027?.\u0027 usages. Applies to all *Adapter\u0027s.",
+      "revId": "94e343fa7b507be3212b73f9a3e9674d88ccab95",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
