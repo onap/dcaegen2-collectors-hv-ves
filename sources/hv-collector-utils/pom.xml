@@ -30,10 +30,6 @@
         </license>
     </licenses>
 
-    <properties>
-        <skipAnalysis>false</skipAnalysis>
-    </properties>
-
     <parent>
         <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
         <artifactId>hv-collector-sources</artifactId>

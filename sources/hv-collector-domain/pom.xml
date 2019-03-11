@@ -40,10 +40,6 @@
     <artifactId>hv-collector-domain</artifactId>
     <description>VES HighVolume Collector :: Domain</description>
 
-    <properties>
-        <skipAnalysis>false</skipAnalysis>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
