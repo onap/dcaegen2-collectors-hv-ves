@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "74d8b508_3ef92eff",
+        "filename": "development/docker-compose.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-11T10:35:24Z",
+      "side": 1,
+      "message": "[optional] If possible put this config to consul.d",
+      "revId": "469c0f9fe31b9eb80805c3537fb58b812756faf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "859a18c3_e241c39b",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/factory/CollectorFactory.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-11T10:35:24Z",
+      "side": 1,
+      "message": "Invoke with ServiceContext (MDC). Consider logging stack trace, too.",
+      "revId": "469c0f9fe31b9eb80805c3537fb58b812756faf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "14f5a15f_40d7c46d",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-11T10:35:24Z",
+      "side": 1,
+      "message": "use Mono.flatMapMany instead of Mono.toFlux.flatMap",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 70,
+        "endChar": 45
+      },
+      "revId": "469c0f9fe31b9eb80805c3537fb58b812756faf3",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
