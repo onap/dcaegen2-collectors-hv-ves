@@ -40,10 +40,6 @@
     <artifactId>hv-collector-main</artifactId>
     <description>VES HighVolume Collector :: Main</description>
 
-    <properties>
-        <skipAnalysis>false</skipAnalysis>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
