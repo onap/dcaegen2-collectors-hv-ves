@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "afee4f12_6e55c085",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-11T11:52:02Z",
+      "side": 1,
+      "message": "Extract the encoding logic (ByteArrayInputStream(..)) to separate method",
+      "revId": "7da7a84e13fa821ee3d8735cbd58acaba79fdc2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ca94bc4_ccd3e2a5",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-11T11:52:02Z",
+      "side": 1,
+      "message": "Extract this lambda body to separate method (\"resolveResponse\" or something)",
+      "revId": "7da7a84e13fa821ee3d8735cbd58acaba79fdc2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "808e9662_ddb1709b",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-11T11:52:02Z",
+      "side": 1,
+      "message": "Move this flatMap to new line",
+      "revId": "7da7a84e13fa821ee3d8735cbd58acaba79fdc2f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
