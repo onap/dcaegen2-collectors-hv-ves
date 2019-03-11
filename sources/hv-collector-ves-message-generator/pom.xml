@@ -40,10 +40,6 @@
     <artifactId>hv-collector-ves-message-generator</artifactId>
     <description>VES HighVolume Collector :: VES message generator</description>
 
-    <properties>
-        <skipAnalysis>false</skipAnalysis>
-    </properties>
-
     <build>
         <plugins>
             <plugin>

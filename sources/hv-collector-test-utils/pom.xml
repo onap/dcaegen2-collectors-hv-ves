@@ -24,6 +24,7 @@
     <properties>
         <failIfMissingUnitTests>false</failIfMissingUnitTests>
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
+        <skipAnalysis>true</skipAnalysis>
     </properties>
 
     <build>

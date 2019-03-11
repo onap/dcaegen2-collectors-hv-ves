@@ -40,10 +40,6 @@
     <artifactId>hv-collector-dcae-app-simulator</artifactId>
     <description>VES HighVolume Collector :: Dcae app simulator</description>
 
-    <properties>
-        <skipAnalysis>false</skipAnalysis>
-    </properties>
-
     <build>
         <plugins>
             <plugin>

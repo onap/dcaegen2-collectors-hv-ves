@@ -40,10 +40,6 @@
     <artifactId>hv-collector-ssl</artifactId>
     <description>VES HighVolume Collector :: SSL</description>
 
-    <properties>
-        <skipAnalysis>false</skipAnalysis>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
