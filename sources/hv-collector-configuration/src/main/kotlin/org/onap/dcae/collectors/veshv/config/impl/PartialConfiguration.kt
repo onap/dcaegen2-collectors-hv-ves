@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config
+package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Option
-import org.onap.dcae.collectors.veshv.model.Routing
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.net.InetSocketAddress
@@ -36,15 +36,6 @@ data class PartialConfiguration(
         val kafka : Option<PartialKafkaConfig>,
         val logLevel : Option<LogLevel>
 )
-data class PartialSecurityConfig(
-        val sslDisable : Option<Boolean>,
-        val keys : Option<SecurityKeys>)
-
-data class PartialCbsConfig(
-        val firstRequestDelaySec : Option<Int>,
-        val requestIntervalSec : Option<Int>
-)
-
 data class PartialServerConfig(
         val healthCheckApiPort : Option<Int>,
         val listenPort : Option<Int>,
@@ -52,6 +43,15 @@ data class PartialServerConfig(
         val maximumPayloadSizeBytes : Option<Int>,
         val dummyMode : Option<Boolean>
 )
+
+data class PartialCbsConfig(
+        val firstRequestDelaySec : Option<Int>,
+        val requestIntervalSec : Option<Int>
+)
+
+data class PartialSecurityConfig(
+        val sslDisable : Option<Boolean>,
+        val keys : Option<SecurityKeys>)
 
 data class PartialKafkaConfig(
     val kafkaServers : Option<Array<InetSocketAddress>>,

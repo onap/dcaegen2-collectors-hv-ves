@@ -17,24 +17,35 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config.adapters
+package org.onap.dcae.collectors.veshv.config.impl.adapters
 
-import arrow.core.Option
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import java.lang.reflect.ParameterizedType
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
+import org.onap.dcaegen2.services.sdk.security.ssl.Passwords
+import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
+import java.io.File
 import java.lang.reflect.Type
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since March 2019
  */
-class OptionAdapter : JsonDeserializer<Option<Any>> {
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Option<Any> {
-        val parametrizedType = typeOfT as ParameterizedType
-        val typeParameter = parametrizedType.actualTypeArguments.first()
-        return Option.fromNullable(context.deserialize<Any>(json, typeParameter))
+class SecurityKeysAdapter : JsonDeserializer<SecurityKeys> {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext?): SecurityKeys {
+        val obj = json.asJsonObject
+        return ImmutableSecurityKeys.builder()
+                .keyStore(ImmutableSecurityKeysStore.of(
+                        File(obj["keyStoreFile"].asString).toPath()))
+                .keyStorePassword(
+                        Passwords.fromString(obj["keyStorePassword"].asString))
+                .trustStore(ImmutableSecurityKeysStore.of(
+                        File(obj["trustStoreFile"].asString).toPath()))
+                .trustStorePassword(
+                        Passwords.fromString(obj["trustStorePassword"].asString))
+                .build()
     }
 
 }
