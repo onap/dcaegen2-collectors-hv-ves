@@ -41,7 +41,7 @@ services:
       - ./consul.d/:/consul/consul.d
 
   consul-config:
-    image: consul
+    image: docker.io/consul:1.0.6
     restart: on-failure
     command: ["kv", "put", "-http-addr=http://consul-server:8500", "dcae-hv-ves-collector", '{
                                               "collector.routing": [
