@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.impl
 import arrow.core.Either
 import arrow.data.Nel
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 
 typealias ValidationFailMessage = () -> String
 typealias ValidationSuccessMessage = () -> String

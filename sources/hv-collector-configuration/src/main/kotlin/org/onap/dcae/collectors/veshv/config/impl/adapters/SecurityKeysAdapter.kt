@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config.adapters
+package org.onap.dcae.collectors.veshv.config.impl.adapters
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -33,7 +33,7 @@ import java.lang.reflect.Type
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since March 2019
  */
-class SecurityKeysAdapter : JsonDeserializer<SecurityKeys> {
+internal class SecurityKeysAdapter : JsonDeserializer<SecurityKeys> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext?): SecurityKeys {
         val obj = json.asJsonObject
         return ImmutableSecurityKeys.builder()

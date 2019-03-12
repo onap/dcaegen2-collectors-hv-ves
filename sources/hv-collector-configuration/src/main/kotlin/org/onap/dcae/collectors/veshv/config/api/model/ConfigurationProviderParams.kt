@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
+package org.onap.dcae.collectors.veshv.config.api.model
 
-import arrow.core.Option
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
-import java.nio.file.Path
+import java.time.Duration
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @since July 2018
  */
-data class SecurityConfiguration(
-        val keys: Option<SecurityKeys>)
+data class ConfigurationProviderParams(val firstRequestDelay: Duration,
+                                       val requestInterval: Duration)

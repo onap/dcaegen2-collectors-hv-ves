@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import org.apache.kafka.common.serialization.Serializer
-import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
