@@ -17,15 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.config.api
 
 import arrow.core.Some
 import org.jetbrains.spek.api.Spek
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.main.config.*
-import org.onap.dcae.collectors.veshv.model.Routing
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
+import org.onap.dcae.collectors.veshv.config.impl.PartialCbsConfig
+import org.onap.dcae.collectors.veshv.config.impl.PartialKafkaConfig
+import org.onap.dcae.collectors.veshv.config.impl.PartialSecurityConfig
+import org.onap.dcae.collectors.veshv.config.impl.PartialServerConfig
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.InputStreamReader
 import java.io.StringReader
@@ -42,7 +45,7 @@ internal object ConfigFactoryTest : Spek({
             it("parses enumerations") {
                 val input = """{"logLevel":"ERROR"}"""
 
-                val config = ConfigFactory().loadConfig(StringReader(input))
+                val config = ConfigurationModule().loadConfig(StringReader(input))
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))
             }
 
@@ -54,7 +57,7 @@ internal object ConfigFactoryTest : Spek({
                 }
             }
             """.trimIndent()
-                val config = ConfigFactory().loadConfig(StringReader(input))
+                val config = ConfigurationModule().loadConfig(StringReader(input))
                 assertThat(config.server.nonEmpty()).isTrue()
                 assertThat(config.server.orNull()?.healthCheckApiPort).isEqualTo(Some(12002))
                 assertThat(config.server.orNull()?.listenPort).isEqualTo(Some(12003))
@@ -69,7 +72,7 @@ internal object ConfigFactoryTest : Spek({
                   }
                 }"""
 
-                val config = ConfigFactory().loadConfig(StringReader(input))
+                val config = ConfigurationModule().loadConfig(StringReader(input))
                 assertThat(config.kafka.nonEmpty()).isTrue()
                 val kafka = config.kafka.orNull() as PartialKafkaConfig
                 assertThat(kafka.kafkaServers.nonEmpty()).isTrue()
@@ -92,7 +95,7 @@ internal object ConfigFactoryTest : Spek({
                         ]
                     }
                 }""".trimIndent()
-                val config = ConfigFactory().loadConfig(StringReader(input))
+                val config = ConfigurationModule().loadConfig(StringReader(input))
                 assertThat(config.kafka.nonEmpty()).isTrue()
                 val kafka = config.kafka.orNull() as PartialKafkaConfig
                 assertThat(kafka.routing.nonEmpty()).isTrue()
@@ -107,7 +110,7 @@ internal object ConfigFactoryTest : Spek({
 
         describe("complete file loading") {
             it("loads actual file") {
-                val config = ConfigFactory().loadConfig(
+                val config = ConfigurationModule().loadConfig(
                         InputStreamReader(
                                 ConfigFactoryTest.javaClass.getResourceAsStream("/sampleConfig.json")))
                 assertThat(config).isNotNull

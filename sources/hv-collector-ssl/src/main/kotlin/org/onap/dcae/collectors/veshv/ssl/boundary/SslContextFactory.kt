@@ -21,7 +21,6 @@ package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import arrow.core.Option
 import io.netty.handler.ssl.SslContext
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
 import org.onap.dcaegen2.services.sdk.security.ssl.SslFactory
 
 /**

@@ -20,9 +20,8 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Try
-import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.model.VesMessage
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.ves.VesEventOuterClass.VesEvent
 
 /**
