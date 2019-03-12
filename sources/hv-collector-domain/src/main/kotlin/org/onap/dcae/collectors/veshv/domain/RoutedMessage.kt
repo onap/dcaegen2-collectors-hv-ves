@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2018 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config.adapters
+package org.onap.dcae.collectors.veshv.domain
 
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.reflect.TypeToken
-import org.onap.dcae.collectors.veshv.model.Route
-import org.onap.dcae.collectors.veshv.model.Routing
-import java.lang.reflect.Type
-
-/**
- * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since March 2019
- */
-class RoutingAdapter : JsonDeserializer<Routing> {
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Routing {
-        val parametrizedType = TypeToken.getParameterized(List::class.java, Route::class.java).type
-        return Routing(context.deserialize<List<Route>>(json, parametrizedType))
-    }
-
-}
+data class RoutedMessage(val topic: String, val partition: Int, val message: VesMessage)

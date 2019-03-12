@@ -19,13 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
-import org.onap.dcae.collectors.veshv.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
-import org.onap.dcae.collectors.veshv.model.RoutedMessage
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.utils.Closeable
 import reactor.core.publisher.Flux
 
@@ -43,7 +43,7 @@ interface Metrics {
     fun notifyClientRejected(cause: ClientRejectionCause)
 }
 
-interface SinkProvider: Closeable {
+interface SinkProvider : Closeable {
     operator fun invoke(ctx: ClientContext): Sink
 }
 
