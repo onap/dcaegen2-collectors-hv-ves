@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e00dd600_405960ac",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/string.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-12T06:56:25Z",
+      "side": 1,
+      "message": "Seems like you have outdated code-generation :)",
+      "range": {
+        "startLine": 5,
+        "startChar": 20,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "875ac15667c1d7d8a91e8c22dce1500aa33600ad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47269028_968e6564",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/string.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-12T06:56:25Z",
+      "side": 1,
+      "message": "Use interface as return type (InputStream)",
+      "range": {
+        "startLine": 25,
+        "startChar": 28,
+        "endLine": 25,
+        "endChar": 37
+      },
+      "revId": "875ac15667c1d7d8a91e8c22dce1500aa33600ad",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
