@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50809704_80cbbe4f",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-12T09:11:32Z",
+      "side": 1,
+      "message": "I don\u0027t get it. First we are aggregating body of the request to a string and then mapping to inputStream. Can\u0027t we just\n\n```              req.receive().aggregate().asInputStream().flatMap{ inputStream -\u003e ... }\n```\n\n?",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 80
+      },
+      "revId": "029df3320349d45e8930cbfc912a50cf8cd67438",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d9724d3_15f38cec",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/main.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-12T09:11:32Z",
+      "side": 1,
+      "message": "Why this change?",
+      "revId": "029df3320349d45e8930cbfc912a50cf8cd67438",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b2fe2ac_577844cb",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/http/netty.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-12T09:11:32Z",
+      "side": 1,
+      "message": "I wouldn\u0027t mix IO and Rx. We can leave IO for starting the server (it makes sense there) but when handling responses let\u0027s use Mono/Flux.",
+      "range": {
+        "startLine": 31,
+        "startChar": 43,
+        "endLine": 31,
+        "endChar": 45
+      },
+      "revId": "029df3320349d45e8930cbfc912a50cf8cd67438",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
