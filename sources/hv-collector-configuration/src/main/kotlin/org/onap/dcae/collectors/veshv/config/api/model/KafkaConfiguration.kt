@@ -17,13 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
-
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
+package org.onap.dcae.collectors.veshv.config.api.model
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since December 2018
  */
-data class VesMessage(val header: CommonEventHeader, val wtpFrame: WireFrameMessage)
+data class KafkaConfiguration(val bootstrapServers: String, val maximalRequestSizeBytes: Int)

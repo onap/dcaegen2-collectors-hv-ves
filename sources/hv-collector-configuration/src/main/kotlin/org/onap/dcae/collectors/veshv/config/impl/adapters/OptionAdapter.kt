@@ -17,30 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config
+package org.onap.dcae.collectors.veshv.config.impl.adapters
 
 import arrow.core.Option
-import com.google.gson.GsonBuilder
-import org.onap.dcae.collectors.veshv.main.config.adapters.*
-import org.onap.dcae.collectors.veshv.model.Route
-import org.onap.dcae.collectors.veshv.model.Routing
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
-import java.io.Reader
-import java.net.InetSocketAddress
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since February 2019
+ * @since March 2019
  */
-class ConfigFactory {
-    private val gson = GsonBuilder()
-            .registerTypeAdapter(InetSocketAddress::class.java, AddressAdapter())
-            .registerTypeAdapter(Route::class.java, RouteAdapter())
-            .registerTypeAdapter(Routing::class.java, RoutingAdapter())
-            .registerTypeAdapter(Option::class.java, OptionAdapter())
-            .registerTypeAdapter(SecurityKeys::class.java, SecurityKeysAdapter())
-            .create()
+class OptionAdapter : JsonDeserializer<Option<Any>> {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Option<Any> {
+        val parametrizedType = typeOfT as ParameterizedType
+        val typeParameter = parametrizedType.actualTypeArguments.first()
+        return Option.fromNullable(context.deserialize<Any>(json, typeParameter))
+    }
 
-    fun loadConfig(input: Reader): PartialConfiguration =
-        gson.fromJson(input, PartialConfiguration::class.java)
 }

@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Option
 import arrow.core.fix
@@ -45,11 +45,10 @@ import org.onap.dcae.collectors.veshv.commandline.hasOption
 import org.onap.dcae.collectors.veshv.commandline.intValue
 import org.onap.dcae.collectors.veshv.commandline.longValue
 import org.onap.dcae.collectors.veshv.commandline.stringValue
+import org.onap.dcae.collectors.veshv.config.api.model.ConfigurationProviderParams
+import org.onap.dcae.collectors.veshv.config.api.model.KafkaConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.model.ConfigurationProviderParams
-import org.onap.dcae.collectors.veshv.model.KafkaConfiguration
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
@@ -92,9 +91,7 @@ internal class ArgVesHvConfiguration : ArgBasedConfiguration<ServerConfiguration
                 val dummyMode = cmdLine.hasOption(DUMMY_MODE)
                 val security = createSecurityConfiguration(cmdLine)
                         .doOnFailure { ex ->
-                            logger.withError(ServiceContext::mdc) {
-                                log("Could not read security keys", ex)
-                            }
+                            logger.withError { log("Could not read security keys", ex) }
                         }
                         .toOption()
                         .bind()

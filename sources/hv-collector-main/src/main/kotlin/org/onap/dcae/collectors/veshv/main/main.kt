@@ -24,11 +24,12 @@ import arrow.effects.fix
 import arrow.effects.instances.io.monad.monad
 import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
+import org.onap.dcae.collectors.veshv.config.api.ConfigurationModule
+import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
 import org.onap.dcae.collectors.veshv.main.servers.VesServer
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.Closeable
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
@@ -42,7 +43,8 @@ private val logger = Logger("$VESHV_PACKAGE.main")
 private const val PROGRAM_NAME = "java $VESHV_PACKAGE.main.MainKt"
 
 fun main(args: Array<String>) =
-        ArgVesHvConfiguration().parse(args)
+        ConfigurationModule()
+                .createConfigurationFromCommandLine(args)
                 .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
                 .map(::startAndAwaitServers)
                 .unsafeRunEitherSync(

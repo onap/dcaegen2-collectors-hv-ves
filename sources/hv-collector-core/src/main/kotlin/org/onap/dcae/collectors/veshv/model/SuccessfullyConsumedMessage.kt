@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.model
 
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import java.lang.Exception
 
 sealed class ConsumedMessage {

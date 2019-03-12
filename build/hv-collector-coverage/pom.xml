@@ -100,6 +100,11 @@
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
+            <artifactId>hv-collector-configuration</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-commandline</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

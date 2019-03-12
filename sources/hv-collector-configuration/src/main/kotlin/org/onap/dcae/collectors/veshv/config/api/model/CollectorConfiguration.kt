@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.config.api.model
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since December 2018
+ * @since May 2018
  */
-data class KafkaConfiguration(val bootstrapServers: String, val maximalRequestSizeBytes: Int)
+data class CollectorConfiguration(val routing: Routing)

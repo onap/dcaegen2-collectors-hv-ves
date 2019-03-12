@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
 import io.vavr.collection.Set
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import java.net.InetSocketAddress
 
 /**

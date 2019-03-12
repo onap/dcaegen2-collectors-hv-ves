@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2018 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.domain
 
-import java.time.Duration
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since July 2018
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since May 2018
  */
-data class ConfigurationProviderParams(val firstRequestDelay: Duration,
-                                       val requestInterval: Duration)
+data class VesMessage(val header: CommonEventHeader, val wtpFrame: WireFrameMessage)
