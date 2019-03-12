@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config
+package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Option
-import org.onap.dcae.collectors.veshv.model.Routing
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.net.InetSocketAddress
@@ -29,23 +29,15 @@ import java.net.InetSocketAddress
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-data class PartialConfiguration(
+internal data class PartialConfiguration(
         val server : Option<PartialServerConfig>,
         val cbs : Option<PartialCbsConfig>,
         val security : Option<PartialSecurityConfig>,
         val kafka : Option<PartialKafkaConfig>,
         val logLevel : Option<LogLevel>
 )
-data class PartialSecurityConfig(
-        val sslDisable : Option<Boolean>,
-        val keys : Option<SecurityKeys>)
 
-data class PartialCbsConfig(
-        val firstRequestDelaySec : Option<Int>,
-        val requestIntervalSec : Option<Int>
-)
-
-data class PartialServerConfig(
+internal data class PartialServerConfig(
         val healthCheckApiPort : Option<Int>,
         val listenPort : Option<Int>,
         val idleTimeoutSec : Option<Int>,
@@ -53,7 +45,16 @@ data class PartialServerConfig(
         val dummyMode : Option<Boolean>
 )
 
-data class PartialKafkaConfig(
+internal data class PartialCbsConfig(
+        val firstRequestDelaySec : Option<Int>,
+        val requestIntervalSec : Option<Int>
+)
+
+internal data class PartialSecurityConfig(
+        val sslDisable : Option<Boolean>,
+        val keys : Option<SecurityKeys>)
+
+internal data class PartialKafkaConfig(
     val kafkaServers : Option<Array<InetSocketAddress>>,
     val routing : Option<Routing>
 )

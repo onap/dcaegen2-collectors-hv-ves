@@ -17,24 +17,34 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config.adapters
+package org.onap.dcae.collectors.veshv.config.impl.gsonadapters
 
-import arrow.core.Option
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.net.InetSocketAddress
+
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since March 2019
+ * @since February 2019
  */
-class OptionAdapter : JsonDeserializer<Option<Any>> {
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Option<Any> {
-        val parametrizedType = typeOfT as ParameterizedType
-        val typeParameter = parametrizedType.actualTypeArguments.first()
-        return Option.fromNullable(context.deserialize<Any>(json, typeParameter))
-    }
+internal class AddressAdapter : JsonDeserializer<InetSocketAddress> {
+    override fun deserialize(
+            json: JsonElement,
+            typeOfT: Type,
+            context: JsonDeserializationContext?): InetSocketAddress
+        {
+            val portStart = json.asString.lastIndexOf(":")
+            if (portStart > 0) {
+                val address = json.asString.substring(0, portStart)
+                val port = json.asString.substring(portStart + 1)
+                return InetSocketAddress(address, port.toInt())
+            } else throw InvalidAddressException("Cannot parse '" + json.asString + "' to address")
+        }
 
+    class InvalidAddressException(reason:String) : RuntimeException(reason)
 }
+
+

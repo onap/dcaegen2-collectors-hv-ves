@@ -17,30 +17,27 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config
+package org.onap.dcae.collectors.veshv.config.impl.gsonadapters
 
-import arrow.core.Option
-import com.google.gson.GsonBuilder
-import org.onap.dcae.collectors.veshv.main.config.adapters.*
-import org.onap.dcae.collectors.veshv.model.Route
-import org.onap.dcae.collectors.veshv.model.Routing
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
-import java.io.Reader
-import java.net.InetSocketAddress
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.config.api.model.RouteBuilder
+import java.lang.reflect.Type
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since February 2019
+ * @since March 2019
  */
-class ConfigFactory {
-    private val gson = GsonBuilder()
-            .registerTypeAdapter(InetSocketAddress::class.java, AddressAdapter())
-            .registerTypeAdapter(Route::class.java, RouteAdapter())
-            .registerTypeAdapter(Routing::class.java, RoutingAdapter())
-            .registerTypeAdapter(Option::class.java, OptionAdapter())
-            .registerTypeAdapter(SecurityKeys::class.java, SecurityKeysAdapter())
-            .create()
+internal class RouteAdapter : JsonDeserializer<Route> {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext?): Route {
+        val jobj = json.asJsonObject
+        return RouteBuilder()
+                .fromDomain(jobj["fromDomain"].asString)
+                .toTopic(jobj["toTopic"].asString)
+                .withFixedPartitioning()
+                .build()
+    }
 
-    fun loadConfig(input: Reader): PartialConfiguration =
-        gson.fromJson(input, PartialConfiguration::class.java)
 }

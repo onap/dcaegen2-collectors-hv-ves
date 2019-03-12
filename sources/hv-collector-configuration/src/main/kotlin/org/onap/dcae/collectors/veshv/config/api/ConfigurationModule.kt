@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.config.api
 
-data class RoutedMessage(val topic: String, val partition: Int, val message: VesMessage)
+import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.config.impl.ArgVesHvConfiguration
+import reactor.core.publisher.Flux
+
+class ConfigurationModule {
+    fun createConfigurationFromCommandLine(args: Array<String>) =
+            ArgVesHvConfiguration().parse(args)
+
+    fun hvVesConfigurationUpdates(): Flux<ServerConfiguration> = Flux.never<ServerConfiguration>()
+}

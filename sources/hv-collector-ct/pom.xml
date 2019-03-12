@@ -74,6 +74,7 @@
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-test-utils</artifactId>
             <version>${project.parent.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.arrow-kt</groupId>
@@ -86,10 +87,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.spek</groupId>
-            <artifactId>spek-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.spek</groupId>

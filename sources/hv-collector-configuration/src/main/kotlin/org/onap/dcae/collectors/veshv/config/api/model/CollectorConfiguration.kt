@@ -17,15 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.domain
-
-import arrow.core.Option
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
-import java.nio.file.Path
+package org.onap.dcae.collectors.veshv.config.api.model
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class SecurityConfiguration(
-        val keys: Option<SecurityKeys>)
+data class CollectorConfiguration(val routing: Routing)
