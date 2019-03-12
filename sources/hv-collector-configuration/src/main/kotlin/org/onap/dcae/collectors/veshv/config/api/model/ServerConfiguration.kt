@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.config.api.model
 
-import org.onap.dcae.collectors.veshv.domain.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.net.InetSocketAddress
 import java.time.Duration
@@ -29,14 +29,14 @@ import java.time.Duration
  * @since May 2018
  */
 data class ServerConfiguration(
-    val serverListenAddress: InetSocketAddress,
-    val kafkaConfiguration: KafkaConfiguration,
-    val configurationProviderParams: ConfigurationProviderParams,
-    val securityConfiguration: SecurityConfiguration,
-    val idleTimeout: Duration,
-    val healthCheckApiListenAddress: InetSocketAddress,
-    val maximumPayloadSizeBytes: Int,
-    val logLevel: LogLevel,
-    val dummyMode: Boolean = false
+        val serverListenAddress: InetSocketAddress,
+        val kafkaConfiguration: KafkaConfiguration,
+        val configurationProviderParams: ConfigurationProviderParams,
+        val securityConfiguration: SecurityConfiguration,
+        val idleTimeout: Duration,
+        val healthCheckApiListenAddress: InetSocketAddress,
+        val maximumPayloadSizeBytes: Int,
+        val logLevel: LogLevel,
+        val dummyMode: Boolean = false
 )
 

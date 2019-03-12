@@ -17,13 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.ssl.boundary
 
-import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import arrow.core.Option
+import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
+import java.nio.file.Path
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class VesMessage(val header: CommonEventHeader, val wtpFrame: WireFrameMessage)
+data class SecurityConfiguration(
+        val keys: Option<SecurityKeys>)

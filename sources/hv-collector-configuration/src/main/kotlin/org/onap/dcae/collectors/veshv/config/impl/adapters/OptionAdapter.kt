@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.config.impl.adapters
+
+import arrow.core.Option
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 
 /**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @author Pawel Biniek <pawel.biniek@nokia.com>
+ * @since March 2019
  */
-data class CollectorConfiguration(val routing: Routing)
+internal class OptionAdapter : JsonDeserializer<Option<Any>> {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Option<Any> {
+        val parametrizedType = typeOfT as ParameterizedType
+        val typeParameter = parametrizedType.actualTypeArguments.first()
+        return Option.fromNullable(context.deserialize<Any>(json, typeParameter))
+    }
+
+}

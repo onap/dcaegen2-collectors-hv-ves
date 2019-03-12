@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2018 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config.adapters
+package org.onap.dcae.collectors.veshv.domain
 
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import org.onap.dcae.collectors.veshv.model.Route
-import org.onap.dcae.collectors.veshv.model.RouteBuilder
-import java.lang.reflect.Type
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
 /**
- * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since March 2019
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since May 2018
  */
-class RouteAdapter : JsonDeserializer<Route> {
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext?): Route {
-        val jobj = json.asJsonObject
-        return RouteBuilder()
-                .fromDomain(jobj["fromDomain"].asString)
-                .toTopic(jobj["toTopic"].asString)
-                .withFixedPartitioning()
-                .build()
-    }
-
-}
+data class VesMessage(val header: CommonEventHeader, val wtpFrame: WireFrameMessage)
