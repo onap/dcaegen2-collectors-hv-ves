@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.main.servers
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.arrow.then

@@ -19,10 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.main.servers
 
+import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
-import org.onap.dcae.collectors.veshv.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 
 /**

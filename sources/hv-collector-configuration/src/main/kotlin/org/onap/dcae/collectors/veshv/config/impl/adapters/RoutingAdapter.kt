@@ -17,34 +17,24 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.config.adapters
+package org.onap.dcae.collectors.veshv.config.impl.adapters
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.google.gson.reflect.TypeToken
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import java.lang.reflect.Type
-import java.net.InetSocketAddress
-
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since February 2019
+ * @since March 2019
  */
-class AddressAdapter : JsonDeserializer<InetSocketAddress> {
-    override fun deserialize(
-            json: JsonElement,
-            typeOfT: Type,
-            context: JsonDeserializationContext?): InetSocketAddress
-        {
-            val portStart = json.asString.lastIndexOf(":")
-            if (portStart > 0) {
-                val address = json.asString.substring(0, portStart)
-                val port = json.asString.substring(portStart + 1)
-                return InetSocketAddress(address, port.toInt())
-            } else throw InvalidAddressException("Cannot parse '" + json.asString + "' to address")
-        }
+internal class RoutingAdapter : JsonDeserializer<Routing> {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Routing {
+        val parametrizedType = TypeToken.getParameterized(List::class.java, Route::class.java).type
+        return Routing(context.deserialize<List<Route>>(json, parametrizedType))
+    }
 
-    class InvalidAddressException(reason:String) : RuntimeException(reason)
 }
-
-
