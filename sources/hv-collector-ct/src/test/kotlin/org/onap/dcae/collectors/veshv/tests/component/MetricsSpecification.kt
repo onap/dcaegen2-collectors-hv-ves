@@ -35,8 +35,8 @@ import org.onap.dcae.collectors.veshv.model.MessageDropCause.KAFKA_FAILURE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
-import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
-import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
+import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicRouting
 import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidListenerVersion
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHeader
@@ -92,7 +92,7 @@ object MetricsSpecification : Spek({
 
     describe("Messages sent metrics") {
         it("should gather info for each topic separately") {
-            val sut = vesHvWithAlwaysSuccessfulSink(twoDomainsToOneTopicConfiguration)
+            val sut = vesHvWithAlwaysSuccessfulSink(twoDomainsToOneTopicRouting)
 
             sut.handleConnection(
                     vesWireFrameMessage(PERF3GPP),
@@ -130,7 +130,7 @@ object MetricsSpecification : Spek({
 
     describe("Messages dropped metrics") {
         it("should gather metrics for invalid messages") {
-            val sut = vesHvWithAlwaysSuccessfulSink(basicConfiguration)
+            val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
                     messageWithInvalidWireFrameHeader(),
@@ -146,7 +146,7 @@ object MetricsSpecification : Spek({
         }
 
         it("should gather metrics for route not found") {
-            val sut = vesHvWithAlwaysSuccessfulSink(basicConfiguration)
+            val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
                     vesWireFrameMessage(domain = PERF3GPP),
@@ -160,7 +160,7 @@ object MetricsSpecification : Spek({
         }
 
         it("should gather metrics for sing errors") {
-            val sut = vesHvWithAlwaysFailingSink(basicConfiguration)
+            val sut = vesHvWithAlwaysFailingSink(basicRouting)
 
             sut.handleConnection(vesWireFrameMessage(domain = PERF3GPP))
 
@@ -171,7 +171,7 @@ object MetricsSpecification : Spek({
         }
 
         it("should gather summed metrics for dropped messages") {
-            val sut = vesHvWithAlwaysSuccessfulSink(basicConfiguration)
+            val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
                     vesWireFrameMessage(domain = PERF3GPP),

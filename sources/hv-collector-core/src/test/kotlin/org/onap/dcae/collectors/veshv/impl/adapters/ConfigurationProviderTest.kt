@@ -78,7 +78,7 @@ internal object ConfigurationProviderImplTest : Spek({
                     StepVerifier.create(configProvider().take(1))
                             .consumeNextWith {
 
-                                val route1 = it.routing.routes[0]
+                                val route1 = it.routes[0]
                                 assertThat(FAULT.domainName)
                                         .describedAs("routed domain 1")
                                         .isEqualTo(route1.domain)
@@ -86,7 +86,7 @@ internal object ConfigurationProviderImplTest : Spek({
                                         .describedAs("target topic 1")
                                         .isEqualTo(route1.targetTopic)
 
-                                val route2 = it.routing.routes[1]
+                                val route2 = it.routes[1]
                                 assertThat(HEARTBEAT.domainName)
                                         .describedAs("routed domain 2")
                                         .isEqualTo(route2.domain)
