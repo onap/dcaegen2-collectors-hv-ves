@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "dfa8480b_b142acdd",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-13T11:14:12Z",
+      "side": 1,
+      "message": "Maybe naming this class just ConfigurationFacade would be a better idea?",
+      "revId": "f4b9ecbe4a8eb3d80c2166eb6a73d202e81d8ee4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "86acbbc5_21b68c8e",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/FileConfigurationReader.kt",
         "patchSetId": 3
