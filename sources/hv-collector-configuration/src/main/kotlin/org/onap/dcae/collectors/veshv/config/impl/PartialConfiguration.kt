@@ -19,8 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
+import arrow.core.ForOption
 import arrow.core.Option
+import arrow.typeclasses.MonadContinuation
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
+import org.onap.dcae.collectors.veshv.utils.arrow.binding
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.net.InetSocketAddress
@@ -30,30 +33,32 @@ import java.net.InetSocketAddress
  * @since February 2019
  */
 data class PartialConfiguration(
-        val server : Option<PartialServerConfig>,
-        val cbs : Option<PartialCbsConfig>,
-        val security : Option<PartialSecurityConfig>,
-        val kafka : Option<PartialKafkaConfig>,
-        val logLevel : Option<LogLevel>
+        val server: Option<PartialServerConfig>,
+        val cbs: Option<PartialCbsConfig>,
+        val security: Option<PartialSecurityConfig>,
+        val collector: Option<PartialCollectorConfig>,
+        val logLevel: Option<LogLevel>
 )
+
 data class PartialServerConfig(
-        val healthCheckApiPort : Option<Int>,
-        val listenPort : Option<Int>,
-        val idleTimeoutSec : Option<Int>,
-        val maximumPayloadSizeBytes : Option<Int>,
-        val dummyMode : Option<Boolean>
+        val healthCheckApiPort: Option<Int>,
+        val listenPort: Option<Int>,
+        val idleTimeoutSec: Option<Int>,
+        val maxPayloadSizeBytes: Option<Int>
 )
 
 data class PartialCbsConfig(
-        val firstRequestDelaySec : Option<Int>,
-        val requestIntervalSec : Option<Int>
+        val firstRequestDelaySec: Option<Int>,
+        val requestIntervalSec: Option<Int>
 )
 
 data class PartialSecurityConfig(
-        val sslDisable : Option<Boolean>,
-        val keys : Option<SecurityKeys>)
+        val sslDisable: Option<Boolean>,
+        val keys: Option<SecurityKeys>)
 
-data class PartialKafkaConfig(
-    val kafkaServers : Option<Array<InetSocketAddress>>,
-    val routing : Option<Routing>
+data class PartialCollectorConfig(
+        val dummyMode: Option<Boolean>,
+        val maxRequestSizeBytes: Option<Int>,
+        val kafkaServers: Option<List<InetSocketAddress>>,
+        val routing: Option<Routing>
 )

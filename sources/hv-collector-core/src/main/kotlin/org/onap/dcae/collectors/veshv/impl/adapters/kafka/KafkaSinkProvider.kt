@@ -29,10 +29,10 @@ import org.apache.kafka.clients.producer.ProducerConfig.MAX_REQUEST_SIZE_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.config.api.model.KafkaConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfig
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServiceContext
-import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.kafka.sender.KafkaSender
@@ -46,7 +46,7 @@ import java.lang.Integer.max
 internal class KafkaSinkProvider internal constructor(
         private val kafkaSender: KafkaSender<CommonEventHeader, VesMessage>) : SinkProvider {
 
-    constructor(config: KafkaConfiguration) : this(constructKafkaSender(config))
+    constructor(config: CollectorConfig) : this(constructKafkaSender(config))
 
     override fun invoke(ctx: ClientContext) = KafkaSink(kafkaSender, ctx)
 
@@ -60,14 +60,16 @@ internal class KafkaSinkProvider internal constructor(
         private const val MAXIMUM_REQUEST_SIZE_MULTIPLIER = 1.2f
         private const val BUFFER_MEMORY_MULTIPLIER = 32
         private const val MINIMUM_BUFFER_MEMORY = 32 * 1024 * 1024
-        private fun constructKafkaSender(config: KafkaConfiguration) =
+
+        private fun constructKafkaSender(config: CollectorConfig) =
                 KafkaSender.create(constructSenderOptions(config))
 
-        private fun constructSenderOptions(config: KafkaConfiguration) =
+        private fun constructSenderOptions(config: CollectorConfig) =
                 SenderOptions.create<CommonEventHeader, VesMessage>()
-                        .producerProperty(BOOTSTRAP_SERVERS_CONFIG, config.bootstrapServers)
-                        .producerProperty(MAX_REQUEST_SIZE_CONFIG, maxRequestSize(config))
-                        .producerProperty(BUFFER_MEMORY_CONFIG, bufferMemory(config))
+                        // TODO handle multiple kafka servers
+                        .producerProperty(BOOTSTRAP_SERVERS_CONFIG, config.kafkaServers)
+                        .producerProperty(MAX_REQUEST_SIZE_CONFIG, maxRequestSize(config.maxRequestSizeBytes))
+                        .producerProperty(BUFFER_MEMORY_CONFIG, bufferMemory(config.maxRequestSizeBytes))
                         .producerProperty(KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
                         .producerProperty(VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
                         .producerProperty(MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
@@ -75,10 +77,10 @@ internal class KafkaSinkProvider internal constructor(
                         .producerProperty(ACKS_CONFIG, "1")
                         .stopOnError(false)
 
-        private fun maxRequestSize(config: KafkaConfiguration) =
-                (MAXIMUM_REQUEST_SIZE_MULTIPLIER * config.maximalRequestSizeBytes).toInt()
+        private fun maxRequestSize(maxRequestSize: Int) =
+                (MAXIMUM_REQUEST_SIZE_MULTIPLIER * maxRequestSize).toInt()
 
-        private fun bufferMemory(config: KafkaConfiguration) =
-                max(MINIMUM_BUFFER_MEMORY, BUFFER_MEMORY_MULTIPLIER * config.maximalRequestSizeBytes)
+        private fun bufferMemory(maxRequestSize: Int) =
+                max(MINIMUM_BUFFER_MEMORY, BUFFER_MEMORY_MULTIPLIER * maxRequestSize)
     }
 }

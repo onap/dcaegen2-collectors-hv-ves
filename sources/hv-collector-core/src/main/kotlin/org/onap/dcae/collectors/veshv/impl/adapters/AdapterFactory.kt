@@ -21,9 +21,9 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.config.api.model.KafkaConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfig
 import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
-import org.onap.dcae.collectors.veshv.config.api.model.ConfigurationProviderParams
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClientFactory
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.EnvProperties
 
@@ -32,15 +32,14 @@ import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.EnvProperti
  * @since May 2018
  */
 object AdapterFactory {
-    fun sinkCreatorFactory(dummyMode: Boolean,
-                           kafkaConfig: KafkaConfiguration): SinkProvider =
-            if (dummyMode)
+    fun sinkCreatorFactory(config: CollectorConfig): SinkProvider =
+            if (config.dummyMode)
                 LoggingSinkProvider()
             else
-                KafkaSinkProvider(kafkaConfig)
+                KafkaSinkProvider(config)
 
-    fun configurationProvider(configurationProviderParams: ConfigurationProviderParams): ConfigurationProvider =
+    fun configurationProvider(config: CbsConfiguration): ConfigurationProvider =
             ConfigurationProviderImpl(
                     CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
-                    configurationProviderParams)
+                    config)
 }
