@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.config.api.model
+package org.onap.dcae.collectors.veshv.utils
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since December 2018
- */
-data class KafkaConfiguration(val bootstrapServers: String, val maximalRequestSizeBytes: Int)
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+
+fun <T> Flux<T>.neverComplete(): Mono<Void> = then(Mono.never<T>()).then()

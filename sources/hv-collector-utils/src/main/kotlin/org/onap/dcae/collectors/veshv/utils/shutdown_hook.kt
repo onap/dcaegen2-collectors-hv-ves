@@ -19,10 +19,19 @@
  */
 package org.onap.dcae.collectors.veshv.utils
 
+import java.util.concurrent.atomic.AtomicReference
+
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since January 2019
  */
-fun registerShutdownHook(job: () -> Unit) =
-        Runtime.getRuntime()
-                .addShutdownHook(Thread({ job() }, "GracefulShutdownThread"))
+
+private val currentShutdownHook = AtomicReference<Thread>()
+
+fun registerShutdownHook(job: () -> Unit) {
+    val runtime = Runtime.getRuntime()
+    val newShutdownHook = Thread({ job() }, "GracefulShutdownThread")
+    currentShutdownHook.get()?.run(runtime::removeShutdownHook)
+    currentShutdownHook.set(newShutdownHook)
+    runtime.addShutdownHook(newShutdownHook)
+}

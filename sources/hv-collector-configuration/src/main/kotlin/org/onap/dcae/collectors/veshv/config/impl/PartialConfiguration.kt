@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
+import arrow.core.None
 import arrow.core.Option
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
@@ -30,31 +31,29 @@ import java.net.InetSocketAddress
  * @since February 2019
  */
 internal data class PartialConfiguration(
-        val server : Option<PartialServerConfig>,
-        val cbs : Option<PartialCbsConfig>,
-        val security : Option<PartialSecurityConfig>,
-        val kafka : Option<PartialKafkaConfig>,
-        val logLevel : Option<LogLevel>
+        val server: Option<PartialServerConfig> = None,
+        val cbs: Option<PartialCbsConfig> = None,
+        val security: Option<PartialSecurityConfig> = None,
+        val collector: Option<PartialCollectorConfig> = None,
+        val logLevel: Option<LogLevel> = None
 )
 
 internal data class PartialServerConfig(
-        val healthCheckApiPort : Option<Int>,
-        val listenPort : Option<Int>,
-        val idleTimeoutSec : Option<Int>,
-        val maximumPayloadSizeBytes : Option<Int>,
-        val dummyMode : Option<Boolean>
+        val listenPort: Option<Int> = None,
+        val idleTimeoutSec: Option<Int> = None,
+        val maxPayloadSizeBytes: Option<Int> = None
 )
 
 internal data class PartialCbsConfig(
-        val firstRequestDelaySec : Option<Int>,
-        val requestIntervalSec : Option<Int>
+        val firstRequestDelaySec: Option<Int> = None,
+        val requestIntervalSec: Option<Int> = None
 )
 
-internal data class PartialSecurityConfig(
-        val sslDisable : Option<Boolean>,
-        val keys : Option<SecurityKeys>)
+internal data class PartialSecurityConfig(val keys: Option<SecurityKeys> = None)
 
-internal data class PartialKafkaConfig(
-    val kafkaServers : Option<Array<InetSocketAddress>>,
-    val routing : Option<Routing>
+internal data class PartialCollectorConfig(
+        val dummyMode: Option<Boolean> = None,
+        val maxRequestSizeBytes: Option<Int> = None,
+        val kafkaServers: Option<List<InetSocketAddress>> = None,
+        val routing: Option<Routing> = None
 )

@@ -24,78 +24,72 @@ import org.apache.commons.cli.Option
 
 enum class CommandLineOption(val option: Option, val required: Boolean = false) {
     HEALTH_CHECK_API_PORT(
-        Option.builder("H")
-            .longOpt("health-check-api-port")
-            .hasArg()
-            .desc("Health check rest api listen port")
-            .build()
+            Option.builder("H")
+                    .longOpt("health-check-api-port")
+                    .hasArg()
+                    .desc("Health check rest api listen port")
+                    .build()
+    ),
+    CONFIGURATION_FILE(
+            Option.builder("c")
+                    .longOpt("configuration-file")
+                    .hasArg()
+                    .desc("Json file containing HV-VES configuration")
+                    .build(),
+            required = true
     ),
     LISTEN_PORT(
-        Option.builder("p")
-            .longOpt("listen-port")
-            .hasArg()
-            .desc("Listen port")
-            .build(),
-        required = true
-    ),
-    CONFIGURATION_FIRST_REQUEST_DELAY(
-        Option.builder("d")
-            .longOpt("first-request-delay")
-            .hasArg()
-            .desc("Delay of first request for configuration in seconds")
-            .build()
-    ),
-    CONFIGURATION_REQUEST_INTERVAL(
-        Option.builder("I")
-            .longOpt("request-interval")
-            .hasArg()
-            .desc("Interval of configuration requests in seconds")
-            .build()
+            Option.builder("p")
+                    .longOpt("listen-port")
+                    .hasArg()
+                    .desc("Listen port")
+                    .build(),
+            required = true
     ),
     VES_HV_PORT(
-        Option.builder("v")
-            .longOpt("ves-port")
-            .hasArg()
-            .desc("VesHvCollector port")
-            .build(),
-        required = true
+            Option.builder("v")
+                    .longOpt("ves-port")
+                    .hasArg()
+                    .desc("VesHvCollector port")
+                    .build(),
+            required = true
     ),
     VES_HV_HOST(
-        Option.builder("h")
-            .longOpt("ves-host")
-            .hasArg()
-            .desc("VesHvCollector host")
-            .build(),
-        required = true
+            Option.builder("h")
+                    .longOpt("ves-host")
+                    .hasArg()
+                    .desc("VesHvCollector host")
+                    .build(),
+            required = true
     ),
     KAFKA_SERVERS(
-        Option.builder("s")
-            .longOpt("kafka-bootstrap-servers")
-            .hasArg()
-            .desc("Comma-separated Kafka bootstrap servers in <host>:<port> format")
-            .build(),
-        required = true
+            Option.builder("s")
+                    .longOpt("kafka-bootstrap-servers")
+                    .hasArg()
+                    .desc("Comma-separated Kafka bootstrap servers in <host>:<port> format")
+                    .build(),
+            required = true
     ),
     KAFKA_TOPICS(
-        Option.builder("f")
-            .longOpt("kafka-topics")
-            .hasArg()
-            .desc("Comma-separated Kafka topics")
-            .build(),
-        required = true
+            Option.builder("f")
+                    .longOpt("kafka-topics")
+                    .hasArg()
+                    .desc("Comma-separated Kafka topics")
+                    .build(),
+            required = true
     ),
     SSL_DISABLE(
-        Option.builder("l")
-            .longOpt("ssl-disable")
-            .desc("Disable SSL encryption")
-            .build()
+            Option.builder("l")
+                    .longOpt("ssl-disable")
+                    .desc("Disable SSL encryption")
+                    .build()
     ),
     KEY_STORE_FILE(
-        Option.builder("k")
-            .longOpt("key-store")
-            .hasArg()
-            .desc("Key store in PKCS12 format")
-            .build()
+            Option.builder("k")
+                    .longOpt("key-store")
+                    .hasArg()
+                    .desc("Key store in PKCS12 format")
+                    .build()
     ),
     KEY_STORE_PASSWORD(
             Option.builder("kp")
@@ -105,54 +99,31 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
                     .build()
     ),
     TRUST_STORE_FILE(
-        Option.builder("t")
-            .longOpt("trust-store")
-            .hasArg()
-            .desc("File with trusted certificate bundle in PKCS12 format")
-            .build()
+            Option.builder("t")
+                    .longOpt("trust-store")
+                    .hasArg()
+                    .desc("File with trusted certificate bundle in PKCS12 format")
+                    .build()
     ),
     TRUST_STORE_PASSWORD(
-        Option.builder("tp")
-            .longOpt("trust-store-password")
-            .hasArg()
-            .desc("Trust store password")
-            .build()
-    ),
-    IDLE_TIMEOUT_SEC(
-        Option.builder("i")
-            .longOpt("idle-timeout-sec")
-            .hasArg()
-            .desc(
-                """Idle timeout for remote hosts. After given time without any data exchange the
-                |connection might be closed.""".trimMargin()
-            )
-            .build()
+            Option.builder("tp")
+                    .longOpt("trust-store-password")
+                    .hasArg()
+                    .desc("Trust store password")
+                    .build()
     ),
     MAXIMUM_PAYLOAD_SIZE_BYTES(
-        Option.builder("m")
-            .longOpt("max-payload-size")
-            .hasArg()
-            .desc("Maximum supported payload size in bytes")
-            .build()
-    ),
-    LOG_LEVEL(
-        Option.builder("ll")
-            .longOpt("log-level")
-            .hasArg()
-            .desc("Log level")
-            .build()
-    ),
-    DUMMY_MODE(
-        Option.builder("u")
-            .longOpt("dummy")
-            .desc("If present will start in dummy mode (dummy external services)")
-            .build()
+            Option.builder("m")
+                    .longOpt("max-payload-size")
+                    .hasArg()
+                    .desc("Maximum supported payload size in bytes")
+                    .build()
     );
 
     fun environmentVariableName(prefix: String = DEFAULT_ENV_PREFIX): String =
-        option.longOpt.toUpperCase().replace('-', '_').let { mainPart ->
-            "${prefix}_${mainPart}"
-        }
+            option.longOpt.toUpperCase().replace('-', '_').let { mainPart ->
+                "${prefix}_${mainPart}"
+            }
 
     companion object {
         private const val DEFAULT_ENV_PREFIX = "VESHV"

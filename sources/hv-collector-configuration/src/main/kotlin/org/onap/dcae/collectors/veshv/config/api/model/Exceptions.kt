@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.config.api.model
 
-import java.time.Duration
+class MissingArgumentException(message: String, cause: Throwable?) : RuntimeException(message, cause)
 
-/**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
- * @since July 2018
- */
-data class ConfigurationProviderParams(val firstRequestDelay: Duration,
-                                       val requestInterval: Duration)
+class ValidationException(message: String) : RuntimeException(message)

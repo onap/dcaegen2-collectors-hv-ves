@@ -42,7 +42,7 @@ import org.onap.dcae.collectors.veshv.utils.ServerHandle
 internal object MainTest : Spek({
     describe("closeServer shutdown hook") {
         given("server handles and health state") {
-            val handle: ServerHandle = mock()
+            val handle = mock<ServerHandle>()
             var closed = false
             val handleClose = IO {
                 closed = true
@@ -50,8 +50,8 @@ internal object MainTest : Spek({
             whenever(handle.close()).thenReturn(handleClose)
             val healthState: HealthState = mock()
 
-            on("closeServers") {
-                closeServers(handle, healthState = healthState).invoke()
+            on("shutdownGracefully") {
+                shutdownGracefully(handle, healthState = healthState)
 
                 it("should close all handles") {
                     assertThat(closed).isTrue()

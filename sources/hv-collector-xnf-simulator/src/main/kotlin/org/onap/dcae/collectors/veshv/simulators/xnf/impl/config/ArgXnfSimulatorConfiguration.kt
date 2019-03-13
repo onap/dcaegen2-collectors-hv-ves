@@ -20,9 +20,6 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
 
 import arrow.core.Option
-import arrow.core.fix
-import arrow.instances.option.monad.monad
-import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
@@ -40,6 +37,7 @@ import org.onap.dcae.collectors.veshv.commandline.intValue
 import org.onap.dcae.collectors.veshv.commandline.stringValue
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfigurationProvider
+import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.net.InetSocketAddress
@@ -62,7 +60,7 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
             TRUST_STORE_PASSWORD)
 
     override fun getConfiguration(cmdLine: CommandLine): Option<SimulatorConfiguration> =
-            Option.monad().binding {
+            binding {
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                 val vesHost = cmdLine.stringValue(VES_HV_HOST).bind()
                 val vesPort = cmdLine.intValue(VES_HV_PORT).bind()
@@ -86,7 +84,7 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
                         InetSocketAddress(vesHost, vesPort),
                         maxPayloadSizeBytes,
                         security)
-            }.fix()
+            }
 
     internal object DefaultValues {
         const val HEALTH_CHECK_API_PORT = 6063

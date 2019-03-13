@@ -1,0 +1,34 @@
+{
+  "logLevel": "DEBUG",
+  "server": {
+    "listenPort": 6061,
+    "idleTimeoutSec": 60,
+    "maxPayloadSizeBytes": 1048576
+  },
+  "cbs": {
+    "firstRequestDelaySec": 10,
+    "requestIntervalSec": 5
+  },
+  "security": {
+    "sslDisable": false,
+    "keys": {
+      "keyStoreFile": "/etc/ves-hv/ssl/server.p12",
+      "keyStorePassword": "onaponap",
+      "trustStoreFile": "/etc/ves-hv/ssl/trust.p12",
+      "trustStorePassword": "onaponap"
+    }
+  },
+  "collector": {
+    "dummyMode": false,
+    "maxRequestSizeBytes": 1048576,
+    "kafkaServers": [
+      "message-router-kafka:9092"
+    ],
+    "routing": [
+      {
+        "fromDomain": "perf3gpp",
+        "toTopic": "HV_VES_PERF3GPP"
+      }
+    ]
+  }
+}

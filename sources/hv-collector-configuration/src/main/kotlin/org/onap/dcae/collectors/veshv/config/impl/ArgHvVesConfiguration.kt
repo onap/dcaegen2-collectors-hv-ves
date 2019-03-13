@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.config.api.model
+package org.onap.dcae.collectors.veshv.config.impl
 
-import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
-import java.net.InetSocketAddress
-import java.time.Duration
+import arrow.core.Option
+import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.DefaultParser
+import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONFIGURATION_FILE
+import org.onap.dcae.collectors.veshv.commandline.stringValue
+import java.io.File
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class ServerConfiguration(
-        val serverListenAddress: InetSocketAddress,
-        val kafkaConfiguration: KafkaConfiguration,
-        val configurationProviderParams: ConfigurationProviderParams,
-        val securityConfiguration: SecurityConfiguration,
-        val idleTimeout: Duration,
-        val healthCheckApiListenAddress: InetSocketAddress,
-        val maximumPayloadSizeBytes: Int,
-        val logLevel: LogLevel,
-        val dummyMode: Boolean = false
-)
+internal class ArgHvVesConfiguration : ArgBasedConfiguration<File>(DefaultParser()) {
+    override val cmdLineOptionsList = listOf(CONFIGURATION_FILE)
 
+    override fun getConfiguration(cmdLine: CommandLine): Option<File> =
+            cmdLine.stringValue(CONFIGURATION_FILE).map(::File)
+
+}

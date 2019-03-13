@@ -25,8 +25,7 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.DUMMY_MODE
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.KAFKA_SERVERS
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.*
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -49,13 +48,13 @@ class CommandLineOptionTest : Spek({
             }
 
             given("sample option without prefix") {
-                val opt = DUMMY_MODE
+                val opt = SSL_DISABLE
 
                 on("calling environmentVariableName") {
                     val result = opt.environmentVariableName()
 
                     it("should return prefixed upper snake cased long option name") {
-                        assertThat(result).isEqualTo("VESHV_DUMMY")
+                        assertThat(result).isEqualTo("VESHV_SSL_DISABLE")
                     }
                 }
             }

@@ -19,25 +19,38 @@
  */
 package org.onap.dcae.collectors.veshv.main.servers
 
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
+import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import org.onap.dcae.collectors.veshv.utils.arrow.then
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import java.net.InetSocketAddress
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-object HealthCheckServer : ServerStarter() {
-    override fun startServer(config: ServerConfiguration) = createHealthCheckServer(config).start()
+object HealthCheckServer {
 
-    private fun createHealthCheckServer(config: ServerConfiguration) =
+    private const val DEFAULT_HEALTHCHECK_PORT = 6060
+    private val logger = Logger(HealthCheckServer::class)
+
+    fun start(port: Int = DEFAULT_HEALTHCHECK_PORT) =
+            createHealthCheckServer(port)
+                    .start()
+                    .then(::logServerStarted)
+                    .unsafeRunSync()
+
+    private fun createHealthCheckServer(listenPort: Int) =
             HealthCheckApiServer(
                     HealthState.INSTANCE,
                     MicrometerMetrics.INSTANCE.metricsProvider,
-                    config.healthCheckApiListenAddress)
+                    InetSocketAddress(listenPort))
 
-    override fun serverStartedMessage(handle: ServerHandle) =
-            "Health check server is up and listening on ${handle.host}:${handle.port}"
+    private fun logServerStarted(handle: ServerHandle) =
+            logger.info(ServiceContext::mdc) {
+                "Health check server is up and listening on ${handle.host}:${handle.port}"
+            }
 }

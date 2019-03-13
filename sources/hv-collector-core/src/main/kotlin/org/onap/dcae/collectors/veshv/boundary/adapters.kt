@@ -19,13 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
-import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
-import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.utils.Closeable
 import reactor.core.publisher.Flux
 
@@ -48,5 +48,5 @@ interface SinkProvider : Closeable {
 }
 
 interface ConfigurationProvider {
-    operator fun invoke(): Flux<CollectorConfiguration>
+    operator fun invoke(): Flux<Routing>
 }

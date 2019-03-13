@@ -20,10 +20,20 @@
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
+import arrow.core.ForOption
 import arrow.core.Option
 import arrow.core.Try
+import arrow.core.fix
 import arrow.core.identity
+import arrow.effects.ForIO
+import arrow.effects.IO
+import arrow.effects.fix
+import arrow.effects.instances.io.monad.monad
+import arrow.instances.option.monad.monad
 import arrow.syntax.collections.firstOption
+import arrow.typeclasses.MonadContinuation
+import arrow.typeclasses.binding
+import reactor.core.publisher.Flux
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -31,11 +41,23 @@ import java.util.concurrent.atomic.AtomicReference
  * @since July 2018
  */
 
+object OptionUtils {
+    fun <A> binding(c: suspend MonadContinuation<ForOption, *>.() -> A)
+            : Option<A> = Option.monad().binding(c).fix()
+}
+
+object IOUtils {
+    fun <A> binding(c: suspend MonadContinuation<ForIO, *>.() -> A)
+            : IO<A> = IO.monad().binding(c).fix()
+}
+
 fun <A> Either<A, A>.flatten() = fold(::identity, ::identity)
 
 fun <B> Either<Throwable, B>.rightOrThrow() = fold({ throw it }, ::identity)
 
 fun <A, B> Either<A, B>.rightOrThrow(mapper: (A) -> Throwable) = fold({ throw mapper(it) }, ::identity)
+
+fun <A, B> Flux<Either<A, B>>.throwOnLeft(f: (A) -> Exception): Flux<B> = map { it.rightOrThrow(f) }
 
 fun <A> AtomicReference<A>.getOption() = Option.fromNullable(get())
 
@@ -57,3 +79,13 @@ fun <A> Try<A>.doOnFailure(action: (Throwable) -> Unit): Try<A> = apply {
         action(exception)
     }
 }
+
+fun <A, B> A.mapBinding(c: suspend MonadContinuation<ForOption, *>.(A) -> B)
+        : Option<B> = let { OptionUtils.binding { c(it) } }
+
+
+
+
+
+
+

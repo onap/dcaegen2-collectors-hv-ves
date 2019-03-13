@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.config.api.model
+package org.onap.dcae.collectors.veshv.tests.utils
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class CollectorConfiguration(val routing: Routing)
+import java.io.InputStreamReader
+
+fun <T> Class<T>.resourceAsStream(resourcePath: String): InputStreamReader =
+        InputStreamReader(getResourceAsStream(resourcePath))
+
+fun <T> Class<T>.absoluteResourcePath(resourcePath: String): String =
+        getResource(resourcePath).path

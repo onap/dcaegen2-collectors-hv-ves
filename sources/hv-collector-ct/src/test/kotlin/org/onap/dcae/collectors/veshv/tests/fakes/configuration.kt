@@ -20,12 +20,11 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.api.model.routing
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
-
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import reactor.core.publisher.FluxProcessor
 import reactor.core.publisher.UnicastProcessor
 import reactor.retry.RetryExhaustedException
@@ -35,62 +34,55 @@ const val PERF3GPP_TOPIC = "HV_VES_PERF3GPP"
 const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "HV_VES_MEAS_FOR_VF_SCALING"
 const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
 
-val basicConfiguration: CollectorConfiguration = CollectorConfiguration(
-        routing = routing {
-            defineRoute {
-                fromDomain(PERF3GPP.domainName)
-                toTopic(PERF3GPP_TOPIC)
-                withFixedPartitioning()
-            }
-        }.build()
-)
-
-val twoDomainsToOneTopicConfiguration: CollectorConfiguration = CollectorConfiguration(
-        routing = routing {
-            defineRoute {
-                fromDomain(PERF3GPP.domainName)
-                toTopic(PERF3GPP_TOPIC)
-                withFixedPartitioning()
-            }
-            defineRoute {
-                fromDomain(HEARTBEAT.domainName)
-                toTopic(PERF3GPP_TOPIC)
-                withFixedPartitioning()
-            }
-            defineRoute {
-                fromDomain(MEASUREMENT.domainName)
-                toTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
-                withFixedPartitioning()
-            }
-        }.build()
-)
+val basicRouting = routing {
+    defineRoute {
+        fromDomain(PERF3GPP.domainName)
+        toTopic(PERF3GPP_TOPIC)
+        withFixedPartitioning()
+    }
+}.build()
 
 
-val configurationWithDifferentRouting: CollectorConfiguration = CollectorConfiguration(
-        routing = routing {
-            defineRoute {
-                fromDomain(PERF3GPP.domainName)
-                toTopic(ALTERNATE_PERF3GPP_TOPIC)
-                withFixedPartitioning()
-            }
-        }.build()
-)
+val twoDomainsToOneTopicRouting = routing {
+    defineRoute {
+        fromDomain(PERF3GPP.domainName)
+        toTopic(PERF3GPP_TOPIC)
+        withFixedPartitioning()
+    }
+    defineRoute {
+        fromDomain(HEARTBEAT.domainName)
+        toTopic(PERF3GPP_TOPIC)
+        withFixedPartitioning()
+    }
+    defineRoute {
+        fromDomain(MEASUREMENT.domainName)
+        toTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
+        withFixedPartitioning()
+    }
+}.build()
 
 
-val configurationWithoutRouting: CollectorConfiguration = CollectorConfiguration(
-        routing = routing {
-        }.build()
-)
+val configurationWithDifferentRouting = routing {
+    defineRoute {
+        fromDomain(PERF3GPP.domainName)
+        toTopic(ALTERNATE_PERF3GPP_TOPIC)
+        withFixedPartitioning()
+    }
+}.build()
+
+
+val emptyRouting = routing { }.build()
+
 
 class FakeConfigurationProvider : ConfigurationProvider {
     private var shouldThrowException = false
-    private val configStream: FluxProcessor<CollectorConfiguration, CollectorConfiguration> = UnicastProcessor.create()
+    private val configStream: FluxProcessor<Routing, Routing> = UnicastProcessor.create()
 
-    fun updateConfiguration(collectorConfiguration: CollectorConfiguration) =
+    fun updateConfiguration(routing: Routing) =
             if (shouldThrowException) {
                 configStream.onError(RetryExhaustedException("I'm so tired"))
             } else {
-                configStream.onNext(collectorConfiguration)
+                configStream.onNext(routing)
             }
 
 

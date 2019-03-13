@@ -19,33 +19,54 @@
  */
 package org.onap.dcae.collectors.veshv.main.servers
 
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.boundary.Server
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
+import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import org.onap.dcae.collectors.veshv.utils.arrow.then
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-object VesServer : ServerStarter() {
-    override fun startServer(config: ServerConfiguration): IO<ServerHandle> = createVesServer(config).start()
+object VesServer {
 
-    private fun createVesServer(config: ServerConfiguration): Server {
-        val collectorProvider = CollectorFactory(
-                AdapterFactory.configurationProvider(config.configurationProviderParams),
-                AdapterFactory.sinkCreatorFactory(config.dummyMode, config.kafkaConfiguration),
-                MicrometerMetrics.INSTANCE,
-                config.maximumPayloadSizeBytes
-        ).createVesHvCollectorProvider()
+    private val logger = Logger(VesServer::class)
 
-        return ServerFactory.createNettyTcpServer(config, collectorProvider, MicrometerMetrics.INSTANCE)
-    }
+    fun start(config: HvVesConfiguration): ServerHandle =
+            createVesServer(config)
+                    .start()
+                    .then(::logServerStarted)
+                    .unsafeRunSync()
 
-    override fun serverStartedMessage(handle: ServerHandle) =
-            "HighVolume VES Collector is up and listening on ${handle.host}:${handle.port}"
+    private fun createVesServer(config: HvVesConfiguration): Server =
+            initializeCollectorFactory(config)
+                    .createVesHvCollectorProvider()
+                    .let { collectorProvider ->
+                        ServerFactory.createNettyTcpServer(
+                                config.server,
+                                config.security,
+                                collectorProvider,
+                                MicrometerMetrics.INSTANCE
+                        )
+                    }
+
+    private fun initializeCollectorFactory(config: HvVesConfiguration): CollectorFactory =
+            CollectorFactory(
+                    AdapterFactory.configurationProvider(config.cbs),
+                    AdapterFactory.sinkCreatorFactory(config.collector),
+                    MicrometerMetrics.INSTANCE,
+                    config.server.maxPayloadSizeBytes
+            )
+
+    private fun logServerStarted(handle: ServerHandle) =
+            logger.info(ServiceContext::mdc) {
+                "HighVolume VES Collector is up and listening on ${handle.host}:${handle.port}"
+            }
+
 }

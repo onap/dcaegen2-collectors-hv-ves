@@ -33,25 +33,24 @@ import java.nio.file.Paths
 abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
     abstract val cmdLineOptionsList: List<CommandLineOption>
 
-    fun parse(args: Array<out String>): Either<WrongArgumentError, T> {
-        val parseResult = Try {
-            val commandLineOptions = cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
-            parser.parse(commandLineOptions, args)
-        }
-        return parseResult
-                .toEither()
-                .mapLeft { ex -> WrongArgumentError(ex, cmdLineOptionsList) }
-                .map(this::getConfiguration)
-                .flatMap {
-                    it.toEither {
-                        WrongArgumentError(
-                                message = "Unexpected error when parsing command line arguments",
-                                cmdLineOptionsList = cmdLineOptionsList)
-                    }
-                }
-    }
-
     protected abstract fun getConfiguration(cmdLine: CommandLine): Option<T>
 
-    protected fun stringPathToPath(path: String): Path = Paths.get(File(path).toURI())
+    fun parse(args: Array<out String>): Either<WrongArgumentError, T> =
+            Try { parseArgumentsArray(args) }
+                    .toEither()
+                    .mapLeft { WrongArgumentError(it, cmdLineOptionsList) }
+                    .map(this::getConfiguration)
+                    .flatMap {
+                        it.toEither {
+                            WrongArgumentError(
+                                    message = "Unexpected error when parsing command line arguments",
+                                    cmdLineOptionsList = cmdLineOptionsList)
+                        }
+                    }
+
+    private fun parseArgumentsArray(args: Array<out String>) =
+            cmdLineOptionsList
+                    .map { it.option }
+                    .fold(Options(), Options::addOption)
+                    .let { parser.parse(it, args) }
 }

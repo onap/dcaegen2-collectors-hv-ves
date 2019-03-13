@@ -17,28 +17,38 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.servers
+package org.onap.dcae.collectors.veshv.config.api.model
 
-import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.model.ServiceContext
-import org.onap.dcae.collectors.veshv.utils.ServerHandle
-import org.onap.dcae.collectors.veshv.utils.arrow.then
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
+import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since August 2018
+ * @since May 2018
  */
-abstract class ServerStarter {
-    fun start(config: ServerConfiguration): IO<ServerHandle> =
-            startServer(config)
-                    .then { logger.info(ServiceContext::mdc) { serverStartedMessage(it) } }
+data class HvVesConfiguration(
+        val server: ServerConfiguration,
+        val cbs: CbsConfiguration,
+        val security: SecurityConfiguration,
+        val collector: CollectorConfiguration,
+        val logLevel: LogLevel
+)
 
-    protected abstract fun startServer(config: ServerConfiguration): IO<ServerHandle>
-    protected abstract fun serverStartedMessage(handle: ServerHandle): String
+data class ServerConfiguration(
+        val listenPort: Int,
+        val idleTimeout: Duration,
+        val maxPayloadSizeBytes: Int
+)
 
-    companion object {
-        private val logger = Logger(ServerStarter::class)
-    }
-}
+data class CbsConfiguration(
+        val firstRequestDelay: Duration,
+        val requestInterval: Duration
+)
+
+data class CollectorConfiguration(
+        val maxRequestSizeBytes: Int,
+        val kafkaServers: String,
+        val routing: Routing,
+        val dummyMode: Boolean = false
+)
