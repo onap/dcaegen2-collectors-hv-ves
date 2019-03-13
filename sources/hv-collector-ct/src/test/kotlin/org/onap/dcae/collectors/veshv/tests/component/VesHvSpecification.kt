@@ -24,21 +24,24 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
-import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
-import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
+import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithDifferentRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithoutRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicConfiguration
-import org.onap.dcae.collectors.veshv.tests.utils.*
-
+import org.onap.dcae.collectors.veshv.tests.fakes.emptyRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicRouting
+import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
+import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHeader
+import org.onap.dcae.collectors.veshv.tests.utils.messageWithPayloadOfSize
+import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
+import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
 import reactor.core.publisher.Flux
 import java.time.Duration
 
@@ -149,7 +152,7 @@ object VesHvSpecification : Spek({
         it("should be able to direct 2 messages from different domains to one topic") {
             val (sut, sink) = vesHvWithStoringSink()
 
-            sut.configurationProvider.updateConfiguration(twoDomainsToOneTopicConfiguration)
+            sut.configurationProvider.updateConfiguration(twoDomainsToOneTopicRouting)
 
             val messages = sut.handleConnection(sink,
                     vesWireFrameMessage(PERF3GPP),
@@ -210,12 +213,12 @@ object VesHvSpecification : Spek({
 
             it("should start routing messages") {
 
-                sut.configurationProvider.updateConfiguration(configurationWithoutRouting)
+                sut.configurationProvider.updateConfiguration(emptyRouting)
 
                 val messages = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messages).isEmpty()
 
-                sut.configurationProvider.updateConfiguration(basicConfiguration)
+                sut.configurationProvider.updateConfiguration(basicRouting)
 
                 val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messagesAfterUpdate).hasSize(1)
@@ -317,7 +320,7 @@ object VesHvSpecification : Spek({
         given("failed configuration change") {
             val (sut, _) = vesHvWithStoringSink()
             sut.configurationProvider.shouldThrowExceptionOnConfigUpdate(true)
-            sut.configurationProvider.updateConfiguration(basicConfiguration)
+            sut.configurationProvider.updateConfiguration(basicRouting)
 
             it("should mark the application unhealthy ") {
                 assertThat(sut.healthStateProvider.currentHealth)
@@ -346,6 +349,6 @@ object VesHvSpecification : Spek({
 private fun vesHvWithStoringSink(): Pair<Sut, StoringSink> {
     val sink = StoringSink()
     val sut = Sut(sink)
-    sut.configurationProvider.updateConfiguration(basicConfiguration)
+    sut.configurationProvider.updateConfiguration(basicRouting)
     return Pair(sut, sink)
 }

@@ -1,16 +1,16 @@
 {
-  "server" : {
-    "healthCheckApiPort" : 5000,
-    "listenPort" : 6000,
-    "idleTimeoutSec" : 1200,
-    "maximumPayloadSizeBytes" : 512000,
-    "dummyMode" : false
+  "logLevel": "ERROR",
+  "server": {
+    "healthCheckApiPort": 5000,
+    "listenPort": 6000,
+    "idleTimeoutSec": 1200,
+    "maxPayloadSizeBytes": 512000
   },
-  "cbs" : {
+  "cbs": {
     "firstRequestDelaySec": 7,
     "requestIntervalSec": 900
   },
-  "security" : {
+  "security": {
     "sslDisable": false,
     "keys": {
       "keyStoreFile": "test.ks.pkcs12",
@@ -19,7 +19,9 @@
       "trustStorePassword": "changeMeToo"
     }
   },
-  "kafka" : {
+  "collector": {
+    "dummyMode": false,
+    "maxRequestSizeBytes": 512000,
     "kafkaServers": [
       "192.168.255.1:5005",
       "192.168.255.1:5006"
@@ -30,6 +32,5 @@
         "toTopic": "HV_VES_PERF3GPP"
       }
     ]
-  },
-  "logLevel" : "ERROR"
+  }
 }

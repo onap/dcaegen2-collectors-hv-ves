@@ -24,5 +24,4 @@ package org.onap.dcae.collectors.veshv.utils
  * @since January 2019
  */
 fun registerShutdownHook(job: () -> Unit) =
-        Runtime.getRuntime()
-                .addShutdownHook(Thread({ job() }, "GracefulShutdownThread"))
+        Runtime.getRuntime().addShutdownHook(Thread({ job() }, "GracefulShutdownThread"))

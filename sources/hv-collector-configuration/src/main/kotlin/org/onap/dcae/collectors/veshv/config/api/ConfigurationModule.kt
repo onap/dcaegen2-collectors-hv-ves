@@ -19,13 +19,24 @@
  */
 package org.onap.dcae.collectors.veshv.config.api
 
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.config.impl.ArgVesHvConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
+import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
+import org.onap.dcae.collectors.veshv.config.impl.ArgHvVesConfiguration
+import org.onap.dcae.collectors.veshv.config.impl.ConfigurationAdapter
+import org.onap.dcae.collectors.veshv.config.impl.FileConfigurationReader
+import org.onap.dcae.collectors.veshv.utils.arrow.rightOrThrow
 import reactor.core.publisher.Flux
 
 class ConfigurationModule {
-    fun createConfigurationFromCommandLine(args: Array<String>) =
-            ArgVesHvConfiguration().parse(args)
 
-    fun hvVesConfigurationUpdates(): Flux<ServerConfiguration> = Flux.never<ServerConfiguration>()
+    private val configurationReader = FileConfigurationReader()
+    private val configurationAdapter = ConfigurationAdapter()
+
+    fun hvVesConfigurationUpdates(args: Array<String>): Flux<HvVesConfiguration> =
+            Flux.just(ArgHvVesConfiguration().parse(args))
+                    .map { it.rightOrThrow { err -> MissingArgumentException(err.message, err.cause) } }
+                    .map { configurationReader.loadConfig(it.reader()) }
+                    .map { configurationAdapter.createConfiguration(it) }
+                    .map { it.rightOrThrow { err -> ValidationException(err.message) } }
 }
