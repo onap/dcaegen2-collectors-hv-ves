@@ -30,7 +30,7 @@ import org.onap.dcaegen2.services.sdk.security.ssl.SslFactory
 class SslContextFactory(private val sslFactory: SslFactory = SslFactory()) {
     fun createServerContext(secConfig: SecurityConfiguration): Option<SslContext> =
             secConfig.keys.map { sslFactory.createSecureServerContext(it) }
+
     fun createClientContext(secConfig: SecurityConfiguration): Option<SslContext> =
             secConfig.keys.map { sslFactory.createSecureClientContext(it) }
-
 }

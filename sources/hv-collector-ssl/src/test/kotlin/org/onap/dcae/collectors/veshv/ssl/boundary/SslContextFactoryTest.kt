@@ -43,7 +43,7 @@ internal object SslContextFactoryTest : Spek({
     val cut = SslContextFactory(sslFactory)
 
     given("empty security configuration") {
-        val secConfig = SecurityConfiguration(None)
+        val secConfig = SecurityConfiguration(keys = None)
 
         on("creating server context") {
             val result = cut.createServerContext(secConfig)
@@ -69,7 +69,7 @@ internal object SslContextFactoryTest : Spek({
                 .keyStore(ImmutableSecurityKeysStore.of(Paths.get("ks.pkcs12")))
                 .keyStorePassword(Passwords.fromString("yyy"))
                 .build()
-        val secConfig = SecurityConfiguration(Some(keys))
+        val secConfig = SecurityConfiguration(keys = Some(keys))
 
         on("creating server context") {
             val result = cut.createServerContext(secConfig)

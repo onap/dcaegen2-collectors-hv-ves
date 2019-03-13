@@ -21,22 +21,35 @@ package org.onap.dcae.collectors.veshv.config.api.model
 
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
-import java.net.InetSocketAddress
 import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-data class ServerConfiguration(
-        val serverListenAddress: InetSocketAddress,
-        val kafkaConfiguration: KafkaConfiguration,
-        val configurationProviderParams: ConfigurationProviderParams,
-        val securityConfiguration: SecurityConfiguration,
-        val idleTimeout: Duration,
-        val healthCheckApiListenAddress: InetSocketAddress,
-        val maximumPayloadSizeBytes: Int,
-        val logLevel: LogLevel,
-        val dummyMode: Boolean = false
+data class HvVesConfiguration(
+        val server: ServerConfiguration,
+        val cbs: CbsConfiguration,
+        val security: SecurityConfiguration,
+        val collector: CollectorConfiguration,
+        val logLevel: LogLevel
 )
 
+data class ServerConfiguration(
+        val healthCheckApiPort: Int,
+        val listenPort: Int,
+        val idleTimeout: Duration,
+        val maxPayloadSizeBytes: Int
+)
+
+data class CbsConfiguration(
+        val firstRequestDelay: Duration,
+        val requestInterval: Duration
+)
+
+data class CollectorConfiguration(
+        val maxRequestSizeBytes: Int,
+        val kafkaServers: String,
+        val routing: Routing,
+        val dummyMode: Boolean = false
+)
