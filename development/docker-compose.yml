@@ -73,15 +73,9 @@ services:
     ports:
       - "6060:6060"
       - "6061:6061/tcp"
-    command: ["--listen-port", "6061",
-              "--health-check-api-port", "6060",
-              "--kafka-bootstrap-servers", "message-router-kafka:9092",
-              "--key-store-password", "onaponap",
-              "--trust-store-password", "onaponap",
-              "--first-request-delay", "5",
-              "--log-level", "DEBUG"]
+    command: ["--configuration-file /etc/ves-hv/configuration/configuration.json"]
     environment:
-      JAVA_OPTS:  "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
+      JAVA_OPTS: "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
       CONSUL_HOST: "consul-server"
       CONFIG_BINDING_SERVICE: "cbs"
       HOSTNAME: "dcae-hv-ves-collector"
@@ -95,7 +89,8 @@ services:
       - message-router-kafka
       - config-binding-service
     volumes:
-      - ./ssl/:/etc/ves-hv/
+      - ./configuration/:/etc/ves-hv/configuration/
+      - ./ssl/:/etc/ves-hv/ssl/
       - ./logs:/var/log/ONAP/dcae-hv-ves-collector
 
 
@@ -139,6 +134,7 @@ services:
   #
   # Monitoring
   #
+
   prometheus:
     image: prom/prometheus
     ports:

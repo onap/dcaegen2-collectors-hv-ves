@@ -20,9 +20,6 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
 import arrow.effects.IO
-import arrow.effects.fix
-import arrow.effects.instances.io.monad.monad
-import arrow.typeclasses.binding
 import io.vavr.collection.HashSet
 import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
@@ -36,6 +33,7 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.ClientConfigura
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.SimulatorConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
+import org.onap.dcae.collectors.veshv.utils.arrow.IOUtils.binding
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
@@ -64,7 +62,7 @@ fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
         )
 
 private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
-        IO.monad().binding {
+        binding {
             logger.info { "Using configuration: $config" }
             XnfHealthCheckServer().startServer(config).bind()
             val clientConfig = ClientConfiguration(HashSet.of(config.hvVesAddress), config.securityProvider)
@@ -75,4 +73,4 @@ private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
             XnfApiServer(xnfSimulator, OngoingSimulations())
                     .start(config.listenAddress)
                     .bind()
-        }.fix()
+        }

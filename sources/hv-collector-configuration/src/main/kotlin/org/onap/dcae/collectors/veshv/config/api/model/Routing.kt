@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ data class Routing(val routes: List<Route>) {
             Option.fromNullable(routes.find { it.applies(commonHeader) })
 }
 
-data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int = {0}) {
+data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int = { 0 }) {
 
     fun applies(commonHeader: CommonEventHeader) = commonHeader.domain == domain
 
@@ -40,24 +40,17 @@ data class Route(val domain: String, val targetTopic: String, val partitioning: 
 
 
 /*
-Configuration DSL
- */
+HvVesConfiguration DSL
+*/
 
-fun routing(init: RoutingBuilder.() -> Unit): RoutingBuilder {
-    val conf = RoutingBuilder()
-    conf.init()
-    return conf
-}
+fun routing(init: RoutingBuilder.() -> Unit): RoutingBuilder = RoutingBuilder().apply(init)
 
 class RoutingBuilder {
     private val routes: MutableList<RouteBuilder> = mutableListOf()
 
-    fun defineRoute(init: RouteBuilder.() -> Unit): RouteBuilder {
-        val rule = RouteBuilder()
-        rule.init()
-        routes.add(rule)
-        return rule
-    }
+    fun defineRoute(init: RouteBuilder.() -> Unit): RouteBuilder = RouteBuilder()
+            .apply(init)
+            .also { routes.add(it) }
 
     fun build() = Routing(routes.map { it.build() }.toList())
 }
@@ -68,18 +61,17 @@ class RouteBuilder {
     private lateinit var targetTopic: String
     private lateinit var partitioning: (CommonEventHeader) -> Int
 
-    fun fromDomain(domain: String) : RouteBuilder = apply {
+    fun fromDomain(domain: String): RouteBuilder = apply {
         this.domain = domain
     }
 
-    fun toTopic(targetTopic: String) : RouteBuilder = apply {
+    fun toTopic(targetTopic: String): RouteBuilder = apply {
         this.targetTopic = targetTopic
     }
 
-    fun withFixedPartitioning(num: Int = 0) : RouteBuilder = apply {
+    fun withFixedPartitioning(num: Int = 0): RouteBuilder = apply {
         partitioning = { num }
     }
 
     fun build() = Route(domain, targetTopic, partitioning)
-
 }

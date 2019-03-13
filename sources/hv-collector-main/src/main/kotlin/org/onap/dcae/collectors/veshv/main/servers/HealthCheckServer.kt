@@ -19,24 +19,27 @@
  */
 package org.onap.dcae.collectors.veshv.main.servers
 
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import java.net.InetSocketAddress
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
 object HealthCheckServer : ServerStarter() {
-    override fun startServer(config: ServerConfiguration) = createHealthCheckServer(config).start()
 
-    private fun createHealthCheckServer(config: ServerConfiguration) =
+    override fun startServer(config: HvVesConfiguration) =
+            createHealthCheckServer(config.server.healthCheckApiPort).start()
+
+    private fun createHealthCheckServer(listenPort: Int) =
             HealthCheckApiServer(
                     HealthState.INSTANCE,
                     MicrometerMetrics.INSTANCE.metricsProvider,
-                    config.healthCheckApiListenAddress)
+                    InetSocketAddress(listenPort))
 
     override fun serverStartedMessage(handle: ServerHandle) =
             "Health check server is up and listening on ${handle.host}:${handle.port}"

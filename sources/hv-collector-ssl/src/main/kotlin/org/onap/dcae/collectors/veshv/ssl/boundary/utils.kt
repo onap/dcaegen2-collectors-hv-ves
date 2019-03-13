@@ -51,7 +51,7 @@ fun createSecurityConfigurationProvider(cmdLine: CommandLine): Try<() -> Securit
 
 private fun shouldDisableSsl(cmdLine: CommandLine) = cmdLine.hasOption(CommandLineOption.SSL_DISABLE)
 
-private fun disabledSecurityConfiguration() = SecurityConfiguration(keys = None)
+private fun disabledSecurityConfiguration() = SecurityConfiguration(None)
 
 private fun enabledSecurityConfiguration(cmdLine: CommandLine): SecurityConfiguration {
     val ksFile = cmdLine.stringValue(CommandLineOption.KEY_STORE_FILE, KEY_STORE_FILE)
@@ -66,8 +66,7 @@ private fun enabledSecurityConfiguration(cmdLine: CommandLine): SecurityConfigur
             .trustStorePassword(Passwords.fromString(tsPass))
             .build()
 
-    return SecurityConfiguration(keys = Some(keys))
+    return SecurityConfiguration(Some(keys))
 }
-
 
 private fun pathFromFile(file: String) = Paths.get(file)
