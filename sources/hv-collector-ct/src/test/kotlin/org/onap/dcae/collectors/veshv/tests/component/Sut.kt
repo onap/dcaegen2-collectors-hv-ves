@@ -27,11 +27,18 @@ import io.netty.buffer.UnpooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.domain.RoutedMessage
-import org.onap.dcae.collectors.veshv.tests.fakes.*
+import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysFailingSink
+import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysSuccessfulSink
+import org.onap.dcae.collectors.veshv.tests.fakes.DelayingSink
+import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
+import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthState
+import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
+import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
+import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import reactor.core.publisher.Flux
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
@@ -40,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class Sut(sink: Sink = StoringSink()): AutoCloseable {
+class Sut(sink: Sink = StoringSink()) : AutoCloseable {
     val configurationProvider = FakeConfigurationProvider()
     val healthStateProvider = FakeHealthState()
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
@@ -94,17 +101,17 @@ fun Sut.handleConnection(vararg packets: ByteBuf) {
     collector.handleConnection(Flux.fromArray(packets)).block(timeout)
 }
 
-fun vesHvWithAlwaysSuccessfulSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+fun vesHvWithAlwaysSuccessfulSink(routing: Routing = basicRouting): Sut =
         Sut(AlwaysSuccessfulSink()).apply {
-            configurationProvider.updateConfiguration(collectorConfiguration)
+            configurationProvider.updateConfiguration(routing)
         }
 
-fun vesHvWithAlwaysFailingSink(collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+fun vesHvWithAlwaysFailingSink(routing: Routing = basicRouting): Sut =
         Sut(AlwaysFailingSink()).apply {
-            configurationProvider.updateConfiguration(collectorConfiguration)
+            configurationProvider.updateConfiguration(routing)
         }
 
-fun vesHvWithDelayingSink(delay: Duration, collectorConfiguration: CollectorConfiguration = basicConfiguration): Sut =
+fun vesHvWithDelayingSink(delay: Duration, routing: Routing = basicRouting): Sut =
         Sut(DelayingSink(delay)).apply {
-            configurationProvider.updateConfiguration(collectorConfiguration)
+            configurationProvider.updateConfiguration(routing)
         }

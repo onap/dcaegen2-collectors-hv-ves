@@ -32,12 +32,12 @@ import org.onap.dcae.collectors.veshv.utils.arrow.fromNullablesChain
  * @since June 2018
  */
 
+val handleWrongArgumentErrorCurried = ::handleWrongArgumentError.curried()
+
 fun handleWrongArgumentError(programName: String, err: WrongArgumentError): IO<Unit> = IO {
     err.printMessage()
     err.printHelp(programName)
 }.flatMap { ExitFailure(2).io() }
-
-val handleWrongArgumentErrorCurried = ::handleWrongArgumentError.curried()
 
 fun CommandLine.longValue(cmdLineOpt: CommandLineOption, default: Long): Long =
         longValue(cmdLineOpt).getOrElse { default }

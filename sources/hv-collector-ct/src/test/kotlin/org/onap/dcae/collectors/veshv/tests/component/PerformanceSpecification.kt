@@ -34,7 +34,7 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.tests.component.Sut.Companion.MAX_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
-import org.onap.dcae.collectors.veshv.tests.fakes.basicConfiguration
+import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType
@@ -57,7 +57,7 @@ object PerformanceSpecification : Spek({
         it("should handle multiple clients in reasonable time") {
             val sink = CountingSink()
             val sut = Sut(sink)
-            sut.configurationProvider.updateConfiguration(basicConfiguration)
+            sut.configurationProvider.updateConfiguration(basicRouting)
 
             val numMessages: Long = 300_000
             val runs = 4
@@ -88,7 +88,7 @@ object PerformanceSpecification : Spek({
         it("should disconnect on transmission errors") {
             val sink = CountingSink()
             val sut = Sut(sink)
-            sut.configurationProvider.updateConfiguration(basicConfiguration)
+            sut.configurationProvider.updateConfiguration(basicRouting)
 
             val numMessages: Long = 100_000
             val timeout = Duration.ofSeconds(30)
