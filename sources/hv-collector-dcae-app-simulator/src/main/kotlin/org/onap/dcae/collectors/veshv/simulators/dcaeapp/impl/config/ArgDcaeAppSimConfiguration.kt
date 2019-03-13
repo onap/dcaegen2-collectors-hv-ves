@@ -20,9 +20,6 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config
 
 import arrow.core.Option
-import arrow.core.fix
-import arrow.instances.option.monad.monad
-import arrow.typeclasses.binding
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
@@ -34,6 +31,7 @@ import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.MAXIMUM_PAYL
 import org.onap.dcae.collectors.veshv.commandline.intValue
 import org.onap.dcae.collectors.veshv.commandline.stringValue
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
+import org.onap.dcae.collectors.veshv.utils.arrow.binding
 import java.net.InetSocketAddress
 
 class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
@@ -45,7 +43,7 @@ class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration
     )
 
     override fun getConfiguration(cmdLine: CommandLine): Option<DcaeAppSimConfiguration> =
-            Option.monad().binding {
+            binding {
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
                 val kafkaBootstrapServers = cmdLine.stringValue(KAFKA_SERVERS).bind()
 
@@ -62,5 +60,5 @@ class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration
                         maxPayloadSizeBytes,
                         kafkaBootstrapServers,
                         kafkaTopics)
-            }.fix()
+            }
 }

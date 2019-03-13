@@ -30,31 +30,32 @@ import java.net.InetSocketAddress
  * @since February 2019
  */
 internal data class PartialConfiguration(
-        val server : Option<PartialServerConfig>,
-        val cbs : Option<PartialCbsConfig>,
-        val security : Option<PartialSecurityConfig>,
-        val kafka : Option<PartialKafkaConfig>,
-        val logLevel : Option<LogLevel>
+        val server: Option<PartialServerConfig>,
+        val cbs: Option<PartialCbsConfig>,
+        val security: Option<PartialSecurityConfig>,
+        val collector: Option<PartialCollectorConfig>,
+        val logLevel: Option<LogLevel>
 )
 
 internal data class PartialServerConfig(
-        val healthCheckApiPort : Option<Int>,
-        val listenPort : Option<Int>,
-        val idleTimeoutSec : Option<Int>,
-        val maximumPayloadSizeBytes : Option<Int>,
-        val dummyMode : Option<Boolean>
+        val healthCheckApiPort: Option<Int>,
+        val listenPort: Option<Int>,
+        val idleTimeoutSec: Option<Int>,
+        val maxPayloadSizeBytes: Option<Int>
 )
 
 internal data class PartialCbsConfig(
-        val firstRequestDelaySec : Option<Int>,
-        val requestIntervalSec : Option<Int>
+        val firstRequestDelaySec: Option<Int>,
+        val requestIntervalSec: Option<Int>
 )
 
 internal data class PartialSecurityConfig(
-        val sslDisable : Option<Boolean>,
-        val keys : Option<SecurityKeys>)
+        val sslDisable: Option<Boolean>,
+        val keys: Option<SecurityKeys>)
 
-internal data class PartialKafkaConfig(
-    val kafkaServers : Option<Array<InetSocketAddress>>,
-    val routing : Option<Routing>
+internal data class PartialCollectorConfig(
+        val dummyMode: Option<Boolean>,
+        val maxRequestSizeBytes: Option<Int>,
+        val kafkaServers: Option<List<InetSocketAddress>>,
+        val routing: Option<Routing>
 )

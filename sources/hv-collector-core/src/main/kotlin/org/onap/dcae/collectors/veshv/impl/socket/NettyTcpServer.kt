@@ -30,6 +30,7 @@ import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.debug
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.info
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServiceContext
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
@@ -41,6 +42,7 @@ import reactor.netty.NettyInbound
 import reactor.netty.NettyOutbound
 import reactor.netty.tcp.TcpServer
 import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.time.Duration
 
 
@@ -48,14 +50,15 @@ import java.time.Duration
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
+internal class NettyTcpServer(private val serverConfiguration: ServerConfiguration,
+                              private val securityConfig: SecurityConfiguration,
                               private val sslContextFactory: SslContextFactory,
                               private val collectorProvider: CollectorProvider,
                               private val metrics: Metrics) : Server {
 
     override fun start(): IO<ServerHandle> = IO {
         TcpServer.create()
-                .addressSupplier { serverConfig.serverListenAddress }
+                .addressSupplier { InetSocketAddress(serverConfiguration.listenPort) }
                 .configureSsl()
                 .handle(this::handleConnection)
                 .doOnUnbound {
@@ -67,10 +70,10 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
 
     private fun TcpServer.configureSsl() =
             sslContextFactory
-                    .createServerContext(serverConfig.securityConfiguration)
-                    .map { sslContext ->
+                    .createServerContext(securityConfig)
+                    .map { serverContext ->
                         logger.info { "Collector configured with SSL enabled" }
-                        this.secure { b -> b.sslContext(sslContext) }
+                        this.secure { it.sslContext(serverContext) }
                     }.getOrElse {
                         logger.info { "Collector configured with SSL disabled" }
                         this
@@ -125,7 +128,7 @@ internal class NettyTcpServer(private val serverConfig: ServerConfiguration,
                              nettyInbound: NettyInbound): (Collector) -> Mono<Void> = { collector ->
         withConnectionFrom(nettyInbound) { connection ->
             connection
-                    .configureIdleTimeout(clientContext, serverConfig.idleTimeout)
+                    .configureIdleTimeout(clientContext, serverConfiguration.idleTimeout)
                     .logConnectionClosed(clientContext)
         }.run {
             collector.handleConnection(nettyInbound.createDataStream())

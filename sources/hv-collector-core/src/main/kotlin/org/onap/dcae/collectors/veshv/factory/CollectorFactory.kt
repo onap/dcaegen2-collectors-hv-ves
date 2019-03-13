@@ -20,7 +20,6 @@
 package org.onap.dcae.collectors.veshv.factory
 
 import arrow.core.Option
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
@@ -44,14 +43,14 @@ import java.util.concurrent.atomic.AtomicReference
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class CollectorFactory(val configuration: ConfigurationProvider,
+class CollectorFactory(private val configuration: ConfigurationProvider,
                        private val sinkProvider: SinkProvider,
                        private val metrics: Metrics,
-                       private val maximumPayloadSizeBytes: Int,
+                       private val maxPayloadSizeBytes: Int,
                        private val healthState: HealthState = HealthState.INSTANCE) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
-        val config: AtomicReference<CollectorConfiguration> = AtomicReference()
+        val config = AtomicReference<CollectorConfiguration>()
         configuration()
                 .doOnNext {
                     logger.info(ServiceContext::mdc) { "Using updated configuration for new connections" }
@@ -75,7 +74,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
     private fun createVesHvCollector(config: CollectorConfiguration, ctx: ClientContext): Collector =
             VesHvCollector(
                     clientContext = ctx,
-                    wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx),
+                    wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maxPayloadSizeBytes), ctx),
                     protobufDecoder = VesDecoder(),
                     router = Router(config.routing, ctx),
                     sink = sinkProvider(ctx),

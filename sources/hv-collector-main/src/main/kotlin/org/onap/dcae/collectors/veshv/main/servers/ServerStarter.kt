@@ -20,7 +20,7 @@
 package org.onap.dcae.collectors.veshv.main.servers
 
 import arrow.effects.IO
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.arrow.then
@@ -31,11 +31,11 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
  * @since August 2018
  */
 abstract class ServerStarter {
-    fun start(config: ServerConfiguration): IO<ServerHandle> =
+    fun start(config: HvVesConfiguration): IO<ServerHandle> =
             startServer(config)
                     .then { logger.info(ServiceContext::mdc) { serverStartedMessage(it) } }
 
-    protected abstract fun startServer(config: ServerConfiguration): IO<ServerHandle>
+    protected abstract fun startServer(config: HvVesConfiguration): IO<ServerHandle>
     protected abstract fun serverStartedMessage(handle: ServerHandle): String
 
     companion object {

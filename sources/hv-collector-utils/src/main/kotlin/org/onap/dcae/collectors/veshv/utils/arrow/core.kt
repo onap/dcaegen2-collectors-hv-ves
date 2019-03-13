@@ -20,10 +20,15 @@
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
+import arrow.core.ForOption
 import arrow.core.Option
 import arrow.core.Try
+import arrow.core.fix
 import arrow.core.identity
+import arrow.instances.option.monad.monad
 import arrow.syntax.collections.firstOption
+import arrow.typeclasses.MonadContinuation
+import arrow.typeclasses.binding
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -57,3 +62,9 @@ fun <A> Try<A>.doOnFailure(action: (Throwable) -> Unit): Try<A> = apply {
         action(exception)
     }
 }
+
+fun <A, B> A.mapBinding(c: suspend MonadContinuation<ForOption, *>.(A) -> B)
+        : Option<B> = let { binding { c(it) } }
+
+fun <A> binding(c: suspend MonadContinuation<ForOption, *>.() -> A)
+        : Option<A> = Option.monad().binding(c).fix()

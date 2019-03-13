@@ -20,14 +20,14 @@
 package org.onap.dcae.collectors.veshv.config.api
 
 import arrow.core.Some
-import org.jetbrains.spek.api.Spek
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.impl.FileConfigurationReader
 import org.onap.dcae.collectors.veshv.config.impl.PartialCbsConfig
-import org.onap.dcae.collectors.veshv.config.impl.PartialKafkaConfig
+import org.onap.dcae.collectors.veshv.config.impl.PartialCollectorConfig
 import org.onap.dcae.collectors.veshv.config.impl.PartialSecurityConfig
 import org.onap.dcae.collectors.veshv.config.impl.PartialServerConfig
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
@@ -65,7 +65,7 @@ internal object FileConfigurationReaderTest : Spek({
             }
 
             it("parses ip address") {
-                val input = """{  "kafka" : {
+                val input = """{  "collector" : {
                     "kafkaServers": [
                       "192.168.255.1:5005",
                       "192.168.255.26:5006"
@@ -74,12 +74,12 @@ internal object FileConfigurationReaderTest : Spek({
                 }"""
 
                 val config = FileConfigurationReader().loadConfig(StringReader(input))
-                assertThat(config.kafka.nonEmpty()).isTrue()
-                val kafka = config.kafka.orNull() as PartialKafkaConfig
-                assertThat(kafka.kafkaServers.nonEmpty()).isTrue()
-                val addresses = kafka.kafkaServers.orNull() as Array<InetSocketAddress>
+                assertThat(config.collector.nonEmpty()).isTrue()
+                val collector = config.collector.orNull() as PartialCollectorConfig
+                assertThat(collector.kafkaServers.nonEmpty()).isTrue()
+                val addresses = collector.kafkaServers.orNull() as List<InetSocketAddress>
                 assertThat(addresses)
-                        .isEqualTo(arrayOf(
+                        .isEqualTo(listOf(
                                 InetSocketAddress("192.168.255.1", 5005),
                                 InetSocketAddress("192.168.255.26", 5006)
                         ))
@@ -87,7 +87,7 @@ internal object FileConfigurationReaderTest : Spek({
 
             it("parses routing array with RoutingAdapter") {
                 val input = """{
-                    "kafka" : {
+                    "collector" : {
                         "routing" : [
                             {
                               "fromDomain": "perf3gpp",
@@ -97,10 +97,10 @@ internal object FileConfigurationReaderTest : Spek({
                     }
                 }""".trimIndent()
                 val config = FileConfigurationReader().loadConfig(StringReader(input))
-                assertThat(config.kafka.nonEmpty()).isTrue()
-                val kafka = config.kafka.orNull() as PartialKafkaConfig
-                assertThat(kafka.routing.nonEmpty()).isTrue()
-                val routing = kafka.routing.orNull() as Routing
+                assertThat(config.collector.nonEmpty()).isTrue()
+                val collector = config.collector.orNull() as PartialCollectorConfig
+                assertThat(collector.routing.nonEmpty()).isTrue()
+                val routing = collector.routing.orNull() as Routing
                 routing.run {
                     assertThat(routes.size).isEqualTo(1)
                     assertThat(routes[0].domain).isEqualTo("perf3gpp")
@@ -127,19 +127,22 @@ internal object FileConfigurationReaderTest : Spek({
                 assertThat(cbs.firstRequestDelaySec).isEqualTo(Some(7))
                 assertThat(cbs.requestIntervalSec).isEqualTo(Some(900))
 
-                assertThat(config.kafka.nonEmpty()).isTrue()
-                val kafka = config.kafka.orNull() as PartialKafkaConfig
-                assertThat(kafka.kafkaServers.nonEmpty()).isTrue()
-                assertThat(kafka.routing.nonEmpty()).isTrue()
+                assertThat(config.collector.nonEmpty()).isTrue()
+                val collector = config.collector.orNull() as PartialCollectorConfig
+                collector.run {
+                    assertThat(dummyMode).isEqualTo(Some(false))
+                    assertThat(maxRequestSizeBytes).isEqualTo(Some(512000))
+                    assertThat(kafkaServers.nonEmpty()).isTrue()
+                    assertThat(routing.nonEmpty()).isTrue()
+                }
 
                 assertThat(config.server.nonEmpty()).isTrue()
                 val server = config.server.orNull() as PartialServerConfig
                 server.run {
-                    assertThat(dummyMode).isEqualTo(Some(false))
                     assertThat(healthCheckApiPort).isEqualTo(Some(5000))
                     assertThat(idleTimeoutSec).isEqualTo(Some(1200))
                     assertThat(listenPort).isEqualTo(Some(6000))
-                    assertThat(maximumPayloadSizeBytes).isEqualTo(Some(512000))
+                    assertThat(maxPayloadSizeBytes).isEqualTo(Some(512000))
                 }
             }
         }

@@ -21,11 +21,13 @@ package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import arrow.core.Option
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
-import java.nio.file.Path
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
+//TODO remove after review
+// what to do with security config
 data class SecurityConfiguration(
+        val sslDisable: Boolean = false,
         val keys: Option<SecurityKeys>)
