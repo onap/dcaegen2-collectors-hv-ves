@@ -19,9 +19,19 @@
  */
 package org.onap.dcae.collectors.veshv.config.api
 
-import org.onap.dcae.collectors.veshv.config.impl.ArgVesHvConfiguration
+import arrow.core.Either
+import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.ValidationError
+import org.onap.dcae.collectors.veshv.config.impl.ConfigurationAdapter
+import org.onap.dcae.collectors.veshv.config.impl.FileConfigurationReader
+import java.io.Reader
 
+// TODO
 class ConfigurationModule {
-    fun createConfigurationFromCommandLine(args: Array<String>) =
-            ArgVesHvConfiguration().parse(args)
+    private val validator = ConfigurationAdapter()
+
+    fun createConfigurationFromFile(input: Reader): Either<ValidationError, HvVesConfiguration> =
+            FileConfigurationReader()
+                    .loadConfig(input)
+                    .let { validator.createConfiguration(it) }
 }

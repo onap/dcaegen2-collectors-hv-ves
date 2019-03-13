@@ -23,4 +23,5 @@ package org.onap.dcae.collectors.veshv.config.api.model
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
+// TODO Remove this class after implementing configuration merge
 data class CollectorConfiguration(val routing: Routing)

@@ -21,11 +21,11 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 
 import com.google.gson.JsonObject
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.routing
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.config.api.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
@@ -49,7 +49,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
                                          retrySpec: Retry<Any>
 
 ) : ConfigurationProvider {
-    constructor(cbsClientMono: Mono<CbsClient>, params: ConfigurationProviderParams) : this(
+    constructor(cbsClientMono: Mono<CbsClient>, params: CbsConfiguration) : this(
             cbsClientMono,
             params.firstRequestDelay,
             params.requestInterval,

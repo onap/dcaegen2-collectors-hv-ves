@@ -48,7 +48,7 @@ import java.time.Duration
  */
 internal object ConfigurationProviderImplTest : Spek({
 
-    describe("Configuration provider") {
+    describe("HvVesConfiguration provider") {
 
         val cbsClient: CbsClient = mock()
         val cbsClientMock: Mono<CbsClient> = Mono.just(cbsClient)

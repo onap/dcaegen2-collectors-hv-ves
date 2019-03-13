@@ -23,9 +23,9 @@ import arrow.effects.IO
 import arrow.effects.fix
 import arrow.effects.instances.io.monad.monad
 import arrow.typeclasses.binding
-import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationModule
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.handleValidationError
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
@@ -37,15 +37,17 @@ import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.registerShutdownHook
+import java.io.File
+import java.io.Reader
+import java.nio.charset.Charset
 
-private const val VESHV_PACKAGE = "org.onap.dcae.collectors.veshv"
-private val logger = Logger("$VESHV_PACKAGE.main")
-private const val PROGRAM_NAME = "java $VESHV_PACKAGE.main.MainKt"
+private const val VES_HV_PACKAGE = "org.onap.dcae.collectors.veshv"
+private val logger = Logger("$VES_HV_PACKAGE.main")
 
 fun main(args: Array<String>) =
-        ConfigurationModule()
-                .createConfigurationFromCommandLine(args)
-                .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
+        readConfigurationFile(args)
+                .let { ConfigurationModule().createConfigurationFromFile(it) }
+                .mapLeft(::handleValidationError)
                 .map(::startAndAwaitServers)
                 .unsafeRunEitherSync(
                         { ex ->
@@ -55,20 +57,27 @@ fun main(args: Array<String>) =
                         { logger.debug(ServiceContext::mdc) { "High Volume VES Collector execution finished" } }
                 )
 
-private fun startAndAwaitServers(config: ServerConfiguration) =
+// TODO
+private fun readConfigurationFile(args: Array<String>): Reader =
+        if (args.size != 1)
+            throw RuntimeException("Failed to start a server - expecting configuration file path as a argument")
+        else
+            File(args.first()).reader(Charset.defaultCharset())
+
+private fun startAndAwaitServers(config: HvVesConfiguration) =
         IO.monad().binding {
-            Logger.setLogLevel(VESHV_PACKAGE, config.logLevel)
+            Logger.setLogLevel(VES_HV_PACKAGE, config.logLevel)
             logger.info { "Using configuration: $config" }
 
             val healthCheckServerHandle = HealthCheckServer.start(config).bind()
             val hvVesHandle = VesServer.start(config).bind()
 
-            registerShutdownHook(closeServers(hvVesHandle, healthCheckServerHandle))
+            registerShutdownHook { closeServers(hvVesHandle, healthCheckServerHandle) }
             hvVesHandle.await().bind()
         }.fix()
 
 internal fun closeServers(vararg handles: ServerHandle,
-                          healthState: HealthState = HealthState.INSTANCE) = {
+                          healthState: HealthState = HealthState.INSTANCE) {
     logger.debug(ServiceContext::mdc) { "Graceful shutdown started" }
     healthState.changeState(HealthDescription.SHUTTING_DOWN)
     Closeable.closeAll(handles.asIterable()).unsafeRunSync()
