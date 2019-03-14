@@ -1,0 +1,274 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac709d86_154b45b2",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/ArgBasedConfiguration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "Isn\u0027t this unused?",
+      "range": {
+        "startLine": 57,
+        "startChar": 3,
+        "endLine": 57,
+        "endChar": 76
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51f5f7ba_eca07d0b",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "validator.create() ? Either wrong naming or mixed responsibility",
+      "range": {
+        "startLine": 36,
+        "startChar": 27,
+        "endLine": 36,
+        "endChar": 56
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb9e4680_204c4eb2",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/CollectorConfiguration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "Remove it now - replace with direct Routing usage",
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "af68055a_af20f33c",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/Configuration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "...uration (to comply with other naming, after applying comment to CollectorConfiguration)",
+      "range": {
+        "startLine": 50,
+        "startChar": 20,
+        "endLine": 50,
+        "endChar": 27
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c6df0e14_2ccc3f4b",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/Configuration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "make it last argument and preserve default\u003dfalse assignement",
+      "range": {
+        "startLine": 51,
+        "startChar": 8,
+        "endLine": 51,
+        "endChar": 31
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c9380f3_7fede20c",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationAdapter.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "It would be nice to have causes gathered similar as we have in MessageValidator",
+      "range": {
+        "startLine": 65,
+        "startChar": 5,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f36c0216_d47049fa",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/factory/ServerFactory.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "It will be better to pass Option\u003cSSLContext\u003e",
+      "range": {
+        "startLine": 41,
+        "startChar": 12,
+        "endLine": 42,
+        "endChar": 32
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd944417_0558b97d",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "More like backlog item than TODO comment",
+      "range": {
+        "startLine": 68,
+        "startChar": 63,
+        "endLine": 69,
+        "endChar": 24
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddafbce9_5614b3f1",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "Let\u0027s preserve `Bytes` suffix (here and below)",
+      "range": {
+        "startLine": 80,
+        "startChar": 35,
+        "endLine": 80,
+        "endChar": 49
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83d70770_33a7c117",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "To do what?",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 7
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43882b5f_257c0e15",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be nicer to leave ArgHvVesConfiguration class (probably with some rename) and use already-implemented command line parsing with exception handling?\n\nWe can even think about not removing all options from command line - just make them optional and ignore them for now (we can later discuss if we don\u0027t want to make another configuration-merger on Commandline-File level)",
+      "range": {
+        "startLine": 62,
+        "startChar": 7,
+        "endLine": 63,
+        "endChar": 112
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "601a6604_2ce0ffe5",
+        "filename": "sources/hv-collector-ssl/src/main/kotlin/org/onap/dcae/collectors/veshv/ssl/boundary/SecurityConfiguration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T09:58:24Z",
+      "side": 1,
+      "message": "Keep it as is :)",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 34
+      },
+      "revId": "ed63ea88a78d0257b5b01344e005587b7602a803",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
