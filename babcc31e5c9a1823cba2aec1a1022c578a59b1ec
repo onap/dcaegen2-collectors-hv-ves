@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1d685f8_09bf2583",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/adapters/AddressAdapter.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-14T06:56:12Z",
+      "side": 1,
+      "message": "Change package name to gsonadapters or similar. Adapters in context of module architecture means something different.",
+      "revId": "babcc31e5c9a1823cba2aec1a1022c578a59b1ec",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
