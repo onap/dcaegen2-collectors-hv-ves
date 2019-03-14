@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0c1d6c90_05c8ec22",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T06:32:03Z",
+      "side": 1,
+      "message": "I guess we can rename this class when we have settled the API for it.\nIt may be something like ConfProvider (to comply with our current naming) or ConfChangePublisher. \n\nIMO for now \"ConfigurationModule\" as single entrypoint to this module seems fine.",
+      "parentUuid": "dfa8480b_b142acdd",
+      "revId": "f4b9ecbe4a8eb3d80c2166eb6a73d202e81d8ee4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "86acbbc5_21b68c8e",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/FileConfigurationReader.kt",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-12T16:36:56Z",
       "side": 1,
       "message": "Should be internal, since as it seems to me, the ConfigurationModule is supposed to be this module entry point.",
+      "revId": "f4b9ecbe4a8eb3d80c2166eb6a73d202e81d8ee4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "887b8230_4c16be8d",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/FileConfigurationReader.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T06:32:03Z",
+      "side": 1,
+      "message": "Sure, done",
+      "parentUuid": "86acbbc5_21b68c8e",
       "revId": "f4b9ecbe4a8eb3d80c2166eb6a73d202e81d8ee4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "f1456c74_6aea8f71",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/PartialConfiguration.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T06:32:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d236e17a_c36e66a8",
+      "revId": "f4b9ecbe4a8eb3d80c2166eb6a73d202e81d8ee4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5e08f41f_6076c88a",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/adapters/RouteAdapter.kt",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2019-03-12T16:36:56Z",
       "side": 1,
       "message": "Make all adapters internal",
+      "revId": "f4b9ecbe4a8eb3d80c2166eb6a73d202e81d8ee4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "81e684cf_cf227343",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/adapters/RouteAdapter.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-14T06:32:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e08f41f_6076c88a",
       "revId": "f4b9ecbe4a8eb3d80c2166eb6a73d202e81d8ee4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
