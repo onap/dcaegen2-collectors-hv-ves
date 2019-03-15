@@ -25,6 +25,7 @@ import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.net.InetSocketAddress
+import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -40,13 +41,13 @@ internal data class PartialConfiguration(
 
 internal data class PartialServerConfig(
         val listenPort: Option<Int> = None,
-        val idleTimeoutSec: Option<Int> = None,
+        val idleTimeoutSec: Option<Duration> = None,
         val maxPayloadSizeBytes: Option<Int> = None
 )
 
 internal data class PartialCbsConfig(
-        val firstRequestDelaySec: Option<Int> = None,
-        val requestIntervalSec: Option<Int> = None
+        val firstRequestDelaySec: Option<Duration> = None,
+        val requestIntervalSec: Option<Duration> = None
 )
 
 internal data class PartialSecurityConfig(val keys: Option<SecurityKeys> = None)

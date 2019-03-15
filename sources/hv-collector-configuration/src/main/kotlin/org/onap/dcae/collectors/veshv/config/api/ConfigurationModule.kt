@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.config.api
 
+import arrow.core.left
+import arrow.core.right
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
@@ -34,10 +36,14 @@ class ConfigurationModule {
     private val configReader = FileConfigurationReader()
     private val configValidator = ConfigurationValidator()
 
+    private lateinit var initialConfig: HvVesConfiguration
+
     fun hvVesConfigurationUpdates(args: Array<String>): Flux<HvVesConfiguration> =
             Flux.just(cmd.parse(args))
                     .throwOnLeft { MissingArgumentException(it.message, it.cause) }
                     .map { it.reader().use(configReader::loadConfig) }
                     .map { configValidator.validate(it) }
                     .throwOnLeft { ValidationException(it.message) }
+                    .doOnNext { initialConfig = it }
+
 }
