@@ -79,7 +79,7 @@ internal class ConfigurationValidator {
             partial.mapBinding {
                 ServerConfiguration(
                         it.listenPort.bind(),
-                        Duration.ofSeconds(it.idleTimeoutSec.bind().toLong()),
+                        it.idleTimeoutSec.bind(),
                         it.maxPayloadSizeBytes.bind()
                 )
             }
@@ -87,8 +87,8 @@ internal class ConfigurationValidator {
     private fun createCbsConfiguration(partial: PartialCbsConfig) =
             partial.mapBinding {
                 CbsConfiguration(
-                        Duration.ofSeconds(it.firstRequestDelaySec.bind().toLong()),
-                        Duration.ofSeconds(it.requestIntervalSec.bind().toLong())
+                        it.firstRequestDelaySec.bind(),
+                        it.requestIntervalSec.bind()
                 )
             }
 
