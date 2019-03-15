@@ -39,7 +39,6 @@ import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
-import ratpack.server.RatpackServer
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.xnf"
 private val logger = Logger(PACKAGE_NAME)
@@ -58,21 +57,27 @@ fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
                     ExitFailure(1)
                 },
                 {
-                    logger.info { "Started xNF Simulator API server" }
-                    HealthState.INSTANCE.changeState(HealthDescription.IDLE)
+                    logger.info { "Stopping xNF Simulator API server" }
                 }
         )
 
-private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
+private fun startServers(config: SimulatorConfiguration): IO<Unit> =
         IO.monad().binding {
             logger.info { "Using configuration: $config" }
+
             XnfHealthCheckServer().startServer(config).bind()
+
             val clientConfig = ClientConfiguration(HashSet.of(config.hvVesAddress), config.securityProvider)
             val xnfSimulator = XnfSimulator(
                     ClientFactory(clientConfig),
                     MessageGeneratorFactory(config.maxPayloadSizeBytes)
             )
-            XnfApiServer(xnfSimulator, OngoingSimulations())
-                    .start(config.listenAddress)
-                    .bind()
+            val xnfApiServerHandler = XnfApiServer(xnfSimulator, OngoingSimulations())
+                    .start(config.listenAddress).bind()
+
+            logger.info { "Started xNF Simulator API server" }
+            HealthState.INSTANCE.changeState(HealthDescription.IDLE)
+
+            xnfApiServerHandler.await().bind()
         }.fix()
+
