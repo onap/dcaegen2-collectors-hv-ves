@@ -53,22 +53,21 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
-                            Some(2),
+                            Some(Duration.ofSeconds(2)),
                             Some(3)
                     )),
                     Some(PartialCbsConfig(
-                            Some(5),
-                            Some(3)
+                            Some(Duration.ofSeconds(5)),
+                            Some(Duration.ofSeconds(3))
                     )),
                     Some(PartialSecurityConfig(
                             Some(mock())
                     )),
-// TOD0: retrieve when ConfigurationMerger is implemented
-//                    Some(PartialCollectorConfig(
-//                            Some(4),
-//                            Some(emptyList()),
-//                            someFromEmptyRouting
-//                    )),
+                    Some(PartialCollectorConfig(
+                            Some(4),
+                            Some(emptyList()),
+                            someFromEmptyRouting
+                    )),
                     None
             )
 
@@ -86,8 +85,8 @@ internal object ConfigurationValidatorTest : Spek({
         }
 
         describe("validating complete configuration") {
-            val idleTimeoutSec = 10
-            val firstReqDelaySec = 10
+            val idleTimeoutSec = Duration.ofSeconds(10L)
+            val firstReqDelaySec = Duration.ofSeconds(10L)
             val securityKeys = Some(mock<SecurityKeys>())
 
             val config = PartialConfiguration(
@@ -98,17 +97,16 @@ internal object ConfigurationValidatorTest : Spek({
                     )),
                     Some(PartialCbsConfig(
                             Some(firstReqDelaySec),
-                            Some(3)
+                            Some(Duration.ofSeconds(3))
                     )),
                     Some(PartialSecurityConfig(
                             securityKeys
                     )),
-// TOD0: retrieve when ConfigurationMerger is implemented
-//                    Some(PartialCollectorConfig(
-//                            Some(4),
-//                            Some(emptyList()),
-//                            someFromEmptyRouting
-//                    )),
+                    Some(PartialCollectorConfig(
+                            Some(4),
+                            Some(emptyList()),
+                            someFromEmptyRouting
+                    )),
                     Some(LogLevel.INFO)
             )
 
@@ -120,25 +118,24 @@ internal object ConfigurationValidatorTest : Spek({
                         },
                         {
                             assertThat(it.server.idleTimeout)
-                                    .isEqualTo(Duration.ofSeconds(idleTimeoutSec.toLong()))
+                                    .isEqualTo(idleTimeoutSec)
 
                             assertThat(it.security.keys)
                                     .isEqualTo(securityKeys)
 
                             assertThat(it.cbs.firstRequestDelay)
-                                    .isEqualTo(Duration.ofSeconds(firstReqDelaySec.toLong()))
+                                    .isEqualTo(firstReqDelaySec)
 
-// TOD0: retrieve when ConfigurationMerger is implemented
-//                            assertThat(it.collector.routing)
-//                                    .isEqualTo(emptyRouting)
+                            assertThat(it.collector.routing)
+                                    .isEqualTo(emptyRouting)
                         }
                 )
             }
         }
 
         describe("validating configuration with security disabled") {
-            val idleTimeoutSec = 10
-            val firstReqDelaySec = 10
+            val idleTimeoutSec = Duration.ofSeconds(10)
+            val firstReqDelaySec = Duration.ofSeconds(10)
             val securityKeys: Option<SecurityKeys> = None
 
             val config = PartialConfiguration(
@@ -149,17 +146,16 @@ internal object ConfigurationValidatorTest : Spek({
                     )),
                     Some(PartialCbsConfig(
                             Some(firstReqDelaySec),
-                            Some(3)
+                            Some(Duration.ofSeconds(3))
                     )),
                     Some(PartialSecurityConfig(
                             securityKeys
                     )),
-// TOD0: retrieve when ConfigurationMerger is implemented
-//                    Some(PartialCollectorConfig(
-//                            Some(4),
-//                            Some(emptyList()),
-//                            someFromEmptyRouting
-//                    )),
+                    Some(PartialCollectorConfig(
+                            Some(4),
+                            Some(emptyList()),
+                            someFromEmptyRouting
+                    )),
                     Some(LogLevel.INFO)
             )
 
@@ -171,17 +167,16 @@ internal object ConfigurationValidatorTest : Spek({
                         },
                         {
                             assertThat(it.server.idleTimeout)
-                                    .isEqualTo(Duration.ofSeconds(idleTimeoutSec.toLong()))
+                                    .isEqualTo(idleTimeoutSec)
 
                             assertThat(it.security.keys)
                                     .isEqualTo(securityKeys)
 
                             assertThat(it.cbs.firstRequestDelay)
-                                    .isEqualTo(Duration.ofSeconds(firstReqDelaySec.toLong()))
+                                    .isEqualTo(firstReqDelaySec)
 
-// TOD0: retrieve when ConfigurationMerger is implemented
-//                            assertThat(it.collector.routing)
-//                                    .isEqualTo(emptyRouting)
+                            assertThat(it.collector.routing)
+                                    .isEqualTo(emptyRouting)
                         }
                 )
             }
@@ -190,6 +185,5 @@ internal object ConfigurationValidatorTest : Spek({
     }
 })
 
-// TOD0: retrieve when ConfigurationMerger is implemented
-//val emptyRouting = Routing(emptyList())
-//val someFromEmptyRouting = Some(emptyRouting)
+val emptyRouting = Routing(emptyList())
+val someFromEmptyRouting = Some(emptyRouting)

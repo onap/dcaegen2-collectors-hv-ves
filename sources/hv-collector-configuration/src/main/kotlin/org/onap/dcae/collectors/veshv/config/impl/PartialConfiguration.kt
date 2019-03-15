@@ -25,6 +25,7 @@ import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.net.InetSocketAddress
+import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -34,26 +35,25 @@ internal data class PartialConfiguration(
         val server: Option<PartialServerConfig> = None,
         val cbs: Option<PartialCbsConfig> = None,
         val security: Option<PartialSecurityConfig> = None,
-// TOD0: retrieve when ConfigurationMerger is implemented
-//        val collector: Option<PartialCollectorConfig> = None,
+        val collector: Option<PartialCollectorConfig> = None,
         val logLevel: Option<LogLevel> = None
 )
 
 internal data class PartialServerConfig(
         val listenPort: Option<Int> = None,
-        val idleTimeoutSec: Option<Int> = None,
+        val idleTimeoutSec: Option<Duration> = None,
         val maxPayloadSizeBytes: Option<Int> = None
 )
 
 internal data class PartialCbsConfig(
-        val firstRequestDelaySec: Option<Int> = None,
-        val requestIntervalSec: Option<Int> = None
+        val firstRequestDelaySec: Option<Duration> = None,
+        val requestIntervalSec: Option<Duration> = None
 )
 
 internal data class PartialSecurityConfig(val keys: Option<SecurityKeys> = None)
-// TOD0: retrieve when ConfigurationMerger is implemented
-//internal data class PartialCollectorConfig(
-//        val maxRequestSizeBytes: Option<Int> = None,
-//        val kafkaServers: Option<List<InetSocketAddress>> = None,
-//        val routing: Option<Routing> = None
-//)
+
+internal data class PartialCollectorConfig(
+        val maxRequestSizeBytes: Option<Int> = None,
+        val kafkaServers: Option<List<InetSocketAddress>> = None,
+        val routing: Option<Routing> = None
+)

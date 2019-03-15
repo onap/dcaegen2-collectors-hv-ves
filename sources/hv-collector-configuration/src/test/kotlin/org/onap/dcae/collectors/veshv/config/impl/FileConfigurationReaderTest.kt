@@ -27,6 +27,8 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.tests.utils.resourceAsStream
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.StringReader
+import java.net.InetSocketAddress
+import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -93,13 +95,13 @@ internal object FileConfigurationReaderTest : Spek({
 
                 assertThat(config.cbs.nonEmpty()).isTrue()
                 val cbs = config.cbs.orNull() as PartialCbsConfig
-                assertThat(cbs.firstRequestDelaySec).isEqualTo(Some(7))
-                assertThat(cbs.requestIntervalSec).isEqualTo(Some(900))
+                assertThat(cbs.firstRequestDelaySec).isEqualTo(Some(Duration.ofSeconds(7)))
+                assertThat(cbs.requestIntervalSec).isEqualTo(Some(Duration.ofSeconds(900)))
 
                 assertThat(config.server.nonEmpty()).isTrue()
                 val server = config.server.orNull() as PartialServerConfig
                 server.run {
-                    assertThat(idleTimeoutSec).isEqualTo(Some(1200))
+                    assertThat(idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
                     assertThat(listenPort).isEqualTo(Some(6000))
                     assertThat(maxPayloadSizeBytes).isEqualTo(Some(512000))
                 }
