@@ -17,28 +17,20 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.config.impl
+package org.onap.dcae.collectors.veshv.config.impl.gsonadapters
 
-import arrow.core.Option
-import com.google.gson.GsonBuilder
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.DurationOfSecondsAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityAdapter
-
-import java.io.Reader
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import java.lang.reflect.Type
 import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since February 2019
+ * @since March 2019
  */
-internal class FileConfigurationReader {
-    private val gson = GsonBuilder()
-            .registerTypeAdapter(Option::class.java, OptionAdapter())
-            .registerTypeAdapter(PartialSecurityConfig::class.java, SecurityAdapter())
-            .registerTypeAdapter(Duration::class.java, DurationOfSecondsAdapter())
-            .create()
+class DurationOfSecondsAdapter : JsonDeserializer<Duration> {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext) =
+        Duration.ofSeconds(json.asLong)
 
-    fun loadConfig(input: Reader): PartialConfiguration =
-            gson.fromJson(input, PartialConfiguration::class.java)
 }
