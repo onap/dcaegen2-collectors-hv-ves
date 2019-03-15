@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,20 @@ import arrow.core.Either
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
+import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.http.Response
 import org.onap.dcae.collectors.veshv.utils.http.Responses
 import org.onap.dcae.collectors.veshv.utils.http.sendAndHandleErrors
 import org.onap.dcae.collectors.veshv.utils.http.sendEitherErrorOrResponse
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
-import ratpack.handling.Chain
-import ratpack.handling.Context
-import ratpack.http.TypedData
-import ratpack.server.RatpackServer
-import ratpack.server.ServerConfig
+import reactor.core.publisher.Mono
+import reactor.netty.http.server.HttpServer
+import reactor.netty.http.server.HttpServerRequest
+import reactor.netty.http.server.HttpServerResponse
+import reactor.netty.http.server.HttpServerRoutes
+import java.io.InputStream
 import java.net.InetSocketAddress
 import java.util.*
 
@@ -45,48 +48,49 @@ internal class XnfApiServer(
         private val xnfSimulator: XnfSimulator,
         private val ongoingSimulations: OngoingSimulations) {
 
-    fun start(socketAddress: InetSocketAddress): IO<RatpackServer> = IO {
-        RatpackServer.start { server ->
-            server.serverConfig(ServerConfig.embedded()
-                    .port(socketAddress.port))
-                    .handlers(this::configureHandlers)
-        }
+    fun start(socketAddress: InetSocketAddress): IO<ServerHandle> = IO {
+        HttpServer.create()
+                .host(socketAddress.hostName)
+                .port(socketAddress.port)
+                .route(::setRoutes)
+                .let { NettyServerHandle(it.bindNow()) }
     }
 
-    private fun configureHandlers(chain: Chain) {
-        chain
-                .post("simulator", ::startSimulationHandler)
-                .post("simulator/async", ::startSimulationHandler)
-                .get("simulator/:id", ::simulatorStatusHandler)
+    private fun setRoutes(route: HttpServerRoutes) {
+        route
+                .post("/simulator", ::startSimulationHandler)
+                .post("/simulator/async", ::startSimulationHandler)
+                .get("/simulator/:id", ::simulatorStatusHandler)
     }
 
-    private fun startSimulationHandler(ctx: Context) {
+    private fun startSimulationHandler(req: HttpServerRequest, res: HttpServerResponse): Mono<Void> {
         logger.info { "Attempting to start asynchronous scenario" }
-        ctx.request.body.then { body ->
-            val id = startSimulation(body)
-            when (id) {
-                is Either.Left -> logger.warn { "Failed to start scenario, ${id.a}" }
-                is Either.Right -> logger.info { "Scenario started, details: ${id.b}" }
-            }
-            ctx.response.sendEitherErrorOrResponse(id)
-        }
-    }
-
-    private fun startSimulation(body: TypedData): Either<ParsingError, Response> {
-        return xnfSimulator.startSimulation(body.inputStream)
-                .map(ongoingSimulations::startAsynchronousSimulation)
-                .map(Responses::acceptedResponse)
+        return req.receive().aggregate().asInputStream()
+                .flatMap { body ->
+                    val id = startSimulation(body)
+                    when (id) {
+                        is Either.Left -> logger.warn { "Failed to start scenario, ${id.a}" }
+                        is Either.Right -> logger.info { "Scenario started, details: ${id.b}" }
+                    }
+                    res.sendEitherErrorOrResponse(id).then()
+                }
     }
 
 
-    private fun simulatorStatusHandler(ctx: Context) {
+    private fun startSimulation(body: InputStream): Either<ParsingError, Response> =
+            xnfSimulator.startSimulation(body)
+                    .map(ongoingSimulations::startAsynchronousSimulation)
+                    .map(Responses::acceptedResponse)
+
+
+    private fun simulatorStatusHandler(req: HttpServerRequest, res: HttpServerResponse): Mono<Void> {
         logger.debug { "Checking task status" }
-        val id = UUID.fromString(ctx.pathTokens["id"])
+        val id = UUID.fromString(req.param("id"))
         logger.debug { "Checking status for id: $id" }
         val status = ongoingSimulations.status(id)
         val response = Responses.statusResponse(status.toString(), status.message)
         logger.info { "Task $id status: $response" }
-        ctx.response.sendAndHandleErrors(IO.just(response))
+        return res.sendAndHandleErrors(IO.just(response)).then()
     }
 
     companion object {

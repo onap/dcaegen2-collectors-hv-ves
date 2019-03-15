@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.utils.http
 
+import arrow.core.Either
 import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Mono
@@ -51,6 +52,12 @@ fun HttpServerResponse.sendAndHandleErrors(response: IO<Response>): NettyOutboun
                     sendResponse(it)
                 }
         )
+
+fun <A> HttpServerResponse.sendEitherErrorOrResponse(response: Either<A, Response>): NettyOutbound =
+        when (response) {
+            is Either.Left -> sendResponse(errorResponse(response.a.toString()))
+            is Either.Right -> sendAndHandleErrors(IO.just(response.b))
+        }
 
 private fun HttpServerResponse.sendResponse(response: Response): NettyOutbound {
     val respWithStatus = status(response.status.number)
