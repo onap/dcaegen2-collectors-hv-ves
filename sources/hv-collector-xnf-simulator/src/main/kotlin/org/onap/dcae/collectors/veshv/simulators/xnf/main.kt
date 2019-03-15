@@ -35,9 +35,13 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.ArgXnfSimulator
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.ClientConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.SimulatorConfiguration
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
+import org.onap.dcae.collectors.veshv.utils.Closeable
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
+import org.onap.dcae.collectors.veshv.utils.arrow.unit
 import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.registerShutdownHook
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 import ratpack.server.RatpackServer
 
@@ -63,7 +67,7 @@ fun main(args: Array<String>) = ArgXnfSimulatorConfiguration().parse(args)
                 }
         )
 
-private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
+private fun startServers(config: SimulatorConfiguration): IO<Unit> =
         IO.monad().binding {
             logger.info { "Using configuration: $config" }
             XnfHealthCheckServer().startServer(config).bind()
@@ -73,6 +77,6 @@ private fun startServers(config: SimulatorConfiguration): IO<RatpackServer> =
                     MessageGeneratorFactory(config.maxPayloadSizeBytes)
             )
             XnfApiServer(xnfSimulator, OngoingSimulations())
-                    .start(config.listenAddress)
-                    .bind()
+                    .start(config.listenAddress).flatMap { it.await() }.bind()
         }.fix()
+
