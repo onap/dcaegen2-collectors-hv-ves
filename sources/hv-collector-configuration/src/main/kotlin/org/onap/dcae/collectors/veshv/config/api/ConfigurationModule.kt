@@ -34,10 +34,14 @@ class ConfigurationModule {
     private val configReader = FileConfigurationReader()
     private val configValidator = ConfigurationValidator()
 
+    private lateinit var initialConfig: HvVesConfiguration
+
     fun hvVesConfigurationUpdates(args: Array<String>): Flux<HvVesConfiguration> =
             Flux.just(cmd.parse(args))
                     .throwOnLeft { MissingArgumentException(it.message, it.cause) }
                     .map { it.reader().use(configReader::loadConfig) }
                     .map { configValidator.validate(it) }
                     .throwOnLeft { ValidationException(it.message) }
+                    .doOnNext { initialConfig = it }
+
 }
