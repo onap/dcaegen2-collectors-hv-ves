@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91cb5b5f_0895d559",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ArgHvVesConfiguration.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-15T11:19:44Z",
+      "side": 1,
+      "message": "For one bind() it makes no sense to use monadic binding. Use .map(::File)",
+      "revId": "37a4f8e6414d06835d2c69ef8fd01d0f85f515b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c74e908b_291af10a",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationAdapter.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-15T11:19:44Z",
+      "side": 1,
+      "message": "It\u0027s not an adapter. Rather some kind of converter or even validator.",
+      "range": {
+        "startLine": 39,
+        "startChar": 27,
+        "endLine": 39,
+        "endChar": 35
+      },
+      "revId": "37a4f8e6414d06835d2c69ef8fd01d0f85f515b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18afbf44_9dd51c47",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-15T11:19:44Z",
+      "side": 1,
+      "message": "Where to we stop old server when new configuration is available?",
+      "revId": "37a4f8e6414d06835d2c69ef8fd01d0f85f515b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f28800d_d857118d",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-15T11:19:44Z",
+      "side": 1,
+      "message": "That is nasty.",
+      "revId": "37a4f8e6414d06835d2c69ef8fd01d0f85f515b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "40e83489_3485b73e",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-15T11:19:44Z",
+      "side": 1,
+      "message": "Why this?",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 18
+      },
+      "revId": "37a4f8e6414d06835d2c69ef8fd01d0f85f515b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b00228e2_d4f15156",
+        "filename": "sources/hv-collector-ssl/src/main/kotlin/org/onap/dcae/collectors/veshv/ssl/boundary/SecurityConfiguration.kt",
+        "patchSetId": 6
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-15T11:19:44Z",
+      "side": 1,
+      "message": "It\u0027s unused.",
+      "revId": "37a4f8e6414d06835d2c69ef8fd01d0f85f515b9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
