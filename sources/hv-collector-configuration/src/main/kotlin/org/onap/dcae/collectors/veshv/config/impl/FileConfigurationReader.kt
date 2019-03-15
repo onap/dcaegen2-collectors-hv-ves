@@ -23,14 +23,10 @@ import arrow.core.Option
 import com.google.gson.GsonBuilder
 import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.AddressAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.RouteAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.RoutingAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityAdapter
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
+import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.*
 import java.io.Reader
 import java.net.InetSocketAddress
+import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -43,6 +39,7 @@ internal class FileConfigurationReader {
             .registerTypeAdapter(Routing::class.java, RoutingAdapter())
             .registerTypeAdapter(Option::class.java, OptionAdapter())
             .registerTypeAdapter(PartialSecurityConfig::class.java, SecurityAdapter())
+            .registerTypeAdapter(Duration::class.java, SecondDurationAdapter())
             .create()
 
     fun loadConfig(input: Reader): PartialConfiguration =

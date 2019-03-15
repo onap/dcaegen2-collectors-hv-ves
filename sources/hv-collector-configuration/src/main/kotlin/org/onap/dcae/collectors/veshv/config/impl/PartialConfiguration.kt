@@ -25,35 +25,36 @@ import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.net.InetSocketAddress
+import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
 internal data class PartialConfiguration(
-        val server: Option<PartialServerConfig> = None,
-        val cbs: Option<PartialCbsConfig> = None,
-        val security: Option<PartialSecurityConfig> = None,
-        val collector: Option<PartialCollectorConfig> = None,
-        val logLevel: Option<LogLevel> = None
+        var server: Option<PartialServerConfig> = None,
+        var cbs: Option<PartialCbsConfig> = None,
+        var security: Option<PartialSecurityConfig> = None,
+        var collector: Option<PartialCollectorConfig> = None,
+        var logLevel: Option<LogLevel> = None
 )
 
 internal data class PartialServerConfig(
-        val listenPort: Option<Int> = None,
-        val idleTimeoutSec: Option<Int> = None,
-        val maxPayloadSizeBytes: Option<Int> = None
+        var listenPort: Option<Int> = None,
+        var idleTimeoutSec: Option<Duration> = None,
+        var maxPayloadSizeBytes: Option<Int> = None
 )
 
 internal data class PartialCbsConfig(
-        val firstRequestDelaySec: Option<Int> = None,
-        val requestIntervalSec: Option<Int> = None
+        var firstRequestDelaySec: Option<Duration> = None,
+        var requestIntervalSec: Option<Duration> = None
 )
 
-internal data class PartialSecurityConfig(val keys: Option<SecurityKeys> = None)
+internal data class PartialSecurityConfig(var keys: Option<SecurityKeys> = None)
 
 internal data class PartialCollectorConfig(
-        val dummyMode: Option<Boolean> = None,
-        val maxRequestSizeBytes: Option<Int> = None,
-        val kafkaServers: Option<List<InetSocketAddress>> = None,
-        val routing: Option<Routing> = None
+        var dummyMode: Option<Boolean> = None,
+        var maxRequestSizeBytes: Option<Int> = None,
+        var kafkaServers: Option<List<InetSocketAddress>> = None,
+        var routing: Option<Routing> = None
 )
