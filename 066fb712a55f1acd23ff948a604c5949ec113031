@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c72818be_8fc9062e",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/ArgBasedConfiguration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-18T08:19:34Z",
+      "side": 1,
+      "message": "Still unused, remove :)",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 76
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b7a9eff_f3cdb70c",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-18T08:19:34Z",
+      "side": 1,
+      "message": "After some discussions, I guess we can clean up unused options from here.",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 6
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9758d2e9_5ee5e974",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-18T08:19:34Z",
+      "side": 1,
+      "message": "There too",
+      "range": {
+        "startLine": 128,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 6
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cb5c4dd0_6b6bb701",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-18T08:19:34Z",
+      "side": 1,
+      "message": "There too",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 157,
+        "endChar": 6
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc5d9ca9_33cda06d",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-18T08:19:34Z",
+      "side": 1,
+      "message": "We could `.throwOnLeft` or `.handleLeft` (here and below).\n\nfun \u003cA, B\u003e Flux\u003cEither\u003cA, B\u003e\u003e.throwOnLeft(f: (A) -\u003e Exception): Flux\u003cB\u003e \u003d map { it.rightOrThrow(f) }",
+      "range": {
+        "startLine": 39,
+        "startChar": 20,
+        "endLine": 39,
+        "endChar": 42
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1e5abc6_e3e89967",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidatorTest.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-18T08:19:34Z",
+      "side": 1,
+      "message": "assertThat(result.isRight()).isTrue() checks pretty much same.\n\nI guess it would be nicer to actually check created object (especially fields where we change Int to Duration or similar).",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 17
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
