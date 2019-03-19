@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ce6c701_d2b65ef7",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ArgVesHvConfigurationTest.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-19T08:34:51Z",
+      "side": 0,
+      "message": "Let\u0027s keep this class",
+      "range": {
+        "startLine": 42,
+        "startChar": 7,
+        "endLine": 42,
+        "endChar": 32
+      },
+      "revId": "189c70a48c24274fb7dd6cb910397a9a93233401",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
