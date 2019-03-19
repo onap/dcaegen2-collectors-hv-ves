@@ -78,7 +78,7 @@ class CollectorFactory(val configuration: ConfigurationProvider,
                     wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maximumPayloadSizeBytes), ctx),
                     protobufDecoder = VesDecoder(),
                     router = Router(config.routing, ctx),
-                    sink = sinkProvider(ctx),
+                    sinkProvider = sinkProvider,
                     metrics = metrics)
 
     companion object {

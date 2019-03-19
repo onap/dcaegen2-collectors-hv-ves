@@ -30,6 +30,7 @@ import org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.config.api.model.KafkaConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.domain.VesMessage
@@ -43,16 +44,21 @@ import java.lang.Integer.max
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
+@Suppress("UnusedPrivateMember")
 internal class KafkaSinkProvider internal constructor(
-        private val kafkaSender: KafkaSender<CommonEventHeader, VesMessage>) : SinkProvider {
+        private val kafkaSenders: Map<String, KafkaSender<CommonEventHeader, VesMessage>>) : SinkProvider {
 
-    constructor(config: KafkaConfiguration) : this(constructKafkaSender(config))
+    constructor(config: KafkaConfiguration) : this(constructKafkaSenders(config))
 
-    override fun invoke(ctx: ClientContext) = KafkaSink(kafkaSender, ctx)
+    override fun invoke(ctx: ClientContext, topic: String) =
+            KafkaSink(kafkaSenderFor(topic), ctx)
+
+    private fun kafkaSenderFor(topic: String) = kafkaSenders
+            .getOrElse(topic, { throw MissingKafkaSenderException("No kafka sender configured for topic $topic") })
 
     override fun close() = IO {
-        kafkaSender.close()
-        logger.info(ServiceContext::mdc) { "KafkaSender flushed and closed" }
+        kafkaSenders.values.forEach { it.close() }
+        logger.info(ServiceContext::mdc) { "KafkaSenders flushed and closed" }
     }
 
     companion object {
@@ -60,12 +66,14 @@ internal class KafkaSinkProvider internal constructor(
         private const val MAXIMUM_REQUEST_SIZE_MULTIPLIER = 1.2f
         private const val BUFFER_MEMORY_MULTIPLIER = 32
         private const val MINIMUM_BUFFER_MEMORY = 32 * 1024 * 1024
-        private fun constructKafkaSender(config: KafkaConfiguration) =
-                KafkaSender.create(constructSenderOptions(config))
+        private fun constructKafkaSenders(config: KafkaConfiguration) =
+                config.streamsPublishes.routes
+                        .associateBy({ it.targetTopic }, { KafkaSender.create(constructSenderOptions(config, it)) })
 
-        private fun constructSenderOptions(config: KafkaConfiguration) =
+        private fun constructSenderOptions(config: KafkaConfiguration, /*//T0DO:*/ something: Route) =
                 SenderOptions.create<CommonEventHeader, VesMessage>()
                         .producerProperty(BOOTSTRAP_SERVERS_CONFIG, config.bootstrapServers)
+//T0DO:                        .producerProperty(BOOTSTRAP_SERVERS_CONFIG, something.bootstrapServers)
                         .producerProperty(MAX_REQUEST_SIZE_CONFIG, maxRequestSize(config))
                         .producerProperty(BUFFER_MEMORY_CONFIG, bufferMemory(config))
                         .producerProperty(KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
@@ -82,3 +90,5 @@ internal class KafkaSinkProvider internal constructor(
                 max(MINIMUM_BUFFER_MEMORY, BUFFER_MEMORY_MULTIPLIER * config.maximalRequestSizeBytes)
     }
 }
+
+class MissingKafkaSenderException(msg: String) : Throwable(msg)

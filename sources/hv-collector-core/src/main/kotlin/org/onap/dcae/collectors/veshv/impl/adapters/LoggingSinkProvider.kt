@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicLong
  */
 internal class LoggingSinkProvider : SinkProvider {
 
-    override fun invoke(ctx: ClientContext): Sink {
+    override fun invoke(ctx: ClientContext, topic: String): Sink {
         return object : Sink {
             private val totalMessages = AtomicLong()
             private val totalBytes = AtomicLong()
@@ -48,7 +48,7 @@ internal class LoggingSinkProvider : SinkProvider {
             private fun logMessage(msg: RoutedMessage) {
                 val msgs = totalMessages.addAndGet(1)
                 val bytes = totalBytes.addAndGet(msg.message.wtpFrame.payloadSize.toLong())
-                val logMessageSupplier = { "Message routed to ${msg.topic}. Total = $msgs ($bytes B)" }
+                val logMessageSupplier = { "Message routed to ${topic}. Total = $msgs ($bytes B)" }
                 if (msgs % INFO_LOGGING_FREQ == 0L)
                     logger.info(ctx, logMessageSupplier)
                 else

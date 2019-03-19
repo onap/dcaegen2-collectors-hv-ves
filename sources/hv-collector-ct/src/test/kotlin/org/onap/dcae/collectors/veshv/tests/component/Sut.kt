@@ -73,7 +73,7 @@ class Sut(sink: Sink = StoringSink()): AutoCloseable {
 class DummySinkProvider(private val sink: Sink) : SinkProvider {
     private val active = AtomicBoolean(true)
 
-    override fun invoke(ctx: ClientContext) = sink
+    override fun invoke(ctx: ClientContext, topic: String) = sink
 
     override fun close() = IO {
         active.set(false)

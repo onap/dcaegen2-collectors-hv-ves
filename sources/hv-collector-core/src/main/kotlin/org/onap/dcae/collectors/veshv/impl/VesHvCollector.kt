@@ -22,7 +22,8 @@ package org.onap.dcae.collectors.veshv.impl
 import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Metrics
-import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleReactiveStreamError
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
@@ -42,6 +43,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.MessageEither
 import org.onap.dcae.collectors.veshv.utils.logging.filterEmptyWithLog
 import org.onap.dcae.collectors.veshv.utils.logging.filterFailedWithLog
 import reactor.core.publisher.Flux
+import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 
 /**
@@ -53,7 +55,7 @@ internal class VesHvCollector(
         private val wireChunkDecoder: WireChunkDecoder,
         private val protobufDecoder: VesDecoder,
         private val router: Router,
-        private val sink: Sink,
+        private val sinkProvider: SinkProvider,
         private val metrics: Metrics) : Collector {
 
     override fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void> =
@@ -62,10 +64,11 @@ internal class VesHvCollector(
                     .transform(::filterInvalidWireFrame)
                     .transform(::decodeProtobufPayload)
                     .transform(::filterInvalidProtobufMessages)
-                    .transform(::routeMessage)
-                    .onErrorResume {
-                        metrics.notifyClientRejected(ClientRejectionCause.fromThrowable(it))
-                        logger.handleReactiveStreamError(clientContext, it) }
+                    .transform(::findRoute)
+                    .handleErrors()
+                    .groupBy { it.topic }
+                    .handleErrors()
+                    .transform(::sendMessage)
                     .doFinally { releaseBuffersMemory() }
                     .then()
 
@@ -98,17 +101,19 @@ internal class VesHvCollector(
                         .doOnLeft { metrics.notifyMessageDropped(INVALID_MESSAGE) }
             }
 
-    private fun routeMessage(flux: Flux<VesMessage>): Flux<ConsumedMessage> = flux
-            .flatMap(this::findRoute)
-            .compose(sink::send)
-            .doOnNext(this::updateSinkMetrics)
+    private fun findRoute(flux: Flux<VesMessage>) = flux
+            .flatMap { msg ->
+                router
+                        .findDestination(msg)
+                        .doOnEmpty { metrics.notifyMessageDropped(ROUTE_NOT_FOUND) }
+                        .filterEmptyWithLog(logger, clientContext::fullMdc,
+                                { "Found route for message: ${it.topic}, partition: ${it.partition}" },
+                                { "Could not find route for message" })
+            }
 
-    private fun findRoute(msg: VesMessage) = router
-            .findDestination(msg)
-            .doOnEmpty { metrics.notifyMessageDropped(ROUTE_NOT_FOUND) }
-            .filterEmptyWithLog(logger, clientContext::fullMdc,
-                    { "Found route for message: ${it.topic}, partition: ${it.partition}" },
-                    { "Could not find route for message" })
+    private fun sendMessage(flux: Flux<GroupedFlux<String, RoutedMessage>>): Flux<ConsumedMessage> = flux
+            .flatMap { sinkProvider(clientContext, it.key()).send(it) }
+            .doOnNext(this::updateSinkMetrics)
 
     private fun updateSinkMetrics(consumedMessage: ConsumedMessage) {
         when (consumedMessage) {
@@ -117,6 +122,11 @@ internal class VesHvCollector(
             is FailedToConsumeMessage ->
                 metrics.notifyMessageDropped(consumedMessage.cause)
         }
+    }
+
+    private fun <T> Flux<T>.handleErrors(): Flux<T> = onErrorResume {
+        metrics.notifyClientRejected(ClientRejectionCause.fromThrowable(it))
+        logger.handleReactiveStreamError(clientContext, it)
     }
 
     private fun releaseBuffersMemory() = wireChunkDecoder.release()

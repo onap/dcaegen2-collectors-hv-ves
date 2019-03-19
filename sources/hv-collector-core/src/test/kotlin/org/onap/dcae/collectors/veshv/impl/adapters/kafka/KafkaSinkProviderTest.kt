@@ -45,22 +45,27 @@ internal object KafkaSinkProviderTest : Spek({
                     1024 * 1024)
             val cut = KafkaSinkProvider(config)
 
-            on("sample clients") {
-                val clients = listOf(
-                        ClientContext(),
-                        ClientContext(),
-                        ClientContext(),
-                        ClientContext())
+            on("one client to topic1 and two clients to another") {
+                val clients = mapOf(
+                        Pair(ClientContext(), "topic_1"),
+                        Pair(ClientContext(), "topic_2"),
+                        Pair(ClientContext(), "topic_2"))
 
                 it("should create only one instance of KafkaSender") {
-                    val sinks = clients.map(cut::invoke)
+                    val sinks = clients.map { cut.invoke(it.key, it.value) }
                     val firstSink = sinks[0]
+                    val secondSink = sinks[1]
                     val restOfSinks = sinks.tail()
 
                     assertThat(restOfSinks).isNotEmpty
                     assertThat(restOfSinks).allSatisfy { sink ->
                         assertThat(firstSink.usesSameSenderAs(sink))
-                                .describedAs("$sink.kafkaSender should be same as $firstSink.kafkaSender")
+                                .describedAs("$sink.kafkaSender should not be same as $firstSink.kafkaSender")
+                                .isFalse()
+                    }
+                    assertThat(restOfSinks).allSatisfy { sink ->
+                        assertThat(secondSink.usesSameSenderAs(sink))
+                                .describedAs("$sink.kafkaSender should be same as $secondSink.kafkaSender")
                                 .isTrue()
                     }
                 }
@@ -69,7 +74,7 @@ internal object KafkaSinkProviderTest : Spek({
 
         given("dummy KafkaSender") {
             val kafkaSender: KafkaSender<VesEventOuterClass.CommonEventHeader, VesMessage> = mock()
-            val cut = KafkaSinkProvider(kafkaSender)
+            val cut = KafkaSinkProvider(mapOf(Pair("", kafkaSender)))
 
             on("close") {
                 cut.close().unsafeRunSync()

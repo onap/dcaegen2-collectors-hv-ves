@@ -44,7 +44,7 @@ interface Metrics {
 }
 
 interface SinkProvider : Closeable {
-    operator fun invoke(ctx: ClientContext): Sink
+    operator fun invoke(ctx: ClientContext, topic: String): Sink
 }
 
 interface ConfigurationProvider {

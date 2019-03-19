@@ -23,4 +23,27 @@ package org.onap.dcae.collectors.veshv.config.api.model
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since December 2018
  */
-data class KafkaConfiguration(val bootstrapServers: String, val maximalRequestSizeBytes: Int)
+data class KafkaConfiguration(val bootstrapServers: String, val maximalRequestSizeBytes: Int) {
+    var streamsPublishes: Routing = routing {
+//        defineRoute {
+//            fromDomain("perf3gpp")
+//            toTopic("TEST_HV_VES_PERF3GPP")
+//            withFixedPartitioning()
+//        }
+        defineRoute {
+            fromDomain("perf3gpp")
+            toTopic("HV_VES_PERF3GPP")
+            withFixedPartitioning()
+        }
+        defineRoute {
+            fromDomain("PERF_3GPP2")
+            toTopic("topic_1")
+            withFixedPartitioning()
+        }
+        defineRoute {
+            fromDomain("PERF_3GPP3")
+            toTopic("topic_2")
+            withFixedPartitioning()
+        }
+    }.build()
+}
