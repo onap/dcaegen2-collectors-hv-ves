@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9762ec12_ea817ca4",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/ArgBasedConfiguration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-19T13:44:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c72818be_8fc9062e",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 76
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b42df414_a7721cc5",
         "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
         "patchSetId": 9
@@ -36,6 +60,30 @@
       "writtenOn": "2019-03-19T08:43:08Z",
       "side": 1,
       "message": "I believe we should have this required? If no, then we need todefine default value somewhere",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 6
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba86f357_d6669d5c",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-19T13:44:09Z",
+      "side": 1,
+      "message": "Thought \"hasArg\" makes it required, but i guess it does not",
+      "parentUuid": "b42df414_a7721cc5",
       "range": {
         "startLine": 33,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "37d1ea56_72a37c23",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-19T13:44:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b7a9eff_f3cdb70c",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 6
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9758d2e9_5ee5e974",
         "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
         "patchSetId": 9
@@ -82,6 +154,30 @@
       "writtenOn": "2019-03-18T08:19:34Z",
       "side": 1,
       "message": "There too",
+      "range": {
+        "startLine": 128,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 6
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "821421db_63b3c85c",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-19T13:44:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9758d2e9_5ee5e974",
       "range": {
         "startLine": 128,
         "startChar": 0,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "73e6466a_16156b36",
+        "filename": "sources/hv-collector-commandline/src/main/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOption.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-19T13:44:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb5c4dd0_6b6bb701",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 157,
+        "endChar": 6
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc5d9ca9_33cda06d",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
         "patchSetId": 9
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "9322377d_20d0f3bd",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-19T13:44:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc5d9ca9_33cda06d",
+      "range": {
+        "startLine": 39,
+        "startChar": 20,
+        "endLine": 39,
+        "endChar": 42
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b1e5abc6_e3e89967",
         "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidatorTest.kt",
         "patchSetId": 9
@@ -151,6 +295,30 @@
       "writtenOn": "2019-03-18T08:19:34Z",
       "side": 1,
       "message": "assertThat(result.isRight()).isTrue() checks pretty much same.\n\nI guess it would be nicer to actually check created object (especially fields where we change Int to Duration or similar).",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 17
+      },
+      "revId": "066fb712a55f1acd23ff948a604c5949ec113031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc92e0dc_76246b79",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidatorTest.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-19T13:44:09Z",
+      "side": 1,
+      "message": "I used \"fold\" here to validate the server.healthCheckApiPort field. assertThat(result.isRight()).isTrue() wouldln\u0027t allow me to do that. Gonna check more fields though.",
+      "parentUuid": "b1e5abc6_e3e89967",
       "range": {
         "startLine": 73,
         "startChar": 0,
