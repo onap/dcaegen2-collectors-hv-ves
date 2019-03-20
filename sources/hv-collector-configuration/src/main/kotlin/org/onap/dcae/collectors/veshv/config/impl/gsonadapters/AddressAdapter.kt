@@ -22,9 +22,9 @@ package org.onap.dcae.collectors.veshv.config.impl.gsonadapters
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
 import java.lang.reflect.Type
 import java.net.InetSocketAddress
-
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -34,17 +34,15 @@ internal class AddressAdapter : JsonDeserializer<InetSocketAddress> {
     override fun deserialize(
             json: JsonElement,
             typeOfT: Type,
-            context: JsonDeserializationContext?): InetSocketAddress
-        {
-            val portStart = json.asString.lastIndexOf(":")
-            if (portStart > 0) {
-                val address = json.asString.substring(0, portStart)
-                val port = json.asString.substring(portStart + 1)
-                return InetSocketAddress(address, port.toInt())
-            } else throw InvalidAddressException("Cannot parse '" + json.asString + "' to address")
-        }
+            context: JsonDeserializationContext): InetSocketAddress {
+        val portStart = json.asString.lastIndexOf(":")
+        if (portStart > 0) {
+            val address = json.asString.substring(0, portStart)
+            val port = json.asString.substring(portStart + 1)
+            return InetSocketAddress(address, port.toInt())
+        } else throw InvalidAddressException("Cannot parse '" + json.asString + "' to address")
+    }
 
-    class InvalidAddressException(reason:String) : RuntimeException(reason)
+    class InvalidAddressException(reason: String) : RuntimeException(reason)
 }
-
 
