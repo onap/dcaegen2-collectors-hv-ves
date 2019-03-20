@@ -27,7 +27,7 @@ import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.AddressAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.RouteAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.RoutingAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityKeysAdapter
+import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityAdapter
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.io.Reader
 import java.net.InetSocketAddress
@@ -42,7 +42,7 @@ internal class FileConfigurationReader {
             .registerTypeAdapter(Route::class.java, RouteAdapter())
             .registerTypeAdapter(Routing::class.java, RoutingAdapter())
             .registerTypeAdapter(Option::class.java, OptionAdapter())
-            .registerTypeAdapter(SecurityKeys::class.java, SecurityKeysAdapter())
+            .registerTypeAdapter(PartialSecurityConfig::class.java, SecurityAdapter())
             .create()
 
     fun loadConfig(input: Reader): PartialConfiguration =
