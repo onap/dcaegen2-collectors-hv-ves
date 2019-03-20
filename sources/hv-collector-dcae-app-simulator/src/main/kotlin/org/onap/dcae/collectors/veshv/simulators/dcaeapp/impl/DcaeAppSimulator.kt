@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,11 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
 import arrow.core.getOrElse
-import arrow.effects.IO
-import arrow.effects.fix
-import arrow.effects.instances.io.monadError.monadError
-import arrow.typeclasses.bindingCatch
 import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import reactor.core.publisher.Mono
 import java.io.InputStream
+import java.lang.IllegalArgumentException
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -39,7 +37,7 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
 
     fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))
 
-    fun listenToTopics(topics: Set<String>): IO<Unit> = IO.monadError().bindingCatch {
+    fun listenToTopics(topics: Set<String>) {
         if (topics.isEmpty() || topics.any { it.isBlank() }) {
             val message = "Topic list cannot be empty or contain empty elements, topics: $topics"
             logger.info { message }
@@ -47,17 +45,15 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
         }
 
         logger.info { "Received new configuration. Creating consumer for topics: $topics" }
-        consumerState.set(consumerFactory.createConsumerForTopics(topics).bind())
-    }.fix()
+        consumerState.set(consumerFactory.createConsumerForTopics(topics))
+    }
 
     fun state() = consumerState.getOption().map { it.currentState() }
 
-    fun resetState(): IO<Unit> = consumerState.getOption().fold(
-            { IO.unit },
-            { it.reset() }
-    )
+    fun resetState() = consumerState.getOption().fold({ }, { it.reset() })
 
-    fun validate(jsonDescription: InputStream) = messageStreamValidation.validate(jsonDescription, currentMessages())
+
+    fun validate(jsonDescription: InputStream)= messageStreamValidation.validate(jsonDescription, currentMessages())
 
     private fun currentMessages(): List<ByteArray> =
             consumerState.getOption()
