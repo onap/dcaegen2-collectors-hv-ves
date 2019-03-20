@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.KafkaSource
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.kafka.receiver.ReceiverRecord
@@ -41,7 +40,7 @@ class ConsumerState(private val messages: ConcurrentLinkedQueue<ByteArray>) {
 
 interface ConsumerStateProvider {
     fun currentState(): ConsumerState
-    fun reset(): IO<Unit>
+    fun reset()
 }
 
 class Consumer : ConsumerStateProvider {
@@ -50,11 +49,9 @@ class Consumer : ConsumerStateProvider {
 
     override fun currentState(): ConsumerState = ConsumerState(consumedMessages)
 
-    override fun reset(): IO<Unit> = IO {
-        consumedMessages.clear()
-    }
+    override fun reset() = consumedMessages.clear()
 
-    fun update(record: ReceiverRecord<ByteArray, ByteArray>) = IO<Unit> {
+    fun update(record: ReceiverRecord<ByteArray, ByteArray>) {
         logger.trace { "Updating stats for message from ${record.topic()}:${record.partition()}" }
         consumedMessages.add(record.value())
     }
@@ -65,6 +62,6 @@ class Consumer : ConsumerStateProvider {
 }
 
 class ConsumerFactory(private val kafkaBootstrapServers: String) {
-    fun createConsumerForTopics(kafkaTopics: Set<String>): IO<Consumer> =
+    fun createConsumerForTopics(kafkaTopics: Set<String>): Consumer =
             KafkaSource.create(kafkaBootstrapServers, kafkaTopics.toSet()).start()
 }
