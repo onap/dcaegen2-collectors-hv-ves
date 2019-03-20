@@ -26,7 +26,10 @@ import arrow.effects.instances.io.monadError.monadError
 import arrow.typeclasses.bindingCatch
 import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import reactor.core.publisher.Mono
+import reactor.core.publisher.toMono
 import java.io.InputStream
+import java.lang.IllegalArgumentException
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -39,25 +42,28 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
 
     fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))
 
-    fun listenToTopics(topics: Set<String>): IO<Unit> = IO.monadError().bindingCatch {
-        if (topics.isEmpty() || topics.any { it.isBlank() }) {
-            val message = "Topic list cannot be empty or contain empty elements, topics: $topics"
-            logger.info { message }
-            throw IllegalArgumentException(message)
-        }
+    fun listenToTopics(topics: Set<String>){
+       if (topics.isEmpty() || topics.any { it.isBlank() }) {
+           val message = "Topic list cannot be empty or contain empty elements, topics: $topics"
+           logger.info { message }
+           throw IllegalArgumentException(message)
+       }
 
-        logger.info { "Received new configuration. Creating consumer for topics: $topics" }
-        consumerState.set(consumerFactory.createConsumerForTopics(topics).bind())
-    }.fix()
+       logger.info { "Received new configuration. Creating consumer for topics: $topics" }
+       consumerState.set(consumerFactory.createConsumerForTopics(topics))
+    }
 
     fun state() = consumerState.getOption().map { it.currentState() }
 
-    fun resetState(): IO<Unit> = consumerState.getOption().fold(
-            { IO.unit },
-            { it.reset() }
-    )
+    fun resetState() =
+        consumerState.getOption().fold(
+                { },
+                {   it.reset() }
+        )
 
-    fun validate(jsonDescription: InputStream) = messageStreamValidation.validate(jsonDescription, currentMessages())
+
+
+    fun validate(jsonDescription: InputStream): Mono<Boolean> = messageStreamValidation.validate(jsonDescription, currentMessages())
 
     private fun currentMessages(): List<ByteArray> =
             consumerState.getOption()

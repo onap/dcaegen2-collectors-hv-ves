@@ -52,7 +52,7 @@ internal class ConsumerTest : Spek({
                         topic = "topic",
                         key = byteArrayOf(1),
                         value = value
-                )).unsafeRunSync()
+                ))
             }
 
             it("should contain one message if it was updated once") {
@@ -60,7 +60,7 @@ internal class ConsumerTest : Spek({
             }
 
             it("should contain empty state message if it was reset after update") {
-                cut.reset().unsafeRunSync()
+                cut.reset()
                 assertEmptyState(cut)
             }
         }

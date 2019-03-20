@@ -72,7 +72,7 @@ internal class XnfApiServer(
                         is Either.Left -> logger.warn { "Failed to start scenario, ${id.a}" }
                         is Either.Right -> logger.info { "Scenario started, details: ${id.b}" }
                     }
-                    res.sendEitherErrorOrResponse(id).then()
+                    res.sendEitherErrorOrResponse(id)
                 }
     }
 
@@ -90,7 +90,7 @@ internal class XnfApiServer(
         val status = ongoingSimulations.status(id)
         val response = Responses.statusResponse(status.toString(), status.message)
         logger.info { "Task $id status: $response" }
-        return res.sendAndHandleErrors(IO.just(response)).then()
+        return res.sendAndHandleErrors(Mono.just(response))
     }
 
     companion object {

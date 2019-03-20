@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
 
-import arrow.effects.IO
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.Consumer
@@ -34,10 +33,10 @@ import reactor.kafka.receiver.ReceiverOptions
  */
 class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
 
-    fun start(): IO<Consumer> = IO {
+    fun start(): Consumer {
         val consumer = Consumer()
-        receiver.receive().map(consumer::update).evaluateIo().subscribe()
-        consumer
+        receiver.receive().map(consumer::update)
+        return consumer
     }
 
     companion object {
