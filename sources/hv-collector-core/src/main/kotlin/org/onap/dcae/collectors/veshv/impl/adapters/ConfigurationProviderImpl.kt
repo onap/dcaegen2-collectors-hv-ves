@@ -20,16 +20,21 @@
 package org.onap.dcae.collectors.veshv.impl.adapters
 
 import com.google.gson.JsonObject
+import io.vavr.collection.Stream
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.config.api.model.routing
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.config.api.model.ConfigurationProviderParams
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.DataStreams
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParser
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -46,6 +51,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
                                          private val firstRequestDelay: Duration,
                                          private val requestInterval: Duration,
                                          private val healthState: HealthState,
+                                         private val streamParser: StreamFromGsonParser<KafkaSink>,
                                          retrySpec: Retry<Any>
 
 ) : ConfigurationProvider {
@@ -54,6 +60,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
             params.firstRequestDelay,
             params.requestInterval,
             HealthState.INSTANCE,
+            StreamFromGsonParsers.kafkaSinkParser(),
             Retry.any<Any>()
                     .retryMax(MAX_RETRIES)
                     .fixedBackoff(params.requestInterval)
@@ -87,14 +94,16 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
 
     private fun createCollectorConfiguration(configuration: JsonObject): CollectorConfiguration =
             try {
-                val routingArray = configuration.getAsJsonArray(ROUTING_CONFIGURATION_KEY)
+                val sinks = DataStreams.namedSinks(configuration)
+                        .groupBy { it.type() }
+                val kafkaSinks = sinks.getOrElse("kafka", Stream.empty())
+                        .map(streamParser::unsafeParse)
                 CollectorConfiguration(
                         routing {
-                            for (route in routingArray) {
-                                val routeObj = route.asJsonObject
+                            kafkaSinks.forEach {
                                 defineRoute {
-                                    fromDomain(routeObj.getPrimitiveAsString(DOMAIN_CONFIGURATION_KEY))
-                                    toTopic(routeObj.getPrimitiveAsString(TOPIC_CONFIGURATION_KEY))
+                                    fromDomain(it.name())
+                                    toTopic(it.topicName())
                                     withFixedPartitioning()
                                 }
                             }
@@ -104,14 +113,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
                 throw ParsingException("Failed to parse configuration", e)
             }
 
-    private fun JsonObject.getPrimitiveAsString(memberName: String) = getAsJsonPrimitive(memberName).asString
-
-
     companion object {
-        private const val ROUTING_CONFIGURATION_KEY = "collector.routing"
-        private const val DOMAIN_CONFIGURATION_KEY = "fromDomain"
-        private const val TOPIC_CONFIGURATION_KEY = "toTopic"
-
         private const val MAX_RETRIES = 5L
         private val logger = Logger(ConfigurationProviderImpl::class)
     }

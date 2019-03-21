@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.config.api.model
 
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
+
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
