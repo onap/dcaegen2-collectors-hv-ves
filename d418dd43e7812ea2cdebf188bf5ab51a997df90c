@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6e54aa16_c356d6d8",
+        "filename": "sources/hv-collector-main/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-21T08:45:17Z",
+      "side": 1,
+      "message": "We probably should move to \"hv-ves\" - if so, then also WORKDIR /opt/hv-ves-collector",
+      "range": {
+        "startLine": 15,
+        "startChar": 32,
+        "endLine": 15,
+        "endChar": 38
+      },
+      "revId": "d418dd43e7812ea2cdebf188bf5ab51a997df90c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
