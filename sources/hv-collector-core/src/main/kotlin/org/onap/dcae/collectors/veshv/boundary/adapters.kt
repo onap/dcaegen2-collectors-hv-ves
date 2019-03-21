@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import io.vavr.collection.Stream
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
@@ -27,6 +28,7 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.utils.Closeable
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
 import reactor.core.publisher.Flux
 
 interface Sink {
@@ -48,5 +50,5 @@ interface SinkProvider : Closeable {
 }
 
 interface ConfigurationProvider {
-    operator fun invoke(): Flux<Routing>
+    operator fun invoke(): Flux<Stream<KafkaSink>>
 }

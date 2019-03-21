@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.factory
 
 import arrow.core.Option
+import io.vavr.collection.Stream
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
@@ -37,6 +38,8 @@ import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.SinkStream
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -50,7 +53,7 @@ class CollectorFactory(private val configuration: ConfigurationProvider,
                        private val healthState: HealthState = HealthState.INSTANCE) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
-        val config = AtomicReference<Routing>()
+        val config = AtomicReference<Stream<KafkaSink>>()
         configuration()
                 .doOnNext {
                     logger.info(ServiceContext::mdc) { "Using updated configuration for new connections" }
@@ -71,12 +74,12 @@ class CollectorFactory(private val configuration: ConfigurationProvider,
         }
     }
 
-    private fun createVesHvCollector(routing: Routing, ctx: ClientContext): Collector =
+    private fun createVesHvCollector(sinkStream: Stream<KafkaSink>, ctx: ClientContext): Collector =
             VesHvCollector(
                     clientContext = ctx,
                     wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maxPayloadSizeBytes), ctx),
                     protobufDecoder = VesDecoder(),
-                    router = Router(routing, ctx),
+                    router = Router(sinkStream, ctx),
                     sink = sinkProvider(ctx),
                     metrics = metrics)
 
