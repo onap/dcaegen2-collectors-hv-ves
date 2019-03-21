@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.None
+import arrow.core.Option
 import arrow.core.Some
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
@@ -134,5 +135,57 @@ internal object ConfigurationValidatorTest : Spek({
                 )
             }
         }
+
+        describe("validating configuration with security disabled") {
+            val idleTimeoutSec = 10
+            val firstReqDelaySec = 10
+            val securityKeys: Option<SecurityKeys> = None
+            val routing = routing { }.build()
+
+            val config = PartialConfiguration(
+                    Some(PartialServerConfig(
+                            Some(1),
+                            Some(idleTimeoutSec),
+                            Some(2)
+                    )),
+                    Some(PartialCbsConfig(
+                            Some(firstReqDelaySec),
+                            Some(3)
+                    )),
+                    Some(PartialSecurityConfig(
+                            securityKeys
+                    )),
+                    Some(PartialCollectorConfig(
+                            Some(true),
+                            Some(4),
+                            Some(emptyList()),
+                            Some(routing)
+                    )),
+                    Some(LogLevel.INFO)
+            )
+
+            it("should create valid configuration") {
+                val result = cut.validate(config)
+                result.fold(
+                        {
+                            fail("Configuration should have been created successfully but was $it")
+                        },
+                        {
+                            assertThat(it.server.idleTimeout)
+                                    .isEqualTo(Duration.ofSeconds(idleTimeoutSec.toLong()))
+
+                            assertThat(it.security.keys)
+                                    .isEqualTo(securityKeys)
+
+                            assertThat(it.cbs.firstRequestDelay)
+                                    .isEqualTo(Duration.ofSeconds(firstReqDelaySec.toLong()))
+
+                            assertThat(it.collector.routing)
+                                    .isEqualTo(routing)
+                        }
+                )
+            }
+        }
+
     }
 })

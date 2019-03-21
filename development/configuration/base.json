@@ -10,7 +10,6 @@
     "requestIntervalSec": 5
   },
   "security": {
-    "sslDisable": false,
     "keys": {
       "keyStoreFile": "/etc/ves-hv/ssl/server.p12",
       "keyStorePassword": "onaponap",

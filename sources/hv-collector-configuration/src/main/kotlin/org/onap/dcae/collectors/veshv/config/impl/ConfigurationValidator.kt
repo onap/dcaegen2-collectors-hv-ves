@@ -53,7 +53,7 @@ internal class ConfigurationValidator {
                 .let { createCbsConfiguration(it).bind() }
 
         val securityConfiguration = partialConfig.security.bind()
-                .let { createSecurityConfiguration(it).bind() }
+                .let { createSecurityConfiguration(it) }
 
         val collectorConfiguration = partialConfig.collector.bind()
                 .let { createCollectorConfig(it).bind() }
@@ -94,7 +94,11 @@ internal class ConfigurationValidator {
             }
 
     private fun createSecurityConfiguration(partial: PartialSecurityConfig) =
-            partial.keys.map { SecurityConfiguration(Some(it)) }
+            partial.keys
+                    .fold(
+                            { SecurityConfiguration(None) },
+                            { SecurityConfiguration(Some(it)) }
+                    )
 
     private fun createCollectorConfig(partial: PartialCollectorConfig) =
             partial.mapBinding {
