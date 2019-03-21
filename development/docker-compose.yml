@@ -36,9 +36,8 @@ services:
     image: docker.io/consul:1.0.6
     ports:
       - "8500:8500"
-    command: ["agent","-bootstrap", "-client=0.0.0.0", "-server", "-ui", "-config-dir=/consul/consul.d"]
     volumes:
-      - ./consul.d/:/consul/consul.d
+      - ./consul/:/consul/config
 
   consul-config:
     image: docker.io/consul:1.0.6
@@ -77,7 +76,7 @@ services:
     environment:
       JAVA_OPTS: "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
       CONSUL_HOST: "consul-server"
-      CONFIG_BINDING_SERVICE: "cbs"
+      CONFIG_BINDING_SERVICE: "CBS"
       HOSTNAME: "dcae-hv-ves-collector"
     healthcheck:
       test: ./healthcheck.sh || exit 1
