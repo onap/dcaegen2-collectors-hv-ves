@@ -46,6 +46,54 @@
       "revId": "d418dd43e7812ea2cdebf188bf5ab51a997df90c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0b80514_4b2b2eeb",
+        "filename": "sources/hv-collector-main/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-21T12:09:41Z",
+      "side": 1,
+      "message": "It will have too big impact for now (change default SSL keys location + container names + prometheus configuration + ...)",
+      "parentUuid": "6e54aa16_c356d6d8",
+      "range": {
+        "startLine": 15,
+        "startChar": 32,
+        "endLine": 15,
+        "endChar": 38
+      },
+      "revId": "d418dd43e7812ea2cdebf188bf5ab51a997df90c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6dd5c6d_7ef7af93",
+        "filename": "sources/hv-collector-main/Dockerfile",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-21T12:09:41Z",
+      "side": 1,
+      "message": "But it\u0027s in configuration directory. Context is the key ;)",
+      "parentUuid": "5a69e7c9_4816bd34",
+      "range": {
+        "startLine": 15,
+        "startChar": 32,
+        "endLine": 15,
+        "endChar": 38
+      },
+      "revId": "d418dd43e7812ea2cdebf188bf5ab51a997df90c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
