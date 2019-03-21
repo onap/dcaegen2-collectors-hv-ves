@@ -103,6 +103,18 @@ internal object FileConfigurationReaderTest : Spek({
                 }
             }
 
+            it("parses disabled security configuration") {
+                val input = """{
+                    "security": {
+                    }
+                }""".trimIndent()
+                val config = cut.loadConfig(StringReader(input))
+
+                assertThat(config.security.nonEmpty()).isTrue()
+                val security = config.security.orNull() as PartialSecurityConfig
+                assertThat(security.keys.nonEmpty()).isFalse()
+            }
+
             it("parses invalid log level string to empty option") {
                 val input = """{
                     "logLevel": something

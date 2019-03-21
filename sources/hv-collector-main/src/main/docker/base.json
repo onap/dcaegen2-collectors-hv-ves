@@ -1,0 +1,27 @@
+{
+  "logLevel": "INFO",
+  "server": {
+    "listenPort": 6061,
+    "idleTimeoutSec": 60,
+    "maxPayloadSizeBytes": 1048576
+  },
+  "cbs": {
+    "firstRequestDelaySec": 10,
+    "requestIntervalSec": 5
+  },
+  "security": {
+  },
+  "collector": {
+    "dummyMode": false,
+    "maxRequestSizeBytes": 1048576,
+    "kafkaServers": [
+      "message-router-kafka:9092"
+    ],
+    "routing": [
+      {
+        "fromDomain": "perf3gpp",
+        "toTopic": "HV_VES_PERF3GPP"
+      }
+    ]
+  }
+}

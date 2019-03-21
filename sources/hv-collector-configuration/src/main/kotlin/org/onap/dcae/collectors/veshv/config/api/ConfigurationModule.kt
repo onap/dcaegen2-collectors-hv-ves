@@ -37,7 +37,7 @@ class ConfigurationModule {
     fun hvVesConfigurationUpdates(args: Array<String>): Flux<HvVesConfiguration> =
             Flux.just(cmd.parse(args))
                     .throwOnLeft { MissingArgumentException(it.message, it.cause) }
-                    .map { configReader.loadConfig(it.reader()) }
+                    .map { it.reader().use(configReader::loadConfig) }
                     .map { configValidator.validate(it) }
                     .throwOnLeft { ValidationException(it.message) }
 }

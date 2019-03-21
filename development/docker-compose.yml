@@ -73,7 +73,6 @@ services:
     ports:
       - "6060:6060"
       - "6061:6061/tcp"
-    command: ["--configuration-file /etc/ves-hv/configuration/configuration.json"]
     environment:
       JAVA_OPTS: "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
       CONSUL_HOST: "consul-server"
