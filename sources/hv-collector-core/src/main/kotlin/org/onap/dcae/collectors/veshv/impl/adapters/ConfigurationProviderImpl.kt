@@ -30,13 +30,13 @@ import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsRequests
 import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.retry.Jitter
 import reactor.retry.Retry
 import java.time.Duration
-
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -76,7 +76,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
                     .flatMapMany(::handleUpdates)
 
     private fun handleUpdates(cbsClient: CbsClient): Flux<Routing> = cbsClient
-            .updates(RequestDiagnosticContext.create(),
+            .updates(CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
                     firstRequestDelay,
                     requestInterval)
             .doOnNext { logger.info(ServiceContext::mdc) { "Received new configuration:\n$it" } }
