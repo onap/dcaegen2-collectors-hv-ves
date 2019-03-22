@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
+import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -27,8 +28,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
 import org.onap.dcae.collectors.veshv.tests.utils.absoluteResourcePath
-import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
-import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import java.io.File
 
 /**
@@ -71,3 +70,14 @@ object ArgVesHvConfigurationTest : Spek({
         }
     }
 })
+
+fun ArgHvVesConfiguration.parseExpectingSuccess(vararg cmdLine: String): File =
+        parseToFile(cmdLine).fold(
+                { throw AssertionError("Parsing result should be present") },
+                ::identity
+        )
+
+fun ArgHvVesConfiguration.parseExpectingFailure(vararg cmdLine: String): WrongArgumentError =
+        parseToFile(cmdLine).fold(
+                ::identity
+        ) { throw AssertionError("parsing should have failed") }

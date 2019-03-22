@@ -34,10 +34,9 @@ import java.net.InetSocketAddress
  */
 object HealthCheckServer {
 
-    private const val DEFAULT_HEALTHCHECK_PORT = 6060
     private val logger = Logger(HealthCheckServer::class)
 
-    fun start(port: Int = DEFAULT_HEALTHCHECK_PORT) =
+    fun start(port: Int) =
             createHealthCheckServer(port)
                     .start()
                     .then(::logServerStarted)

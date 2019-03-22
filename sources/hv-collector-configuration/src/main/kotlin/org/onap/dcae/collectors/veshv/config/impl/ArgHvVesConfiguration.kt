@@ -19,18 +19,69 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
-import arrow.core.Option
+import arrow.core.*
 import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser
-import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
+import org.apache.commons.cli.Options
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONFIGURATION_FILE
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
+import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
+import org.onap.dcae.collectors.veshv.commandline.intValue
 import org.onap.dcae.collectors.veshv.commandline.stringValue
 import java.io.File
 
-internal class ArgHvVesConfiguration : ArgBasedConfiguration<File>(DefaultParser()) {
-    override val cmdLineOptionsList = listOf(CONFIGURATION_FILE)
+class ArgHvVesConfiguration(private val parser: CommandLineParser = DefaultParser()) {
+    val cmdLineOptionsList = listOf(CONFIGURATION_FILE, HEALTH_CHECK_API_PORT)
 
-    override fun getConfiguration(cmdLine: CommandLine): Option<File> =
+    fun getConfiguration(cmdLine: CommandLine): Option<File> =
             cmdLine.stringValue(CONFIGURATION_FILE).map(::File)
 
+    fun getHealthcheckPort(cmdLine: CommandLine): Option<Int> =
+            cmdLine.intValue(HEALTH_CHECK_API_PORT)
+
+    lateinit var parsingResult: CommandLine
+
+    fun parseToFile(args: Array<out String>): Either<WrongArgumentError, File> {
+        parseIfEmpty(args)
+        return Try { parsingResult }.toEither()
+                .mapLeft { WrongArgumentError(it, cmdLineOptionsList) }
+                .map(this::getConfiguration)
+                .flatMap {
+                    it.toEither {
+                        WrongArgumentError(
+                                message = "Unexpected error when parsing command line arguments",
+                                cmdLineOptionsList = cmdLineOptionsList)
+                    }
+                }
+    }
+
+    fun parseToInt(args: Array<out String>): Either<WrongArgumentError, Int> {
+        parseIfEmpty(args)
+        return Try { parsingResult }.toEither()
+                .mapLeft { WrongArgumentError(it, cmdLineOptionsList) }
+                .map(this::getHealthcheckPort)
+                .flatMap {
+                    it.toEither {
+                        WrongArgumentError(
+                                message = "Unexpected error when parsing command line arguments",
+                                cmdLineOptionsList = cmdLineOptionsList)
+                    }
+                }
+    }
+
+    private fun parseIfEmpty(args: Array<out String>) {
+        if (!this::parsingResult.isInitialized) {
+            parsingResult = parseArgumentsArray(args)
+        }
+    }
+
+    private fun parseArgumentsArray(args: Array<out String>) =
+            cmdLineOptionsList
+                    .map { it.option }
+                    .fold(Options(), Options::addOption)
+                    .let { parser.parse(it, args) }
+
 }
+
+

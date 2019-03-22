@@ -40,7 +40,7 @@ private val logger = Logger("$VES_HV_PACKAGE.main")
 private val hvVesServer = AtomicReference<ServerHandle>()
 
 fun main(args: Array<String>) {
-    HealthCheckServer.start()
+    HealthCheckServer.start(ConfigurationModule().healthCheckPort(args))
     ConfigurationModule()
             .hvVesConfigurationUpdates(args)
             .publishOn(Schedulers.single(Schedulers.elastic()))
