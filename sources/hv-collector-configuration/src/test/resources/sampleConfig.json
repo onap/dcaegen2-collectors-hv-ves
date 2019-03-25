@@ -18,18 +18,5 @@
       "trustStoreFile": "trust.ks.pkcs12",
       "trustStorePassword": "changeMeToo"
     }
-  },
-  "collector": {
-    "maxRequestSizeBytes": 512000,
-    "kafkaServers": [
-      "192.168.255.1:5005",
-      "192.168.255.1:5006"
-    ],
-    "routing": [
-      {
-        "fromDomain": "perf3gpp",
-        "toTopic": "HV_VES_PERF3GPP"
-      }
-    ]
   }
 }

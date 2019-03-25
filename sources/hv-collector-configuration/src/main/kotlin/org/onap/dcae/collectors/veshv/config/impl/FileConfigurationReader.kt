@@ -21,14 +21,8 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Option
 import com.google.gson.GsonBuilder
-import org.onap.dcae.collectors.veshv.config.api.model.Route
-import org.onap.dcae.collectors.veshv.config.api.model.Routing
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.AddressAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.RouteAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.RoutingAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityAdapter
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.io.Reader
 import java.net.InetSocketAddress
 
@@ -38,9 +32,6 @@ import java.net.InetSocketAddress
  */
 internal class FileConfigurationReader {
     private val gson = GsonBuilder()
-            .registerTypeAdapter(InetSocketAddress::class.java, AddressAdapter())
-            .registerTypeAdapter(Route::class.java, RouteAdapter())
-            .registerTypeAdapter(Routing::class.java, RoutingAdapter())
             .registerTypeAdapter(Option::class.java, OptionAdapter())
             .registerTypeAdapter(PartialSecurityConfig::class.java, SecurityAdapter())
             .create()
