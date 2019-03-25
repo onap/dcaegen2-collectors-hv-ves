@@ -24,11 +24,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.tests.utils.resourceAsStream
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.StringReader
-import java.net.InetSocketAddress
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -57,50 +55,6 @@ internal object FileConfigurationReaderTest : Spek({
                 val config = cut.loadConfig(StringReader(input))
                 assertThat(config.server.nonEmpty()).isTrue()
                 assertThat(config.server.orNull()?.listenPort).isEqualTo(Some(12003))
-            }
-
-            it("parses ip address") {
-                val input = """{  "collector" : {
-                    "kafkaServers": [
-                      "192.168.255.1:5005",
-                      "192.168.255.26:5006"
-                    ]
-                  }
-                }"""
-
-                val config = cut.loadConfig(StringReader(input))
-                assertThat(config.collector.nonEmpty()).isTrue()
-                val collector = config.collector.orNull() as PartialCollectorConfig
-                assertThat(collector.kafkaServers.nonEmpty()).isTrue()
-                val addresses = collector.kafkaServers.orNull() as List<InetSocketAddress>
-                assertThat(addresses)
-                        .isEqualTo(listOf(
-                                InetSocketAddress("192.168.255.1", 5005),
-                                InetSocketAddress("192.168.255.26", 5006)
-                        ))
-            }
-
-            it("parses routing array with RoutingAdapter") {
-                val input = """{
-                    "collector" : {
-                        "routing" : [
-                            {
-                              "fromDomain": "perf3gpp",
-                              "toTopic": "HV_VES_PERF3GPP"
-                            }
-                        ]
-                    }
-                }""".trimIndent()
-                val config = cut.loadConfig(StringReader(input))
-                assertThat(config.collector.nonEmpty()).isTrue()
-                val collector = config.collector.orNull() as PartialCollectorConfig
-                assertThat(collector.routing.nonEmpty()).isTrue()
-                val routing = collector.routing.orNull() as Routing
-                routing.run {
-                    assertThat(routes.size).isEqualTo(1)
-                    assertThat(routes[0].domain).isEqualTo("perf3gpp")
-                    assertThat(routes[0].targetTopic).isEqualTo("HV_VES_PERF3GPP")
-                }
             }
 
             it("parses disabled security configuration") {
@@ -141,14 +95,6 @@ internal object FileConfigurationReaderTest : Spek({
                 val cbs = config.cbs.orNull() as PartialCbsConfig
                 assertThat(cbs.firstRequestDelaySec).isEqualTo(Some(7))
                 assertThat(cbs.requestIntervalSec).isEqualTo(Some(900))
-
-                assertThat(config.collector.nonEmpty()).isTrue()
-                val collector = config.collector.orNull() as PartialCollectorConfig
-                collector.run {
-                    assertThat(maxRequestSizeBytes).isEqualTo(Some(512000))
-                    assertThat(kafkaServers.nonEmpty()).isTrue()
-                    assertThat(routing.nonEmpty()).isTrue()
-                }
 
                 assertThat(config.server.nonEmpty()).isTrue()
                 val server = config.server.orNull() as PartialServerConfig
