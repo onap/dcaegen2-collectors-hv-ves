@@ -59,50 +59,6 @@ internal object FileConfigurationReaderTest : Spek({
                 assertThat(config.server.orNull()?.listenPort).isEqualTo(Some(12003))
             }
 
-            it("parses ip address") {
-                val input = """{  "collector" : {
-                    "kafkaServers": [
-                      "192.168.255.1:5005",
-                      "192.168.255.26:5006"
-                    ]
-                  }
-                }"""
-
-                val config = cut.loadConfig(StringReader(input))
-                assertThat(config.collector.nonEmpty()).isTrue()
-                val collector = config.collector.orNull() as PartialCollectorConfig
-                assertThat(collector.kafkaServers.nonEmpty()).isTrue()
-                val addresses = collector.kafkaServers.orNull() as List<InetSocketAddress>
-                assertThat(addresses)
-                        .isEqualTo(listOf(
-                                InetSocketAddress("192.168.255.1", 5005),
-                                InetSocketAddress("192.168.255.26", 5006)
-                        ))
-            }
-
-            it("parses routing array with RoutingAdapter") {
-                val input = """{
-                    "collector" : {
-                        "routing" : [
-                            {
-                              "fromDomain": "perf3gpp",
-                              "toTopic": "HV_VES_PERF3GPP"
-                            }
-                        ]
-                    }
-                }""".trimIndent()
-                val config = cut.loadConfig(StringReader(input))
-                assertThat(config.collector.nonEmpty()).isTrue()
-                val collector = config.collector.orNull() as PartialCollectorConfig
-                assertThat(collector.routing.nonEmpty()).isTrue()
-                val routing = collector.routing.orNull() as Routing
-                routing.run {
-                    assertThat(routes.size).isEqualTo(1)
-                    assertThat(routes[0].domain).isEqualTo("perf3gpp")
-                    assertThat(routes[0].targetTopic).isEqualTo("HV_VES_PERF3GPP")
-                }
-            }
-
             it("parses disabled security configuration") {
                 val input = """{
                     "security": {
@@ -146,9 +102,9 @@ internal object FileConfigurationReaderTest : Spek({
                 val collector = config.collector.orNull() as PartialCollectorConfig
                 collector.run {
                     assertThat(dummyMode).isEqualTo(Some(false))
-                    assertThat(maxRequestSizeBytes).isEqualTo(Some(512000))
-                    assertThat(kafkaServers.nonEmpty()).isTrue()
-                    assertThat(routing.nonEmpty()).isTrue()
+                    assertThat(maxRequestSizeBytes.isEmpty()).isTrue()
+                    assertThat(kafkaServers.isEmpty()).isTrue()
+                    assertThat(routing.isEmpty()).isTrue()
                 }
 
                 assertThat(config.server.nonEmpty()).isTrue()

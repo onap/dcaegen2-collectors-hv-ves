@@ -28,7 +28,7 @@ import org.assertj.core.api.Assertions.fail
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.config.api.model.routing
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator.Companion.DEFAULT_LOG_LEVEL
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
@@ -67,7 +67,7 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(true),
                             Some(4),
                             Some(emptyList()),
-                            Some(routing { }.build())
+                            someFromEmptyRouting
                     )),
                     None
             )
@@ -89,7 +89,6 @@ internal object ConfigurationValidatorTest : Spek({
             val idleTimeoutSec = 10
             val firstReqDelaySec = 10
             val securityKeys = Some(mock<SecurityKeys>())
-            val routing = routing { }.build()
 
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
@@ -108,7 +107,7 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(true),
                             Some(4),
                             Some(emptyList()),
-                            Some(routing)
+                            someFromEmptyRouting
                     )),
                     Some(LogLevel.INFO)
             )
@@ -130,7 +129,7 @@ internal object ConfigurationValidatorTest : Spek({
                                     .isEqualTo(Duration.ofSeconds(firstReqDelaySec.toLong()))
 
                             assertThat(it.collector.routing)
-                                    .isEqualTo(routing)
+                                    .isEqualTo(emptyRouting)
                         }
                 )
             }
@@ -140,7 +139,6 @@ internal object ConfigurationValidatorTest : Spek({
             val idleTimeoutSec = 10
             val firstReqDelaySec = 10
             val securityKeys: Option<SecurityKeys> = None
-            val routing = routing { }.build()
 
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
@@ -159,7 +157,7 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(true),
                             Some(4),
                             Some(emptyList()),
-                            Some(routing)
+                            someFromEmptyRouting
                     )),
                     Some(LogLevel.INFO)
             )
@@ -181,7 +179,7 @@ internal object ConfigurationValidatorTest : Spek({
                                     .isEqualTo(Duration.ofSeconds(firstReqDelaySec.toLong()))
 
                             assertThat(it.collector.routing)
-                                    .isEqualTo(routing)
+                                    .isEqualTo(emptyRouting)
                         }
                 )
             }
@@ -189,3 +187,6 @@ internal object ConfigurationValidatorTest : Spek({
 
     }
 })
+
+val emptyRouting = Routing(emptyList())
+val someFromEmptyRouting = Some(emptyRouting)
