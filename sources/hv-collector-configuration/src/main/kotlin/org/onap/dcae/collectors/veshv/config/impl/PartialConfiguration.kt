@@ -34,7 +34,8 @@ internal data class PartialConfiguration(
         val server: Option<PartialServerConfig> = None,
         val cbs: Option<PartialCbsConfig> = None,
         val security: Option<PartialSecurityConfig> = None,
-        val collector: Option<PartialCollectorConfig> = None,
+// TOD0: retrieve when ConfigurationMerger is implemented
+//        val collector: Option<PartialCollectorConfig> = None,
         val logLevel: Option<LogLevel> = None
 )
 
@@ -50,9 +51,9 @@ internal data class PartialCbsConfig(
 )
 
 internal data class PartialSecurityConfig(val keys: Option<SecurityKeys> = None)
-
-internal data class PartialCollectorConfig(
-        val maxRequestSizeBytes: Option<Int> = None,
-        val kafkaServers: Option<List<InetSocketAddress>> = None,
-        val routing: Option<Routing> = None
-)
+// TOD0: retrieve when ConfigurationMerger is implemented
+//internal data class PartialCollectorConfig(
+//        val maxRequestSizeBytes: Option<Int> = None,
+//        val kafkaServers: Option<List<InetSocketAddress>> = None,
+//        val routing: Option<Routing> = None
+//)
