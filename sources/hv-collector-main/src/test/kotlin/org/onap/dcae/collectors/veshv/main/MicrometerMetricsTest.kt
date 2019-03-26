@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
+import arrow.core.Option
 import arrow.core.Try
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Gauge
@@ -44,6 +45,7 @@ import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
 import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
 import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
+import org.onap.ves.VesEventOuterClass
 import java.time.Instant
 import java.time.temporal.Temporal
 import java.util.concurrent.TimeUnit
@@ -383,23 +385,24 @@ object MicrometerMetricsTest : Spek({
 })
 
 fun routedMessage(topic: String, partition: Int = 0) =
-        vesEvent().let { evt ->
-            RoutedMessage(topic, partition,
-                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
-        }
+        vesEvent().run { toRoutedMessage(topic, partition) }
 
 fun routedMessageReceivedAt(topic: String, receivedAt: Temporal, partition: Int = 0) =
-        vesEvent().let { evt ->
-            RoutedMessage(topic, partition,
-                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt).copy(receivedAt = receivedAt)))
-        }
+        vesEvent().run { toRoutedMessage(topic, partition, receivedAt) }
 
 fun routedMessageSentAt(topic: String, sentAt: Instant, partition: Int = 0) =
-        vesEvent().let { evt ->
-            val builder = evt.toBuilder()
+        vesEvent().run {
+            val builder = toBuilder()
             builder.commonEventHeaderBuilder.lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000
-            builder.build()
-        }.let { evt ->
-            RoutedMessage(topic, partition,
-                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
+            builder.build().toRoutedMessage(topic, partition)
         }
+
+private fun VesEventOuterClass.VesEvent.toRoutedMessage(topic: String,
+                                                        partition: Int,
+                                                        receivedAt: Temporal = Instant.now()) =
+        RoutedMessage(
+                VesMessage(this.commonEventHeader, wireProtocolFrame(this).copy(receivedAt = receivedAt)),
+                topic,
+                Option.just(partition)
+        )
+

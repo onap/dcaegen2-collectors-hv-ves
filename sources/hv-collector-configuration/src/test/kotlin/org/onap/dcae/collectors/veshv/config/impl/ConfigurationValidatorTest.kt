@@ -191,5 +191,5 @@ internal object ConfigurationValidatorTest : Spek({
 })
 
 // TOD0: retrieve when ConfigurationMerger is implemented
-//val emptyRouting = Routing(emptyList())
-//val someFromEmptyRouting = Some(emptyRouting)
+//val emptyRouting: Routing = emptyList()
+//val someFromEmptyRouting: Routing = Some(emptyRouting)

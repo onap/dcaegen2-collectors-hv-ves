@@ -20,66 +20,37 @@
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import arrow.effects.IO
-import org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.BUFFER_MEMORY_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION
-import org.apache.kafka.clients.producer.ProducerConfig.MAX_REQUEST_SIZE_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.RETRIES_CONFIG
-import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.impl.createKafkaSender
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcaegen2.services.sdk.model.streams.SinkStream
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.kafka.sender.KafkaSender
-import reactor.kafka.sender.SenderOptions
-import java.lang.Integer.max
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-internal class KafkaSinkProvider internal constructor(
-        private val kafkaSender: KafkaSender<CommonEventHeader, VesMessage>) : SinkProvider {
+internal class KafkaSinkProvider : SinkProvider {
+    private val messageSinks = mutableMapOf<SinkStream, KafkaSender<CommonEventHeader, VesMessage>>()
 
-    constructor(config: CollectorConfiguration) : this(constructKafkaSender(config))
-
-    override fun invoke(ctx: ClientContext) = KafkaSink(kafkaSender, ctx)
+    override fun invoke(stream: SinkStream, ctx: ClientContext): Lazy<KafkaPublisher> = lazy {
+        createKafkaSender(stream)
+                .let {
+                    messageSinks.putIfAbsent(stream, it)
+                    KafkaPublisher(it, ctx)
+                }
+    }
 
     override fun close() = IO {
-        kafkaSender.close()
-        logger.info(ServiceContext::mdc) { "KafkaSender flushed and closed" }
+        messageSinks.values.forEach { it.close() }
+        logger.info(ServiceContext::mdc) { "Message sinks flushed and closed" }
     }
 
     companion object {
         private val logger = Logger(KafkaSinkProvider::class)
-        private const val MAXIMUM_REQUEST_SIZE_MULTIPLIER = 1.2f
-        private const val BUFFER_MEMORY_MULTIPLIER = 32
-        private const val MINIMUM_BUFFER_MEMORY = 32 * 1024 * 1024
-
-        private fun constructKafkaSender(config: CollectorConfiguration) =
-                KafkaSender.create(constructSenderOptions(config))
-
-        private fun constructSenderOptions(config: CollectorConfiguration) =
-                SenderOptions.create<CommonEventHeader, VesMessage>()
-                        .producerProperty(BOOTSTRAP_SERVERS_CONFIG, config.kafkaServers)
-                        .producerProperty(MAX_REQUEST_SIZE_CONFIG, maxRequestSize(config.maxRequestSizeBytes))
-                        .producerProperty(BUFFER_MEMORY_CONFIG, bufferMemory(config.maxRequestSizeBytes))
-                        .producerProperty(KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
-                        .producerProperty(VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
-                        .producerProperty(MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
-                        .producerProperty(RETRIES_CONFIG, 1)
-                        .producerProperty(ACKS_CONFIG, "1")
-                        .stopOnError(false)
-
-        private fun maxRequestSize(maxRequestSizeBytes: Int) =
-                (MAXIMUM_REQUEST_SIZE_MULTIPLIER * maxRequestSizeBytes).toInt()
-
-        private fun bufferMemory(maxRequestSizeBytes: Int) =
-                max(MINIMUM_BUFFER_MEMORY, BUFFER_MEMORY_MULTIPLIER * maxRequestSizeBytes)
     }
 }

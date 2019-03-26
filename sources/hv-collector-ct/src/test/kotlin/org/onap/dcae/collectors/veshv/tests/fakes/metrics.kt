@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class FakeMetrics : Metrics {
 
     override fun notifyMessageSent(msg: RoutedMessage) {
         messagesSentCount++
-        messagesSentToTopic.compute(msg.topic) { k, _ ->
+        messagesSentToTopic.compute(msg.targetTopic) { k, _ ->
             messagesSentToTopic[k]?.inc() ?: 1
         }
         lastProcessingTimeMicros = Duration.between(msg.message.wtpFrame.receivedAt, Instant.now()).toNanos() / 1000.0
