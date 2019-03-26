@@ -12,7 +12,6 @@
   "security": {
   },
   "collector": {
-    "dummyMode": false,
     "maxRequestSizeBytes": 1048576,
     "kafkaServers": [
       "message-router-kafka:9092"

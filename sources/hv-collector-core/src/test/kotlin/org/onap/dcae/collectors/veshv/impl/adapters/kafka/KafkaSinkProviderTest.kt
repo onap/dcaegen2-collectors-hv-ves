@@ -43,7 +43,6 @@ internal object KafkaSinkProviderTest : Spek({
     describe("non functional requirements") {
         given("sample configuration") {
             val config = CollectorConfiguration(
-                    dummyMode = false,
                     maxRequestSizeBytes = 1024 * 1024,
                     kafkaServers = "localhost:9090",
                     routing = routing { }.build())
