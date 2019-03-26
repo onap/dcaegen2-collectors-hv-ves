@@ -28,12 +28,12 @@ import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
 import org.onap.dcaegen2.services.sdk.model.streams.StreamType
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsRequests
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.DataStreams
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParser
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
-import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -90,16 +90,16 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
             .retryWhen(retry)
 
 
-    private fun createCollectorConfiguration(configuration: JsonObject): Sequence<KafkaSink> {
-        try {
-            return DataStreams.namedSinks(configuration)
-                    .filter { it.type() == StreamType.KAFKA }
-                    .map(streamParser::unsafeParse)
-                    .asSequence()
-        } catch (e: NullPointerException) {
-            throw ParsingException("Failed to parse configuration", e)
-        }
-    }
+    private fun createCollectorConfiguration(configuration: JsonObject): Sequence<KafkaSink> =
+            try {
+                DataStreams.namedSinks(configuration)
+                        .filter { it.type() == StreamType.KAFKA }
+                        .map(streamParser::unsafeParse)
+                        .asSequence()
+            } catch (e: NullPointerException) {
+                throw ParsingException("Failed to parse configuration", e)
+            }
+
 
     companion object {
         private const val MAX_RETRIES = 5L
