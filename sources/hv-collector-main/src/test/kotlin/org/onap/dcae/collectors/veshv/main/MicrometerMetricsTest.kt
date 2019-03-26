@@ -384,14 +384,14 @@ object MicrometerMetricsTest : Spek({
 
 fun routedMessage(topic: String, partition: Int = 0) =
         vesEvent().let { evt ->
-            RoutedMessage(topic, partition,
-                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
+            RoutedMessage(VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)), topic, partition)
         }
 
 fun routedMessageReceivedAt(topic: String, receivedAt: Temporal, partition: Int = 0) =
         vesEvent().let { evt ->
-            RoutedMessage(topic, partition,
-                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt).copy(receivedAt = receivedAt)))
+            RoutedMessage(VesMessage(evt.commonEventHeader, wireProtocolFrame(evt).copy(receivedAt = receivedAt)),
+                    topic, partition
+            )
         }
 
 fun routedMessageSentAt(topic: String, sentAt: Instant, partition: Int = 0) =
@@ -400,6 +400,5 @@ fun routedMessageSentAt(topic: String, sentAt: Instant, partition: Int = 0) =
             builder.commonEventHeaderBuilder.lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000
             builder.build()
         }.let { evt ->
-            RoutedMessage(topic, partition,
-                    VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)))
+            RoutedMessage(VesMessage(evt.commonEventHeader, wireProtocolFrame(evt)), topic, partition)
         }

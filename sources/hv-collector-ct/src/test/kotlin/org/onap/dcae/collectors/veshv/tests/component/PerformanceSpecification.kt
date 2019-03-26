@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.tests.component.Sut.Companion.MAX_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
-import org.onap.dcae.collectors.veshv.tests.fakes.configWithBasicRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType
@@ -57,7 +57,7 @@ object PerformanceSpecification : Spek({
         it("should handle multiple clients in reasonable time") {
             val sink = CountingSink()
             val sut = Sut(sink)
-            sut.configurationProvider.updateConfiguration(configWithBasicRouting)
+            sut.configurationProvider.updateConfiguration(basicRouting)
 
             val numMessages: Long = 300_000
             val runs = 4
@@ -79,7 +79,7 @@ object PerformanceSpecification : Spek({
             val durationSec = durationMs / 1000.0
             val throughput = sink.count / durationSec
             logger.info { "Processed $runs connections each containing $numMessages msgs." }
-            logger.info { "Forwarded ${sink.count / ONE_MILION} Mmsgs in $durationSec seconds, that is $throughput msgs/s" }
+            logger.info { "Forwarded ${sink.count / ONE_MILLION}M msgs in $durationSec seconds, that is $throughput msgs/PERF3GPP_REGIONAL" }
             assertThat(sink.count)
                     .describedAs("should send all events")
                     .isEqualTo(runs * numMessages)
@@ -88,7 +88,7 @@ object PerformanceSpecification : Spek({
         it("should disconnect on transmission errors") {
             val sink = CountingSink()
             val sut = Sut(sink)
-            sut.configurationProvider.updateConfiguration(configWithBasicRouting)
+            sut.configurationProvider.updateConfiguration(basicRouting)
 
             val numMessages: Long = 100_000
             val timeout = Duration.ofSeconds(30)
@@ -159,7 +159,7 @@ object PerformanceSpecification : Spek({
 })
 
 
-private const val ONE_MILION = 1_000_000.0
+private const val ONE_MILLION = 1_000_000.0
 private val rand = Random()
 private val generatorsFactory = MessageGeneratorFactory(MAX_PAYLOAD_SIZE_BYTES)
 

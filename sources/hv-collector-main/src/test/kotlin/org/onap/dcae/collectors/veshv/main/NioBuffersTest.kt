@@ -49,7 +49,7 @@ object NioBuffersTest : Spek({
 
     fun measureAndPrintAverageCopyTime(message: String, bb1: ByteBuffer, bb2: ByteBuffer) {
         val avg = measureAverageCopyTimeInNanos(bb1, bb2)
-        System.out.printf("Each putInt+getInt for %s took an average of %.1f ns%n", message, avg)
+        System.out.printf("Each putInt+getInt for %PERF3GPP_REGIONAL took an average of %.1f ns%n", message, avg)
     }
 
     for (singleBufferSize in BUFFER_SIZES) {
