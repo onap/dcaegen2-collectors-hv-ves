@@ -97,8 +97,7 @@ internal class ConfigurationValidator {
                 CollectorConfiguration(
                         it.maxRequestSizeBytes.bind(),
                         toKafkaServersString(it.kafkaServers.bind()),
-                        it.routing.bind(),
-                        it.dummyMode.bind()
+                        it.routing.bind()
                 )
             }
 
