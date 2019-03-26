@@ -569,6 +569,11 @@
             </dependency>
             <dependency>
                 <groupId>org.onap.dcaegen2.services.sdk.rest.services</groupId>
+                <artifactId>model</artifactId>
+                <version>${sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.onap.dcaegen2.services.sdk.rest.services</groupId>
                 <artifactId>cbs-client</artifactId>
                 <version>${sdk.version}</version>
             </dependency>

@@ -20,67 +20,60 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.ImmutableKafkaSink
-import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import reactor.core.publisher.FluxProcessor
 import reactor.core.publisher.UnicastProcessor
 import reactor.retry.RetryExhaustedException
 
 
 const val PERF3GPP_TOPIC = "HV_VES_PERF3GPP"
-const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "HV_VES_MEAS_FOR_VF_SCALING"
 const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
-const val SAMPLE_BOOTSTRAP_SERVERS = "dmaap-mr-kafka-0:6060,dmaap-mr-kafka-1:6060"
+const val KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
+const val MAX_PAYLOAD_SIZE_BYTES = 1024*1024
 
-val configWithBasicRouting = sequenceOf(
-        ImmutableKafkaSink.builder()
-                .name(PERF3GPP.domainName)
-                .topicName(PERF3GPP_TOPIC)
-                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-                .build()
-)
+val perf3gppKafkaSink = ImmutableKafkaSink.builder()
+        .name("PERF3GPP")
+        .bootstrapServers(KAFKA_BOOTSTRAP_SERVERS)
+        .topicName(PERF3GPP_TOPIC)
+        .maxPayloadSizeBytes(MAX_PAYLOAD_SIZE_BYTES)
+        .build()
+val alternativeKafkaSink = ImmutableKafkaSink.builder()
+        .name("ALTERNATE")
+        .bootstrapServers(KAFKA_BOOTSTRAP_SERVERS)
+        .topicName(ALTERNATE_PERF3GPP_TOPIC)
+        .maxPayloadSizeBytes(MAX_PAYLOAD_SIZE_BYTES)
+        .build()
 
-val configWithTwoDomainsToOneTopicRouting = sequenceOf(
-        ImmutableKafkaSink.builder()
-                .name(PERF3GPP.domainName)
-                .topicName(PERF3GPP_TOPIC)
-                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-                .build(),
-        ImmutableKafkaSink.builder()
-                .name(HEARTBEAT.domainName)
-                .topicName(PERF3GPP_TOPIC)
-                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-                .build(),
-        ImmutableKafkaSink.builder()
-                .name(MEASUREMENT.domainName)
-                .topicName(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
-                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-                .build()
-)
+val basicRouting = Routing(listOf(
+        Route(PERF3GPP.domainName, perf3gppKafkaSink)
+))
 
-val configWithDifferentRouting = sequenceOf(
-        ImmutableKafkaSink.builder()
-                .name(PERF3GPP.domainName)
-                .topicName(ALTERNATE_PERF3GPP_TOPIC)
-                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-                .build()
-)
+val configurationWithDifferentRouting = Routing(listOf(
+        Route(PERF3GPP.domainName, alternativeKafkaSink)
+))
 
-val configWithEmptyRouting = emptySequence<KafkaSink>()
+val twoDomainsToOneTopicRouting = Routing(listOf(
+        Route(PERF3GPP.domainName, perf3gppKafkaSink),
+        Route(HEARTBEAT.domainName, perf3gppKafkaSink),
+        Route(MEASUREMENT.domainName, alternativeKafkaSink)
+))
 
+val emptyRouting = Routing(emptyList())
 
 class FakeConfigurationProvider : ConfigurationProvider {
     private var shouldThrowException = false
-    private val configStream: FluxProcessor<Sequence<KafkaSink>, Sequence<KafkaSink>> = UnicastProcessor.create()
+    private val configStream: FluxProcessor<Routing, Routing> = UnicastProcessor.create()
 
-    fun updateConfiguration(kafkaSinkSequence: Sequence<KafkaSink>) =
+    fun updateConfiguration(routing: Routing) =
             if (shouldThrowException) {
                 configStream.onError(RetryExhaustedException("I'm so tired"))
             } else {
-                configStream.onNext(kafkaSinkSequence)
+                configStream.onNext(routing)
             }
 
 
