@@ -19,8 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.config.api.model
 
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 
+// TOD0: typealias probably
 data class Routing(val routes: List<Route>)
 
-data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int = { 0 })
+data class Route(val domain: String, val sink: KafkaSink)

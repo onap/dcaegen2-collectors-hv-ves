@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ class MicrometerMetrics internal constructor(
     override fun notifyMessageSent(msg: RoutedMessage) {
         val now = Instant.now()
         sentMessages.increment()
-        sentMessagesByTopic(msg.topic).increment()
+        sentMessagesByTopic(msg.targetTopic).increment()
 
         processingTime.record(Duration.between(msg.message.wtpFrame.receivedAt, now))
         totalLatency.record(Duration.between(epochMicroToInstant(msg.message.header.lastEpochMicrosec), now))
