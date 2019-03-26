@@ -31,7 +31,8 @@ data class HvVesConfiguration(
         val server: ServerConfiguration,
         val cbs: CbsConfiguration,
         val security: SecurityConfiguration,
-        val collector: CollectorConfiguration,
+// TOD0: retrieve when ConfigurationMerger is implemented
+//        val collector: CollectorConfiguration,
         val logLevel: LogLevel
 )
 
@@ -45,10 +46,10 @@ data class CbsConfiguration(
         val firstRequestDelay: Duration,
         val requestInterval: Duration
 )
-
-data class CollectorConfiguration(
-        val maxRequestSizeBytes: Int,
-        val kafkaServers: String,
-        val routing: Routing,
-        val dummyMode: Boolean = false
-)
+// TOD0: retrieve when ConfigurationMerger is implemented
+//data class CollectorConfiguration(
+//        val maxRequestSizeBytes: Int,
+//        val kafkaServers: String,
+//        val routing: Routing,
+//        val dummyMode: Boolean = false
+//)

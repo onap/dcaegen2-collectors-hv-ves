@@ -98,14 +98,14 @@ internal object FileConfigurationReaderTest : Spek({
                 assertThat(cbs.firstRequestDelaySec).isEqualTo(Some(7))
                 assertThat(cbs.requestIntervalSec).isEqualTo(Some(900))
 
-                assertThat(config.collector.nonEmpty()).isTrue()
-                val collector = config.collector.orNull() as PartialCollectorConfig
-                collector.run {
-                    assertThat(dummyMode).isEqualTo(Some(false))
-                    assertThat(maxRequestSizeBytes.isEmpty()).isTrue()
-                    assertThat(kafkaServers.isEmpty()).isTrue()
-                    assertThat(routing.isEmpty()).isTrue()
-                }
+//                assertThat(config.collector.nonEmpty()).isTrue()
+//                val collector = config.collector.orNull() as PartialCollectorConfig
+//                collector.run {
+//                    assertThat(dummyMode).isEqualTo(Some(false))
+//                    assertThat(maxRequestSizeBytes.isEmpty()).isTrue()
+//                    assertThat(kafkaServers.isEmpty()).isTrue()
+//                    assertThat(routing.isEmpty()).isTrue()
+//                }
 
                 assertThat(config.server.nonEmpty()).isTrue()
                 val server = config.server.orNull() as PartialServerConfig

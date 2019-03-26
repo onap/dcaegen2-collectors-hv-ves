@@ -63,12 +63,12 @@ internal object ConfigurationValidatorTest : Spek({
                     Some(PartialSecurityConfig(
                             Some(mock())
                     )),
-                    Some(PartialCollectorConfig(
-                            Some(true),
-                            Some(4),
-                            Some(emptyList()),
-                            someFromEmptyRouting
-                    )),
+//                    Some(PartialCollectorConfig(
+//                            Some(true),
+//                            Some(4),
+//                            Some(emptyList()),
+//                            someFromEmptyRouting
+//                    )),
                     None
             )
 
@@ -103,12 +103,12 @@ internal object ConfigurationValidatorTest : Spek({
                     Some(PartialSecurityConfig(
                             securityKeys
                     )),
-                    Some(PartialCollectorConfig(
-                            Some(true),
-                            Some(4),
-                            Some(emptyList()),
-                            someFromEmptyRouting
-                    )),
+//                    Some(PartialCollectorConfig(
+//                            Some(true),
+//                            Some(4),
+//                            Some(emptyList()),
+//                            someFromEmptyRouting
+//                    )),
                     Some(LogLevel.INFO)
             )
 
@@ -128,8 +128,8 @@ internal object ConfigurationValidatorTest : Spek({
                             assertThat(it.cbs.firstRequestDelay)
                                     .isEqualTo(Duration.ofSeconds(firstReqDelaySec.toLong()))
 
-                            assertThat(it.collector.routing)
-                                    .isEqualTo(emptyRouting)
+//                            assertThat(it.collector.routing)
+//                                    .isEqualTo(emptyRouting)
                         }
                 )
             }
@@ -153,12 +153,12 @@ internal object ConfigurationValidatorTest : Spek({
                     Some(PartialSecurityConfig(
                             securityKeys
                     )),
-                    Some(PartialCollectorConfig(
-                            Some(true),
-                            Some(4),
-                            Some(emptyList()),
-                            someFromEmptyRouting
-                    )),
+//                    Some(PartialCollectorConfig(
+//                            Some(true),
+//                            Some(4),
+//                            Some(emptyList()),
+//                            someFromEmptyRouting
+//                    )),
                     Some(LogLevel.INFO)
             )
 
@@ -178,8 +178,8 @@ internal object ConfigurationValidatorTest : Spek({
                             assertThat(it.cbs.firstRequestDelay)
                                     .isEqualTo(Duration.ofSeconds(firstReqDelaySec.toLong()))
 
-                            assertThat(it.collector.routing)
-                                    .isEqualTo(emptyRouting)
+//                            assertThat(it.collector.routing)
+//                                    .isEqualTo(emptyRouting)
                         }
                 )
             }
@@ -187,6 +187,6 @@ internal object ConfigurationValidatorTest : Spek({
 
     }
 })
-
-val emptyRouting = Routing(emptyList())
-val someFromEmptyRouting = Some(emptyRouting)
+//
+//val emptyRouting = Routing(emptyList())
+//val someFromEmptyRouting = Some(emptyRouting)

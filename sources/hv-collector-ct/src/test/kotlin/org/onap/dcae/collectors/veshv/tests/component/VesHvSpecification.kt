@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
-import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
@@ -66,11 +65,13 @@ object VesHvSpecification : Spek({
         }
 
         it("should close sink when closing collector provider") {
-            val (sut, _) = vesHvWithStoringSink()
+            val (sut, sink) = vesHvWithStoringSink()
+            // given Router initialized
+            sut.handleConnection()
 
-            sut.close()
+            sut.close().unsafeRunSync()
 
-            assertThat(sut.sinkProvider.closed).isTrue()
+            assertThat(sink.closed).isTrue()
         }
     }
 
@@ -145,7 +146,7 @@ object VesHvSpecification : Spek({
             assertThat(messages).describedAs("number of routed messages").hasSize(1)
 
             val msg = messages[0]
-            assertThat(msg.topic).describedAs("routed message topic").isEqualTo(PERF3GPP_TOPIC)
+            assertThat(msg.targetTopic).describedAs("routed message topic").isEqualTo(PERF3GPP_TOPIC)
             assertThat(msg.partition).describedAs("routed message partition").isEqualTo(0)
         }
 
@@ -161,14 +162,14 @@ object VesHvSpecification : Spek({
 
             assertThat(messages).describedAs("number of routed messages").hasSize(3)
 
-            assertThat(messages[0].topic).describedAs("first message topic")
+            assertThat(messages[0].targetTopic).describedAs("first message topic")
                     .isEqualTo(PERF3GPP_TOPIC)
 
-            assertThat(messages[1].topic).describedAs("second message topic")
+            assertThat(messages[1].targetTopic).describedAs("second message topic")
                     .isEqualTo(PERF3GPP_TOPIC)
 
-            assertThat(messages[2].topic).describedAs("last message topic")
-                    .isEqualTo(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
+            assertThat(messages[2].targetTopic).describedAs("last message topic")
+                    .isEqualTo(ALTERNATE_PERF3GPP_TOPIC)
         }
 
         it("should drop message if route was not found") {
@@ -181,7 +182,7 @@ object VesHvSpecification : Spek({
             assertThat(messages).describedAs("number of routed messages").hasSize(1)
 
             val msg = messages[0]
-            assertThat(msg.topic).describedAs("routed message topic").isEqualTo(PERF3GPP_TOPIC)
+            assertThat(msg.targetTopic).describedAs("routed message topic").isEqualTo(PERF3GPP_TOPIC)
             assertThat(msg.message.header.eventId).describedAs("routed message eventId").isEqualTo("second")
         }
     }
@@ -224,7 +225,7 @@ object VesHvSpecification : Spek({
                 assertThat(messagesAfterUpdate).hasSize(1)
                 val message = messagesAfterUpdate[0]
 
-                assertThat(message.topic).describedAs("routed message topic after configuration's change")
+                assertThat(message.targetTopic).describedAs("routed message topic after configuration'PERF3GPP_REGIONAL change")
                         .isEqualTo(PERF3GPP_TOPIC)
                 assertThat(message.partition).describedAs("routed message partition")
                         .isEqualTo(0)
@@ -236,7 +237,7 @@ object VesHvSpecification : Spek({
                 assertThat(messages).hasSize(1)
                 val firstMessage = messages[0]
 
-                assertThat(firstMessage.topic).describedAs("routed message topic on initial configuration")
+                assertThat(firstMessage.targetTopic).describedAs("routed message topic on initial configuration")
                         .isEqualTo(PERF3GPP_TOPIC)
                 assertThat(firstMessage.partition).describedAs("routed message partition")
                         .isEqualTo(0)
@@ -248,7 +249,7 @@ object VesHvSpecification : Spek({
                 assertThat(messagesAfterUpdate).hasSize(2)
                 val secondMessage = messagesAfterUpdate[1]
 
-                assertThat(secondMessage.topic).describedAs("routed message topic after configuration's change")
+                assertThat(secondMessage.targetTopic).describedAs("routed message topic after configuration'PERF3GPP_REGIONAL change")
                         .isEqualTo(ALTERNATE_PERF3GPP_TOPIC)
                 assertThat(secondMessage.partition).describedAs("routed message partition")
                         .isEqualTo(0)
@@ -269,8 +270,8 @@ object VesHvSpecification : Spek({
 
 
                 val messages = sink.sentMessages
-                val firstTopicMessagesCount = messages.count { it.topic == PERF3GPP_TOPIC }
-                val secondTopicMessagesCount = messages.count { it.topic == ALTERNATE_PERF3GPP_TOPIC }
+                val firstTopicMessagesCount = messages.count { it.targetTopic == PERF3GPP_TOPIC }
+                val secondTopicMessagesCount = messages.count { it.targetTopic == ALTERNATE_PERF3GPP_TOPIC }
 
                 assertThat(messages.size).isEqualTo(messagesAmount)
                 assertThat(messagesForEachTopic)
@@ -297,8 +298,8 @@ object VesHvSpecification : Spek({
                 sut.collector.handleConnection(incomingMessages).block(defaultTimeout)
 
                 val messages = sink.sentMessages
-                val firstTopicMessagesCount = messages.count { it.topic == PERF3GPP_TOPIC }
-                val secondTopicMessagesCount = messages.count { it.topic == ALTERNATE_PERF3GPP_TOPIC }
+                val firstTopicMessagesCount = messages.count { it.targetTopic == PERF3GPP_TOPIC }
+                val secondTopicMessagesCount = messages.count { it.targetTopic == ALTERNATE_PERF3GPP_TOPIC }
 
                 assertThat(messages.size).isEqualTo(messageStreamSize)
                 assertThat(firstTopicMessagesCount)

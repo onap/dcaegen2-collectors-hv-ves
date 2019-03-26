@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,59 +20,50 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
-import org.onap.dcae.collectors.veshv.config.api.model.routing
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.ImmutableKafkaSink
 import reactor.core.publisher.FluxProcessor
 import reactor.core.publisher.UnicastProcessor
 import reactor.retry.RetryExhaustedException
 
 
 const val PERF3GPP_TOPIC = "HV_VES_PERF3GPP"
-const val MEASUREMENTS_FOR_VF_SCALING_TOPIC = "HV_VES_MEAS_FOR_VF_SCALING"
 const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
+const val KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
+const val MAX_PAYLOAD_SIZE_BYTES = 1024*1024
 
-val basicRouting = routing {
-    defineRoute {
-        fromDomain(PERF3GPP.domainName)
-        toTopic(PERF3GPP_TOPIC)
-        withFixedPartitioning()
-    }
-}.build()
+val perf3gppKafkaSink = ImmutableKafkaSink.builder()
+        .name("PERF3GPP")
+        .bootstrapServers(KAFKA_BOOTSTRAP_SERVERS)
+        .topicName(PERF3GPP_TOPIC)
+        .maxPayloadSizeBytes(MAX_PAYLOAD_SIZE_BYTES)
+        .build()
+val alternativeKafkaSink = ImmutableKafkaSink.builder()
+        .name("ALTERNATE")
+        .bootstrapServers(KAFKA_BOOTSTRAP_SERVERS)
+        .topicName(ALTERNATE_PERF3GPP_TOPIC)
+        .maxPayloadSizeBytes(MAX_PAYLOAD_SIZE_BYTES)
+        .build()
 
+val basicRouting = Routing(listOf(
+        Route(PERF3GPP.domainName, perf3gppKafkaSink)
+))
 
-val twoDomainsToOneTopicRouting = routing {
-    defineRoute {
-        fromDomain(PERF3GPP.domainName)
-        toTopic(PERF3GPP_TOPIC)
-        withFixedPartitioning()
-    }
-    defineRoute {
-        fromDomain(HEARTBEAT.domainName)
-        toTopic(PERF3GPP_TOPIC)
-        withFixedPartitioning()
-    }
-    defineRoute {
-        fromDomain(MEASUREMENT.domainName)
-        toTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC)
-        withFixedPartitioning()
-    }
-}.build()
+val configurationWithDifferentRouting = Routing(listOf(
+        Route(PERF3GPP.domainName, alternativeKafkaSink)
+))
 
+val twoDomainsToOneTopicRouting = Routing(listOf(
+        Route(PERF3GPP.domainName, perf3gppKafkaSink),
+        Route(HEARTBEAT.domainName, perf3gppKafkaSink),
+        Route(MEASUREMENT.domainName, alternativeKafkaSink)
+))
 
-val configurationWithDifferentRouting = routing {
-    defineRoute {
-        fromDomain(PERF3GPP.domainName)
-        toTopic(ALTERNATE_PERF3GPP_TOPIC)
-        withFixedPartitioning()
-    }
-}.build()
-
-
-val emptyRouting = routing { }.build()
-
+val emptyRouting = Routing(emptyList())
 
 class FakeConfigurationProvider : ConfigurationProvider {
     private var shouldThrowException = false

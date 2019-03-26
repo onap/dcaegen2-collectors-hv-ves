@@ -213,7 +213,7 @@ internal object MessageValidatorTest : Spek({
         describe("validating messages and converting to Either of string for validation result") {
             given("WireFrameMessage") {
                 on("valid message as input") {
-                    val wireFrameMessage = WireFrameMessage("lets pretend it's valid".toByteArray())
+                    val wireFrameMessage = WireFrameMessage("lets pretend it'PERF3GPP_REGIONAL valid".toByteArray())
                     val mockedWireFrameMessage = mock<WireFrameMessage> {
                         on { validate() } doReturn right(wireFrameMessage)
                     }

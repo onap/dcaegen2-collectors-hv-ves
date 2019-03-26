@@ -30,11 +30,11 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.FAULT
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.ImmutableAafCredentials
 import reactor.core.publisher.Flux
 
 import reactor.core.publisher.Mono
@@ -65,8 +65,8 @@ internal object ConfigurationProviderImplTest : Spek({
                             .expectNoEvent(waitTime)
                 }
             }
-
         }
+
         given("valid configuration from cbs") {
             val configProvider = constructConfigurationProvider(cbsClientMock, healthStateProvider)
 
@@ -77,22 +77,22 @@ internal object ConfigurationProviderImplTest : Spek({
 
                     StepVerifier.create(configProvider().take(1))
                             .consumeNextWith {
+                                val route1 = it.routes.elementAt(0)
+                                val route2 = it.routes.elementAt(1)
+                                val receivedSink1 = route1.sink
+                                val receivedSink2 = route2.sink
 
-                                val route1 = it.routes[0]
-                                assertThat(FAULT.domainName)
-                                        .describedAs("routed domain 1")
-                                        .isEqualTo(route1.domain)
-                                assertThat("test-topic-1")
-                                        .describedAs("target topic 1")
-                                        .isEqualTo(route1.targetTopic)
+                                assertThat(route1.domain).isEqualTo(PERF3GPP_REGIONAL)
+                                assertThat(receivedSink1.aafCredentials()).isEqualTo(aafCredentials1)
+                                assertThat(receivedSink1.bootstrapServers())
+                                        .isEqualTo("dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060")
+                                assertThat(receivedSink1.topicName()).isEqualTo("REG_HVVES_PERF3GPP")
 
-                                val route2 = it.routes[1]
-                                assertThat(HEARTBEAT.domainName)
-                                        .describedAs("routed domain 2")
-                                        .isEqualTo(route2.domain)
-                                assertThat("test-topic-2")
-                                        .describedAs("target topic 2")
-                                        .isEqualTo(route2.targetTopic)
+                                assertThat(route2.domain).isEqualTo(PERF3GPP_CENTRAL)
+                                assertThat(receivedSink2.aafCredentials()).isEqualTo(aafCredentials2)
+                                assertThat(receivedSink2.bootstrapServers())
+                                        .isEqualTo("dmaap-mr-kafka-0.central:6060,dmaap-mr-kafka-1.central:6060")
+                                assertThat(receivedSink2.topicName()).isEqualTo("CEN_HVVES_PERF3GPP")
 
                             }.verifyComplete()
                 }
@@ -127,34 +127,67 @@ internal object ConfigurationProviderImplTest : Spek({
 })
 
 
+val PERF3GPP_REGIONAL = "perf3gpp_regional"
+val PERF3GPP_CENTRAL = "perf3gpp_central"
+
+private val aafCredentials1 = ImmutableAafCredentials.builder()
+        .username("client")
+        .password("very secure password")
+        .build()
+
+private val aafCredentials2 = ImmutableAafCredentials.builder()
+        .username("other_client")
+        .password("another very secure password")
+        .build()
+
 private val validConfiguration = JsonParser().parse("""
 {
-    "whatever": "garbage",
-    "collector.routing": [
-            {
-                "fromDomain": "fault",
-                "toTopic": "test-topic-1"
+    "streams_publishes": {
+        "$PERF3GPP_REGIONAL": {
+            "type": "kafka",
+            "aaf_credentials": {
+                "username": "client",
+                "password": "very secure password"
             },
-            {
-                "fromDomain": "heartbeat",
-                "toTopic": "test-topic-2"
+            "kafka_info": {
+                "bootstrap_servers": "dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060",
+                "topic_name": "REG_HVVES_PERF3GPP"
             }
-    ]
+        },
+        "$PERF3GPP_CENTRAL": {
+            "type": "kafka",
+            "aaf_credentials": {
+                "username": "other_client",
+                "password": "another very secure password"
+            },
+            "kafka_info": {
+                "bootstrap_servers": "dmaap-mr-kafka-0.central:6060,dmaap-mr-kafka-1.central:6060",
+                "topic_name": "CEN_HVVES_PERF3GPP"
+            }
+        }
+    }
 }""").asJsonObject
 
 private val invalidConfiguration = JsonParser().parse("""
 {
-    "whatever": "garbage",
-    "collector.routing": [
-            {
-                "fromDomain": "garbage",
-                "meaningful": "garbage"
+    "streams_publishes": {
+        "$PERF3GPP_REGIONAL": {
+            "type": "kafka",
+            "aaf_credentials": {
+                "username": "client",
+                "password": "very secure password"
+            },
+            "kafka_info": {
+                "bootstrap_servers": "dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060",
+                "popic_name": "REG_HVVES_PERF3GPP"
             }
-    ]
+        }
+    }
 }""").asJsonObject
 
 private val firstRequestDelay = Duration.ofMillis(1)
 private val requestInterval = Duration.ofMillis(1)
+private val streamParser = StreamFromGsonParsers.kafkaSinkParser()
 
 private fun constructConfigurationProvider(cbsClientMono: Mono<CbsClient>,
                                            healthState: HealthState,
@@ -168,6 +201,7 @@ private fun constructConfigurationProvider(cbsClientMono: Mono<CbsClient>,
             firstRequestDelay,
             requestInterval,
             healthState,
+            streamParser,
             retry
     )
 }

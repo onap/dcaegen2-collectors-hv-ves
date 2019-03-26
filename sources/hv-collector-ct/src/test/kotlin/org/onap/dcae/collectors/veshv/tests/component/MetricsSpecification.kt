@@ -33,7 +33,7 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.KAFKA_FAILURE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
-import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicRouting
@@ -107,8 +107,8 @@ object MetricsSpecification : Spek({
             assertThat(metrics.messagesOnTopic(PERF3GPP_TOPIC))
                     .describedAs("messagesSentToTopic $PERF3GPP_TOPIC metric")
                     .isEqualTo(2)
-            assertThat(metrics.messagesOnTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC))
-                    .describedAs("messagesSentToTopic $MEASUREMENTS_FOR_VF_SCALING_TOPIC metric")
+            assertThat(metrics.messagesOnTopic(ALTERNATE_PERF3GPP_TOPIC))
+                    .describedAs("messagesSentToTopic $ALTERNATE_PERF3GPP_TOPIC metric")
                     .isEqualTo(1)
         }
     }

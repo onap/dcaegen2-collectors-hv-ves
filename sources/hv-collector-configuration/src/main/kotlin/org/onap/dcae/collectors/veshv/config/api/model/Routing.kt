@@ -19,59 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.config.api.model
 
-import arrow.core.Option
-import org.onap.dcae.collectors.veshv.domain.RoutedMessage
-import org.onap.dcae.collectors.veshv.domain.VesMessage
-import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
 
-data class Routing(val routes: List<Route>) {
+// TOD0: typealias probably
+data class Routing(val routes: List<Route>)
 
-    fun routeFor(commonHeader: CommonEventHeader): Option<Route> =
-            Option.fromNullable(routes.find { it.applies(commonHeader) })
-}
-
-data class Route(val domain: String, val targetTopic: String, val partitioning: (CommonEventHeader) -> Int = { 0 }) {
-
-    fun applies(commonHeader: CommonEventHeader) = commonHeader.domain == domain
-
-    operator fun invoke(message: VesMessage): RoutedMessage =
-            RoutedMessage(targetTopic, partitioning(message.header), message)
-}
-
-
-/*
-HvVesConfiguration DSL
-*/
-
-fun routing(init: RoutingBuilder.() -> Unit): RoutingBuilder = RoutingBuilder().apply(init)
-
-class RoutingBuilder {
-    private val routes: MutableList<RouteBuilder> = mutableListOf()
-
-    fun defineRoute(init: RouteBuilder.() -> Unit): RouteBuilder = RouteBuilder()
-            .apply(init)
-            .also { routes.add(it) }
-
-    fun build() = Routing(routes.map { it.build() }.toList())
-}
-
-class RouteBuilder {
-
-    private lateinit var domain: String
-    private lateinit var targetTopic: String
-    private lateinit var partitioning: (CommonEventHeader) -> Int
-
-    fun fromDomain(domain: String): RouteBuilder = apply {
-        this.domain = domain
-    }
-
-    fun toTopic(targetTopic: String): RouteBuilder = apply {
-        this.targetTopic = targetTopic
-    }
-
-    fun withFixedPartitioning(num: Int = 0): RouteBuilder = apply {
-        partitioning = { num }
-    }
-
-    fun build() = Route(domain, targetTopic, partitioning)
-}
+data class Route(val domain: String, val sink: KafkaSink)

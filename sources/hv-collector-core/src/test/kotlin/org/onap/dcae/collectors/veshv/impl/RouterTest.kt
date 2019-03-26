@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,31 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
-import arrow.core.None
-import arrow.core.Some
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.config.api.model.routing
+import org.mockito.internal.verification.Times
+import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.SYSLOG
 import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.model.SuccessfullyConsumedMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
+import reactor.core.publisher.Flux
+import reactor.test.StepVerifier
 
 
 /**
@@ -42,72 +51,98 @@ import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
  * @since May 2018
  */
 object RouterTest : Spek({
-    given("sample configuration") {
-        val config = routing {
 
-            defineRoute {
-                fromDomain(PERF3GPP.domainName)
-                toTopic("ves_rtpm")
-                withFixedPartitioning(2)
+    describe("Router") {
+
+        whenever(perf3gppSinkMock.topicName()).thenReturn(perf3gppTopic)
+        whenever(syslogSinkMock.topicName()).thenReturn(syslogTopic)
+
+        val messageSinkMap = mapOf(
+                Pair(perf3gppTopic, messageSinkMock),
+                Pair(syslogTopic, messageSinkMock)
+        )
+
+        given("sample routing specification") {
+            val cut = router(defaultRouting, messageSinkMap)
+
+            on("message with existing route (rtpm)") {
+                whenever(messageSinkMock.send(routedPerf3GppMessage))
+                        .thenReturn(Flux.just(successfullyConsumedPerf3gppMessage))
+
+                it("should be properly routed") {
+                    val result = cut.route(perf3gppMessage)
+
+                    assertThat(result).isNotNull()
+                    StepVerifier.create(result)
+                            .expectNext(successfullyConsumedPerf3gppMessage)
+                            .verifyComplete()
+
+                    verify(perf3gppSinkMock).topicName()
+                    verify(messageSinkMock).send(routedPerf3GppMessage)
+                }
             }
 
-            defineRoute {
-                fromDomain(SYSLOG.domainName)
-                toTopic("ves_trace")
-                withFixedPartitioning()
-            }
-        }.build()
-        val cut = Router(config, ClientContext())
+            on("message with existing route (syslog)") {
+                whenever(messageSinkMock.send(routedSyslogMessage))
+                        .thenReturn(Flux.just(successfullyConsumedSyslogMessage))
+                val result = cut.route(syslogMessage)
 
-        on("message with existing route (rtpm)") {
-            val message = VesMessage(commonHeader(PERF3GPP), emptyWireProtocolFrame())
-            val result = cut.findDestination(message)
+                it("should be properly routed") {
+                    StepVerifier.create(result)
+                            .expectNext(successfullyConsumedSyslogMessage)
+                            .verifyComplete()
 
-            it("should have route available") {
-                assertThat(result).isNotNull()
-            }
-
-            it("should be routed to proper partition") {
-                assertThat(result.map(RoutedMessage::partition)).isEqualTo(Some(2))
+                    verify(syslogSinkMock).topicName()
+                    verify(messageSinkMock).send(routedSyslogMessage)
+                }
             }
 
-            it("should be routed to proper topic") {
-                assertThat(result.map(RoutedMessage::topic)).isEqualTo(Some("ves_rtpm"))
-            }
+            on("message with unknown route") {
+                val message = VesMessage(commonHeader(HEARTBEAT), emptyWireProtocolFrame())
+                val result = cut.route(message)
 
-            it("should be routed with a given message") {
-                assertThat(result.map(RoutedMessage::message)).isEqualTo(Some(message))
-            }
-        }
-
-        on("message with existing route (trace)") {
-            val message = VesMessage(commonHeader(SYSLOG), emptyWireProtocolFrame())
-            val result = cut.findDestination(message)
-
-            it("should have route available") {
-                assertThat(result).isNotNull()
-            }
-
-            it("should be routed to proper partition") {
-                assertThat(result.map(RoutedMessage::partition)).isEqualTo(Some(0))
-            }
-
-            it("should be routed to proper topic") {
-                assertThat(result.map(RoutedMessage::topic)).isEqualTo(Some("ves_trace"))
-            }
-
-            it("should be routed with a given message") {
-                assertThat(result.map(RoutedMessage::message)).isEqualTo(Some(message))
+                it("should not have route available") {
+                    StepVerifier.create(result).verifyComplete()
+                }
             }
         }
 
-        on("message with unknown route") {
-            val message = VesMessage(commonHeader(HEARTBEAT), emptyWireProtocolFrame())
-            val result = cut.findDestination(message)
 
-            it("should not have route available") {
-                assertThat(result).isEqualTo(None)
+        describe("closing router") {
+            val cut = router(defaultRouting, messageSinkMap)
+
+            on("close") {
+                cut.close().unsafeRunSync()
+
+                it("should close every message sink") {
+                    verify(messageSinkMock, Times(2)).close()
+                }
             }
         }
     }
+
 })
+
+private fun router(routing: Routing, kafkaPublisherMap: Map<String, Sink>) =
+        Router(routing, kafkaPublisherMap, ClientContext(), mock())
+
+private val perf3gppTopic = "PERF_PERF"
+private val perf3gppSinkMock = mock<KafkaSink>()
+private val default3gppRoute = Route(PERF3GPP.domainName, perf3gppSinkMock)
+
+private val syslogTopic = "SYS_LOG"
+private val syslogSinkMock = mock<KafkaSink>()
+private val defaultSyslogRoute = Route(SYSLOG.domainName, syslogSinkMock)
+
+private val defaultRouting = Routing(listOf(default3gppRoute, defaultSyslogRoute))
+
+private val messageSinkMock = mock<Sink>()
+private val default_partition = 0
+
+private val perf3gppMessage = VesMessage(commonHeader(PERF3GPP), emptyWireProtocolFrame())
+private val routedPerf3GppMessage = RoutedMessage(perf3gppMessage, perf3gppTopic, default_partition)
+private val successfullyConsumedPerf3gppMessage = SuccessfullyConsumedMessage(routedPerf3GppMessage)
+
+private val syslogMessage = VesMessage(commonHeader(SYSLOG), emptyWireProtocolFrame())
+private val routedSyslogMessage = RoutedMessage(syslogMessage, syslogTopic, default_partition)
+private val successfullyConsumedSyslogMessage = SuccessfullyConsumedMessage(routedSyslogMessage)

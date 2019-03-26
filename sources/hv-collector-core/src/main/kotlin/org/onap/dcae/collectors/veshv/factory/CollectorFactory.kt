@@ -64,20 +64,24 @@ class CollectorFactory(private val configuration: ConfigurationProvider,
                 .subscribe(config::set)
 
         return object : CollectorProvider {
-            override fun invoke(ctx: ClientContext): Option<Collector> =
-                    config.getOption().map { createVesHvCollector(it, ctx) }
+            private lateinit var router: Router
 
-            override fun close() = sinkProvider.close()
+            override fun invoke(ctx: ClientContext): Option<Collector> =
+                    config.getOption().map {
+                        router = Router(it, ctx, metrics, sinkProvider)
+                        createVesHvCollector(router, ctx)
+                    }
+
+            override fun close() = router.close()
         }
     }
 
-    private fun createVesHvCollector(routing: Routing, ctx: ClientContext): Collector =
+    private fun createVesHvCollector(router: Router, ctx: ClientContext): Collector =
             VesHvCollector(
                     clientContext = ctx,
                     wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maxPayloadSizeBytes), ctx),
                     protobufDecoder = VesDecoder(),
-                    router = Router(routing, ctx),
-                    sink = sinkProvider(ctx),
+                    router = router,
                     metrics = metrics)
 
     companion object {

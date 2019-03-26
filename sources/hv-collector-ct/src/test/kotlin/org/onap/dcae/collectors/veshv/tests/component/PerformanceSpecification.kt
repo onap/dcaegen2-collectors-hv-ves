@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ object PerformanceSpecification : Spek({
             val durationSec = durationMs / 1000.0
             val throughput = sink.count / durationSec
             logger.info { "Processed $runs connections each containing $numMessages msgs." }
-            logger.info { "Forwarded ${sink.count / ONE_MILION} Mmsgs in $durationSec seconds, that is $throughput msgs/s" }
+            logger.info { "Forwarded ${sink.count / ONE_MILLION}M msgs in $durationSec seconds, that is $throughput msgs/PERF3GPP_REGIONAL" }
             assertThat(sink.count)
                     .describedAs("should send all events")
                     .isEqualTo(runs * numMessages)
@@ -159,7 +159,7 @@ object PerformanceSpecification : Spek({
 })
 
 
-private const val ONE_MILION = 1_000_000.0
+private const val ONE_MILLION = 1_000_000.0
 private val rand = Random()
 private val generatorsFactory = MessageGeneratorFactory(MAX_PAYLOAD_SIZE_BYTES)
 

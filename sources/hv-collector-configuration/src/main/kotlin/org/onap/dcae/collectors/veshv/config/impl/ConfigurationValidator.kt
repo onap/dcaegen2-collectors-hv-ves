@@ -22,10 +22,10 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
-import arrow.core.Some
+//import arrow.core.Some
 import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
-import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
+//import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
@@ -53,15 +53,16 @@ internal class ConfigurationValidator {
                 .let { createCbsConfiguration(it).bind() }
 
         val securityConfiguration = SecurityConfiguration(partialConfig.security.bind().keys)
-
-        val collectorConfiguration = partialConfig.collector.bind()
-                .let { createCollectorConfig(it).bind() }
+// TOD0: retrieve when ConfigurationMerger is implemented
+//        val collectorConfiguration = partialConfig.collector.bind()
+//                .let { createCollectorConfig(it).bind() }
 
         HvVesConfiguration(
                 serverConfiguration,
                 cbsConfiguration,
                 securityConfiguration,
-                collectorConfiguration,
+// TOD0: retrieve when ConfigurationMerger is implemented
+//                collectorConfiguration,
                 logLevel
         )
     }.toEither { ValidationError("Some required configuration options are missing") }
@@ -91,16 +92,16 @@ internal class ConfigurationValidator {
                         Duration.ofSeconds(it.requestIntervalSec.bind().toLong())
                 )
             }
-
-    private fun createCollectorConfig(partial: PartialCollectorConfig) =
-            partial.mapBinding {
-                CollectorConfiguration(
-                        it.maxRequestSizeBytes.bind(),
-                        toKafkaServersString(it.kafkaServers.bind()),
-                        it.routing.bind(),
-                        it.dummyMode.bind()
-                )
-            }
+// TOD0: retrieve when ConfigurationMerger is implemented
+//    private fun createCollectorConfig(partial: PartialCollectorConfig) =
+//            partial.mapBinding {
+//                CollectorConfiguration(
+//                        it.maxRequestSizeBytes.bind(),
+//                        toKafkaServersString(it.kafkaServers.bind()),
+//                        it.routing.bind(),
+//                        it.dummyMode.bind()
+//                )
+//            }
 
     private fun toKafkaServersString(kafkaServers: List<InetSocketAddress>): String =
             kafkaServers.joinToString(",") { "${it.hostName}:${it.port}" }

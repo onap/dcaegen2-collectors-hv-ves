@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 package org.onap.dcae.collectors.veshv.tests.component
 
 import arrow.core.getOrElse
-import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.UnpooledByteBufAllocator
@@ -39,27 +38,28 @@ import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthState
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
+import org.onap.dcae.collectors.veshv.utils.Closeable
 import reactor.core.publisher.Flux
 import java.time.Duration
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class Sut(sink: Sink = StoringSink()) : AutoCloseable {
+class Sut(sink: Sink = StoringSink()) : Closeable {
     val configurationProvider = FakeConfigurationProvider()
     val healthStateProvider = FakeHealthState()
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
     val metrics = FakeMetrics()
-    val sinkProvider = DummySinkProvider(sink)
 
     private val collectorFactory = CollectorFactory(
             configurationProvider,
-            sinkProvider,
+            sinkProvider(sink),
             metrics,
             MAX_PAYLOAD_SIZE_BYTES,
-            healthStateProvider)
+            healthStateProvider
+    )
+
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
@@ -67,27 +67,13 @@ class Sut(sink: Sink = StoringSink()) : AutoCloseable {
             throw IllegalStateException("Collector not available.")
         }
 
-    override fun close() {
-        collectorProvider.close().unsafeRunSync()
-    }
+    override fun close() = collectorProvider.close()
+
+    private fun sinkProvider(sink: Sink): SinkProvider = { _, _ -> sink }
 
     companion object {
         const val MAX_PAYLOAD_SIZE_BYTES = 1024
     }
-}
-
-
-class DummySinkProvider(private val sink: Sink) : SinkProvider {
-    private val active = AtomicBoolean(true)
-
-    override fun invoke(ctx: ClientContext) = sink
-
-    override fun close() = IO {
-        active.set(false)
-    }
-
-    val closed get() = !active.get()
-
 }
 
 private val timeout = Duration.ofSeconds(10)
