@@ -26,6 +26,9 @@ import arrow.core.flatMap
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.Options
+import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 
 abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
     abstract val cmdLineOptionsList: List<CommandLineOption>
