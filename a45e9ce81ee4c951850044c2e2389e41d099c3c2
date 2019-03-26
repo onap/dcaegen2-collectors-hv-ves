@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a840370_98a06dbf",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-26T11:56:37Z",
+      "side": 1,
+      "message": "* Try to use `try` as expression\n* Inline `sinks` value",
+      "range": {
+        "startLine": 92,
+        "startChar": 93,
+        "endLine": 101,
+        "endChar": 5
+      },
+      "revId": "a45e9ce81ee4c951850044c2e2389e41d099c3c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
