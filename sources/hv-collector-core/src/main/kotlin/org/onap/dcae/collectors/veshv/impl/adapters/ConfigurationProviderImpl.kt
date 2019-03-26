@@ -22,6 +22,8 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 import com.google.gson.JsonObject
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.model.ServiceContext
@@ -72,7 +74,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
         healthState.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
     }
 
-    override fun invoke(): Flux<Sequence<KafkaSink>> =
+    override fun invoke(): Flux<Routing> =
             cbsClientMono
                     .doOnNext { logger.info(ServiceContext::mdc) { "CBS client successfully created" } }
                     .onErrorLog(logger, ServiceContext::mdc) { "Failed to retrieve CBS client" }
@@ -80,7 +82,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
                     .doFinally { logger.trace(ServiceContext::mdc) { "CBS client subscription finished" } }
                     .flatMapMany(::handleUpdates)
 
-    private fun handleUpdates(cbsClient: CbsClient): Flux<Sequence<KafkaSink>> = cbsClient
+    private fun handleUpdates(cbsClient: CbsClient): Flux<Routing> = cbsClient
             .updates(CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
                     firstRequestDelay,
                     requestInterval)
@@ -90,16 +92,19 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
             .retryWhen(retry)
 
 
-    private fun createCollectorConfiguration(configuration: JsonObject): Sequence<KafkaSink> =
+    private fun createCollectorConfiguration(configuration: JsonObject): Routing =
             try {
-                DataStreams.namedSinks(configuration)
-                        .filter { it.type() == StreamType.KAFKA }
-                        .map(streamParser::unsafeParse)
-                        .asSequence()
+                Routing(
+                        DataStreams.namedSinks(configuration)
+                                .filter { it.type() == StreamType.KAFKA }
+                                .map(streamParser::unsafeParse)
+                                .map { Route(it.name(), it) }
+                                .asIterable()
+                                .toList()
+                )
             } catch (e: NullPointerException) {
                 throw ParsingException("Failed to parse configuration", e)
             }
-
 
     companion object {
         private const val MAX_RETRIES = 5L

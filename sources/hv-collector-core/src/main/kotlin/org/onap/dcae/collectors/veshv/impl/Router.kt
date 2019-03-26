@@ -20,39 +20,79 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Option
+import arrow.effects.IO
+import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.boundary.Sink
+import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.debug
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.model.ConsumedMessage
+import org.onap.dcae.collectors.veshv.model.MessageDropCause
+import org.onap.dcae.collectors.veshv.model.ServiceContext
+import org.onap.dcae.collectors.veshv.utils.Closeable
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
-import org.onap.ves.VesEventOuterClass
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import reactor.core.publisher.Flux
 
-class Router(private val routing: Routing, private val ctx: ClientContext) {
+class Router internal constructor(private val routing: Routing,
+                                  private val messageSinks: Map<String, Sink>,
+                                  private val ctx: ClientContext,
+                                  private val metrics: Metrics) : Closeable {
+    constructor(routing: Routing,
+                ctx: ClientContext,
+                metrics: Metrics,
+                sinkProvider: SinkProvider) :
+            this(routing,
+                    constructMessageSinks(routing, ctx, sinkProvider),
+                    ctx,
+                    metrics) {
+        logger.debug(ctx::mdc) { "Routing for client: $routing" }
+        logger.trace(ctx::mdc) { "Message sinks configured for client: $messageSinks" }
+    }
 
-    constructor(kafkaSinks: Sequence<KafkaSink>, ctx: ClientContext) : this(
-            Routing(
-                    kafkaSinks.map { Route(it.name(), it.topicName()) }.toList()
-            ),
-            ctx)
+    override fun close() = IO {
+        messageSinks.values.forEach { it.close() }
+        logger.info(ServiceContext::mdc) { "Message sinks flushed and closed" }
+    }
 
-    fun findDestination(message: VesMessage): Option<RoutedMessage> =
-            routeFor(message.header).map {
-                with(it) {
-                    RoutedMessage(targetTopic, partitioning(message.header), message)
-                }
-            }.also {
-                if (it.isEmpty()) {
-                    logger.debug(ctx) { "No route is defined for domain: ${message.header.domain}" }
-                }
-            }
+    fun route(message: VesMessage): Flux<ConsumedMessage> =
+            routeFor(message.header)
+                    .fold({
+                        logger.warn(ctx::fullMdc) { "Could not find route for message ${message.header}" }
+                        logger.trace(ctx::fullMdc) { "Routing available for client: ${routing}" }
+                        Flux.empty<Route>()
+                    }, {
+                        metrics.notifyMessageDropped(MessageDropCause.ROUTE_NOT_FOUND)
+                        logger.trace(ctx::fullMdc) { "Found route for message: $it. Assigned partition: $PARTITION" }
+                        Flux.just(it)
+                    })
+                    .flatMap {
+                        val sinkTopic = it.sink.topicName()
+                        messageSinkFor(sinkTopic).send(RoutedMessage(message, sinkTopic, PARTITION))
+                    }
 
-    private fun routeFor(commonHeader: VesEventOuterClass.CommonEventHeader): Option<Route> =
-            Option.fromNullable(routing.routes.find { it.domain == commonHeader.domain })
+    private fun routeFor(header: CommonEventHeader) =
+            Option.fromNullable(routing.routes.find { it.domain == header.domain })
+
+    private fun messageSinkFor(sinkTopic: String) = messageSinks
+            .getOrElse(sinkTopic,
+                    { throw MissingMessageSinkException("No message sink configured for sink with topic $sinkTopic") })
+
 
     companion object {
         private val logger = Logger(Routing::class)
+        private const val PARTITION = 0
+
+        internal fun constructMessageSinks(config: Routing,
+                                           ctx: ClientContext,
+                                           sinkProvider: SinkProvider) =
+                config.routes.map(Route::sink)
+                        .distinctBy { it.topicName() }
+                        .associateBy({ it.topicName() }, { sinkProvider(it, ctx) })
     }
 }
+
+internal class MissingMessageSinkException(msg: String) : Throwable(msg)
