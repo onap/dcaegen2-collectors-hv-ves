@@ -33,10 +33,10 @@ import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
-import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.configurationWithDifferentRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.emptyRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.configWithBasicRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.configWithDifferentRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.configWithEmptyRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.configWithTwoDomainsToOneTopicRouting
 import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHeader
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithPayloadOfSize
@@ -152,7 +152,7 @@ object VesHvSpecification : Spek({
         it("should be able to direct 2 messages from different domains to one topic") {
             val (sut, sink) = vesHvWithStoringSink()
 
-            sut.configurationProvider.updateConfiguration(twoDomainsToOneTopicRouting)
+            sut.configurationProvider.updateConfiguration(configWithTwoDomainsToOneTopicRouting)
 
             val messages = sut.handleConnection(sink,
                     vesWireFrameMessage(PERF3GPP),
@@ -205,7 +205,7 @@ object VesHvSpecification : Spek({
             it("should update collector") {
                 val firstCollector = sut.collector
 
-                sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
+                sut.configurationProvider.updateConfiguration(configWithDifferentRouting)
                 val collectorAfterUpdate = sut.collector
 
                 assertThat(collectorAfterUpdate).isNotSameAs(firstCollector)
@@ -213,12 +213,12 @@ object VesHvSpecification : Spek({
 
             it("should start routing messages") {
 
-                sut.configurationProvider.updateConfiguration(emptyRouting)
+                sut.configurationProvider.updateConfiguration(configWithEmptyRouting)
 
                 val messages = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messages).isEmpty()
 
-                sut.configurationProvider.updateConfiguration(basicRouting)
+                sut.configurationProvider.updateConfiguration(configWithBasicRouting)
 
                 val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messagesAfterUpdate).hasSize(1)
@@ -242,7 +242,7 @@ object VesHvSpecification : Spek({
                         .isEqualTo(0)
 
 
-                sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
+                sut.configurationProvider.updateConfiguration(configWithDifferentRouting)
 
                 val messagesAfterUpdate = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
                 assertThat(messagesAfterUpdate).hasSize(2)
@@ -261,7 +261,7 @@ object VesHvSpecification : Spek({
 
                 Flux.range(0, messagesAmount).doOnNext {
                     if (it == messagesForEachTopic) {
-                        sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
+                        sut.configurationProvider.updateConfiguration(configWithDifferentRouting)
                     }
                 }.doOnNext {
                     sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
@@ -287,7 +287,7 @@ object VesHvSpecification : Spek({
                 val incomingMessages = Flux.range(0, messageStreamSize)
                         .doOnNext {
                             if (it == pivot) {
-                                sut.configurationProvider.updateConfiguration(configurationWithDifferentRouting)
+                                sut.configurationProvider.updateConfiguration(configWithDifferentRouting)
                                 println("config changed")
                             }
                         }
@@ -320,7 +320,7 @@ object VesHvSpecification : Spek({
         given("failed configuration change") {
             val (sut, _) = vesHvWithStoringSink()
             sut.configurationProvider.shouldThrowExceptionOnConfigUpdate(true)
-            sut.configurationProvider.updateConfiguration(basicRouting)
+            sut.configurationProvider.updateConfiguration(configWithBasicRouting)
 
             it("should mark the application unhealthy ") {
                 assertThat(sut.healthStateProvider.currentHealth)
@@ -349,6 +349,6 @@ object VesHvSpecification : Spek({
 private fun vesHvWithStoringSink(): Pair<Sut, StoringSink> {
     val sink = StoringSink()
     val sut = Sut(sink)
-    sut.configurationProvider.updateConfiguration(basicRouting)
+    sut.configurationProvider.updateConfiguration(configWithBasicRouting)
     return Pair(sut, sink)
 }

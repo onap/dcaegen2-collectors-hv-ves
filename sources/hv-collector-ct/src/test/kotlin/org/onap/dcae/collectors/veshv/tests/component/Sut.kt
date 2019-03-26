@@ -38,7 +38,9 @@ import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthState
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
-import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.configWithBasicRouting
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.Kafka
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
 import reactor.core.publisher.Flux
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
@@ -101,17 +103,17 @@ fun Sut.handleConnection(vararg packets: ByteBuf) {
     collector.handleConnection(Flux.fromArray(packets)).block(timeout)
 }
 
-fun vesHvWithAlwaysSuccessfulSink(routing: Routing = basicRouting): Sut =
+fun vesHvWithAlwaysSuccessfulSink(kafkaSinks: Sequence<KafkaSink> = configWithBasicRouting): Sut =
         Sut(AlwaysSuccessfulSink()).apply {
-            configurationProvider.updateConfiguration(routing)
+            configurationProvider.updateConfiguration(kafkaSinks)
         }
 
-fun vesHvWithAlwaysFailingSink(routing: Routing = basicRouting): Sut =
+fun vesHvWithAlwaysFailingSink(kafkaSinks: Sequence<KafkaSink> = configWithBasicRouting): Sut =
         Sut(AlwaysFailingSink()).apply {
-            configurationProvider.updateConfiguration(routing)
+            configurationProvider.updateConfiguration(kafkaSinks)
         }
 
-fun vesHvWithDelayingSink(delay: Duration, routing: Routing = basicRouting): Sut =
+fun vesHvWithDelayingSink(delay: Duration, kafkaSinks: Sequence<KafkaSink> = configWithBasicRouting): Sut =
         Sut(DelayingSink(delay)).apply {
-            configurationProvider.updateConfiguration(routing)
+            configurationProvider.updateConfiguration(kafkaSinks)
         }
