@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.config.api.model.routing
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.SYSLOG
@@ -43,20 +44,10 @@ import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
  */
 object RouterTest : Spek({
     given("sample configuration") {
-        val config = routing {
-
-            defineRoute {
-                fromDomain(PERF3GPP.domainName)
-                toTopic("ves_rtpm")
-                withFixedPartitioning(2)
-            }
-
-            defineRoute {
-                fromDomain(SYSLOG.domainName)
-                toTopic("ves_trace")
-                withFixedPartitioning()
-            }
-        }.build()
+        val config = Routing(listOf(
+                Route(PERF3GPP.domainName, "ves_rtpm", { 2 }),
+                Route(SYSLOG.domainName, "ves_trace")
+        ))
         val cut = Router(config, ClientContext())
 
         on("message with existing route (rtpm)") {
