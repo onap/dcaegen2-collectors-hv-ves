@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "401deb7d_616a8eec",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/boundary/adapters.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-26T12:07:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a079b6a3_2d9fa148",
+      "range": {
+        "startLine": 53,
+        "startChar": 32,
+        "endLine": 53,
+        "endChar": 38
+      },
+      "revId": "df5b90b4393ad2f0291ba1624d9134e87a925f8d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "38b94d84_7f2062e6",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
         "patchSetId": 3
