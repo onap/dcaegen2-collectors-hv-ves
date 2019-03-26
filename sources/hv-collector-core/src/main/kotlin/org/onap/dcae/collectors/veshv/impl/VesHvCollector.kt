@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.impl
 import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Metrics
-import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.handleReactiveStreamError
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
@@ -31,15 +30,12 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.FailedToConsumeMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
-import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.model.SuccessfullyConsumedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
-import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnLeft
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.MessageEither
-import org.onap.dcae.collectors.veshv.utils.logging.filterEmptyWithLog
 import org.onap.dcae.collectors.veshv.utils.logging.filterFailedWithLog
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -53,7 +49,6 @@ internal class VesHvCollector(
         private val wireChunkDecoder: WireChunkDecoder,
         private val protobufDecoder: VesDecoder,
         private val router: Router,
-        private val sink: Sink,
         private val metrics: Metrics) : Collector {
 
     override fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void> =
@@ -62,10 +57,10 @@ internal class VesHvCollector(
                     .transform(::filterInvalidWireFrame)
                     .transform(::decodeProtobufPayload)
                     .transform(::filterInvalidProtobufMessages)
-                    .transform(::routeMessage)
-                    .onErrorResume {
-                        metrics.notifyClientRejected(ClientRejectionCause.fromThrowable(it))
-                        logger.handleReactiveStreamError(clientContext, it) }
+                    // TOD0: try to remove new flux creation in Sink interface to avoid two calls to handleErrors here
+                    .handleErrors()
+                    .transform(::route)
+                    .handleErrors()
                     .doFinally { releaseBuffersMemory() }
                     .then()
 
@@ -98,17 +93,9 @@ internal class VesHvCollector(
                         .doOnLeft { metrics.notifyMessageDropped(INVALID_MESSAGE) }
             }
 
-    private fun routeMessage(flux: Flux<VesMessage>): Flux<ConsumedMessage> = flux
-            .flatMap(this::findRoute)
-            .compose(sink::send)
+    private fun route(flux: Flux<VesMessage>) = flux
+            .flatMap(router::route)
             .doOnNext(this::updateSinkMetrics)
-
-    private fun findRoute(msg: VesMessage) = router
-            .findDestination(msg)
-            .doOnEmpty { metrics.notifyMessageDropped(ROUTE_NOT_FOUND) }
-            .filterEmptyWithLog(logger, clientContext::fullMdc,
-                    { "Found route for message: ${it.topic}, partition: ${it.partition}" },
-                    { "Could not find route for message" })
 
     private fun updateSinkMetrics(consumedMessage: ConsumedMessage) {
         when (consumedMessage) {
@@ -117,6 +104,11 @@ internal class VesHvCollector(
             is FailedToConsumeMessage ->
                 metrics.notifyMessageDropped(consumedMessage.cause)
         }
+    }
+
+    private fun <T> Flux<T>.handleErrors(): Flux<T> = onErrorResume {
+        metrics.notifyClientRejected(ClientRejectionCause.fromThrowable(it))
+        logger.handleReactiveStreamError(clientContext, it)
     }
 
     private fun releaseBuffersMemory() = wireChunkDecoder.release()

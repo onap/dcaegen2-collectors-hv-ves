@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,10 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.KAFKA_FAILURE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
-import org.onap.dcae.collectors.veshv.tests.fakes.MEASUREMENTS_FOR_VF_SCALING_TOPIC
+import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
-import org.onap.dcae.collectors.veshv.tests.fakes.configWithBasicRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.configWithTwoDomainsToOneTopicRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
+import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicRouting
 import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidListenerVersion
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHeader
@@ -92,7 +92,7 @@ object MetricsSpecification : Spek({
 
     describe("Messages sent metrics") {
         it("should gather info for each topic separately") {
-            val sut = vesHvWithAlwaysSuccessfulSink(configWithTwoDomainsToOneTopicRouting)
+            val sut = vesHvWithAlwaysSuccessfulSink(twoDomainsToOneTopicRouting)
 
             sut.handleConnection(
                     vesWireFrameMessage(PERF3GPP),
@@ -107,8 +107,8 @@ object MetricsSpecification : Spek({
             assertThat(metrics.messagesOnTopic(PERF3GPP_TOPIC))
                     .describedAs("messagesSentToTopic $PERF3GPP_TOPIC metric")
                     .isEqualTo(2)
-            assertThat(metrics.messagesOnTopic(MEASUREMENTS_FOR_VF_SCALING_TOPIC))
-                    .describedAs("messagesSentToTopic $MEASUREMENTS_FOR_VF_SCALING_TOPIC metric")
+            assertThat(metrics.messagesOnTopic(ALTERNATE_PERF3GPP_TOPIC))
+                    .describedAs("messagesSentToTopic $ALTERNATE_PERF3GPP_TOPIC metric")
                     .isEqualTo(1)
         }
     }
@@ -130,7 +130,7 @@ object MetricsSpecification : Spek({
 
     describe("Messages dropped metrics") {
         it("should gather metrics for invalid messages") {
-            val sut = vesHvWithAlwaysSuccessfulSink(configWithBasicRouting)
+            val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
                     messageWithInvalidWireFrameHeader(),
@@ -146,7 +146,7 @@ object MetricsSpecification : Spek({
         }
 
         it("should gather metrics for route not found") {
-            val sut = vesHvWithAlwaysSuccessfulSink(configWithBasicRouting)
+            val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
                     vesWireFrameMessage(domain = PERF3GPP),
@@ -160,7 +160,7 @@ object MetricsSpecification : Spek({
         }
 
         it("should gather metrics for sing errors") {
-            val sut = vesHvWithAlwaysFailingSink(configWithBasicRouting)
+            val sut = vesHvWithAlwaysFailingSink(basicRouting)
 
             sut.handleConnection(vesWireFrameMessage(domain = PERF3GPP))
 
@@ -171,7 +171,7 @@ object MetricsSpecification : Spek({
         }
 
         it("should gather summed metrics for dropped messages") {
-            val sut = vesHvWithAlwaysSuccessfulSink(configWithBasicRouting)
+            val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
                     vesWireFrameMessage(domain = PERF3GPP),
