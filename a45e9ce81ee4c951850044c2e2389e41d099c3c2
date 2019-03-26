@@ -22,6 +22,30 @@
       "revId": "a45e9ce81ee4c951850044c2e2389e41d099c3c2",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce94595d_cd4ba8e0",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-26T12:07:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a840370_98a06dbf",
+      "range": {
+        "startLine": 92,
+        "startChar": 93,
+        "endLine": 101,
+        "endChar": 5
+      },
+      "revId": "a45e9ce81ee4c951850044c2e2389e41d099c3c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
