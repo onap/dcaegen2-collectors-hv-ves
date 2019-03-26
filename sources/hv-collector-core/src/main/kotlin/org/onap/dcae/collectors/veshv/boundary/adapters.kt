@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
@@ -26,12 +27,20 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.utils.Closeable
-import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import org.onap.dcaegen2.services.sdk.model.streams.SinkStream
 import reactor.core.publisher.Flux
 
-interface Sink {
+interface Sink : Closeable {
+    fun send(message: RoutedMessage) = send(Flux.just(message))
+
     fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage>
 }
+
+interface SinkProvider : Closeable {
+    operator fun invoke(stream: SinkStream, ctx: ClientContext): Lazy<Sink>
+}
+
+typealias ConfigurationProvider = () -> Flux<Routing>
 
 interface Metrics {
     fun notifyBytesReceived(size: Int)
@@ -41,12 +50,4 @@ interface Metrics {
     fun notifyClientDisconnected()
     fun notifyClientConnected()
     fun notifyClientRejected(cause: ClientRejectionCause)
-}
-
-interface SinkProvider : Closeable {
-    operator fun invoke(ctx: ClientContext): Sink
-}
-
-interface ConfigurationProvider {
-    operator fun invoke(): Flux<Sequence<KafkaSink>>
 }
