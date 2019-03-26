@@ -22,13 +22,10 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
-import arrow.core.Some
 import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
-import org.onap.dcae.collectors.veshv.config.api.model.Route
-import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
@@ -68,7 +65,7 @@ internal class ConfigurationValidator {
 //                    collectorConfiguration
                 CollectorConfiguration(-1,
                         "I do not exist. I'm not even a URL :o",
-                        Routing(emptyList())),
+                        emptyList()),
 // end TOD0
                 logLevel
         )

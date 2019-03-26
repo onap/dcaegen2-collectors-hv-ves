@@ -27,6 +27,7 @@ import io.netty.buffer.UnpooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.model.ClientContext
@@ -37,8 +38,9 @@ import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthState
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
-import org.onap.dcae.collectors.veshv.tests.fakes.configWithBasicRouting
-import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
+import org.onap.dcae.collectors.veshv.utils.Closeable
+import org.onap.dcaegen2.services.sdk.model.streams.SinkStream
 import reactor.core.publisher.Flux
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
@@ -47,7 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class Sut(sink: Sink = StoringSink()) : AutoCloseable {
+class Sut(sink: Sink = StoringSink()) : Closeable {
     val configurationProvider = FakeConfigurationProvider()
     val healthStateProvider = FakeHealthState()
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
@@ -59,7 +61,9 @@ class Sut(sink: Sink = StoringSink()) : AutoCloseable {
             sinkProvider,
             metrics,
             MAX_PAYLOAD_SIZE_BYTES,
-            healthStateProvider)
+            healthStateProvider
+    )
+
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
@@ -67,51 +71,52 @@ class Sut(sink: Sink = StoringSink()) : AutoCloseable {
             throw IllegalStateException("Collector not available.")
         }
 
-    override fun close() {
-        collectorProvider.close().unsafeRunSync()
+
+    fun handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
+        collector.handleConnection(Flux.fromArray(packets)).block(timeout)
+        return sink.sentMessages
     }
+
+    fun handleConnection(vararg packets: ByteBuf) {
+        collector.handleConnection(Flux.fromArray(packets)).block(timeout)
+    }
+
+    override fun close() = collectorProvider.close()
 
     companion object {
         const val MAX_PAYLOAD_SIZE_BYTES = 1024
     }
 }
 
-
 class DummySinkProvider(private val sink: Sink) : SinkProvider {
-    private val active = AtomicBoolean(true)
+    private val sinkInitialized = AtomicBoolean(false)
 
-    override fun invoke(ctx: ClientContext) = sink
-
-    override fun close() = IO {
-        active.set(false)
+    override fun invoke(stream: SinkStream, ctx: ClientContext) = lazy {
+        sinkInitialized.set(true)
+        sink
     }
 
-    val closed get() = !active.get()
-
+    override fun close() =
+            if (sinkInitialized.get()) {
+                sink.close()
+            } else {
+                IO.unit
+            }
 }
 
 private val timeout = Duration.ofSeconds(10)
 
-fun Sut.handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
-    collector.handleConnection(Flux.fromArray(packets)).block(timeout)
-    return sink.sentMessages
-}
-
-fun Sut.handleConnection(vararg packets: ByteBuf) {
-    collector.handleConnection(Flux.fromArray(packets)).block(timeout)
-}
-
-fun vesHvWithAlwaysSuccessfulSink(kafkaSinks: Sequence<KafkaSink> = configWithBasicRouting): Sut =
+fun vesHvWithAlwaysSuccessfulSink(routing: Routing = basicRouting): Sut =
         Sut(AlwaysSuccessfulSink()).apply {
-            configurationProvider.updateConfiguration(kafkaSinks)
+            configurationProvider.updateConfiguration(routing)
         }
 
-fun vesHvWithAlwaysFailingSink(kafkaSinks: Sequence<KafkaSink> = configWithBasicRouting): Sut =
+fun vesHvWithAlwaysFailingSink(routing: Routing = basicRouting): Sut =
         Sut(AlwaysFailingSink()).apply {
-            configurationProvider.updateConfiguration(kafkaSinks)
+            configurationProvider.updateConfiguration(routing)
         }
 
-fun vesHvWithDelayingSink(delay: Duration, kafkaSinks: Sequence<KafkaSink> = configWithBasicRouting): Sut =
+fun vesHvWithDelayingSink(delay: Duration, routing: Routing = basicRouting): Sut =
         Sut(DelayingSink(delay)).apply {
-            configurationProvider.updateConfiguration(kafkaSinks)
+            configurationProvider.updateConfiguration(routing)
         }

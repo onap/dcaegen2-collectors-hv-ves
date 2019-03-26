@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,4 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-data class RoutedMessage(val topic: String, val partition: Int, val message: VesMessage)
+import arrow.core.Option
+
+
+data class RoutedMessage(val message: VesMessage,
+                         val targetTopic: String,
+                         val partition: Option<Int>)

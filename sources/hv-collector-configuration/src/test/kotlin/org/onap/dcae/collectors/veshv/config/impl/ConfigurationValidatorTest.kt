@@ -185,5 +185,5 @@ internal object ConfigurationValidatorTest : Spek({
     }
 })
 
-val emptyRouting = Routing(emptyList())
+val emptyRouting: Routing = emptyList()
 val someFromEmptyRouting = Some(emptyRouting)

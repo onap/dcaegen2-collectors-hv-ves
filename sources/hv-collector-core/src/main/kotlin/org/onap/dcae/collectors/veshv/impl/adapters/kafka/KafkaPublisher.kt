@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
+import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withDebug
 import org.onap.dcae.collectors.veshv.model.ClientContext
@@ -39,41 +40,39 @@ import reactor.kafka.sender.SenderRecord
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class KafkaSink(private val sender: KafkaSender<CommonEventHeader, VesMessage>,
-                         private val ctx: ClientContext) : Sink {
+internal class KafkaPublisher(private val sender: KafkaSender<CommonEventHeader, VesMessage>,
+                              private val ctx: ClientContext) : Sink {
 
     override fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage> =
-            messages.map(::vesToKafkaRecord).let { records ->
-                sender.send(records).map {
-                    val msg = it.correlationMetadata()
-                    if (it.exception() == null) {
-                        logger.trace(ctx::fullMdc, Marker.Invoke()) {
-                            "Message sent to Kafka with metadata: ${it.recordMetadata()}"
+            messages.map(::vesToKafkaRecord)
+                    .compose { sender.send(it) }
+                    .map {
+                        val msg = it.correlationMetadata()
+                        if (it.exception() == null) {
+                            logger.trace(ctx::fullMdc, Marker.Invoke()) {
+                                "Message sent to Kafka with metadata: ${it.recordMetadata()}"
+                            }
+                            SuccessfullyConsumedMessage(msg)
+                        } else {
+                            logger.warn(ctx::fullMdc, Marker.Invoke()) {
+                                "Failed to send message to Kafka. Reason: ${it.exception().message}"
+                            }
+                            logger.withDebug(ctx) { log("Kafka send failure details", it.exception()) }
+                            FailedToConsumeMessage(msg, it.exception(), MessageDropCause.KAFKA_FAILURE)
                         }
-                        SuccessfullyConsumedMessage(msg)
-                    } else {
-                        logger.warn(ctx::fullMdc, Marker.Invoke()) {
-                            "Failed to send message to Kafka. Reason: ${it.exception().message}"
-                        }
-                        logger.withDebug(ctx) { log("Kafka send failure details", it.exception()) }
-                        FailedToConsumeMessage(msg, it.exception(), MessageDropCause.KAFKA_FAILURE)
                     }
-                }
-            }
 
     private fun vesToKafkaRecord(routed: RoutedMessage): SenderRecord<CommonEventHeader, VesMessage, RoutedMessage> =
             SenderRecord.create(
-                    routed.topic,
-                    routed.partition,
+                    routed.targetTopic,
+                    routed.partition.orNull(),
                     FILL_TIMESTAMP_LATER,
                     routed.message.header,
                     routed.message,
                     routed)
 
-    internal fun usesSameSenderAs(other: KafkaSink) = sender === other.sender
-
     companion object {
         private val FILL_TIMESTAMP_LATER: Long? = null
-        private val logger = Logger(KafkaSink::class)
+        private val logger = Logger(KafkaPublisher::class)
     }
 }
