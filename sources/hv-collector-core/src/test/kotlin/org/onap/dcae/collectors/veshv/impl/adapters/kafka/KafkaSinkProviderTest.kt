@@ -29,7 +29,7 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
-import org.onap.dcae.collectors.veshv.config.api.model.routing
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.ves.VesEventOuterClass
@@ -45,7 +45,8 @@ internal object KafkaSinkProviderTest : Spek({
             val config = CollectorConfiguration(
                     maxRequestSizeBytes = 1024 * 1024,
                     kafkaServers = "localhost:9090",
-                    routing = routing { }.build())
+                    routing = Routing(emptyList())
+            )
 
             val cut = KafkaSinkProvider(config)
 

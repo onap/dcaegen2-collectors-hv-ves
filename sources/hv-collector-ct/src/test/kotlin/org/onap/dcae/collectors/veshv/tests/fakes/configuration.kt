@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,11 @@
 package org.onap.dcae.collectors.veshv.tests.fakes
 
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
-import org.onap.dcae.collectors.veshv.config.api.model.routing
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
-import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.ImmutableKafkaSink
-import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.ImmutableKafkaSink
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import reactor.core.publisher.FluxProcessor
 import reactor.core.publisher.UnicastProcessor
 import reactor.retry.RetryExhaustedException
@@ -37,11 +36,11 @@ const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
 const val SAMPLE_BOOTSTRAP_SERVERS = "dmaap-mr-kafka-0:6060,dmaap-mr-kafka-1:6060"
 
 val configWithBasicRouting = sequenceOf(
-    ImmutableKafkaSink.builder()
-            .name(PERF3GPP.domainName)
-            .topicName(PERF3GPP_TOPIC)
-            .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-            .build()
+        ImmutableKafkaSink.builder()
+                .name(PERF3GPP.domainName)
+                .topicName(PERF3GPP_TOPIC)
+                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
+                .build()
 )
 
 val configWithTwoDomainsToOneTopicRouting = sequenceOf(
@@ -63,12 +62,12 @@ val configWithTwoDomainsToOneTopicRouting = sequenceOf(
 )
 
 val configWithDifferentRouting = sequenceOf(
-                ImmutableKafkaSink.builder()
-                        .name(PERF3GPP.domainName)
-                        .topicName(ALTERNATE_PERF3GPP_TOPIC)
-                        .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-                        .build()
-        )
+        ImmutableKafkaSink.builder()
+                .name(PERF3GPP.domainName)
+                .topicName(ALTERNATE_PERF3GPP_TOPIC)
+                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
+                .build()
+)
 
 val configWithEmptyRouting = emptySequence<KafkaSink>()
 

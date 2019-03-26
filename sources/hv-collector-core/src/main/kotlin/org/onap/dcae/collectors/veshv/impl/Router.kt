@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,36 +20,37 @@
 package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Option
+import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
-import org.onap.dcae.collectors.veshv.config.api.model.routing
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.debug
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.streams.dmaap.KafkaSink
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import org.onap.ves.VesEventOuterClass
 
 class Router(private val routing: Routing, private val ctx: ClientContext) {
 
     constructor(kafkaSinks: Sequence<KafkaSink>, ctx: ClientContext) : this(
-            routing {
-                kafkaSinks.forEach {
-                    defineRoute {
-                        fromDomain(it.name())
-                        toTopic(it.topicName())
-                        withFixedPartitioning()
-                    }
-                }
-            }.build(),
-            ctx
-    )
+            Routing(
+                    kafkaSinks.map { Route(it.name(), it.topicName()) }.toList()
+            ),
+            ctx)
 
     fun findDestination(message: VesMessage): Option<RoutedMessage> =
-            routing.routeFor(message.header).map { it(message) }.also {
+            routeFor(message.header).map {
+                with(it) {
+                    RoutedMessage(targetTopic, partitioning(message.header), message)
+                }
+            }.also {
                 if (it.isEmpty()) {
                     logger.debug(ctx) { "No route is defined for domain: ${message.header.domain}" }
                 }
             }
+
+    private fun routeFor(commonHeader: VesEventOuterClass.CommonEventHeader): Option<Route> =
+            Option.fromNullable(routing.routes.find { it.domain == commonHeader.domain })
 
     companion object {
         private val logger = Logger(Routing::class)
