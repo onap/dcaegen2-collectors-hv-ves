@@ -145,7 +145,6 @@ internal object FileConfigurationReaderTest : Spek({
                 assertThat(config.collector.nonEmpty()).isTrue()
                 val collector = config.collector.orNull() as PartialCollectorConfig
                 collector.run {
-                    assertThat(dummyMode).isEqualTo(Some(false))
                     assertThat(maxRequestSizeBytes).isEqualTo(Some(512000))
                     assertThat(kafkaServers.nonEmpty()).isTrue()
                     assertThat(routing.nonEmpty()).isTrue()

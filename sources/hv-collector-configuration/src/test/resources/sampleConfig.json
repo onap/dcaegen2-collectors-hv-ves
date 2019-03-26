@@ -20,7 +20,6 @@
     }
   },
   "collector": {
-    "dummyMode": false,
     "maxRequestSizeBytes": 512000,
     "kafkaServers": [
       "192.168.255.1:5005",

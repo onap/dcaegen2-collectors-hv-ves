@@ -33,10 +33,7 @@ import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.EnvProperti
  */
 object AdapterFactory {
     fun sinkCreatorFactory(config: CollectorConfiguration): SinkProvider =
-            if (config.dummyMode)
-                LoggingSinkProvider()
-            else
-                KafkaSinkProvider(config)
+            KafkaSinkProvider(config)
 
     fun configurationProvider(config: CbsConfiguration): ConfigurationProvider =
             ConfigurationProviderImpl(
