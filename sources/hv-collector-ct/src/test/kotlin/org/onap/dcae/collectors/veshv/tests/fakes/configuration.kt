@@ -36,11 +36,11 @@ const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
 const val SAMPLE_BOOTSTRAP_SERVERS = "dmaap-mr-kafka-0:6060,dmaap-mr-kafka-1:6060"
 
 val configWithBasicRouting = sequenceOf(
-    ImmutableKafkaSink.builder()
-            .name(PERF3GPP.domainName)
-            .topicName(PERF3GPP_TOPIC)
-            .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-            .build()
+        ImmutableKafkaSink.builder()
+                .name(PERF3GPP.domainName)
+                .topicName(PERF3GPP_TOPIC)
+                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
+                .build()
 )
 
 val configWithTwoDomainsToOneTopicRouting = sequenceOf(
@@ -62,12 +62,12 @@ val configWithTwoDomainsToOneTopicRouting = sequenceOf(
 )
 
 val configWithDifferentRouting = sequenceOf(
-                ImmutableKafkaSink.builder()
-                        .name(PERF3GPP.domainName)
-                        .topicName(ALTERNATE_PERF3GPP_TOPIC)
-                        .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
-                        .build()
-        )
+        ImmutableKafkaSink.builder()
+                .name(PERF3GPP.domainName)
+                .topicName(ALTERNATE_PERF3GPP_TOPIC)
+                .bootstrapServers(SAMPLE_BOOTSTRAP_SERVERS)
+                .build()
+)
 
 val configWithEmptyRouting = emptySequence<KafkaSink>()
 

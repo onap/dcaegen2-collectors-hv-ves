@@ -64,7 +64,6 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(mock())
                     )),
                     Some(PartialCollectorConfig(
-                            Some(true),
                             Some(4),
                             Some(emptyList()),
                             Some(routing { }.build())
@@ -105,7 +104,6 @@ internal object ConfigurationValidatorTest : Spek({
                             securityKeys
                     )),
                     Some(PartialCollectorConfig(
-                            Some(true),
                             Some(4),
                             Some(emptyList()),
                             Some(routing)
@@ -156,7 +154,6 @@ internal object ConfigurationValidatorTest : Spek({
                             securityKeys
                     )),
                     Some(PartialCollectorConfig(
-                            Some(true),
                             Some(4),
                             Some(emptyList()),
                             Some(routing)
