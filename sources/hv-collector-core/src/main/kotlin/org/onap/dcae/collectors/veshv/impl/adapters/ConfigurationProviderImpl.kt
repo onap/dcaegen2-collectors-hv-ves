@@ -22,19 +22,21 @@ package org.onap.dcae.collectors.veshv.impl.adapters
 import com.google.gson.JsonObject
 import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
-import org.onap.dcaegen2.services.sdk.model.streams.StreamType
+import org.onap.dcaegen2.services.sdk.model.streams.StreamType.KAFKA
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsRequests
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.DataStreams
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParser
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
-import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamPredicates
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamPredicates.streamOfType
 import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -73,7 +75,7 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
         healthState.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
     }
 
-    override fun invoke(): Flux<Sequence<KafkaSink>> =
+    override fun invoke(): Flux<Routing> =
             cbsClientMono
                     .doOnNext { logger.info(ServiceContext::mdc) { "CBS client successfully created" } }
                     .onErrorLog(logger, ServiceContext::mdc) { "Failed to retrieve CBS client" }
@@ -81,26 +83,25 @@ internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClie
                     .doFinally { logger.trace(ServiceContext::mdc) { "CBS client subscription finished" } }
                     .flatMapMany(::handleUpdates)
 
-    private fun handleUpdates(cbsClient: CbsClient): Flux<Sequence<KafkaSink>> = cbsClient
+    private fun handleUpdates(cbsClient: CbsClient) = cbsClient
             .updates(CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
                     firstRequestDelay,
                     requestInterval)
             .doOnNext { logger.info(ServiceContext::mdc) { "Received new configuration:\n$it" } }
-            .map(::createCollectorConfiguration)
+            .map(::createRoutingDescription)
             .onErrorLog(logger, ServiceContext::mdc) { "Error while creating configuration" }
             .retryWhen(retry)
 
-
-    private fun createCollectorConfiguration(configuration: JsonObject): Sequence<KafkaSink> =
-            try {
-                DataStreams.namedSinks(configuration)
-                        .filter(StreamPredicates.streamOfType(StreamType.KAFKA))
-                        .map(streamParser::unsafeParse)
-                        .asSequence()
-            } catch (e: NullPointerException) {
-                throw ParsingException("Failed to parse configuration", e)
-            }
-
+    private fun createRoutingDescription(configuration: JsonObject): Routing = try {
+        DataStreams.namedSinks(configuration)
+                .filter(streamOfType(KAFKA))
+                .map(streamParser::unsafeParse)
+                .map { Route(it.name(), it) }
+                .asIterable()
+                .toList()
+    } catch (e: NullPointerException) {
+        throw ParsingException("Failed to parse configuration", e)
+    }
 
     companion object {
         private const val MAX_RETRIES = 5L

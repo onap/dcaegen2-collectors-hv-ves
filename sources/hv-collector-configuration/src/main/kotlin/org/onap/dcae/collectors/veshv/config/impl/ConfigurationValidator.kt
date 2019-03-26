@@ -68,7 +68,7 @@ internal class ConfigurationValidator {
 //                    collectorConfiguration
                 CollectorConfiguration(-1,
                         "I do not exist. I'm not even a URL :o",
-                        Routing(emptyList())),
+                        emptyList()),
 // end TOD0
                 logLevel
         )

@@ -36,6 +36,7 @@ import org.onap.dcaegen2.services.sdk.model.streams.ImmutableAafCredentials
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
 import reactor.core.publisher.Flux
+
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
 import reactor.test.StepVerifier
@@ -64,8 +65,8 @@ internal object ConfigurationProviderImplTest : Spek({
                             .expectNoEvent(waitTime)
                 }
             }
-
         }
+
         given("valid configuration from cbs") {
             val configProvider = constructConfigurationProvider(cbsClientMock, healthStateProvider)
 
@@ -76,18 +77,23 @@ internal object ConfigurationProviderImplTest : Spek({
 
                     StepVerifier.create(configProvider().take(1))
                             .consumeNextWith {
-                                val receivedSink1 = it.elementAt(0)
-                                val receivedSink2 = it.elementAt(1)
+                                val route1 = it.elementAt(0)
+                                val route2 = it.elementAt(1)
+                                val receivedSink1 = route1.sink
+                                val receivedSink2 = route2.sink
 
+                                assertThat(route1.domain).isEqualTo(PERF3GPP_REGIONAL)
                                 assertThat(receivedSink1.aafCredentials()).isEqualTo(aafCredentials1)
                                 assertThat(receivedSink1.bootstrapServers())
                                         .isEqualTo("dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060")
                                 assertThat(receivedSink1.topicName()).isEqualTo("REG_HVVES_PERF3GPP")
 
+                                assertThat(route2.domain).isEqualTo(PERF3GPP_CENTRAL)
                                 assertThat(receivedSink2.aafCredentials()).isEqualTo(aafCredentials2)
                                 assertThat(receivedSink2.bootstrapServers())
                                         .isEqualTo("dmaap-mr-kafka-0.central:6060,dmaap-mr-kafka-1.central:6060")
                                 assertThat(receivedSink2.topicName()).isEqualTo("CEN_HVVES_PERF3GPP")
+
                             }.verifyComplete()
                 }
             }
@@ -120,6 +126,10 @@ internal object ConfigurationProviderImplTest : Spek({
 
 })
 
+
+val PERF3GPP_REGIONAL = "perf3gpp_regional"
+val PERF3GPP_CENTRAL = "perf3gpp_central"
+
 private val aafCredentials1 = ImmutableAafCredentials.builder()
         .username("client")
         .password("very secure password")
@@ -133,7 +143,7 @@ private val aafCredentials2 = ImmutableAafCredentials.builder()
 private val validConfiguration = JsonParser().parse("""
 {
     "streams_publishes": {
-        "perf3gpp_regional": {
+        "$PERF3GPP_REGIONAL": {
             "type": "kafka",
             "aaf_credentials": {
                 "username": "client",
@@ -144,7 +154,7 @@ private val validConfiguration = JsonParser().parse("""
                 "topic_name": "REG_HVVES_PERF3GPP"
             }
         },
-        "perf3gpp_central": {
+        "$PERF3GPP_CENTRAL": {
             "type": "kafka",
             "aaf_credentials": {
                 "username": "other_client",
@@ -161,7 +171,7 @@ private val validConfiguration = JsonParser().parse("""
 private val invalidConfiguration = JsonParser().parse("""
 {
     "streams_publishes": {
-        "perf3gpp_regional": {
+        "$PERF3GPP_REGIONAL": {
             "type": "kafka",
             "aaf_credentials": {
                 "username": "client",
