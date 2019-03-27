@@ -1,0 +1,8 @@
+Code-Review+2: Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+Code-Review+1: Kornel Janiak <kornel.janiak@nokia.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+Submitted-at: Wed, 27 Mar 2019 07:20:37 +0000
+Reviewed-on: https://gerrit.onap.org/r/83357
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
