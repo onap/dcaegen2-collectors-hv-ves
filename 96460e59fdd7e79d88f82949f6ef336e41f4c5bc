@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d4e88c0_f30e8ff9",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-27T06:49:43Z",
+      "side": 1,
+      "message": "SHould be fetched together with cbs-client",
+      "revId": "96460e59fdd7e79d88f82949f6ef336e41f4c5bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7bbeacc1_8119c8c4",
+        "filename": "sources/hv-collector-configuration/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-27T06:49:43Z",
+      "side": 1,
+      "message": "It should be fetched together with cbs-cleint",
+      "revId": "96460e59fdd7e79d88f82949f6ef336e41f4c5bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63c01dc1_8325aabe",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-27T06:49:43Z",
+      "side": 1,
+      "message": "1. try to get rid of return\n2. use StreamPredicates.streamOfType",
+      "range": {
+        "startLine": 96,
+        "startChar": 30,
+        "endLine": 96,
+        "endChar": 59
+      },
+      "revId": "96460e59fdd7e79d88f82949f6ef336e41f4c5bc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
