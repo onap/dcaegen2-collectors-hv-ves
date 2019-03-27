@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1df40bfe_b08e3095",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T12:49:01Z",
+      "side": 1,
+      "message": "I thought about something like this:\nfun routedMessageSentAt(topic: String, sentAt: Instant, partition: Int \u003d 0) \u003d\n        vesEvent().toBuilder()\n                .run {\n                    commonEventHeaderBuilder.lastEpochMicrosec \u003d sentAt.epochSecond * 1000000 + sentAt.nano / 1000\n                    build()\n                }\n                .let {\n                    RoutedMessage(VesMessage(it.commonEventHeader, wireProtocolFrame(it)), topic, partition)\n                }",
+      "revId": "bae526437ba7c82397a024462f44f65e720de558",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
