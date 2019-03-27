@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "e7afee1e_7dbd0a21",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c19f873e_f889d2fd",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "65796a91_3a9ff4be",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 7
@@ -47,6 +65,24 @@
       "writtenOn": "2019-03-27T08:52:36Z",
       "side": 1,
       "message": "Remove notifyMessageDropped from this case.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85019392_3991157c",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65796a91_3a9ff4be",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "93d5a4e4_6cb370d0",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "123bca01_5801eee1",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4876984e_1be11861",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 7
@@ -81,6 +135,24 @@
       "writtenOn": "2019-03-27T10:33:29Z",
       "side": 1,
       "message": "Maybe DEFAULT_PARTITION?",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d680c4eb_59b87dcf",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "line 70 would be too long :P\nBad excuse I guess?",
+      "parentUuid": "4876984e_1be11861",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -104,6 +176,24 @@
     },
     {
       "key": {
+        "uuid": "28301d14_2f06bfdf",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a31f0182_769011fb",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9d88892f_341c325f",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
         "patchSetId": 7
@@ -115,6 +205,24 @@
       "writtenOn": "2019-03-27T10:33:29Z",
       "side": 1,
       "message": "Good time to change it to HvVesCollector :)",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3d8b90e_1d62cb7d",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Piotrek opposed it in this repository - this should be done in separate commit, where we switch naming everywhere in the code",
+      "parentUuid": "9d88892f_341c325f",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -155,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "7bec4f76_52d402f8",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "This methods start it\u0027s execution with returned type constructor, so I guess it\u0027s not necessary",
+      "parentUuid": "4b5c954e_12a4bfa6",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a080e04d_47d0dd8d",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaPublisher.kt",
         "patchSetId": 7
@@ -166,6 +292,24 @@
       "writtenOn": "2019-03-27T10:33:29Z",
       "side": 1,
       "message": "Can we do something with that? Its pretty nasty",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52ad200d_5114532f",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaPublisher.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "From SenderRecord.create :\n\n@param timestamp The timestamp of the record.\n*** If null, the current timestamp will be assigned by the producer. ***\n        The timestamp will be overwritten by the broker if the topic is configured with\n        {@link org.apache.kafka.common.record.TimestampType#LOG_APPEND_TIME}. The actual timestamp\n       used will be returned in {@link SenderResult#recordMetadata()}",
+      "parentUuid": "a080e04d_47d0dd8d",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -189,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "95c128c4_f63aa152",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/Sut.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1e8b415d_53689e6f",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e6121b8e_f9cd95a0",
         "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/VesHvSpecification.kt",
         "patchSetId": 7
@@ -200,6 +362,24 @@
       "writtenOn": "2019-03-27T10:51:38Z",
       "side": 1,
       "message": "add \"// then\" or\nremove given, when, then at all.\nIf you will leave it place it everywhere.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02d1c301_341e1e56",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/VesHvSpecification.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e6121b8e_f9cd95a0",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -223,6 +403,24 @@
     },
     {
       "key": {
+        "uuid": "386ed968_109d8bed",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/configuration.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Actually sinks are not used outside this file, so I made them private. Moved routing outside",
+      "parentUuid": "582b1712_68f16c22",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a5a55c5b_880c089d",
         "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/configuration.kt",
         "patchSetId": 7
@@ -234,6 +432,24 @@
       "writtenOn": "2019-03-27T10:51:38Z",
       "side": 1,
       "message": "if config is removed in rest cases why you placed configuration here?",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5454d0b3_cb55f4f7",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/configuration.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "Dunno, just felt like it I guess ;) Done",
+      "parentUuid": "a5a55c5b_880c089d",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -268,6 +484,24 @@
       "writtenOn": "2019-03-27T10:33:29Z",
       "side": 1,
       "message": "Use \"run\" here and get rid of local variable declaration.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a243f58b_541b055c",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T12:47:02Z",
+      "side": 1,
+      "message": "made some refactor here, have a closer look",
+      "parentUuid": "be30c6f6_1a509393",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
