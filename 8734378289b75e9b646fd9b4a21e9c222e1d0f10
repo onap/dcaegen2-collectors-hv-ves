@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "b6b9ba6c_dd39ab5d",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/Routing.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Yup, lgtm. You can do this even now",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c19f873e_f889d2fd",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Make sinkProvider second parameter from the top.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "65796a91_3a9ff4be",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 7
@@ -13,6 +47,176 @@
       "writtenOn": "2019-03-27T08:52:36Z",
       "side": 1,
       "message": "Remove notifyMessageDropped from this case.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "123bca01_5801eee1",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Move lambda out of parentheses.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4876984e_1be11861",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Maybe DEFAULT_PARTITION?",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a31f0182_769011fb",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Same, regarding parameter order",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d88892f_341c325f",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Good time to change it to HvVesCollector :)",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6f914e8_a8b613e7",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "In previous implementation it was needed because we were creating new flux on routing in kafka sink. After your changes i\u0027m not sure about that, probably not. You would have to verify that.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b5c954e_12a4bfa6",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Specify return type explicitly",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a080e04d_47d0dd8d",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaPublisher.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Can we do something with that? Its pretty nasty",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e8b415d_53689e6f",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/component/Sut.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Can this be moved inside Sut class?",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "582b1712_68f16c22",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/configuration.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "I guess we should create separate files for test routings, kafka sinks, and collectors.",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "be30c6f6_1a509393",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:33:29Z",
+      "side": 1,
+      "message": "Use \"run\" here and get rid of local variable declaration.",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
