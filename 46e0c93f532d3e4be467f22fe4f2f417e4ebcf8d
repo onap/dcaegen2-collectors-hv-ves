@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "209475b0_e94543bf",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:06:54Z",
+      "side": 1,
+      "message": "Move this to separate method. Consider using \"run\" extension instead of \"with\"",
+      "revId": "46e0c93f532d3e4be467f22fe4f2f417e4ebcf8d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28951fa7_baf7264b",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:06:54Z",
+      "side": 1,
+      "message": "Use doOnEmpty extension function",
+      "revId": "46e0c93f532d3e4be467f22fe4f2f417e4ebcf8d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ff57b7c_c1760844",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T10:06:54Z",
+      "side": 1,
+      "message": "There\u0027s \"toOption\" extension method defined. You can use it, if you find it prettier",
+      "revId": "46e0c93f532d3e4be467f22fe4f2f417e4ebcf8d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
