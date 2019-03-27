@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c500cd87_a1550ce0",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "inline usage, convert to expression body (actually this can be applied to all methods in this class).\n\nYou can also remove return type declaration to be even more concise",
+      "range": {
+        "startLine": 41,
+        "startChar": 12,
+        "endLine": 41,
+        "endChar": 18
+      },
+      "revId": "6779a4840d74625c75d5dd7dbd7d2dc61310d9c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99f36790_918493ec",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/SecondDurationAdapter.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "DurationOfSecondsAdapter might be better name",
+      "range": {
+        "startLine": 32,
+        "startChar": 6,
+        "endLine": 32,
+        "endChar": 27
+      },
+      "revId": "6779a4840d74625c75d5dd7dbd7d2dc61310d9c2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
