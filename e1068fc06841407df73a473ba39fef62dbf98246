@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4de3699_7bdcce2b",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T09:23:01Z",
+      "side": 1,
+      "message": "cleanup unused",
+      "range": {
+        "startLine": 23,
+        "startChar": 10,
+        "endLine": 35,
+        "endChar": 3
+      },
+      "revId": "e1068fc06841407df73a473ba39fef62dbf98246",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "badd6f12_8f0e46a0",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T09:23:01Z",
+      "side": 1,
+      "message": "reformat to oneline\n    fun resetState() \u003d consumerState.getOption().fold({}, { it.reset() })",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 9
+      },
+      "revId": "e1068fc06841407df73a473ba39fef62dbf98246",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "def3bb6d_6f9671cb",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T09:23:01Z",
+      "side": 1,
+      "message": "remove return type declaration (line is too long)",
+      "range": {
+        "startLine": 66,
+        "startChar": 46,
+        "endLine": 66,
+        "endChar": 61
+      },
+      "revId": "e1068fc06841407df73a473ba39fef62dbf98246",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ffc62d95_a1529058",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidation.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T09:23:01Z",
+      "side": 1,
+      "message": "It might just be your code style (you have tendency to do it) so don\u0027t mind me if you disagree :)\n\nIf your function starts like \"Mono.from()...\" and it does return a Mono in the end, then you can omit return type declaration as it\u0027s redundant (also your IDE will show it).\n\nYou can think of it like when writing some paper - you shouldn\u0027t have short-distance word repetition.",
+      "range": {
+        "startLine": 38,
+        "startChar": 83,
+        "endLine": 39,
+        "endChar": 16
+      },
+      "revId": "e1068fc06841407df73a473ba39fef62dbf98246",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "abdc0689_4656874c",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T09:23:01Z",
+      "side": 1,
+      "message": "this looks repetetive - on routes \"/c/topics\",\"/messages\", \"/m/all/validate\" at some point you are calling first `Mono.fromSupplier` and later `sendAndHandleErrors`. Maybe this could be somehow extracted if you want to try",
+      "range": {
+        "startLine": 69,
+        "startChar": 36,
+        "endLine": 69,
+        "endChar": 65
+      },
+      "revId": "e1068fc06841407df73a473ba39fef62dbf98246",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3d58f5c_a2674258",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/KafkaSource.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T09:23:01Z",
+      "side": 1,
+      "message": "I believe this does the same:\n```\nfun start() \u003d Consumer().also { receiver.receive().map(it::update) }\n```\nor for verbosity\n```\n    fun start() \u003d Consumer()\n            .also { consumer -\u003e\n                receiver.receive().map(consumer::update)\n            }\n```",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 5
+      },
+      "revId": "e1068fc06841407df73a473ba39fef62dbf98246",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
