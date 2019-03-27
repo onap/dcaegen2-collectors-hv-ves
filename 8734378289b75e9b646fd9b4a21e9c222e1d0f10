@@ -317,6 +317,24 @@
     },
     {
       "key": {
+        "uuid": "59f9be8e_fe715eaa",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T13:01:25Z",
+      "side": 1,
+      "message": "Actually I\u0027ve added return type after changing Routing to typealias, as otherwise it would show List\u003cRoute\u003e ;)",
+      "parentUuid": "a916b630_a89a2ef7",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a080e04d_47d0dd8d",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaPublisher.kt",
         "patchSetId": 7
