@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "312f1b3c_f0c82284",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "My base proposition for refactoring current version:\n```\ninternal class ConfigurationMerger {\n    fun merge(base: PartialConfiguration, fallback: PartialConfiguration): PartialConfiguration \u003d\n            PartialConfiguration(\n                    mergeServerConfig(base.server, fallback.server),\n                    mergeCbsConfig(base.cbs, fallback.cbs),\n                    mergeSecurityConfig(base.security, fallback.security),\n                    mergeCollectorConfig(base.collector, fallback.collector),\n                    mergeLogLevel(base.logLevel, fallback.logLevel)\n            )\n\n    private fun mergeCollectorConfig(baseOption: Option\u003cPartialCollectorConfig\u003e,\n                                     fallbackOption: Option\u003cPartialCollectorConfig\u003e) \u003d\n            baseOption.overwriteFieldsFrom(fallbackOption) { base, fallback -\u003e\n                PartialCollectorConfig(\n                        base.dummyMode.fallbackToGivenOrNull(fallback.dummyMode),\n                        base.maxRequestSizeBytes.fallbackToGivenOrNull(fallback.maxRequestSizeBytes),\n                        base.kafkaServers.fallbackToGivenOrNull(fallback.kafkaServers),\n                        base.routing.fallbackToGivenOrNull(fallback.routing)\n                )\n            }\n\n    private fun mergeSecurityConfig(baseOption: Option\u003cPartialSecurityConfig\u003e,\n                                    fallbackOption: Option\u003cPartialSecurityConfig\u003e) \u003d\n            baseOption.overwriteFieldsFrom(fallbackOption) { base, fallback -\u003e\n                PartialSecurityConfig(\n                        base.keys.fallbackToGivenOrNull(fallback.keys)\n                )\n            }\n\n    private fun mergeCbsConfig(baseOption: Option\u003cPartialCbsConfig\u003e,\n                               fallbackOption: Option\u003cPartialCbsConfig\u003e) \u003d\n            baseOption.overwriteFieldsFrom(fallbackOption) { base, fallback -\u003e\n                PartialCbsConfig(\n                        base.firstRequestDelaySec.fallbackToGivenOrNull(fallback.firstRequestDelaySec),\n                        base.requestIntervalSec.fallbackToGivenOrNull(fallback.requestIntervalSec)\n                )\n            }\n\n    private fun mergeServerConfig(baseOption: Option\u003cPartialServerConfig\u003e,\n                                  fallbackOption: Option\u003cPartialServerConfig\u003e) \u003d\n            baseOption.overwriteFieldsFrom(fallbackOption) { base, fallback -\u003e\n                PartialServerConfig(\n                        base.listenPort.fallbackToGivenOrNull(fallback.listenPort),\n                        base.idleTimeoutSec.fallbackToGivenOrNull(fallback.idleTimeoutSec),\n                        base.maxPayloadSizeBytes.fallbackToGivenOrNull(fallback.maxPayloadSizeBytes)\n                )\n            }\n\n    private fun mergeLogLevel(base: Option\u003cLogLevel\u003e, fallback: Option\u003cLogLevel\u003e) \u003d\n            base.fallbackToGivenOrNull(fallback)\n}\n\nprivate fun \u003cT\u003e Option\u003cT\u003e.overwriteFieldsFrom(fallbackOption: Option\u003cT\u003e,\n                                              overrider: (base: T, fallback: T) -\u003e T) \u003d\n        fallbackOption.fold(this::orNull) { fallback -\u003e\n            this.fold({ fallback }, { overrider(it, fallback) })\n        }.toOption()\n\nprivate fun \u003cT\u003e Option\u003cT\u003e.fallbackToGivenOrNull(fallback: Option\u003cT\u003e) \u003d\n        getOrElse(fallback::orNull).toOption()\n\n```",
+      "range": {
+        "startLine": 38,
+        "startChar": 1,
+        "endLine": 38,
+        "endChar": 3
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7760b37_9e30ebdf",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "Maybe let\u0027s name those `base` and `fallback`",
+      "range": {
+        "startLine": 40,
+        "startChar": 15,
+        "endLine": 40,
+        "endChar": 23
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd3fd308_b7df9c64",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/PartialConfiguration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "We should not change production code like this only for tests. \nI\u0027ve provided solution in test class",
+      "range": {
+        "startLine": 35,
+        "startChar": 10,
+        "endLine": 35,
+        "endChar": 11
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e78ff81d_2478dc7e",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/SecondDurationAdapter.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "Second is not best for first word :) Maybe `DurationOfSecondAdapter`?",
+      "range": {
+        "startLine": 32,
+        "startChar": 6,
+        "endLine": 32,
+        "endChar": 27
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0a99b65_67746866",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/SecondDurationAdapter.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "unnecessary",
+      "range": {
+        "startLine": 33,
+        "startChar": 98,
+        "endLine": 33,
+        "endChar": 99
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df662d70_ac67d339",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/SecondDurationAdapter.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "expression body can be used, return type omitted",
+      "range": {
+        "startLine": 34,
+        "startChar": 8,
+        "endLine": 34,
+        "endChar": 14
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "be0b5a68_5080a086",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMergerTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 35,
+        "startChar": 16,
+        "endLine": 35,
+        "endChar": 40
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d2c262b_671cfe1b",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMergerTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-27T10:24:11Z",
+      "side": 1,
+      "message": "change to\n```\nval actual \u003d PartialConfiguration(logLevel\u003d None)\nval diff \u003d PartialConfiguration(logLevel \u003d Some(LogLevel.INFO))\n```",
+      "range": {
+        "startLine": 38,
+        "startChar": 12,
+        "endLine": 40,
+        "endChar": 47
+      },
+      "revId": "a26c1720f598fae18400e79278a82b177266c9c8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
