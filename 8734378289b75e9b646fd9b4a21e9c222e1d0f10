@@ -159,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "5ed9f2f7_c502b2ba",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T12:58:45Z",
+      "side": 1,
+      "message": "Fair enough ;]",
+      "parentUuid": "d680c4eb_59b87dcf",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a31f0182_769011fb",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 7
@@ -275,6 +293,24 @@
       "side": 1,
       "message": "This methods start it\u0027s execution with returned type constructor, so I guess it\u0027s not necessary",
       "parentUuid": "4b5c954e_12a4bfa6",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a916b630_a89a2ef7",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T12:58:45Z",
+      "side": 1,
+      "message": "Well it\u0027s named \"createCollectorConfiguration\", but it returns Routing object. It may be misleading. Rename it at least.",
+      "parentUuid": "7bec4f76_52d402f8",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -502,6 +538,24 @@
       "side": 1,
       "message": "made some refactor here, have a closer look",
       "parentUuid": "be30c6f6_1a509393",
+      "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "164ac00c_e1ccb4a7",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-27T12:58:45Z",
+      "side": 1,
+      "message": "Yup, i see now",
+      "parentUuid": "a243f58b_541b055c",
       "revId": "8734378289b75e9b646fd9b4a21e9c222e1d0f10",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
