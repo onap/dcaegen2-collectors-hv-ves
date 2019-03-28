@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98fa6d6c_31580f53",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidationTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-28T09:40:42Z",
+      "side": 1,
+      "message": "Same",
+      "revId": "1a5bb8d358c1159f916f5336bebfa9dab8c99a3b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e192712b_c8414c0a",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/MessageStreamValidationTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-28T09:40:42Z",
+      "side": 1,
+      "message": "Use StepVerifier here to verify error, like u did in other test cases",
+      "revId": "1a5bb8d358c1159f916f5336bebfa9dab8c99a3b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
