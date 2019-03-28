@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "938bfffa_08e0b6df",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T08:38:27Z",
+      "side": 1,
+      "message": "Please reorder private methods in order of usage.",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98a260e9_a9cd93b8",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMergerTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T08:38:27Z",
+      "side": 1,
+      "message": "Reorder actual with diff.",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ea4681c_67043d0d",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMergerTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T08:38:27Z",
+      "side": 1,
+      "message": "I think its worth to check if rest of parameters are merged.",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7cbc6e6_86a5d2d8",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidatorTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T08:38:27Z",
+      "side": 1,
+      "message": "same here",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6e12ebf5_36482c19",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidatorTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T08:38:27Z",
+      "side": 1,
+      "message": "add empty line",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
