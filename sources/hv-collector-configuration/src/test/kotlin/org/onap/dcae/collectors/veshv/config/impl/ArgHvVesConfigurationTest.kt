@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
+import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -26,9 +27,8 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
+import org.onap.dcae.collectors.veshv.config.impl.ArgHvVesConfiguration.Companion.DEFAULT_HEALTHCHECK_PORT
 import org.onap.dcae.collectors.veshv.tests.utils.absoluteResourcePath
-import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
-import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
 import java.io.File
 
 /**
@@ -37,6 +37,7 @@ import java.io.File
  */
 object ArgVesHvConfigurationTest : Spek({
     lateinit var cut: ArgHvVesConfiguration
+    val emptyConfig = ""
     val configFilePath = javaClass.absoluteResourcePath("sampleConfig.json")
 
     beforeEachTest {
@@ -48,7 +49,7 @@ object ArgVesHvConfigurationTest : Spek({
             lateinit var result: File
 
             beforeEachTest {
-                result = cut.parseExpectingSuccess(
+                result = cut.parseFileExpectingSuccess(
                         "--configuration-file", configFilePath
                 )
             }
@@ -58,16 +59,49 @@ object ArgVesHvConfigurationTest : Spek({
             }
         }
 
-        describe("required parameter is absent") {
+        given("required parameter is absent") {
             on("missing configuration file path") {
                 it("should throw exception") {
                     assertThat(
-                            cut.parseExpectingFailure(
-                                    "--non-existing-option", ""
+                            cut.parseFileExpectingFailure(
+                                    "--non-existing-option", emptyConfig
                             )
                     ).isInstanceOf(WrongArgumentError::class.java)
                 }
             }
         }
+
+        given("healthcheck port defined via cmd") {
+            val healthCheckPort = 888
+            val configWithHealthcheckPort = "--health-check-api-port $healthCheckPort"
+            on("parsing command") {
+                it("should assign proper port") {
+                    assertThat(
+                            cut.getHealthcheckPort(arrayOf(configWithHealthcheckPort))
+                    ).isEqualTo(healthCheckPort)
+                }
+            }
+        }
+
+        given("no healthcheck port defined via cmd") {
+            on("parsing command") {
+                it("should return default port") {
+                    assertThat(
+                            cut.getHealthcheckPort(arrayOf(emptyConfig))
+                    ).isEqualTo(DEFAULT_HEALTHCHECK_PORT)
+                }
+            }
+        }
     }
 })
+
+fun ArgHvVesConfiguration.parseFileExpectingSuccess(vararg cmdLine: String): File =
+        getConfigurationFile(cmdLine).fold(
+                { throw AssertionError("Parsing result should be present") },
+                ::identity
+        )
+
+fun ArgHvVesConfiguration.parseFileExpectingFailure(vararg cmdLine: String): WrongArgumentError =
+        getConfigurationFile(cmdLine).fold(
+                ::identity
+        ) { throw AssertionError("parsing should have failed") }

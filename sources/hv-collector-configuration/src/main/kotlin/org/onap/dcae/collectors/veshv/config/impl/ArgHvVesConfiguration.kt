@@ -19,18 +19,65 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
-import arrow.core.Option
+import arrow.core.*
 import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser
-import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
+import org.apache.commons.cli.Options
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONFIGURATION_FILE
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
+import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
+import org.onap.dcae.collectors.veshv.commandline.intValue
 import org.onap.dcae.collectors.veshv.commandline.stringValue
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.io.File
 
-internal class ArgHvVesConfiguration : ArgBasedConfiguration<File>(DefaultParser()) {
-    override val cmdLineOptionsList = listOf(CONFIGURATION_FILE)
+class ArgHvVesConfiguration(private val parser: CommandLineParser = DefaultParser()) {
+    private val cmdLineOptionsList = listOf(CONFIGURATION_FILE, HEALTH_CHECK_API_PORT)
 
-    override fun getConfiguration(cmdLine: CommandLine): Option<File> =
-            cmdLine.stringValue(CONFIGURATION_FILE).map(::File)
+    private lateinit var parsingResult: CommandLine
+
+    fun getConfigurationFile(args: Array<out String>): Either<WrongArgumentError, File> =
+            parse(args) {
+                it.stringValue(CONFIGURATION_FILE).map(::File)
+            }.toEither {
+                WrongArgumentError(
+                        message = "Unexpected error when parsing command line arguments",
+                        cmdLineOptionsList = cmdLineOptionsList)
+            }
+
+    fun getHealthcheckPort(args: Array<out String>): Int =
+            parse(args) {
+                it.intValue(HEALTH_CHECK_API_PORT)
+            }.getOrElse {
+                logger.info { "Healthcheck port missing in configuration file," +
+                        " taken default: $DEFAULT_HEALTHCHECK_PORT" }
+                DEFAULT_HEALTHCHECK_PORT
+            }
+
+    private fun <T> parse(args: Array<out String>, cmdLineMapper: (CommandLine) -> Option<T>) =
+            Try { parseIfEmpty(args) }
+                    .toOption()
+                    .flatMap(cmdLineMapper)
+
+    private fun parseIfEmpty(args: Array<out String>): CommandLine {
+        if (!this::parsingResult.isInitialized) {
+            parsingResult = parseArgumentsArray(args)
+        }
+        return parsingResult
+    }
+
+    private fun parseArgumentsArray(args: Array<out String>) =
+            cmdLineOptionsList
+                    .map { it.option }
+                    .fold(Options(), Options::addOption)
+                    .let { parser.parse(it, args) }
+
+    companion object {
+        const val DEFAULT_HEALTHCHECK_PORT: Int = 6060
+        private val logger = Logger(ArgHvVesConfiguration::class)
+    }
 
 }
+
+
