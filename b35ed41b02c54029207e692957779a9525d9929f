@@ -70,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "d54ecf71_0034c453",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-03-28T09:12:10Z",
+      "side": 1,
+      "message": "It\u0027s exactly the case. Before though, routing and sending was being handled in a little bit different manner. It\u0027s gotta be verified, if its still needed after Filip\u0027s changes.",
+      "parentUuid": "9263c706_bdad0cff",
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37b72f7f_d2b723b2",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
         "patchSetId": 9
