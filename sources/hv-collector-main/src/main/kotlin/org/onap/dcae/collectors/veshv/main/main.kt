@@ -38,10 +38,11 @@ private const val VES_HV_PACKAGE = "org.onap.dcae.collectors.veshv"
 private val logger = Logger("$VES_HV_PACKAGE.main")
 
 private val hvVesServer = AtomicReference<ServerHandle>()
+private val configurationModule = ConfigurationModule()
 
 fun main(args: Array<String>) {
-    HealthCheckServer.start()
-    ConfigurationModule()
+    HealthCheckServer.start(configurationModule.healthCheckPort(args))
+    configurationModule
             .hvVesConfigurationUpdates(args)
             .publishOn(Schedulers.single(Schedulers.elastic()))
             .doOnNext(::startServer)
