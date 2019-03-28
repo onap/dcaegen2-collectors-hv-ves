@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "13142d19_6f312613",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ArgHvVesConfiguration.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T14:12:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1215879_a3ccf209",
+      "range": {
+        "startLine": 35,
+        "startChar": 6,
+        "endLine": 35,
+        "endChar": 27
+      },
+      "revId": "fe65fc20bacc962aa364f0b2932e649e91633392",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9d4cc88_b907bfbe",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ArgHvVesConfiguration.kt",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2019-03-28T13:53:36Z",
       "side": 1,
       "message": "on command line",
+      "range": {
+        "startLine": 53,
+        "startChar": 56,
+        "endLine": 53,
+        "endChar": 80
+      },
+      "revId": "fe65fc20bacc962aa364f0b2932e649e91633392",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6c4fd1df_1abdc016",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ArgHvVesConfiguration.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T14:12:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9d4cc88_b907bfbe",
       "range": {
         "startLine": 53,
         "startChar": 56,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "b26e3571_2eafe340",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ArgHvVesConfiguration.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T14:12:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5f0d6777_ca4d55fd",
+      "range": {
+        "startLine": 54,
+        "startChar": 26,
+        "endLine": 54,
+        "endChar": 31
+      },
+      "revId": "fe65fc20bacc962aa364f0b2932e649e91633392",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3d135e22_334a1c6f",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ArgHvVesConfiguration.kt",
         "patchSetId": 5
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "9072fdee_855a3072",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ArgHvVesConfiguration.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T14:12:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d135e22_334a1c6f",
+      "range": {
+        "startLine": 77,
+        "startChar": 18,
+        "endLine": 77,
+        "endChar": 42
+      },
+      "revId": "fe65fc20bacc962aa364f0b2932e649e91633392",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e920fefa_72790263",
         "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
         "patchSetId": 5
@@ -105,6 +201,30 @@
       "writtenOn": "2019-03-28T13:53:36Z",
       "side": 1,
       "message": "can be reused",
+      "range": {
+        "startLine": 44,
+        "startChar": 4,
+        "endLine": 44,
+        "endChar": 25
+      },
+      "revId": "fe65fc20bacc962aa364f0b2932e649e91633392",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d801338_808aba90",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-03-28T14:12:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e920fefa_72790263",
       "range": {
         "startLine": 44,
         "startChar": 4,
