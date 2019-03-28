@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c19211fa_ae7945a1",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 12
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-28T12:44:40Z",
+      "side": 1,
+      "message": "Wrap with Collections.synchronizedMap",
+      "revId": "06d067e2f03d35d0428f29bf1e572aa3a5dcf3d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70594670_f933846c",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSinkProvider.kt",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-28T12:44:40Z",
+      "side": 1,
+      "message": "override fun invoke(stream: SinkStream, ctx: ClientContext): Lazy\u003cKafkaPublisher\u003e \u003d lazy {\n        messageSinks.computeIfAbsent(stream, ::createKafkaSender).let {\n            KafkaPublisher(it, ctx)\n        }\n    }",
+      "revId": "06d067e2f03d35d0428f29bf1e572aa3a5dcf3d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
