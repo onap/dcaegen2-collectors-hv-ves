@@ -34,8 +34,10 @@ class ConfigurationModule {
     private val configReader = FileConfigurationReader()
     private val configValidator = ConfigurationValidator()
 
+    fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
+
     fun hvVesConfigurationUpdates(args: Array<String>): Flux<HvVesConfiguration> =
-            Flux.just(cmd.parse(args))
+            Flux.just(cmd.getConfigurationFile(args))
                     .throwOnLeft { MissingArgumentException(it.message, it.cause) }
                     .map { it.reader().use(configReader::loadConfig) }
                     .map { configValidator.validate(it) }
