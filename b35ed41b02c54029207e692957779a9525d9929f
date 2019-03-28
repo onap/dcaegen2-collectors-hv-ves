@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e4016ede_ee21829d",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/factory/CollectorFactory.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:07:25Z",
+      "side": 1,
+      "message": "Not fully :),  my intention was to have 1-1 create-close relation.\n\nFixed with oldRouter.close(), router \u003d newRouter",
+      "parentUuid": "05bfd994_eecb531b",
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5f3ca25_f2e9f8c0",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 9
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "35d98f3e_12eccab0",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:07:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5f3ca25_f2e9f8c0",
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "017d9b42_43efe761",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
         "patchSetId": 9
@@ -47,6 +83,24 @@
       "writtenOn": "2019-03-28T08:18:20Z",
       "side": 1,
       "message": "I\u0027d rather have these sinks lazily-created. For now it may stay as is (as we have only one data stream expected). But we should create a task for the improvement, don\u0027t you think?",
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6999d0d9_e84c9b93",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/Router.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:07:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "017d9b42_43efe761",
       "revId": "b35ed41b02c54029207e692957779a9525d9929f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -88,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "f379007d_343555bf",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/VesHvCollector.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:07:25Z",
+      "side": 1,
+      "message": "changed todo message, verification will be done in another task",
+      "parentUuid": "d54ecf71_0034c453",
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37b72f7f_d2b723b2",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
         "patchSetId": 9
@@ -99,6 +171,30 @@
       "writtenOn": "2019-03-28T08:18:20Z",
       "side": 1,
       "message": "Rename to createRoutingDescription, createRoutingRecipe, createRouting or similar.",
+      "range": {
+        "startLine": 95,
+        "startChar": 16,
+        "endLine": 95,
+        "endChar": 44
+      },
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43be6df7_74630314",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/ConfigurationProviderImpl.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:07:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37b72f7f_d2b723b2",
       "range": {
         "startLine": 95,
         "startChar": 16,
@@ -128,6 +224,24 @@
     },
     {
       "key": {
+        "uuid": "e27b3e6c_0ab125dc",
+        "filename": "sources/hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/RoutedMessage.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:07:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "934a96d0_b1017ba0",
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8fe7e57c_3b120e74",
         "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/NioBuffersTest.kt",
         "patchSetId": 9
@@ -139,6 +253,24 @@
       "writtenOn": "2019-03-28T08:18:20Z",
       "side": 1,
       "message": "Will it work?",
+      "revId": "b35ed41b02c54029207e692957779a9525d9929f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13a4213a_82f7cd51",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/NioBuffersTest.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:07:25Z",
+      "side": 1,
+      "message": "Some renaming overlook from my side - reverted, thanks",
+      "parentUuid": "8fe7e57c_3b120e74",
       "revId": "b35ed41b02c54029207e692957779a9525d9929f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
