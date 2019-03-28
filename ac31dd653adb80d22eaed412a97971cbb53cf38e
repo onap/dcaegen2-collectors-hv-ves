@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "32703955_ad94c817",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-28T10:09:40Z",
+      "side": 1,
+      "message": "This can blow up when multithreading (which we should assume when using reactor). Maybe we can remove this initial config? Is it used anywhere?",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "938bfffa_08e0b6df",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
         "patchSetId": 7
@@ -13,6 +30,23 @@
       "writtenOn": "2019-03-28T08:38:27Z",
       "side": 1,
       "message": "Please reorder private methods in order of usage.",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a284913_f0c3e8fe",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-28T10:09:40Z",
+      "side": 1,
+      "message": "Maybe a little bit less fancy but more readable:\n\n```\nprivate fun \u003cT\u003e overwriteFields(base: Option\u003cT\u003e, update: Option\u003cT\u003e, overrider: (base: T, update: T) -\u003e T) \u003d\n        when {\n            base is Some \u0026\u0026 update is Some -\u003e overrider(base.t, update.t).toOption()\n            base is Some \u0026\u0026 update is None -\u003e base\n            base is None \u0026\u0026 update is Some -\u003e update\n            else -\u003e None\n        }\n```\n\nWhich by the way can be renamed to something more general (don\u0027t have any idea of the name) and moved to org.onap.dcae.collectors.veshv.utils.arrow/core.kt.",
       "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
