@@ -71,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "82fe0a15_e99ba84a",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-28T10:24:22Z",
+      "side": 1,
+      "message": "+2",
+      "parentUuid": "8a284913_f0c3e8fe",
+      "revId": "ac31dd653adb80d22eaed412a97971cbb53cf38e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98a260e9_a9cd93b8",
         "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMergerTest.kt",
         "patchSetId": 7
