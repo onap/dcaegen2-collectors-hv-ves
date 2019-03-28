@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.config.api
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
-import org.onap.dcae.collectors.veshv.config.impl.ArgHvVesConfiguration
+import org.onap.dcae.collectors.veshv.config.impl.HvVesCommandLineParser
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator
 import org.onap.dcae.collectors.veshv.config.impl.FileConfigurationReader
 import org.onap.dcae.collectors.veshv.utils.arrow.throwOnLeft
@@ -30,14 +30,16 @@ import reactor.core.publisher.Flux
 
 class ConfigurationModule {
 
-    private val cmd = ArgHvVesConfiguration()
+    private val cmd = HvVesCommandLineParser()
     private val configReader = FileConfigurationReader()
     private val configValidator = ConfigurationValidator()
 
     private lateinit var initialConfig: HvVesConfiguration
 
+    fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
+
     fun hvVesConfigurationUpdates(args: Array<String>): Flux<HvVesConfiguration> =
-            Flux.just(cmd.parse(args))
+            Flux.just(cmd.getConfigurationFile(args))
                     .throwOnLeft { MissingArgumentException(it.message, it.cause) }
                     .map { it.reader().use(configReader::loadConfig) }
                     .map { configValidator.validate(it) }
