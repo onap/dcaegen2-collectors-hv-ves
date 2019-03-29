@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7bca874_a25b6fa6",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCommandLineParser.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-29T07:08:53Z",
+      "side": 1,
+      "message": "Add internal",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 5
+      },
+      "revId": "d6bddf38b575196c13aa3e1de3171bc060b500ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4eab2886_cf041583",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCommandLineParser.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-29T07:08:53Z",
+      "side": 1,
+      "message": "Maybe `parsedCommandLine` ?",
+      "range": {
+        "startLine": 38,
+        "startChar": 25,
+        "endLine": 38,
+        "endChar": 38
+      },
+      "revId": "d6bddf38b575196c13aa3e1de3171bc060b500ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b226b59_f00394d0",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCommandLineParser.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-29T07:08:53Z",
+      "side": 1,
+      "message": "Would `parseIfNotInitialized`/`parseIfFirstTime` be better?",
+      "range": {
+        "startLine": 59,
+        "startChar": 18,
+        "endLine": 59,
+        "endChar": 30
+      },
+      "revId": "d6bddf38b575196c13aa3e1de3171bc060b500ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4177a3e1_60c7f292",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCommandLineParserTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-03-29T07:08:53Z",
+      "side": 1,
+      "message": "rename",
+      "range": {
+        "startLine": 37,
+        "startChar": 7,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "d6bddf38b575196c13aa3e1de3171bc060b500ba",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
