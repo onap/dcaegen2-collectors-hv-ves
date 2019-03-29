@@ -47,7 +47,5 @@ data class CbsConfiguration(
 )
 
 data class CollectorConfiguration(
-        val maxRequestSizeBytes: Int,
-        val kafkaServers: String,
         val routing: Routing
 )

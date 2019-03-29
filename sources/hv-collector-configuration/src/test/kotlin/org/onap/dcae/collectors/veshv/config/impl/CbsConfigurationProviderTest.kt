@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
+package org.onap.dcae.collectors.veshv.config.impl
 
 import com.google.gson.JsonParser
 import com.nhaarman.mockitokotlin2.any
@@ -52,7 +52,6 @@ internal object ConfigurationProviderImplTest : Spek({
 
         val cbsClient: CbsClient = mock()
         val cbsClientMock: Mono<CbsClient> = Mono.just(cbsClient)
-        val healthStateProvider = HealthState.INSTANCE
 
         given("configuration is never in cbs") {
             val configProvider = constructConfigurationProvider(cbsClientMock, healthStateProvider)
@@ -192,11 +191,11 @@ private val streamParser = StreamFromGsonParsers.kafkaSinkParser()
 private fun constructConfigurationProvider(cbsClientMono: Mono<CbsClient>,
                                            healthState: HealthState,
                                            iterationCount: Long = 1
-): ConfigurationProviderImpl {
+): CbsConfigurationProvider {
 
     val retry = Retry.onlyIf<Any> { it.iteration() <= iterationCount }.fixedBackoff(Duration.ofNanos(1))
 
-    return ConfigurationProviderImpl(
+    return CbsConfigurationProvider(
             cbsClientMono,
             firstRequestDelay,
             requestInterval,

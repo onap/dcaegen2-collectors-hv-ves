@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.main
 
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationModule
+import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
@@ -41,8 +42,14 @@ private val hvVesServer = AtomicReference<ServerHandle>()
 
 fun main(args: Array<String>) {
     HealthCheckServer.start()
+    val configStateListener = object : ConfigurationStateListener {
+        override fun retryingForConfiguration() {
+            HealthState.INSTANCE.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+        }
+
+    }
     ConfigurationModule()
-            .hvVesConfigurationUpdates(args)
+            .hvVesConfigurationUpdates(args, configStateListener, ServiceContext::mdc)
             .publishOn(Schedulers.single(Schedulers.elastic()))
             .doOnNext(::startServer)
             .doOnError(::logServerStartFailed)
