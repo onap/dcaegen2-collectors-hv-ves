@@ -54,6 +54,6 @@ internal data class PartialSecurityConfig(val keys: Option<SecurityKeys> = None)
 
 internal data class PartialCollectorConfig(
         val maxRequestSizeBytes: Option<Int> = None,
-        val kafkaServers: Option<List<InetSocketAddress>> = None,
+        val kafkaServers: Option<List<InetSocketAddress>> = None, // TODO: out
         val routing: Option<Routing> = None
 )

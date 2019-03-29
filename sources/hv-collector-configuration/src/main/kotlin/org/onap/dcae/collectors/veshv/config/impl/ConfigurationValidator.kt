@@ -63,9 +63,7 @@ internal class ConfigurationValidator {
                 securityConfiguration,
 // TOD0: swap when ConfigurationMerger is implemented
 //                    collectorConfiguration
-                CollectorConfiguration(-1,
-                        "I do not exist. I'm not even a URL :o",
-                        emptyList()),
+                CollectorConfiguration(emptyList()),
 // end TOD0
                 logLevel
         )
