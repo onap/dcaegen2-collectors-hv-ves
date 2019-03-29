@@ -77,7 +77,7 @@ class Sut(configuration: CollectorConfiguration, sink: Sink = StoringSink()) : C
     override fun close() = collectorProvider.close()
 
     companion object {
-        const val MAX_PAYLOAD_SIZE_BYTES = 1024
+        const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
     }
 }
 

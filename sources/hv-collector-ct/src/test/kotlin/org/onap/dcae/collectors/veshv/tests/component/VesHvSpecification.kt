@@ -23,7 +23,6 @@ import arrow.core.None
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
@@ -31,21 +30,17 @@ import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.MEASUREMENT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.OTHER
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
+import org.onap.dcae.collectors.veshv.tests.component.Sut.Companion.MAX_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.alternativeRouting
-import org.onap.dcae.collectors.veshv.tests.fakes.emptyRouting
 import org.onap.dcae.collectors.veshv.tests.fakes.twoDomainsToOneTopicRouting
 import org.onap.dcae.collectors.veshv.tests.utils.garbageFrame
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHeader
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithPayloadOfSize
 import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
 import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
-import reactor.core.publisher.Flux
-import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -97,7 +92,7 @@ object VesHvSpecification : Spek({
             val (sut, sink) = vesHvWithStoringSink()
             val validMessage = vesWireFrameMessage(PERF3GPP)
             val msgWithInvalidFrame = messageWithInvalidWireFrameHeader()
-            val msgWithTooBigPayload = messageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP)
+            val msgWithTooBigPayload = messageWithPayloadOfSize(MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP)
             val expectedRefCnt = 0
 
             val handledEvents = sut.handleConnection(
@@ -208,7 +203,7 @@ object VesHvSpecification : Spek({
 
             val handledMessages = sut.handleConnection(sink,
                     vesWireFrameMessage(PERF3GPP, "first"),
-                    messageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP),
+                    messageWithPayloadOfSize(MAX_PAYLOAD_SIZE_BYTES + 1, PERF3GPP),
                     vesWireFrameMessage(PERF3GPP))
 
             assertThat(handledMessages).hasSize(1)
