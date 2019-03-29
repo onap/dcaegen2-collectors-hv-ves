@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,9 @@ import com.google.protobuf.ByteString
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.tests.utils.assertFailedWithError
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
@@ -38,6 +36,8 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.generators.VesEventG
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Flux
+import reactor.test.StepVerifier
+import java.lang.IllegalArgumentException
 import javax.json.stream.JsonParsingException
 
 /**
@@ -60,24 +60,22 @@ internal class MessageStreamValidationTest : Spek({
     }
 
     describe("validate") {
-
         it("should return error when JSON is invalid") {
-            // when
-            val result = cut.validate("[{invalid json}]".byteInputStream(), listOf()).attempt().unsafeRunSync()
-
-            // then
-            result.assertFailedWithError { it is JsonParsingException }
+            StepVerifier
+                    .create(cut.validate("[{invalid json}]".byteInputStream(), listOf()))
+                    .expectError(JsonParsingException::class.java)
+                    .verify()
         }
 
         it("should return error when message param list is empty") {
-            // given
-            givenParsedMessageParameters()
+                // given
+                givenParsedMessageParameters()
 
-            // when
-            val result = cut.validate(sampleJsonAsStream(), listOf()).attempt().unsafeRunSync()
-
-            // then
-            result.assertFailedWithError { it is IllegalArgumentException }
+                //when
+                StepVerifier
+                        .create(cut.validate(sampleJsonAsStream(), listOf()))
+                        .expectError(IllegalArgumentException::class.java)
+                        .verify()
         }
 
         describe("when validating headers only") {
@@ -90,11 +88,10 @@ internal class MessageStreamValidationTest : Spek({
                 givenParsedMessageParameters(VesEventParameters(event.commonEventHeader, VALID, 1))
                 whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(event))
 
-                // when
-                val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
-
-                // then
-                assertThat(result).isTrue()
+                StepVerifier
+                        .create(cut.validate(jsonAsStream, listOf(receivedMessageBytes)))
+                        .expectNext(true)
+                        .verifyComplete()
             }
 
             it("should return true when messages differ with payload only") {
@@ -108,11 +105,10 @@ internal class MessageStreamValidationTest : Spek({
                 givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, VALID, 1))
                 whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
-                // when
-                val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
-
-                // then
-                assertThat(result).isTrue()
+                StepVerifier
+                        .create(cut.validate(jsonAsStream, listOf(receivedMessageBytes)))
+                        .expectNext(true)
+                        .verifyComplete()
             }
 
             it("should return false when messages are different") {
@@ -125,11 +121,10 @@ internal class MessageStreamValidationTest : Spek({
                 givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, VALID, 1))
                 whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
-                // when
-                val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
-
-                // then
-                assertThat(result).isFalse()
+                StepVerifier
+                        .create(cut.validate(jsonAsStream, listOf(receivedMessageBytes)))
+                        .expectNext(false)
+                        .verifyComplete()
             }
         }
 
@@ -143,11 +138,10 @@ internal class MessageStreamValidationTest : Spek({
                 givenParsedMessageParameters(VesEventParameters(event.commonEventHeader, FIXED_PAYLOAD, 1))
                 whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(event))
 
-                // when
-                val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
-
-                // then
-                assertThat(result).isTrue()
+                StepVerifier
+                        .create(cut.validate(jsonAsStream, listOf(receivedMessageBytes)))
+                        .expectNext(true)
+                        .verifyComplete()
             }
 
             it("should return false when messages differ with payload only") {
@@ -160,11 +154,10 @@ internal class MessageStreamValidationTest : Spek({
                 givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, FIXED_PAYLOAD, 1))
                 whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
-                // when
-                val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
-
-                // then
-                assertThat(result).isFalse()
+                StepVerifier
+                        .create(cut.validate(jsonAsStream, listOf(receivedMessageBytes)))
+                        .expectNext(false)
+                        .verifyComplete()
             }
 
             it("should return false when messages are different") {
@@ -177,11 +170,10 @@ internal class MessageStreamValidationTest : Spek({
                 givenParsedMessageParameters(VesEventParameters(generatedEvent.commonEventHeader, FIXED_PAYLOAD, 1))
                 whenever(messageGenerator.createMessageFlux(any())).thenReturn(Flux.just(generatedEvent))
 
-                // when
-                val result = cut.validate(jsonAsStream, listOf(receivedMessageBytes)).unsafeRunSync()
-
-                // then
-                assertThat(result).isFalse()
+                StepVerifier
+                        .create(cut.validate(jsonAsStream, listOf(receivedMessageBytes)))
+                        .expectNext(false)
+                        .verifyComplete()
             }
         }
     }
