@@ -59,13 +59,16 @@ shift $((OPTIND-1))
 DOMAIN=${1:-perf3gpp}
 TOPIC=${2:-HV_VES_PERF3GPP}
 
-CONFIGURATION="
-{
-    \"collector.routing\":
-        [{
-            \"fromDomain\": \"${DOMAIN}\",
-            \"toTopic\": \"${TOPIC}\"
-        }]
+CONFIGURATION="{
+  "streams_publishes": {
+    "${DOMAIN}": {
+      "type": "kafka",
+      "kafka_info": {
+        "bootstrap_servers": "kafka:9092",
+        "topic_name": "${TOPIC}"
+      }
+    }
+  }
 }"
 CONFIGURATION_ENDPOINT=localhost:8500/v1/kv/veshv-config
 

@@ -47,5 +47,6 @@ data class CbsConfiguration(
 )
 
 data class CollectorConfiguration(
+        val maxRequestSizeBytes: Int,
         val routing: Routing
 )

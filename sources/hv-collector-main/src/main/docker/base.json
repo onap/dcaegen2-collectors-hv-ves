@@ -12,15 +12,6 @@
   "security": {
   },
   "collector": {
-    "maxRequestSizeBytes": 1048576,
-    "kafkaServers": [
-      "message-router-kafka:9092"
-    ],
-    "routing": [
-      {
-        "fromDomain": "perf3gpp",
-        "toTopic": "HV_VES_PERF3GPP"
-      }
-    ]
+    "maxRequestSizeBytes": 1048576
   }
 }

@@ -77,7 +77,7 @@ class Sut(configuration: CollectorConfiguration, sink: Sink = StoringSink()) : C
     override fun close() = collectorProvider.close()
 
     companion object {
-        const val MAX_PAYLOAD_SIZE_BYTES = 1024
+        const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
     }
 }
 
@@ -100,10 +100,10 @@ class DummySinkProvider(private val sink: Sink) : SinkProvider {
 private val timeout = Duration.ofSeconds(10)
 
 fun vesHvWithAlwaysSuccessfulSink(routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), AlwaysSuccessfulSink())
+        Sut(CollectorConfiguration(Sut.MAX_PAYLOAD_SIZE_BYTES, routing), AlwaysSuccessfulSink())
 
 fun vesHvWithAlwaysFailingSink(routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), AlwaysFailingSink())
+        Sut(CollectorConfiguration(Sut.MAX_PAYLOAD_SIZE_BYTES, routing), AlwaysFailingSink())
 
 fun vesHvWithDelayingSink(delay: Duration, routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), DelayingSink(delay))
+        Sut(CollectorConfiguration(Sut.MAX_PAYLOAD_SIZE_BYTES, routing), DelayingSink(delay))

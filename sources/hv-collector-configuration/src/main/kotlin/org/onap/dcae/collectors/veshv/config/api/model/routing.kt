@@ -21,6 +21,11 @@ package org.onap.dcae.collectors.veshv.config.api.model
 
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 
-data class Route(val domain: String, val sink: KafkaSink)
+data class Route(val domain: String, val sink: KafkaSink) {
+    override fun toString() =
+            "Route(domain='$domain', " +
+                    "sink=(topic=${sink.topicName()}, " +
+                    "bootstrapServers=${sink.bootstrapServers()}))"
+}
 
 typealias Routing = List<Route>
