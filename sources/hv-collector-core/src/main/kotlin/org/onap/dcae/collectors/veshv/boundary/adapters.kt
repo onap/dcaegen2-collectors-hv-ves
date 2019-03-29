@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
-import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientContext
@@ -39,8 +38,6 @@ interface Sink : Closeable {
 interface SinkProvider : Closeable {
     operator fun invoke(stream: SinkStream, ctx: ClientContext): Lazy<Sink>
 }
-
-typealias ConfigurationProvider = () -> Flux<Routing>
 
 interface Metrics {
     fun notifyBytesReceived(size: Int)

@@ -17,12 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
+package org.onap.dcae.collectors.veshv.config.impl
 
 import com.google.gson.JsonParser
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -30,13 +32,12 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
+import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcaegen2.services.sdk.model.streams.ImmutableAafCredentials
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
 import reactor.core.publisher.Flux
-
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
 import reactor.test.StepVerifier
@@ -46,16 +47,16 @@ import java.time.Duration
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-internal object ConfigurationProviderImplTest : Spek({
+internal object CbsConfigurationProviderTest : Spek({
 
     describe("Configuration provider") {
 
         val cbsClient: CbsClient = mock()
         val cbsClientMock: Mono<CbsClient> = Mono.just(cbsClient)
-        val healthStateProvider = HealthState.INSTANCE
+        val configStateListener: ConfigurationStateListener = mock()
 
         given("configuration is never in cbs") {
-            val configProvider = constructConfigurationProvider(cbsClientMock, healthStateProvider)
+            val configProvider = constructConfigurationProvider(cbsClientMock, configStateListener)
 
             on("waiting for configuration") {
                 val waitTime = Duration.ofMillis(100)
@@ -68,7 +69,7 @@ internal object ConfigurationProviderImplTest : Spek({
         }
 
         given("valid configuration from cbs") {
-            val configProvider = constructConfigurationProvider(cbsClientMock, healthStateProvider)
+            val configProvider = constructConfigurationProvider(cbsClientMock, configStateListener)
 
             on("new configuration") {
                 whenever(cbsClient.updates(any(), eq(firstRequestDelay), eq(requestInterval)))
@@ -77,8 +78,9 @@ internal object ConfigurationProviderImplTest : Spek({
 
                     StepVerifier.create(configProvider().take(1))
                             .consumeNextWith {
-                                val route1 = it.elementAt(0)
-                                val route2 = it.elementAt(1)
+                                val routes = it.collector.orNull()!!.routing.orNull()!!
+                                val route1 = routes.elementAt(0)
+                                val route2 = routes.elementAt(1)
                                 val receivedSink1 = route1.sink
                                 val receivedSink2 = route2.sink
 
@@ -102,7 +104,7 @@ internal object ConfigurationProviderImplTest : Spek({
         given("invalid configuration from cbs") {
             val iterationCount = 3L
             val configProvider = constructConfigurationProvider(
-                    cbsClientMock, healthStateProvider, iterationCount
+                    cbsClientMock, configStateListener, iterationCount
             )
 
             on("new configuration") {
@@ -114,11 +116,8 @@ internal object ConfigurationProviderImplTest : Spek({
                             .verifyError()
                 }
 
-                it("should update the health state") {
-                    StepVerifier.create(healthStateProvider().take(iterationCount))
-                            .expectNextCount(iterationCount - 1)
-                            .expectNext(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
-                            .verifyComplete()
+                it("should call state listener when retrying") {
+                    verify(configStateListener, times(iterationCount.toInt())).retrying()
                 }
             }
         }
@@ -190,18 +189,18 @@ private val requestInterval = Duration.ofMillis(1)
 private val streamParser = StreamFromGsonParsers.kafkaSinkParser()
 
 private fun constructConfigurationProvider(cbsClientMono: Mono<CbsClient>,
-                                           healthState: HealthState,
+                                           configurationStateListener: ConfigurationStateListener,
                                            iterationCount: Long = 1
-): ConfigurationProviderImpl {
+): CbsConfigurationProvider {
 
     val retry = Retry.onlyIf<Any> { it.iteration() <= iterationCount }.fixedBackoff(Duration.ofNanos(1))
 
-    return ConfigurationProviderImpl(
+    return CbsConfigurationProvider(
             cbsClientMono,
-            firstRequestDelay,
-            requestInterval,
-            healthState,
+            CbsConfiguration(firstRequestDelay, requestInterval),
             streamParser,
-            retry
+            configurationStateListener,
+            retry,
+            { mapOf("k" to "v") }
     )
 }
