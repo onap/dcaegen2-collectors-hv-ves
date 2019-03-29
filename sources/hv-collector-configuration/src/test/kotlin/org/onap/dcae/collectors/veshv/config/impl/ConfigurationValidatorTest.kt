@@ -65,7 +65,6 @@ internal object ConfigurationValidatorTest : Spek({
                     )),
                     Some(PartialCollectorConfig(
                             Some(4),
-                            Some(emptyList()),
                             someFromEmptyRouting
                     )),
                     None
@@ -104,7 +103,6 @@ internal object ConfigurationValidatorTest : Spek({
                     )),
                     Some(PartialCollectorConfig(
                             Some(4),
-                            Some(emptyList()),
                             someFromEmptyRouting
                     )),
                     Some(LogLevel.INFO)
@@ -153,7 +151,6 @@ internal object ConfigurationValidatorTest : Spek({
                     )),
                     Some(PartialCollectorConfig(
                             Some(4),
-                            Some(emptyList()),
                             someFromEmptyRouting
                     )),
                     Some(LogLevel.INFO)

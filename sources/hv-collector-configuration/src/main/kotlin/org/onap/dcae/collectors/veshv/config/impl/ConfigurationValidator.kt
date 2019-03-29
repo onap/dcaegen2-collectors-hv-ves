@@ -27,13 +27,13 @@ import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
 import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
+import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import java.net.InetSocketAddress
-import java.time.Duration
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -41,33 +41,35 @@ import java.time.Duration
  */
 internal class ConfigurationValidator {
 
-    fun validate(partialConfig: PartialConfiguration)
-            : Either<ValidationError, HvVesConfiguration> = binding {
-        val logLevel = determineLogLevel(partialConfig.logLevel)
+    fun validate(partialConfig: PartialConfiguration) =
+            logger.info { "About to validate configuration: $partialConfig" }.let {
+                binding {
+                    val logLevel = determineLogLevel(partialConfig.logLevel)
 
-        val serverConfiguration = partialConfig.server.bind()
-                .let { createServerConfiguration(it).bind() }
+                    val serverConfiguration = validatedServerConfiguration(partialConfig)
+                            .doOnEmpty { logger.debug { "Cannot bind server configuration" } }
+                            .bind()
 
-        val cbsConfiguration = partialConfig.cbs.bind()
-                .let { createCbsConfiguration(it).bind() }
+                    val cbsConfiguration = validatedCbsConfiguration(partialConfig)
+                            .doOnEmpty { logger.debug { "Cannot bind cbs configuration" } }
+                            .bind()
 
-        val securityConfiguration = SecurityConfiguration(partialConfig.security.bind().keys)
+                    val securityConfiguration = SecurityConfiguration(partialConfig.security.bind().keys)
 
-// TOD0: retrieve when ConfigurationMerger is implemented
-//        val collectorConfiguration = partialConfig.collector.bind()
-//                .let { createCollectorConfig(it).bind() }
+                    val collectorConfiguration = validatedCollectorConfig(partialConfig)
+                            .doOnEmpty { logger.debug { "Cannot bind collector configuration" } }
+                            .bind()
 
-        HvVesConfiguration(
-                serverConfiguration,
-                cbsConfiguration,
-                securityConfiguration,
-// TOD0: swap when ConfigurationMerger is implemented
-//                    collectorConfiguration
-                CollectorConfiguration(emptyList()),
-// end TOD0
-                logLevel
-        )
-    }.toEither { ValidationError("Some required configuration options are missing") }
+                    HvVesConfiguration(
+                            serverConfiguration,
+                            cbsConfiguration,
+                            securityConfiguration,
+                            collectorConfiguration,
+                            logLevel
+                    )
+                }.toEither { ValidationException("Some required configuration options are missing") }
+            }
+
 
     private fun determineLogLevel(logLevel: Option<LogLevel>) =
             logLevel.getOrElse {
@@ -78,40 +80,39 @@ internal class ConfigurationValidator {
                 DEFAULT_LOG_LEVEL
             }
 
-    private fun createServerConfiguration(partial: PartialServerConfig) =
+    private fun validatedServerConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                ServerConfiguration(
-                        it.listenPort.bind(),
-                        it.idleTimeoutSec.bind(),
-                        it.maxPayloadSizeBytes.bind()
-                )
+                partial.server.bind().let {
+                    ServerConfiguration(
+                            it.listenPort.bind(),
+                            it.idleTimeoutSec.bind(),
+                            it.maxPayloadSizeBytes.bind()
+                    )
+                }
             }
 
-    private fun createCbsConfiguration(partial: PartialCbsConfig) =
+    fun validatedCbsConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                CbsConfiguration(
-                        it.firstRequestDelaySec.bind(),
-                        it.requestIntervalSec.bind()
-                )
+                it.cbs.bind().let {
+                    CbsConfiguration(
+                            it.firstRequestDelaySec.bind(),
+                            it.requestIntervalSec.bind()
+                    )
+                }
             }
 
-// TOD0: retrieve when ConfigurationMerger is implemented
-//    private fun createCollectorConfig(partial: PartialCollectorConfig) =
-//            partial.mapBinding {
-//                CollectorConfiguration(
-//                        it.maxRequestSizeBytes.bind(),
-//                        toKafkaServersString(it.kafkaServers.bind()),
-//                        it.routing.bind()
-//                )
-//            }
-
-    private fun toKafkaServersString(kafkaServers: List<InetSocketAddress>): String =
-            kafkaServers.joinToString(",") { "${it.hostName}:${it.port}" }
+    private fun validatedCollectorConfig(partial: PartialConfiguration) =
+            partial.mapBinding {
+                partial.collector.bind().let {
+                    CollectorConfiguration(
+                            it.maxRequestSizeBytes.bind(),
+                            it.routing.bind()
+                    )
+                }
+            }
 
     companion object {
         val DEFAULT_LOG_LEVEL = LogLevel.INFO
         private val logger = Logger(ConfigurationValidator::class)
     }
 }
-
-data class ValidationError(val message: String, val cause: Option<Throwable> = None)
