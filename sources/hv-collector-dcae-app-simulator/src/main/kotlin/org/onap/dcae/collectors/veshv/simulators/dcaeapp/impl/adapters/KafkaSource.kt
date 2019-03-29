@@ -34,7 +34,7 @@ class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
 
     fun start() = Consumer()
             .also { consumer ->
-                receiver.receive().map(consumer::update)
+                receiver.receive().map(consumer::update).subscribe()
             }
 
     companion object {
