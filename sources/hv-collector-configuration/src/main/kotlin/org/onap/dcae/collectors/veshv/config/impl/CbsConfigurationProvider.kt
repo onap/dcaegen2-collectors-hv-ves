@@ -17,17 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.adapters
+package org.onap.dcae.collectors.veshv.config.impl
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
 import com.google.gson.JsonObject
-import org.onap.dcae.collectors.veshv.boundary.ConfigurationProvider
+import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
 import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
 import org.onap.dcaegen2.services.sdk.model.streams.StreamType.KAFKA
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
@@ -42,69 +43,77 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.retry.Jitter
 import reactor.retry.Retry
-import java.time.Duration
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-internal class ConfigurationProviderImpl(private val cbsClientMono: Mono<CbsClient>,
-                                         private val firstRequestDelay: Duration,
-                                         private val requestInterval: Duration,
-                                         private val healthState: HealthState,
-                                         private val streamParser: StreamFromGsonParser<KafkaSink>,
-                                         retrySpec: Retry<Any>
+internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClient>,
+                                        private val cbsConfiguration: CbsConfiguration,
+                                        private val streamParser: StreamFromGsonParser<KafkaSink>,
+                                        private val configurationStateListener: ConfigurationStateListener,
+                                        retrySpec: Retry<Any>,
+                                        private val mdc: MappedDiagnosticContext
 
-) : ConfigurationProvider {
-    constructor(cbsClientMono: Mono<CbsClient>, params: CbsConfiguration) : this(
-            cbsClientMono,
-            params.firstRequestDelay,
-            params.requestInterval,
-            HealthState.INSTANCE,
-            StreamFromGsonParsers.kafkaSinkParser(),
-            Retry.any<Any>()
-                    .retryMax(MAX_RETRIES)
-                    .fixedBackoff(params.requestInterval)
-                    .jitter(Jitter.random())
-    )
+) {
+    constructor(cbsClientMono: Mono<CbsClient>,
+                cbsConfig: CbsConfiguration,
+                configurationStateListener: ConfigurationStateListener,
+                mdc: MappedDiagnosticContext) :
+            this(
+                    cbsClientMono,
+                    cbsConfig,
+                    StreamFromGsonParsers.kafkaSinkParser(),
+                    configurationStateListener,
+                    Retry.any<Any>()
+                            .retryMax(MAX_RETRIES)
+                            .fixedBackoff(cbsConfig.requestInterval)
+                            .jitter(Jitter.random()),
+                    mdc
+            )
 
     private val retry = retrySpec.doOnRetry {
-        logger.withWarn(ServiceContext::mdc) {
+        logger.withWarn(mdc) {
             log("Exception from configuration provider client, retrying subscription", it.exception())
         }
-        healthState.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+        configurationStateListener.retrying()
     }
 
-    override fun invoke(): Flux<Routing> =
+    operator fun invoke(): Flux<PartialConfiguration> =
             cbsClientMono
-                    .doOnNext { logger.info(ServiceContext::mdc) { "CBS client successfully created" } }
-                    .onErrorLog(logger, ServiceContext::mdc) { "Failed to retrieve CBS client" }
+                    .doOnNext { logger.info(mdc) { "CBS client successfully created" } }
+                    .onErrorLog(logger, mdc) { "Failed to retrieve CBS client" }
                     .retryWhen(retry)
-                    .doFinally { logger.trace(ServiceContext::mdc) { "CBS client subscription finished" } }
+                    .doFinally { logger.trace(mdc) { "CBS client subscription finished" } }
                     .flatMapMany(::handleUpdates)
 
     private fun handleUpdates(cbsClient: CbsClient) = cbsClient
             .updates(CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
-                    firstRequestDelay,
-                    requestInterval)
-            .doOnNext { logger.info(ServiceContext::mdc) { "Received new configuration:\n$it" } }
+                    cbsConfiguration.firstRequestDelay,
+                    cbsConfiguration.requestInterval)
+            .doOnNext { logger.info(mdc) { "Received new configuration:\n$it" } }
             .map(::createRoutingDescription)
-            .onErrorLog(logger, ServiceContext::mdc) { "Error while creating configuration" }
+            .onErrorLog(logger, mdc) { "Error while creating configuration" }
             .retryWhen(retry)
+            .map { PartialConfiguration(collector = Some(PartialCollectorConfig(routing = it))) }
 
-    private fun createRoutingDescription(configuration: JsonObject): Routing = try {
-        DataStreams.namedSinks(configuration)
+    private fun createRoutingDescription(configuration: JsonObject): Option<Routing> = try {
+        val routes = DataStreams.namedSinks(configuration)
                 .filter(streamOfType(KAFKA))
                 .map(streamParser::unsafeParse)
                 .map { Route(it.name(), it) }
                 .asIterable()
                 .toList()
+        Some(routes)
     } catch (e: NullPointerException) {
-        throw ParsingException("Failed to parse configuration", e)
+        logger.withWarn(mdc) {
+            log("Invalid streams configuration", e)
+        }
+        None
     }
 
     companion object {
         private const val MAX_RETRIES = 5L
-        private val logger = Logger(ConfigurationProviderImpl::class)
+        private val logger = Logger(CbsConfigurationProvider::class)
     }
 }
