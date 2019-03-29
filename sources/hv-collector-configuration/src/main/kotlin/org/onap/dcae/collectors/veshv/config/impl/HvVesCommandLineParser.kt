@@ -45,7 +45,7 @@ internal class HvVesCommandLineParser(private val parser: CommandLineParser = De
                 it.stringValue(CONFIGURATION_FILE).map(::File)
             }.toEither {
                 WrongArgumentError(
-                        message = "Unexpected error when parsing command line arguments",
+                        message = "Base configuration filepath missing on command line",
                         cmdLineOptionsList = cmdLineOptionsList)
             }
 
@@ -53,8 +53,7 @@ internal class HvVesCommandLineParser(private val parser: CommandLineParser = De
             parse(args) {
                 it.intValue(HEALTH_CHECK_API_PORT)
             }.getOrElse {
-                logger.info { "Healthcheck port missing on command line," +
-                        " using default: $DEFAULT_HEALTHCHECK_PORT" }
+                logger.info { "Healthcheck port missing on command line, using default: $DEFAULT_HEALTHCHECK_PORT" }
                 DEFAULT_HEALTHCHECK_PORT
             }
 

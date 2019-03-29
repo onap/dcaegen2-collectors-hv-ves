@@ -34,6 +34,7 @@ import arrow.syntax.collections.firstOption
 import arrow.typeclasses.MonadContinuation
 import arrow.typeclasses.binding
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -57,7 +58,11 @@ fun <B> Either<Throwable, B>.rightOrThrow() = fold({ throw it }, ::identity)
 
 fun <A, B> Either<A, B>.rightOrThrow(mapper: (A) -> Throwable) = fold({ throw mapper(it) }, ::identity)
 
+fun <A : Exception, B> Flux<Either<A, B>>.throwOnLeft(): Flux<B> = map { it.rightOrThrow() }
+
 fun <A, B> Flux<Either<A, B>>.throwOnLeft(f: (A) -> Exception): Flux<B> = map { it.rightOrThrow(f) }
+
+fun <A, B> Mono<Either<A, B>>.throwOnLeft(f: (A) -> Exception): Mono<B> = map { it.rightOrThrow(f) }
 
 fun <A> AtomicReference<A>.getOption() = Option.fromNullable(get())
 

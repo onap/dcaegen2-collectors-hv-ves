@@ -43,12 +43,15 @@ services:
     image: docker.io/consul:1.0.6
     restart: on-failure
     command: ["kv", "put", "-http-addr=http://consul-server:8500", "dcae-hv-ves-collector", '{
-                                              "collector.routing": [
-                                                {
-                                                  "fromDomain": "perf3gpp",
-                                                  "toTopic": "HV_VES_PERF3GPP"
+                                              "streams_publishes": {
+                                                "perf3gpp": {
+                                                  "type": "kafka",
+                                                  "kafka_info": {
+                                                    "bootstrap_servers": "message-router-kafka:9092",
+                                                    "topic_name": "HV_VES_PERF3GPP"
+                                                  }
                                                 }
-                                              ]
+                                              }
                                             }'
     ]
     depends_on:
@@ -74,6 +77,7 @@ services:
       - "6061:6061/tcp"
     environment:
       JAVA_OPTS: "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
+      VESHV_CONFIGURATION_FILE: "/etc/ves-hv/configuration/base.json"
       CONSUL_HOST: "consul-server"
       CONFIG_BINDING_SERVICE: "CBS"
       HOSTNAME: "dcae-hv-ves-collector"

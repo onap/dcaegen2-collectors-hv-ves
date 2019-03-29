@@ -19,6 +19,8 @@
  */
 package org.onap.dcae.collectors.veshv.config.api.model
 
-class MissingArgumentException(message: String, cause: Throwable?) : RuntimeException(message, cause)
+import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
+
+class MissingArgumentException(err: WrongArgumentError) : RuntimeException(err.message, err.cause)
 
 class ValidationException(message: String) : RuntimeException(message)

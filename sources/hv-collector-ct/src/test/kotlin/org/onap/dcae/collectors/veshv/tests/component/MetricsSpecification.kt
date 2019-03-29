@@ -33,6 +33,7 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.KAFKA_FAILURE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
+import org.onap.dcae.collectors.veshv.tests.component.Sut.Companion.MAX_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.tests.fakes.ALTERNATE_PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.PERF3GPP_TOPIC
 import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
@@ -159,7 +160,7 @@ object MetricsSpecification : Spek({
                     .isEqualTo(1)
         }
 
-        it("should gather metrics for sing errors") {
+        it("should gather metrics for sink errors") {
             val sut = vesHvWithAlwaysFailingSink(basicRouting)
 
             sut.handleConnection(vesWireFrameMessage(domain = PERF3GPP))
@@ -190,7 +191,7 @@ object MetricsSpecification : Spek({
         given("rejection causes") {
             mapOf(
                     ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE to
-                            messageWithPayloadOfSize(Sut.MAX_PAYLOAD_SIZE_BYTES + 1),
+                            messageWithPayloadOfSize(MAX_PAYLOAD_SIZE_BYTES + 1),
                     ClientRejectionCause.INVALID_WIRE_FRAME_MARKER to garbageFrame()
             ).forEach { cause, vesMessage ->
                 on("cause $cause") {

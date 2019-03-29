@@ -29,7 +29,6 @@ import org.onap.dcae.collectors.veshv.main.servers.VesServer
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.dcae.collectors.veshv.utils.neverComplete
 import org.onap.dcae.collectors.veshv.utils.registerShutdownHook
 import reactor.core.scheduler.Schedulers
 import java.util.concurrent.atomic.AtomicReference
@@ -57,20 +56,20 @@ fun main(args: Array<String>) {
                 HealthState.INSTANCE.changeState(HealthDescription.HEALTHY)
             }
             .doOnError {
-                logger.error(ServiceContext::mdc) { "Failed to acquire configuration ${it.message}" }
-                logger.debug(ServiceContext::mdc) { "Detailed stack trace: $it" }
+                logger.error(ServiceContext::mdc) { "Failed to create configuration: ${it.message}" }
+                logger.withDebug(ServiceContext::mdc) { log("Detailed stack trace: ", it) }
                 HealthState.INSTANCE.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
             }
             .doOnNext(::startServer)
             .doOnError(::logServerStartFailed)
-            .neverComplete() // TODO: remove after merging configuration stream with cbs
+            .then()
             .block()
 }
 
 private fun startServer(config: HvVesConfiguration) {
     stopRunningServer()
     Logger.setLogLevel(VES_HV_PACKAGE, config.logLevel)
-    logger.info { "Using configuration: $config" }
+    logger.debug(ServiceContext::mdc) { "Configuration: $config" }
 
     VesServer.start(config).let {
         registerShutdownHook { shutdownGracefully(it) }
