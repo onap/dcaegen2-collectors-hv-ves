@@ -23,7 +23,6 @@ import arrow.core.None
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
@@ -220,6 +219,6 @@ object VesHvSpecification : Spek({
 
 private fun vesHvWithStoringSink(routing: Routing = basicRouting): Pair<Sut, StoringSink> {
     val sink = StoringSink()
-    val sut = Sut(CollectorConfiguration(routing), sink)
+    val sut = Sut(CollectorConfiguration(Sut.MAX_PAYLOAD_SIZE_BYTES, routing), sink)
     return Pair(sut, sink)
 }
