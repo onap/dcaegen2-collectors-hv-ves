@@ -19,7 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Option
+import arrow.core.Try
+import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser
