@@ -74,8 +74,6 @@ internal class ConfigurationMerger {
                                      updateOption: Option<PartialCollectorConfig>) =
             applyUpdate(baseOption, updateOption) { base, update ->
                 PartialCollectorConfig(
-                        base.maxRequestSizeBytes.updateToGivenOrNone(update.maxRequestSizeBytes),
-                        base.kafkaServers.updateToGivenOrNone(update.kafkaServers),
                         base.routing.updateToGivenOrNone(update.routing)
                 )
             }

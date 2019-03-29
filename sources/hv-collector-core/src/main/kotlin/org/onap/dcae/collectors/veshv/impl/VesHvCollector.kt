@@ -57,8 +57,6 @@ internal class VesHvCollector(
                     .transform(::filterInvalidWireFrame)
                     .transform(::decodeProtobufPayload)
                     .transform(::filterInvalidProtobufMessages)
-                    // TOD0: try to remove new flux creation in Sink interface to avoid two calls to handleErrors here
-                    .handleErrors()
                     .transform(::route)
                     .handleErrors()
                     .doFinally { releaseBuffersMemory() }
@@ -106,13 +104,13 @@ internal class VesHvCollector(
         }
     }
 
+    private fun releaseBuffersMemory() = wireChunkDecoder.release()
+            .also { logger.debug { "Released buffer memory after handling message stream" } }
+
     private fun <T> Flux<T>.handleErrors(): Flux<T> = onErrorResume {
         metrics.notifyClientRejected(ClientRejectionCause.fromThrowable(it))
         logger.handleReactiveStreamError(clientContext, it)
     }
-
-    private fun releaseBuffersMemory() = wireChunkDecoder.release()
-            .also { logger.debug { "Released buffer memory after handling message stream" } }
 
     private fun <T> Flux<T>.filterFailedWithLog(predicate: (T) -> MessageEither): Flux<T> =
             filterFailedWithLog(logger, clientContext::fullMdc, predicate)
