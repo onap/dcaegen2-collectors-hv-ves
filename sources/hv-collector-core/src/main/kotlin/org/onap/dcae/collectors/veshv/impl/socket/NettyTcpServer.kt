@@ -113,25 +113,19 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
     private fun acceptClientConnection(clientContext: ClientContext, nettyInbound: NettyInbound): Mono<Void> {
         metrics.notifyClientConnected()
         logger.info(clientContext::fullMdc) { "Handling new client connection" }
-        return collectorProvider(clientContext).fold(
-                {
-                    logger.warn(clientContext::fullMdc) { "Collector is not ready. Closing connection" }
-                    nettyInbound.closeConnectionAndReturn(Mono.empty<Void>())
-                },
-                handleClient(clientContext, nettyInbound)
-        )
+        val collector = collectorProvider(clientContext)
+        return collector.handleClient(clientContext, nettyInbound)
     }
 
-    private fun handleClient(clientContext: ClientContext,
-                             nettyInbound: NettyInbound): (Collector) -> Mono<Void> = { collector ->
+    private fun Collector.handleClient(clientContext: ClientContext,
+                             nettyInbound: NettyInbound) =
         withConnectionFrom(nettyInbound) { connection ->
             connection
                     .configureIdleTimeout(clientContext, serverConfiguration.idleTimeout)
                     .logConnectionClosed(clientContext)
         }.run {
-            collector.handleConnection(nettyInbound.createDataStream())
+            handleConnection(nettyInbound.createDataStream())
         }
-    }
 
     private fun Connection.configureIdleTimeout(ctx: ClientContext, timeout: Duration): Connection =
             onReadIdle(timeout.toMillis()) {

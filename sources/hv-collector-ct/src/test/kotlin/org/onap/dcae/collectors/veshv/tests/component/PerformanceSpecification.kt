@@ -29,6 +29,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
@@ -56,8 +57,7 @@ object PerformanceSpecification : Spek({
     describe("VES High Volume Collector performance") {
         it("should handle multiple clients in reasonable time") {
             val sink = CountingSink()
-            val sut = Sut(sink)
-            sut.configurationProvider.updateConfiguration(basicRouting)
+            val sut = Sut(CollectorConfiguration(basicRouting), sink)
 
             val numMessages: Long = 300_000
             val runs = 4
@@ -87,8 +87,7 @@ object PerformanceSpecification : Spek({
 
         it("should disconnect on transmission errors") {
             val sink = CountingSink()
-            val sut = Sut(sink)
-            sut.configurationProvider.updateConfiguration(basicRouting)
+            val sut = Sut(CollectorConfiguration(basicRouting), sink)
 
             val numMessages: Long = 100_000
             val timeout = Duration.ofSeconds(30)

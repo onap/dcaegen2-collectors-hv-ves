@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
-import arrow.core.Option
 import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.model.ClientContext
@@ -33,7 +32,7 @@ interface Collector {
 }
 
 interface CollectorProvider : Closeable {
-    operator fun invoke(ctx: ClientContext): Option<Collector>
+    operator fun invoke(ctx: ClientContext): Collector
 }
 
 interface Server {
