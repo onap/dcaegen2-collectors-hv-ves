@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ed0ccaf0_3c55a357",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCommandLineParser.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-29T10:40:27Z",
+      "side": 1,
+      "message": "To be honest this is expected error :)",
+      "range": {
+        "startLine": 45,
+        "startChar": 35,
+        "endLine": 45,
+        "endChar": 46
+      },
+      "revId": "4281a12d8e892f46f5f2226ee0f8aee8b862b177",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd797ae6_9c169731",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCommandLineParser.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-03-29T10:40:27Z",
+      "side": 1,
+      "message": "\"is not specified\"",
+      "range": {
+        "startLine": 53,
+        "startChar": 48,
+        "endLine": 53,
+        "endChar": 71
+      },
+      "revId": "4281a12d8e892f46f5f2226ee0f8aee8b862b177",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
