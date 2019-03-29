@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.main
 
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationModule
+import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
@@ -41,10 +42,25 @@ private val hvVesServer = AtomicReference<ServerHandle>()
 private val configurationModule = ConfigurationModule()
 
 fun main(args: Array<String>) {
+    val configStateListener = object : ConfigurationStateListener {
+        override fun retrying() {
+            HealthState.INSTANCE.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+        }
+    }
+
     HealthCheckServer.start(configurationModule.healthCheckPort(args))
     configurationModule
-            .hvVesConfigurationUpdates(args)
+            .hvVesConfigurationUpdates(args, configStateListener, ServiceContext::mdc)
             .publishOn(Schedulers.single(Schedulers.elastic()))
+            .doOnNext {
+                logger.info(ServiceContext::mdc) { "Using updated configuration for new connections" }
+                HealthState.INSTANCE.changeState(HealthDescription.HEALTHY)
+            }
+            .doOnError {
+                logger.error(ServiceContext::mdc) { "Failed to acquire configuration ${it.message}" }
+                logger.debug(ServiceContext::mdc) { "Detailed stack trace: $it" }
+                HealthState.INSTANCE.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
+            }
             .doOnNext(::startServer)
             .doOnError(::logServerStartFailed)
             .neverComplete() // TODO: remove after merging configuration stream with cbs

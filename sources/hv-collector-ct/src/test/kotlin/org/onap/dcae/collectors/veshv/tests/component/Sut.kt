@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.tests.component
 
-import arrow.core.getOrElse
 import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
@@ -27,6 +26,7 @@ import io.netty.buffer.UnpooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
@@ -34,7 +34,6 @@ import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysFailingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysSuccessfulSink
 import org.onap.dcae.collectors.veshv.tests.fakes.DelayingSink
-import org.onap.dcae.collectors.veshv.tests.fakes.FakeConfigurationProvider
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeHealthState
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
@@ -49,27 +48,23 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class Sut(sink: Sink = StoringSink()) : Closeable {
-    val configurationProvider = FakeConfigurationProvider()
+class Sut(configuration: CollectorConfiguration, sink: Sink = StoringSink()) : Closeable {
     val healthStateProvider = FakeHealthState()
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
     val metrics = FakeMetrics()
     val sinkProvider = DummySinkProvider(sink)
 
     private val collectorFactory = CollectorFactory(
-            configurationProvider,
+            configuration,
             sinkProvider,
             metrics,
-            MAX_PAYLOAD_SIZE_BYTES,
-            healthStateProvider
+            MAX_PAYLOAD_SIZE_BYTES
     )
 
     private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
-        get() = collectorProvider(ClientContext(alloc)).getOrElse {
-            throw IllegalStateException("Collector not available.")
-        }
+        get() = collectorProvider(ClientContext(alloc))
 
 
     fun handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
@@ -82,6 +77,9 @@ class Sut(sink: Sink = StoringSink()) : Closeable {
     }
 
     override fun close() = collectorProvider.close()
+    fun updateConfiguration(config: Routing) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     companion object {
         const val MAX_PAYLOAD_SIZE_BYTES = 1024
@@ -107,16 +105,10 @@ class DummySinkProvider(private val sink: Sink) : SinkProvider {
 private val timeout = Duration.ofSeconds(10)
 
 fun vesHvWithAlwaysSuccessfulSink(routing: Routing = basicRouting): Sut =
-        Sut(AlwaysSuccessfulSink()).apply {
-            configurationProvider.updateConfiguration(routing)
-        }
+        Sut(CollectorConfiguration(routing), AlwaysSuccessfulSink())
 
 fun vesHvWithAlwaysFailingSink(routing: Routing = basicRouting): Sut =
-        Sut(AlwaysFailingSink()).apply {
-            configurationProvider.updateConfiguration(routing)
-        }
+        Sut(CollectorConfiguration(routing), AlwaysFailingSink())
 
 fun vesHvWithDelayingSink(delay: Duration, routing: Routing = basicRouting): Sut =
-        Sut(DelayingSink(delay)).apply {
-            configurationProvider.updateConfiguration(routing)
-        }
+        Sut(CollectorConfiguration(routing), DelayingSink(delay))
