@@ -16,5 +16,8 @@
       "trustStoreFile": "/etc/ves-hv/ssl/trust.p12",
       "trustStorePassword": "onaponap"
     }
+  },
+  "collector": {
+    "maxRequestSizeBytes": 1048576
   }
 }

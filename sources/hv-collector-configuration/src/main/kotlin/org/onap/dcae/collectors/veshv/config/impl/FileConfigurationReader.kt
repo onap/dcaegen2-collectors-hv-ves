@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.DurationOfSecondsAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityAdapter
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 import java.io.Reader
 import java.time.Duration
@@ -41,4 +42,9 @@ internal class FileConfigurationReader {
 
     fun loadConfig(input: Reader): PartialConfiguration =
             gson.fromJson(input, PartialConfiguration::class.java)
+                    .also { logger.info { "Successfully read file and parsed json to configuration: $it" } }
+
+    companion object {
+        private val logger = Logger(FileConfigurationReader::class)
+    }
 }
