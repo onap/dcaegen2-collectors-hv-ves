@@ -23,8 +23,7 @@ import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
-import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.impl.adapters.AdapterFactory
+import org.onap.dcae.collectors.veshv.factory.AdapterFactory
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
@@ -59,11 +58,10 @@ object VesServer {
 
     private fun initializeCollectorFactory(config: HvVesConfiguration): CollectorFactory =
             CollectorFactory(
-                    AdapterFactory.configurationProvider(config.cbs),
+                    config.collector,
                     AdapterFactory.sinkCreatorFactory(),
                     MicrometerMetrics.INSTANCE,
-                    config.server.maxPayloadSizeBytes,
-                    HealthState.INSTANCE
+                    config.server.maxPayloadSizeBytes
             )
 
     private fun logServerStarted(handle: ServerHandle) =

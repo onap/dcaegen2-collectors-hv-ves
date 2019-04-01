@@ -22,10 +22,16 @@ package org.onap.dcae.collectors.veshv.config.api
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
-import org.onap.dcae.collectors.veshv.config.impl.HvVesCommandLineParser
+import org.onap.dcae.collectors.veshv.config.impl.CbsConfigurationProvider
+import org.onap.dcae.collectors.veshv.config.impl.ConfigurationMerger
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator
 import org.onap.dcae.collectors.veshv.config.impl.FileConfigurationReader
+import org.onap.dcae.collectors.veshv.config.impl.HvVesCommandLineParser
+import org.onap.dcae.collectors.veshv.utils.arrow.rightOrThrow
 import org.onap.dcae.collectors.veshv.utils.arrow.throwOnLeft
+import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClientFactory
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.EnvProperties
 import reactor.core.publisher.Flux
 
 class ConfigurationModule {
@@ -34,16 +40,28 @@ class ConfigurationModule {
     private val configReader = FileConfigurationReader()
     private val configValidator = ConfigurationValidator()
 
-    private lateinit var initialConfig: HvVesConfiguration
-
     fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
 
-    fun hvVesConfigurationUpdates(args: Array<String>): Flux<HvVesConfiguration> =
+    fun hvVesConfigurationUpdates(args: Array<String>,
+                                  configStateListener: ConfigurationStateListener,
+                                  mdc: MappedDiagnosticContext): Flux<HvVesConfiguration> =
             Flux.just(cmd.getConfigurationFile(args))
                     .throwOnLeft { MissingArgumentException(it.message, it.cause) }
                     .map { it.reader().use(configReader::loadConfig) }
-                    .map { configValidator.validate(it) }
-                    .throwOnLeft { ValidationException(it.message) }
-                    .doOnNext { initialConfig = it }
+                    .cache()
+                    .flatMap { basePartialConfig ->
+                        val baseConfig = configValidator.validate(basePartialConfig)
+                                .rightOrThrow { ValidationException(it.message) }
+                        val cbsConfigProvider = CbsConfigurationProvider(
+                                CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
+                                baseConfig.cbs,
+                                configStateListener,
+                                mdc)
+                        val merger = ConfigurationMerger()
+                        cbsConfigProvider()
+                                .map { merger.merge(basePartialConfig, it) }
+                                .map { configValidator.validate(it) }
+                                .throwOnLeft { ValidationException(it.message) }
+                    }
 
 }
