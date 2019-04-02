@@ -21,7 +21,6 @@ package org.onap.dcae.collectors.veshv.impl.socket
 
 import arrow.core.Option
 import arrow.core.getOrElse
-import arrow.effects.IO
 import io.netty.handler.ssl.SslContext
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
@@ -55,17 +54,23 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
                               private val collectorProvider: CollectorProvider,
                               private val metrics: Metrics) : Server {
 
-    override fun start(): IO<ServerHandle> = IO {
-        TcpServer.create()
-                .addressSupplier { InetSocketAddress(serverConfiguration.listenPort) }
-                .configureSsl()
-                .handle(this::handleConnection)
-                .doOnUnbound {
-                    logger.info(ServiceContext::mdc) { "Netty TCP Server closed" }
-                    collectorProvider.close().unsafeRunSync()
-                }
-                .let { NettyServerHandle(it.bindNow()) }
-    }
+    override fun start(): Mono<ServerHandle> =
+            Mono.defer {
+                TcpServer.create()
+                        .addressSupplier { InetSocketAddress(serverConfiguration.listenPort) }
+                        .configureSsl()
+                        .handle(this::handleConnection)
+                        .bind()
+                        .map {
+                            NettyServerHandle(it, closeAction())
+                        }
+            }
+
+    private fun closeAction(): Mono<Void> =
+            collectorProvider.close().doOnSuccess {
+                logger.info(ServiceContext::mdc) { "Netty TCP Server closed" }
+            }
+
 
     private fun TcpServer.configureSsl() =
             sslContext
@@ -86,7 +91,7 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
     private fun messageHandlingStream(nettyInbound: NettyInbound, nettyOutbound: NettyOutbound): Mono<Void> =
             withNewClientContextFrom(nettyInbound, nettyOutbound)
             { clientContext ->
-                logger.debug(clientContext::fullMdc, Marker.Entry) { "Client connection request received" }
+                logger.debug(clientContext::fullMdc) { "Client connection request received" }
 
                 clientContext.clientAddress
                         .map { acceptIfNotLocalConnection(it, clientContext, nettyInbound) }
@@ -112,20 +117,20 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
 
     private fun acceptClientConnection(clientContext: ClientContext, nettyInbound: NettyInbound): Mono<Void> {
         metrics.notifyClientConnected()
-        logger.info(clientContext::fullMdc) { "Handling new client connection" }
+        logger.info(clientContext::fullMdc, Marker.Entry) { "Handling new client connection" }
         val collector = collectorProvider(clientContext)
         return collector.handleClient(clientContext, nettyInbound)
     }
 
     private fun Collector.handleClient(clientContext: ClientContext,
-                             nettyInbound: NettyInbound) =
-        withConnectionFrom(nettyInbound) { connection ->
-            connection
-                    .configureIdleTimeout(clientContext, serverConfiguration.idleTimeout)
-                    .logConnectionClosed(clientContext)
-        }.run {
-            handleConnection(nettyInbound.createDataStream())
-        }
+                                       nettyInbound: NettyInbound) =
+            withConnectionFrom(nettyInbound) { connection ->
+                connection
+                        .configureIdleTimeout(clientContext, serverConfiguration.idleTimeout)
+                        .logConnectionClosed(clientContext)
+            }.run {
+                handleConnection(nettyInbound.createDataStream())
+            }
 
     private fun Connection.configureIdleTimeout(ctx: ClientContext, timeout: Duration): Connection =
             onReadIdle(timeout.toMillis()) {

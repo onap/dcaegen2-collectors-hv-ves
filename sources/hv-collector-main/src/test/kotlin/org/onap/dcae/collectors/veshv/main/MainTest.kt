@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import arrow.effects.IO
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
@@ -34,6 +33,7 @@ import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import reactor.core.publisher.Mono
 
 /**
  * @author <a href="mailto:piotr.jaszczyk@nokia.com">Piotr Jaszczyk</a>
@@ -42,12 +42,9 @@ import org.onap.dcae.collectors.veshv.utils.ServerHandle
 internal object MainTest : Spek({
     describe("closeServer shutdown hook") {
         given("server handles and health state") {
-            val handle = mock<ServerHandle>()
+            val handle: ServerHandle = mock()
             var closed = false
-            val handleClose = IO {
-                closed = true
-            }
-            whenever(handle.close()).thenReturn(handleClose)
+            whenever(handle.close()).thenReturn(Mono.empty<Void>().doOnSuccess { closed = true })
             val healthState: HealthState = mock()
 
             on("shutdownGracefully") {

@@ -91,6 +91,7 @@
     </appender>
 
     <logger name="reactor.netty" level="WARN"/>
+    <logger name="reactor.netty.tcp.TcpServer" level="OFF"/>
     <logger name="io.netty" level="INFO"/>
     <logger name="io.netty.util" level="WARN"/>
     <logger name="org.apache.kafka" level="INFO"/>

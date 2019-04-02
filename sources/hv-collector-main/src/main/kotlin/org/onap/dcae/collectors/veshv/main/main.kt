@@ -30,7 +30,9 @@ import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.registerShutdownHook
+import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
+import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
 
 
@@ -39,6 +41,7 @@ private val logger = Logger("$VES_HV_PACKAGE.main")
 
 private val hvVesServer = AtomicReference<ServerHandle>()
 private val configurationModule = ConfigurationModule()
+private val maxCloseTime = Duration.ofSeconds(10)
 
 fun main(args: Array<String>) {
     val configStateListener = object : ConfigurationStateListener {
@@ -60,30 +63,36 @@ fun main(args: Array<String>) {
                 logger.withDebug(ServiceContext::mdc) { log("Detailed stack trace: ", it) }
                 HealthState.INSTANCE.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
             }
-            .doOnNext(::startServer)
+            .flatMap(::startServer)
             .doOnError(::logServerStartFailed)
             .then()
             .block()
 }
 
-private fun startServer(config: HvVesConfiguration) {
-    stopRunningServer()
+private fun startServer(config: HvVesConfiguration): Mono<ServerHandle> =
+        stopRunningServer()
+                .timeout(maxCloseTime)
+                .then(deferredVesServer(config))
+                .doOnNext {
+                    registerShutdownHook { shutdownGracefully(it) }
+                    hvVesServer.set(it)
+                }
+
+private fun deferredVesServer(config: HvVesConfiguration) = Mono.defer {
     Logger.setLogLevel(VES_HV_PACKAGE, config.logLevel)
     logger.debug(ServiceContext::mdc) { "Configuration: $config" }
-
-    VesServer.start(config).let {
-        registerShutdownHook { shutdownGracefully(it) }
-        hvVesServer.set(it)
-    }
+    VesServer.start(config)
 }
 
-private fun stopRunningServer() = hvVesServer.get()?.close()?.unsafeRunSync()
+private fun stopRunningServer() = Mono.defer {
+    hvVesServer.get()?.close() ?: Mono.empty()
+}
 
 internal fun shutdownGracefully(serverHandle: ServerHandle,
                                 healthState: HealthState = HealthState.INSTANCE) {
     logger.debug(ServiceContext::mdc) { "Graceful shutdown started" }
     healthState.changeState(HealthDescription.SHUTTING_DOWN)
-    serverHandle.close().unsafeRunSync()
+    serverHandle.close().block(maxCloseTime)
     logger.info(ServiceContext::mdc) { "Graceful shutdown completed" }
 }
 

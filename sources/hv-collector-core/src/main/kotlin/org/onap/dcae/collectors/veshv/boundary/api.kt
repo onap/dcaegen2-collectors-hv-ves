@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.boundary
 
-import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.utils.Closeable
@@ -36,5 +35,5 @@ interface CollectorProvider : Closeable {
 }
 
 interface Server {
-    fun start(): IO<ServerHandle>
+    fun start(): Mono<ServerHandle>
 }

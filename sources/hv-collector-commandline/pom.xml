@@ -41,10 +41,6 @@
       <artifactId>kotlin-reflect</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.arrow-kt</groupId>
-      <artifactId>arrow-effects</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
