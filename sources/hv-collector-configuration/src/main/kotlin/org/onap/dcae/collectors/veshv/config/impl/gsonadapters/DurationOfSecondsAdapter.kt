@@ -29,7 +29,7 @@ import java.time.Duration
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since March 2019
  */
-class DurationOfSecondsAdapter : JsonDeserializer<Duration> {
+internal class DurationOfSecondsAdapter : JsonDeserializer<Duration> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext) =
         Duration.ofSeconds(json.asLong)
 

@@ -29,6 +29,7 @@ import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
 import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
@@ -54,7 +55,9 @@ internal class ConfigurationValidator {
                             .doOnEmpty { logger.debug { "Cannot bind cbs configuration" } }
                             .bind()
 
-                    val securityConfiguration = SecurityConfiguration(partialConfig.security.bind().keys)
+                    val securityConfiguration = validatedSecurityConfiguration(partialConfig)
+                            .doOnEmpty { logger.debug { "Cannot bind security configuration" } }
+                            .bind()
 
                     val collectorConfiguration = validatedCollectorConfig(partialConfig)
                             .doOnEmpty { logger.debug { "Cannot bind collector configuration" } }
@@ -91,13 +94,20 @@ internal class ConfigurationValidator {
                 }
             }
 
-    fun validatedCbsConfiguration(partial: PartialConfiguration) =
+    internal fun validatedCbsConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
                 it.cbs.bind().let {
                     CbsConfiguration(
                             it.firstRequestDelaySec.bind(),
                             it.requestIntervalSec.bind()
                     )
+                }
+            }
+
+    private fun validatedSecurityConfiguration(partial: PartialConfiguration) =
+            partial.mapBinding {
+                it.security.bind().let {
+                    SecurityConfiguration(it.keys.map(SecurityKeysPaths::asImmutableSecurityKeys))
                 }
             }
 

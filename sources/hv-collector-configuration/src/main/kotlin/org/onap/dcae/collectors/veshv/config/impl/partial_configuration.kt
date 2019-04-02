@@ -22,9 +22,8 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.None
 import arrow.core.Option
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
-import java.net.InetSocketAddress
 import java.time.Duration
 
 /**
@@ -50,7 +49,7 @@ internal data class PartialCbsConfig(
         val requestIntervalSec: Option<Duration> = None
 )
 
-internal data class PartialSecurityConfig(val keys: Option<SecurityKeys> = None)
+internal data class PartialSecurityConfig(val keys: Option<SecurityKeysPaths> = None)
 
 internal data class PartialCollectorConfig(
         val routing: Option<Routing> = None

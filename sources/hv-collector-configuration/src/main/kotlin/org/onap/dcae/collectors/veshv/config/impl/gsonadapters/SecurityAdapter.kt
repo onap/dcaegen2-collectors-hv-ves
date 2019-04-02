@@ -25,10 +25,7 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.onap.dcae.collectors.veshv.config.impl.PartialSecurityConfig
-import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
-import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
-import org.onap.dcaegen2.services.sdk.security.ssl.Passwords
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import java.io.File
 import java.lang.reflect.Type
 
@@ -50,18 +47,14 @@ internal class SecurityAdapter : JsonDeserializer<PartialSecurityConfig> {
     private fun hasSslDisableSet(security: JsonObject) =
             security.has(SSL_DISABLE_KEY) && security[SSL_DISABLE_KEY].asBoolean
 
-    private fun JsonObject.securityKeys(f: (JsonObject) -> SecurityKeys) = f(getAsJsonObject(KEYS_OBJECT_KEY))
+    private fun JsonObject.securityKeys(f: (JsonObject) -> SecurityKeysPaths) = f(getAsJsonObject(KEYS_OBJECT_KEY))
 
-    private fun asImmutableSecurityKeys(keys: JsonObject) = ImmutableSecurityKeys.builder()
-            .keyStore(ImmutableSecurityKeysStore.of(
-                    File(keys[KEY_STORE_FILE_KEY].asString).toPath()))
-            .keyStorePassword(
-                    Passwords.fromString(keys[KEY_STORE_PASSWORD_KEY].asString))
-            .trustStore(ImmutableSecurityKeysStore.of(
-                    File(keys[TRUST_STORE_FILE_KEY].asString).toPath()))
-            .trustStorePassword(
-                    Passwords.fromString(keys[TRUST_STORE_PASSWORD_KEY].asString))
-            .build()
+    private fun asImmutableSecurityKeys(keys: JsonObject) = SecurityKeysPaths(
+            File(keys[KEY_STORE_FILE_KEY].asString).toPath(),
+            keys[KEY_STORE_PASSWORD_KEY].asString,
+            File(keys[TRUST_STORE_FILE_KEY].asString).toPath(),
+            keys[TRUST_STORE_PASSWORD_KEY].asString
+    )
 
     companion object {
         private val SSL_DISABLE_KEY = "sslDisable"

@@ -22,14 +22,19 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.getOrElse
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
+import org.assertj.core.api.ObjectAssert
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator.Companion.DEFAULT_LOG_LEVEL
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.time.Duration
@@ -85,7 +90,9 @@ internal object ConfigurationValidatorTest : Spek({
         describe("validating complete configuration") {
             val idleTimeoutSec = Duration.ofSeconds(10L)
             val firstReqDelaySec = Duration.ofSeconds(10L)
-            val securityKeys = Some(mock<SecurityKeys>())
+            val securityKeys = mock<SecurityKeysPaths>()
+            val immutableSecurityKeys = mock<SecurityKeys>()
+            whenever(securityKeys.asImmutableSecurityKeys()).thenReturn(immutableSecurityKeys)
 
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
@@ -98,7 +105,7 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(Duration.ofSeconds(3))
                     )),
                     Some(PartialSecurityConfig(
-                            securityKeys
+                            Some(securityKeys)
                     )),
                     Some(PartialCollectorConfig(
                             someFromEmptyRouting
@@ -116,8 +123,10 @@ internal object ConfigurationValidatorTest : Spek({
                             assertThat(it.server.idleTimeout)
                                     .isEqualTo(idleTimeoutSec)
 
-                            assertThat(it.security.keys)
-                                    .isEqualTo(securityKeys)
+                            verify(securityKeys).asImmutableSecurityKeys()
+                            assertThat(it.security.keys
+                                    .getOrElse { fail("Should be immutableSecurityKeys") })
+                                    .isEqualTo(immutableSecurityKeys)
 
                             assertThat(it.cbs.firstRequestDelay)
                                     .isEqualTo(firstReqDelaySec)
@@ -132,7 +141,7 @@ internal object ConfigurationValidatorTest : Spek({
         describe("validating configuration with security disabled") {
             val idleTimeoutSec = Duration.ofSeconds(10)
             val firstReqDelaySec = Duration.ofSeconds(10)
-            val securityKeys: Option<SecurityKeys> = None
+            val missingSecurityKeys: Option<SecurityKeysPaths> = None
 
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
@@ -145,7 +154,7 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(Duration.ofSeconds(3))
                     )),
                     Some(PartialSecurityConfig(
-                            securityKeys
+                            missingSecurityKeys
                     )),
                     Some(PartialCollectorConfig(
                             someFromEmptyRouting
@@ -164,7 +173,7 @@ internal object ConfigurationValidatorTest : Spek({
                                     .isEqualTo(idleTimeoutSec)
 
                             assertThat(it.security.keys)
-                                    .isEqualTo(securityKeys)
+                                    .isEqualTo(missingSecurityKeys)
 
                             assertThat(it.cbs.firstRequestDelay)
                                     .isEqualTo(firstReqDelaySec)
