@@ -29,6 +29,7 @@ import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.arrow.then
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -38,11 +39,10 @@ object VesServer {
 
     private val logger = Logger(VesServer::class)
 
-    fun start(config: HvVesConfiguration): ServerHandle =
+    fun start(config: HvVesConfiguration): Mono<ServerHandle> =
             createVesServer(config)
                     .start()
-                    .then(::logServerStarted)
-                    .unsafeRunSync()
+                    .doOnNext(::logServerStarted)
 
     private fun createVesServer(config: HvVesConfiguration): Server =
             initializeCollectorFactory(config)

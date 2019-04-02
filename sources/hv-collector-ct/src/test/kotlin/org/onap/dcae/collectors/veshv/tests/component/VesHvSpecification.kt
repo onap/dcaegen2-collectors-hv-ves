@@ -67,7 +67,7 @@ object VesHvSpecification : Spek({
 
             // just connecting should not create sink
             sut.handleConnection()
-            sut.close().unsafeRunSync()
+            sut.close().block()
 
             // then
             assertThat(sink.closed).isFalse()
@@ -80,7 +80,7 @@ object VesHvSpecification : Spek({
             sut.handleConnection(vesWireFrameMessage(PERF3GPP))
 
             // when
-            sut.close().unsafeRunSync()
+            sut.close().block()
 
             // then
             assertThat(sink.closed).isTrue()
