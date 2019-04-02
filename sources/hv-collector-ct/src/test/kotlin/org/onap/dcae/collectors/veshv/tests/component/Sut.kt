@@ -40,6 +40,7 @@ import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import org.onap.dcae.collectors.veshv.utils.Closeable
 import org.onap.dcaegen2.services.sdk.model.streams.SinkStream
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -93,7 +94,7 @@ class DummySinkProvider(private val sink: Sink) : SinkProvider {
             if (sinkInitialized.get()) {
                 sink.close()
             } else {
-                IO.unit
+                Mono.empty()
             }
 }
 

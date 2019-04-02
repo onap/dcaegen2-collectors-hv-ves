@@ -44,7 +44,7 @@ import reactor.core.publisher.Mono
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class VesHvCollector(
+internal class HvVesCollector(
         private val clientContext: ClientContext,
         private val wireChunkDecoder: WireChunkDecoder,
         private val protobufDecoder: VesDecoder,
@@ -116,6 +116,6 @@ internal class VesHvCollector(
             filterFailedWithLog(logger, clientContext::fullMdc, predicate)
 
     companion object {
-        private val logger = Logger(VesHvCollector::class)
+        private val logger = Logger(HvVesCollector::class)
     }
 }

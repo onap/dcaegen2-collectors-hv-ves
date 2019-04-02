@@ -28,6 +28,7 @@ import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.model.SuccessfullyConsumedMessage
 import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedDeque
@@ -50,12 +51,9 @@ class StoringSink : Sink {
         return messages.doOnNext(sent::addLast).map(::SuccessfullyConsumedMessage)
     }
 
-    /*
-    * TOD0: if the code would look like:
-    * ```IO { active.set(false) }```
-    * the tests wouldn't pass even though `.unsafeRunSync()` is called (see HvVesSpec)
-    */
-    override fun close() = active.set(false).run { IO.unit }
+    override fun close(): Mono<Void> = Mono.fromRunnable {
+        active.set(false)
+    }
 }
 
 /**

@@ -21,7 +21,6 @@ package org.onap.dcae.collectors.veshv.impl.socket
 
 import arrow.core.Option
 import arrow.core.getOrElse
-import arrow.effects.IO
 import io.netty.handler.ssl.SslContext
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
@@ -55,17 +54,23 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
                               private val collectorProvider: CollectorProvider,
                               private val metrics: Metrics) : Server {
 
-    override fun start(): IO<ServerHandle> = IO {
-        TcpServer.create()
-                .addressSupplier { InetSocketAddress(serverConfiguration.listenPort) }
-                .configureSsl()
-                .handle(this::handleConnection)
-                .doOnUnbound {
-                    logger.info(ServiceContext::mdc) { "Netty TCP Server closed" }
-                    collectorProvider.close().unsafeRunSync()
-                }
-                .let { NettyServerHandle(it.bindNow()) }
-    }
+    override fun start(): Mono<ServerHandle> =
+            Mono.defer {
+                TcpServer.create()
+                        .addressSupplier { InetSocketAddress(serverConfiguration.listenPort) }
+                        .configureSsl()
+                        .handle(this::handleConnection)
+                        .bind()
+                        .map {
+                            NettyServerHandle(it, closeAction())
+                        }
+            }
+
+    private fun closeAction(): Mono<Void> =
+            collectorProvider.close().doOnSuccess {
+                logger.info(ServiceContext::mdc) { "Netty TCP Server closed" }
+            }
+
 
     private fun TcpServer.configureSsl() =
             sslContext
@@ -118,14 +123,14 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
     }
 
     private fun Collector.handleClient(clientContext: ClientContext,
-                             nettyInbound: NettyInbound) =
-        withConnectionFrom(nettyInbound) { connection ->
-            connection
-                    .configureIdleTimeout(clientContext, serverConfiguration.idleTimeout)
-                    .logConnectionClosed(clientContext)
-        }.run {
-            handleConnection(nettyInbound.createDataStream())
-        }
+                                       nettyInbound: NettyInbound) =
+            withConnectionFrom(nettyInbound) { connection ->
+                connection
+                        .configureIdleTimeout(clientContext, serverConfiguration.idleTimeout)
+                        .logConnectionClosed(clientContext)
+            }.run {
+                handleConnection(nettyInbound.createDataStream())
+            }
 
     private fun Connection.configureIdleTimeout(ctx: ClientContext, timeout: Duration): Connection =
             onReadIdle(timeout.toMillis()) {
