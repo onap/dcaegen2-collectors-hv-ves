@@ -1,0 +1,20 @@
+{
+  "logLevel": "DEBUG",
+  "server": {
+    "listenPort": 8061,
+    "idleTimeoutSec": 60,
+    "maxPayloadSizeBytes": 1048576
+  },
+  "cbs": {
+    "firstRequestDelaySec": 10,
+    "requestIntervalSec": 5
+  },
+  "security": {
+    "keys": {
+      "keyStoreFile": "development/ssl/server.p12",
+      "keyStorePassword": "onaponap",
+      "trustStoreFile": "development/ssl/trust.p12",
+      "trustStorePassword": "onaponap"
+    }
+  }
+}
