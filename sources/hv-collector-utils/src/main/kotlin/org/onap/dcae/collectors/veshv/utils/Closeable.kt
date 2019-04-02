@@ -19,22 +19,18 @@
  */
 package org.onap.dcae.collectors.veshv.utils
 
-import arrow.effects.IO
-import arrow.effects.fix
-import arrow.effects.instances.io.monadError.monadError
-import arrow.typeclasses.binding
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since January 2019
  */
 interface Closeable {
-    fun close(): IO<Unit> = IO.unit
+    fun close(): Mono<Void> = Mono.empty()
 
     companion object {
         fun closeAll(closeables: Iterable<Closeable>) =
-                IO.monadError().binding {
-                    closeables.forEach { it.close().bind() }
-                }.fix()
+                Flux.fromIterable(closeables).flatMap(Closeable::close).then()
     }
 }

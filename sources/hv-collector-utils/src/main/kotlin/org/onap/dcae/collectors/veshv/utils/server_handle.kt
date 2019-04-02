@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.utils
 
 import arrow.effects.IO
+import reactor.core.publisher.Mono
 import reactor.netty.DisposableServer
 import java.time.Duration
 
@@ -35,16 +36,26 @@ abstract class ServerHandle(val host: String, val port: Int) : Closeable {
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class NettyServerHandle(private val ctx: DisposableServer) : ServerHandle(ctx.host(), ctx.port()) {
-    override fun close() = IO {
-        ctx.disposeNow(SHUTDOWN_TIMEOUT)
-    }
+class NettyServerHandle(private val ctx: DisposableServer,
+                        private val additionalCloseAction: Mono<Void> = Mono.empty())
+    : ServerHandle(ctx.host(), ctx.port()) {
+
+    override fun close(): Mono<Void> =
+            Mono.just(ctx)
+                    .filter { !it.isDisposed }
+                    .flatMap {
+                        additionalCloseAction.thenReturn(it)
+                    }
+                    .then(dispose())
+
+    private fun dispose(): Mono<Void> =
+            Mono.create { callback ->
+                ctx.dispose()
+                ctx.onDispose { callback.success() }
+            }
 
     override fun await() = IO<Unit> {
         ctx.channel().closeFuture().sync()
     }
 
-    companion object {
-        private val SHUTDOWN_TIMEOUT = Duration.ofSeconds(10)
-    }
 }

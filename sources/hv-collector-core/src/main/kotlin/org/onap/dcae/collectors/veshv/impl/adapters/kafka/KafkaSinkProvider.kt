@@ -28,6 +28,9 @@ import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcaegen2.services.sdk.model.streams.SinkStream
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kafka.sender.KafkaSender
 import java.util.Collections.synchronizedMap
 
@@ -46,10 +49,14 @@ internal class KafkaSinkProvider : SinkProvider {
         }
     }
 
-    override fun close() = IO {
-        messageSinks.values.forEach { it.close() }
-        logger.info(ServiceContext::mdc) { "Message sinks flushed and closed" }
-    }
+    override fun close(): Mono<Void> =
+            Flux.fromIterable(messageSinks.values)
+                    .publishOn(Schedulers.elastic())
+                    .doOnNext(KafkaSender<CommonEventHeader, VesMessage>::close)
+                    .then()
+                    .doOnSuccess {
+                        logger.info(ServiceContext::mdc) { "Message sinks flushed and closed" }
+                    }
 
     companion object {
         private val logger = Logger(KafkaSinkProvider::class)
