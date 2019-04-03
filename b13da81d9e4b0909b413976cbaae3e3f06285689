@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87f43b3e_f86fc42f",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/sink.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-03T05:44:34Z",
+      "side": 1,
+      "message": "This TODO is most likely resolved with these changes (and for sure outdated) :)",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 6
+      },
+      "revId": "b13da81d9e4b0909b413976cbaae3e3f06285689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b236c50_cb7f6019",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-03T05:44:34Z",
+      "side": 1,
+      "message": "I believe we can move `doOnNext` to flatten this function a little:\n```\nprivate fun startServer(config: HvVesConfiguration): Mono\u003cServerHandle\u003e \u003d\n        stopRunningServer()\n                .timeout(maxCloseTime)\n                .then(deferredVesServer(config))\n                .doOnNext {\n                    registerShutdownHook { shutdownGracefully(it) }\n                    hvVesServer.set(it)\n                }\n\nprivate fun deferredVesServer(config: HvVesConfiguration) \u003d Mono.defer {\n    Logger.setLogLevel(VES_HV_PACKAGE, config.logLevel)\n    logger.debug(ServiceContext::mdc) { \"Configuration: $config\" }\n    VesServer.start(config)\n}\n```",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 84,
+        "endChar": 18
+      },
+      "revId": "b13da81d9e4b0909b413976cbaae3e3f06285689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "965de543_fd853308",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-03T05:44:34Z",
+      "side": 1,
+      "message": "We might want to log something here",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 29
+      },
+      "revId": "b13da81d9e4b0909b413976cbaae3e3f06285689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc8fb1ab_0d191a8b",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/server_handle.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-03T05:44:34Z",
+      "side": 1,
+      "message": "Maybe `onCloseAction` or similar for more Reactor-like naming?",
+      "range": {
+        "startLine": 40,
+        "startChar": 36,
+        "endLine": 40,
+        "endChar": 57
+      },
+      "revId": "b13da81d9e4b0909b413976cbaae3e3f06285689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
