@@ -19,17 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.tests.component
 
-import arrow.effects.IO
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufAllocator
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.onap.dcae.collectors.veshv.boundary.Collector
 import org.onap.dcae.collectors.veshv.boundary.Sink
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkFactory
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
-import org.onap.dcae.collectors.veshv.factory.CollectorFactory
+import org.onap.dcae.collectors.veshv.factory.HvVesCollectorFactory
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysFailingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysSuccessfulSink
@@ -51,16 +50,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 class Sut(configuration: CollectorConfiguration, sink: Sink = StoringSink()) : Closeable {
     val alloc: ByteBufAllocator = UnpooledByteBufAllocator.DEFAULT
     val metrics = FakeMetrics()
-    val sinkProvider = DummySinkProvider(sink)
+    val sinkProvider = DummySinkFactory(sink)
 
-    private val collectorFactory = CollectorFactory(
+    private val collectorProvider = HvVesCollectorFactory(
             configuration,
             sinkProvider,
             metrics,
             MAX_PAYLOAD_SIZE_BYTES
     )
-
-    private val collectorProvider = collectorFactory.createVesHvCollectorProvider()
 
     val collector: Collector
         get() = collectorProvider(ClientContext(alloc))
@@ -82,7 +79,7 @@ class Sut(configuration: CollectorConfiguration, sink: Sink = StoringSink()) : C
     }
 }
 
-class DummySinkProvider(private val sink: Sink) : SinkProvider {
+class DummySinkFactory(private val sink: Sink) : SinkFactory {
     private val sinkInitialized = AtomicBoolean(false)
 
     override fun invoke(stream: SinkStream, ctx: ClientContext) = lazy {

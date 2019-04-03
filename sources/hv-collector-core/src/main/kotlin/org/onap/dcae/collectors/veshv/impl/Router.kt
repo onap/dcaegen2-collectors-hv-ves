@@ -23,7 +23,7 @@ import arrow.core.None
 import arrow.core.toOption
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Sink
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkFactory
 import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.model.ClientContext
@@ -40,11 +40,11 @@ class Router internal constructor(private val routing: Routing,
                                   private val ctx: ClientContext,
                                   private val metrics: Metrics) {
     constructor(routing: Routing,
-                sinkProvider: SinkProvider,
+                sinkFactory: SinkFactory,
                 ctx: ClientContext,
                 metrics: Metrics) :
             this(routing,
-                    constructMessageSinks(routing, sinkProvider, ctx),
+                    constructMessageSinks(routing, sinkFactory, ctx),
                     ctx,
                     metrics) {
         logger.debug(ctx::mdc) { "Routing for client: $routing" }
@@ -87,11 +87,11 @@ class Router internal constructor(private val routing: Routing,
         private val NONE_PARTITION = None
 
         internal fun constructMessageSinks(routing: Routing,
-                                           sinkProvider: SinkProvider,
+                                           sinkFactory: SinkFactory,
                                            ctx: ClientContext) =
                 routing.map(Route::sink)
                         .distinctBy { it.topicName() }
-                        .associateBy({ it.topicName() }, { sinkProvider(it, ctx) })
+                        .associateBy({ it.topicName() }, { sinkFactory(it, ctx) })
     }
 
     private fun Lazy<Sink>.send(message: RoutedMessage) = value.send(message)

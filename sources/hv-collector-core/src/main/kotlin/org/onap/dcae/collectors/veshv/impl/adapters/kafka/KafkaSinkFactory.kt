@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkFactory
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.impl.createKafkaSender
 import org.onap.dcae.collectors.veshv.model.ClientContext
@@ -37,7 +37,7 @@ import java.util.Collections.synchronizedMap
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-internal class KafkaSinkProvider : SinkProvider {
+internal class KafkaSinkFactory : SinkFactory {
     private val messageSinks = synchronizedMap(
             mutableMapOf<SinkStream, KafkaSender<CommonEventHeader, VesMessage>>()
     )
@@ -58,6 +58,6 @@ internal class KafkaSinkProvider : SinkProvider {
                     }
 
     companion object {
-        private val logger = Logger(KafkaSinkProvider::class)
+        private val logger = Logger(KafkaSinkFactory::class)
     }
 }

@@ -21,13 +21,12 @@ package org.onap.dcae.collectors.veshv.main.servers
 
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
-import org.onap.dcae.collectors.veshv.factory.CollectorFactory
+import org.onap.dcae.collectors.veshv.factory.HvVesCollectorFactory
 import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.factory.AdapterFactory
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
-import org.onap.dcae.collectors.veshv.utils.arrow.then
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Mono
 
@@ -45,8 +44,7 @@ object VesServer {
                     .doOnNext(::logServerStarted)
 
     private fun createVesServer(config: HvVesConfiguration): Server =
-            initializeCollectorFactory(config)
-                    .createVesHvCollectorProvider()
+            createCollectorProvider(config)
                     .let { collectorProvider ->
                         ServerFactory.createNettyTcpServer(
                                 config.server,
@@ -56,8 +54,8 @@ object VesServer {
                         )
                     }
 
-    private fun initializeCollectorFactory(config: HvVesConfiguration): CollectorFactory =
-            CollectorFactory(
+    private fun createCollectorProvider(config: HvVesConfiguration): HvVesCollectorFactory =
+            HvVesCollectorFactory(
                     config.collector,
                     AdapterFactory.sinkCreatorFactory(),
                     MicrometerMetrics.INSTANCE,

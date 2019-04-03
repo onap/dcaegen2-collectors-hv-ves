@@ -23,7 +23,7 @@ import arrow.core.Option
 import arrow.core.getOrElse
 import io.netty.handler.ssl.SslContext
 import org.onap.dcae.collectors.veshv.boundary.Collector
-import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
+import org.onap.dcae.collectors.veshv.boundary.CollectorFactory
 import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
@@ -51,7 +51,7 @@ import java.time.Duration
  */
 internal class NettyTcpServer(private val serverConfiguration: ServerConfiguration,
                               private val sslContext: Option<SslContext>,
-                              private val collectorProvider: CollectorProvider,
+                              private val collectorFactory: CollectorFactory,
                               private val metrics: Metrics) : Server {
 
     override fun start(): Mono<ServerHandle> =
@@ -67,7 +67,7 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
             }
 
     private fun closeAction(): Mono<Void> =
-            collectorProvider.close().doOnSuccess {
+            collectorFactory.close().doOnSuccess {
                 logger.info(ServiceContext::mdc) { "Netty TCP Server closed" }
             }
 
@@ -118,7 +118,7 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
     private fun acceptClientConnection(clientContext: ClientContext, nettyInbound: NettyInbound): Mono<Void> {
         metrics.notifyClientConnected()
         logger.info(clientContext::fullMdc, Marker.Entry) { "Handling new client connection" }
-        val collector = collectorProvider(clientContext)
+        val collector = collectorFactory(clientContext)
         return collector.handleClient(clientContext, nettyInbound)
     }
 

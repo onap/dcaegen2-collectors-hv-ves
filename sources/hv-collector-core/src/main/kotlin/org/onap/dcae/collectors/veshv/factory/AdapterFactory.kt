@@ -19,13 +19,13 @@
  */
 package org.onap.dcae.collectors.veshv.factory
 
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
-import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkFactory
+import org.onap.dcae.collectors.veshv.impl.adapters.kafka.KafkaSinkFactory
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
 object AdapterFactory {
-    fun sinkCreatorFactory(): SinkProvider = KafkaSinkProvider()
+    fun sinkCreatorFactory(): SinkFactory = KafkaSinkFactory()
 }

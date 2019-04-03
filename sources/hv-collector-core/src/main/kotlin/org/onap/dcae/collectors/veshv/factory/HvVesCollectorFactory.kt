@@ -20,46 +20,36 @@
 package org.onap.dcae.collectors.veshv.factory
 
 import org.onap.dcae.collectors.veshv.boundary.Collector
-import org.onap.dcae.collectors.veshv.boundary.CollectorProvider
+import org.onap.dcae.collectors.veshv.boundary.CollectorFactory
 import org.onap.dcae.collectors.veshv.boundary.Metrics
-import org.onap.dcae.collectors.veshv.boundary.SinkProvider
+import org.onap.dcae.collectors.veshv.boundary.SinkFactory
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
+import org.onap.dcae.collectors.veshv.impl.HvVesCollector
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
-import org.onap.dcae.collectors.veshv.impl.HvVesCollector
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class CollectorFactory(private val configuration: CollectorConfiguration,
-                       private val sinkProvider: SinkProvider,
-                       private val metrics: Metrics,
-                       private val maxPayloadSizeBytes: Int) {
+class HvVesCollectorFactory(private val configuration: CollectorConfiguration,
+                            private val sinkFactory: SinkFactory,
+                            private val metrics: Metrics,
+                            private val maxPayloadSizeBytes: Int): CollectorFactory {
 
-    fun createVesHvCollectorProvider(): CollectorProvider {
+    override fun invoke(ctx: ClientContext): Collector =
+            createVesHvCollector(ctx)
 
-        return object : CollectorProvider {
-            override fun invoke(ctx: ClientContext): Collector =
-                    createVesHvCollector(ctx)
-
-            override fun close() = sinkProvider.close()
-        }
-    }
+    override fun close() = sinkFactory.close()
 
     private fun createVesHvCollector(ctx: ClientContext): Collector =
             HvVesCollector(
                     clientContext = ctx,
                     wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maxPayloadSizeBytes), ctx),
                     protobufDecoder = VesDecoder(),
-                    router = Router(configuration.routing, sinkProvider, ctx, metrics),
+                    router = Router(configuration.routing, sinkFactory, ctx, metrics),
                     metrics = metrics)
-
-    companion object {
-        private val logger = Logger(CollectorFactory::class)
-    }
 }

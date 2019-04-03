@@ -35,7 +35,7 @@ interface Sink : Closeable {
     fun send(messages: Flux<RoutedMessage>): Flux<ConsumedMessage>
 }
 
-interface SinkProvider : Closeable {
+interface SinkFactory : Closeable {
     operator fun invoke(stream: SinkStream, ctx: ClientContext): Lazy<Sink>
 }
 

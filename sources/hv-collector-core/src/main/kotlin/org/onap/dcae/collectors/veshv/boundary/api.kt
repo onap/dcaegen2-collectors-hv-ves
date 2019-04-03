@@ -30,7 +30,7 @@ interface Collector {
     fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void>
 }
 
-interface CollectorProvider : Closeable {
+interface CollectorFactory : Closeable {
     operator fun invoke(ctx: ClientContext): Collector
 }
 
