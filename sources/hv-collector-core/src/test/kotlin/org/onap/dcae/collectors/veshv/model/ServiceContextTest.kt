@@ -26,6 +26,7 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
+import org.onap.dcae.collectors.veshv.utils.logging.client.context.ServiceContext
 import java.util.*
 
 /**

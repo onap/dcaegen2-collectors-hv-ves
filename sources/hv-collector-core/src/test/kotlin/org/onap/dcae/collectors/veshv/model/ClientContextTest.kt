@@ -29,11 +29,9 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
-import java.net.Inet4Address
+import org.onap.dcae.collectors.veshv.utils.logging.client.context.ClientContext
 import java.net.InetAddress
-import java.net.InetSocketAddress
 import java.security.cert.X509Certificate
-import java.util.*
 import javax.security.auth.x500.X500Principal
 
 /**

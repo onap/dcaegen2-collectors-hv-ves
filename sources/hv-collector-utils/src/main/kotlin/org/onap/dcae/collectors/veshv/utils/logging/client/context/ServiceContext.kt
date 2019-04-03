@@ -17,32 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.factory
+package org.onap.dcae.collectors.veshv.utils.logging.client.context
 
-import org.onap.dcae.collectors.veshv.boundary.CollectorFactory
-import org.onap.dcae.collectors.veshv.boundary.Metrics
-import org.onap.dcae.collectors.veshv.boundary.Server
-import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.impl.socket.NettyTcpServer
-import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
+import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
+import java.net.InetAddress
+import java.net.UnknownHostException
+import java.util.*
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
+ * @since December 2018
  */
-object ServerFactory {
+object ServiceContext {
+    val instanceId = UUID.randomUUID().toString()
+    val serverFqdn = getHost().hostName!!
 
-    private val sslFactory = SslContextFactory()
-
-    fun createNettyTcpServer(serverConfig: ServerConfiguration,
-                             securityConfig: SecurityConfiguration,
-                             collectorFactory: CollectorFactory,
-                             metrics: Metrics
-    ): Server = NettyTcpServer(
-            serverConfig,
-            sslFactory.createServerContext(securityConfig),
-            collectorFactory,
-            metrics
+    val mdc = mapOf(
+            OnapMdc.INSTANCE_ID to instanceId,
+            OnapMdc.SERVER_FQDN to serverFqdn
     )
+
+    private fun getHost() = try {
+        InetAddress.getLocalHost()
+    } catch (ex: UnknownHostException) {
+        InetAddress.getLoopbackAddress()
+    }
 }

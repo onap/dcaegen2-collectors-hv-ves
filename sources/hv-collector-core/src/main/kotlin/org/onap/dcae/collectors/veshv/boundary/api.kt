@@ -20,9 +20,8 @@
 package org.onap.dcae.collectors.veshv.boundary
 
 import io.netty.buffer.ByteBuf
-import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.utils.logging.client.context.ClientContext
 import org.onap.dcae.collectors.veshv.utils.Closeable
-import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -34,6 +33,3 @@ interface CollectorFactory : Closeable {
     operator fun invoke(ctx: ClientContext): Collector
 }
 
-interface Server {
-    fun start(): Mono<ServerHandle>
-}
