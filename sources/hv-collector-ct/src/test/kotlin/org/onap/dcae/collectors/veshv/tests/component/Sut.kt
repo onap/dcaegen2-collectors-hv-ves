@@ -29,7 +29,7 @@ import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.factory.HvVesCollectorFactory
-import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.domain.logging.ClientContext
 import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysFailingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysSuccessfulSink
 import org.onap.dcae.collectors.veshv.tests.fakes.DelayingSink

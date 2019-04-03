@@ -22,8 +22,8 @@ package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 import org.onap.dcae.collectors.veshv.boundary.SinkFactory
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.impl.createKafkaSender
-import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.model.ServiceContext
+import org.onap.dcae.collectors.veshv.domain.logging.ClientContext
+import org.onap.dcae.collectors.veshv.domain.logging.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcaegen2.services.sdk.model.streams.SinkStream
 import org.onap.ves.VesEventOuterClass.CommonEventHeader

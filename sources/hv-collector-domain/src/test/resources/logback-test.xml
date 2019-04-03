@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property name="LOG_FILE"
+    value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}ves-hv.log}"/>
+  <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC} %-5level [%-40.40logger{10}] - %msg%n"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        %d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX,UTC} %highlight(%-5level) [%-40.40logger{10}] - %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+
+    <appender name="ROLLING-FILE"
+      class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <encoder>
+        <pattern>${FILE_LOG_PATTERN}</pattern>
+      </encoder>
+      <file>${LOG_FILE}</file>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+        <maxFileSize>50MB</maxFileSize>
+        <maxHistory>30</maxHistory>
+        <totalSizeCap>10GB</totalSizeCap>
+      </rollingPolicy>
+    </appender>
+
+  <logger name="org.onap.dcae.collectors.veshv" level="TRACE"/>
+
+  <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="ROLLING-FILE"/>
+    </root>
+</configuration>

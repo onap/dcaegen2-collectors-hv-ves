@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.logging
+package org.onap.dcae.collectors.veshv.api
+
+import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
+import org.onap.dcae.collectors.veshv.impl.HvVesServer
+import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import reactor.core.publisher.Mono
+
+interface Server {
+    fun start(): Mono<ServerHandle>
+}
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since December 2018
+ * @since May 2018
  */
-object OnapMdc {
-    const val REQUEST_ID = "RequestID"
-    const val CLIENT_NAME = "PartnerName"
-    const val CLIENT_IP = "ClientIPAddress"
-    const val INVOCATION_ID = "InvocationID"
-    const val INVOCATION_TIMESTAMP = "InvokeTimestamp"
-    const val STATUS_CODE = "StatusCode"
-    const val INSTANCE_ID = "InstanceID"
-    const val SERVER_FQDN = "ServerFQDN"
+object ServersFactory {
+    fun createHvVesServer(config: HvVesConfiguration,
+                          sslContextFactory: SslContextFactory,
+                          metrics: Metrics): Server = HvVesServer(config, sslContextFactory, metrics)
 }
