@@ -50,7 +50,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    HealthCheckServer.start(configurationModule.healthCheckPort(args))
+    HealthCheckServer.start(configurationModule.healthCheckPort(args)).block()
     configurationModule
             .hvVesConfigurationUpdates(args, configStateListener, ServiceContext::mdc)
             .publishOn(Schedulers.single(Schedulers.elastic()))

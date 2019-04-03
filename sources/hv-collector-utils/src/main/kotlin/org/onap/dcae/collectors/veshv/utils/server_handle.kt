@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.utils
 
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Mono
 import reactor.netty.DisposableServer
@@ -29,7 +28,7 @@ import reactor.netty.DisposableServer
  * @since August 2018
  */
 abstract class ServerHandle(val host: String, val port: Int) : Closeable {
-    abstract fun await(): IO<Unit>
+    abstract fun await(): Mono<Void>
 }
 
 /**
@@ -58,8 +57,10 @@ class NettyServerHandle(private val ctx: DisposableServer,
                 }
             }
 
-    override fun await() = IO<Unit> {
-        ctx.channel().closeFuture().sync()
+    override fun await(): Mono<Void> = Mono.create { callback ->
+        ctx.channel().closeFuture().addListener {
+            callback.success()
+        }
     }
 
     companion object {

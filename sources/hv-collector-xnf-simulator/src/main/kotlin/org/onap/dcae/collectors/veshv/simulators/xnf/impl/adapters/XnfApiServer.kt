@@ -20,7 +20,6 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
 import arrow.core.Either
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
@@ -48,13 +47,14 @@ internal class XnfApiServer(
         private val xnfSimulator: XnfSimulator,
         private val ongoingSimulations: OngoingSimulations) {
 
-    fun start(socketAddress: InetSocketAddress): IO<ServerHandle> = IO {
-        HttpServer.create()
-                .host(socketAddress.hostName)
-                .port(socketAddress.port)
-                .route(::setRoutes)
-                .let { NettyServerHandle(it.bindNow()) }
-    }
+    fun start(socketAddress: InetSocketAddress): Mono<ServerHandle> =
+            HttpServer.create()
+                    .host(socketAddress.hostName)
+                    .port(socketAddress.port)
+                    .route(::setRoutes)
+                    .bind()
+                    .map { NettyServerHandle(it) }
+
 
     private fun setRoutes(route: HttpServerRoutes) {
         route

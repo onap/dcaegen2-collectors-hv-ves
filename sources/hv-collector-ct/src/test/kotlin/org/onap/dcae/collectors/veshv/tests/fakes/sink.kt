@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.tests.fakes
 
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.FailedToConsumeMessage

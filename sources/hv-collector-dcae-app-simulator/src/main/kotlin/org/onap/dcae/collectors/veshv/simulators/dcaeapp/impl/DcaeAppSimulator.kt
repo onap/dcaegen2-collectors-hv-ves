@@ -22,9 +22,7 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import reactor.core.publisher.Mono
 import java.io.InputStream
-import java.lang.IllegalArgumentException
 import java.util.concurrent.atomic.AtomicReference
 
 /**

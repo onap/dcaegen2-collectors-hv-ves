@@ -93,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>io.arrow-kt</groupId>
-            <artifactId>arrow-core</artifactId>
+            <artifactId>arrow-core-data</artifactId>
         </dependency>
         <dependency>
             <groupId>io.arrow-kt</groupId>

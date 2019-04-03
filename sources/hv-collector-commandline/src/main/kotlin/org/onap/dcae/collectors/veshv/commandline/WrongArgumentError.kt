@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.commandline
 
-import arrow.core.Option
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 
@@ -53,17 +52,15 @@ data class WrongArgumentError(
     private fun getOptions() = cmdLineOptionsList.map { it.option }.fold(Options(), Options::addOption)
 
     companion object {
-        fun generateRequiredParametersNote(cmdLineOptionsList: List<CommandLineOption>): String {
-            val requiredParams = Option.fromNullable(cmdLineOptionsList.filter { it.required }
-                    .takeUnless { it.isEmpty() })
-            return requiredParams.fold(
-                    { "" },
-                    {
-                        it.map { commandLineOption -> commandLineOption.option.opt }
+        fun generateRequiredParametersNote(cmdLineOptionsList: List<CommandLineOption>): String =
+                cmdLineOptionsList.filter { it.required }.let { requiredParams ->
+                    if (requiredParams.isEmpty())
+                        ""
+                    else
+                        requiredParams.map { commandLineOption -> commandLineOption.option.opt }
                                 .joinToString(prefix = "Required parameters: ", separator = ", ")
-                    }
-            )
-        }
+                }
+
     }
 
 }

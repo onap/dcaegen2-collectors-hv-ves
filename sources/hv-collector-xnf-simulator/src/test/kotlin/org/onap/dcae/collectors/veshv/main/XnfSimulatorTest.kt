@@ -126,7 +126,7 @@ internal class XnfSimulatorTest : Spek({
             whenever(vesClient.sendRawPayload(any(), eq(PayloadType.PROTOBUF))).thenReturn(Mono.just(Unit))
 
             // when
-            cut.startSimulation(json).map { it.unsafeRunSync() }
+            cut.startSimulation(json).map { it.block() }
 
             // then
             verify(vesClient).sendRawPayload(any(), eq(PayloadType.PROTOBUF))

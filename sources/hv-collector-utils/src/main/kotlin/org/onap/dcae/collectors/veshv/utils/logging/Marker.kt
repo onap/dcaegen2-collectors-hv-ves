@@ -28,7 +28,8 @@ sealed class Marker(internal val slf4jMarker: org.slf4j.Marker, val mdc: Map<Str
     object Entry : Marker(ENTRY)
     object Exit : Marker(EXIT)
 
-    class Invoke(id: UUID = UUID.randomUUID(), timestamp: Instant = Instant.now()) : Marker(INVOKE, mdc(id, timestamp)) {
+    class Invoke(id: UUID = UUID.randomUUID(), timestamp: Instant = Instant.now()) :
+            Marker(INVOKE, mdc(id, timestamp)) {
         companion object {
             private fun mdc(id: UUID, timestamp: Instant) = mapOf(
                     OnapMdc.INVOCATION_ID to id.toString(),

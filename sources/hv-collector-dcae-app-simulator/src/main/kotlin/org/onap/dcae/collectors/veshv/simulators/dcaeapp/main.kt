@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
-import arrow.effects.IO
 import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
@@ -27,35 +26,29 @@ import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.MessageStreamValid
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.DcaeAppApiServer
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
-import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
-import org.onap.dcae.collectors.veshv.utils.arrow.unsafeRunEitherSync
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcae.collectors.veshv.utils.process.ExitCode
+import org.onap.dcae.collectors.veshv.utils.process.ExitSuccess
 import org.onap.dcae.collectors.veshv.ves.message.generator.factory.MessageGeneratorFactory
 
 private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.simulators.dcaeapp"
 private val logger = Logger(PACKAGE_NAME)
 const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
 
-fun main(args: Array<String>) =
+fun main(args: Array<String>): Unit =
         ArgDcaeAppSimConfiguration().parse(args)
-                .mapLeft(handleWrongArgumentErrorCurried(PROGRAM_NAME))
-                .map(::startApp)
-                .unsafeRunEitherSync(
-                        { ex ->
-                            logger.withError { log("Failed to start a server", ex) }
-                            ExitFailure(1)
-                        },
-                        {
-                            logger.info { "Started DCAE-APP Simulator API server" }
-                        }
-                )
+                .fold(handleWrongArgumentErrorCurried(PROGRAM_NAME), ::startApp)
+                .let(ExitCode::doExit)
 
-private fun startApp(config: DcaeAppSimConfiguration): IO<Unit> {
-    logger.info { "Using configuration: $config" }
+
+private fun startApp(config: DcaeAppSimConfiguration): ExitSuccess {
+    logger.info { "Starting DCAE-APP Simulator API server with configuration: $config" }
     val consumerFactory = ConsumerFactory(config.kafkaBootstrapServers)
     val generatorFactory = MessageGeneratorFactory(config.maxPayloadSizeBytes)
     val messageStreamValidation = MessageStreamValidation(generatorFactory.createVesEventGenerator())
-    return DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))
+    DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))
             .start(config.apiAddress, config.kafkaTopics)
             .flatMap { it.await() }
+            .block()
+    return ExitSuccess
 }

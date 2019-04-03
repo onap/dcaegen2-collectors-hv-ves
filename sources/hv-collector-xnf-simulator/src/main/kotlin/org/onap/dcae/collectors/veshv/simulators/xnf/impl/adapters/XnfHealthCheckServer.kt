@@ -32,7 +32,7 @@ import reactor.core.publisher.Mono
 internal class XnfHealthCheckServer {
     fun startServer(config: SimulatorConfiguration) = createHealthCheckServer(config)
             .start()
-            .map { logger.info(serverStartedMessage(it)); it }
+            .doOnNext { logger.info(serverStartedMessage(it)) }
 
     private fun createHealthCheckServer(config: SimulatorConfiguration): HealthCheckApiServer {
         val monitoring = object : PrometheusMetricsProvider {
