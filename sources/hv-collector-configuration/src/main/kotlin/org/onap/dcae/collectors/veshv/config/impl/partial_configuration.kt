@@ -21,12 +21,12 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.None
 import arrow.core.Option
-import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import java.time.Duration
 
-/**
+/**`
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
@@ -34,7 +34,7 @@ internal data class PartialConfiguration(
         val server: Option<PartialServerConfig> = None,
         val cbs: Option<PartialCbsConfig> = None,
         val security: Option<PartialSecurityConfig> = None,
-        val collector: Option<PartialCollectorConfig> = None,
+        val streams_publishes: Option<List<KafkaSink>> = None,
         val logLevel: Option<LogLevel> = None
 )
 
@@ -50,7 +50,3 @@ internal data class PartialCbsConfig(
 )
 
 internal data class PartialSecurityConfig(val keys: Option<SecurityKeysPaths> = None)
-
-internal data class PartialCollectorConfig(
-        val routing: Option<Routing> = None
-)

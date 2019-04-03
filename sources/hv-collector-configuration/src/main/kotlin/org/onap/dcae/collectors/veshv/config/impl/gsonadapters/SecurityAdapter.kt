@@ -57,12 +57,12 @@ internal class SecurityAdapter : JsonDeserializer<PartialSecurityConfig> {
     )
 
     companion object {
-        private val SSL_DISABLE_KEY = "sslDisable"
-        private val KEYS_OBJECT_KEY = "keys"
-        private val KEY_STORE_FILE_KEY = "keyStoreFile"
-        private val KEY_STORE_PASSWORD_KEY = "keyStorePassword"
-        private val TRUST_STORE_FILE_KEY = "trustStoreFile"
-        private val TRUST_STORE_PASSWORD_KEY = "trustStorePassword"
+        private const val SSL_DISABLE_KEY = "sslDisable"
+        private const val KEYS_OBJECT_KEY = "keys"
+        private const val KEY_STORE_FILE_KEY = "keyStoreFile"
+        private const val KEY_STORE_PASSWORD_KEY = "keyStorePassword"
+        private const val TRUST_STORE_FILE_KEY = "trustStoreFile"
+        private const val TRUST_STORE_PASSWORD_KEY = "trustStorePassword"
     }
 }
 
