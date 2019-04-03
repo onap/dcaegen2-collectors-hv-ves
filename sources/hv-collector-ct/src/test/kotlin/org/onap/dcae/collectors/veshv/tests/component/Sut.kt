@@ -55,8 +55,7 @@ class Sut(configuration: CollectorConfiguration, sink: Sink = StoringSink()) : C
     private val collectorProvider = HvVesCollectorFactory(
             configuration,
             sinkProvider,
-            metrics,
-            MAX_PAYLOAD_SIZE_BYTES
+            metrics
     )
 
     val collector: Collector
@@ -64,18 +63,18 @@ class Sut(configuration: CollectorConfiguration, sink: Sink = StoringSink()) : C
 
 
     fun handleConnection(sink: StoringSink, vararg packets: ByteBuf): List<RoutedMessage> {
-        collector.handleConnection(Flux.fromArray(packets)).block(timeout)
+        collector.handleConnection(Flux.fromArray(packets)).block(TIMEOUT)
         return sink.sentMessages
     }
 
     fun handleConnection(vararg packets: ByteBuf) {
-        collector.handleConnection(Flux.fromArray(packets)).block(timeout)
+        collector.handleConnection(Flux.fromArray(packets)).block(TIMEOUT)
     }
 
     override fun close() = collectorProvider.close()
 
     companion object {
-        const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
+        private val TIMEOUT = Duration.ofSeconds(10)
     }
 }
 
@@ -95,13 +94,14 @@ class DummySinkFactory(private val sink: Sink) : SinkFactory {
             }
 }
 
-private val timeout = Duration.ofSeconds(10)
+
+const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
 
 fun vesHvWithAlwaysSuccessfulSink(routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), AlwaysSuccessfulSink())
+        Sut(CollectorConfiguration(routing, MAX_PAYLOAD_SIZE_BYTES), AlwaysSuccessfulSink())
 
 fun vesHvWithAlwaysFailingSink(routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), AlwaysFailingSink())
+        Sut(CollectorConfiguration(routing, MAX_PAYLOAD_SIZE_BYTES), AlwaysFailingSink())
 
 fun vesHvWithDelayingSink(delay: Duration, routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), DelayingSink(delay))
+        Sut(CollectorConfiguration(routing, MAX_PAYLOAD_SIZE_BYTES), DelayingSink(delay))
