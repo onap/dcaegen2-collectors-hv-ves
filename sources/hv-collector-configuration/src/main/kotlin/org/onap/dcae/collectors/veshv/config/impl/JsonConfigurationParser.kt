@@ -33,18 +33,18 @@ import java.time.Duration
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-internal class FileConfigurationReader {
+internal class JsonConfigurationParser {
     private val gson = GsonBuilder()
             .registerTypeAdapter(Option::class.java, OptionAdapter())
             .registerTypeAdapter(PartialSecurityConfig::class.java, SecurityAdapter())
             .registerTypeAdapter(Duration::class.java, DurationOfSecondsAdapter())
             .create()
 
-    fun loadConfig(input: Reader): PartialConfiguration =
+    fun parseConfiguration(input: Reader): PartialConfiguration =
             gson.fromJson(input, PartialConfiguration::class.java)
-                    .also { logger.info { "Successfully read file and parsed json to configuration: $it" } }
+                    .also { logger.info { "Successfully parsed json to configuration: $it" } }
 
     companion object {
-        private val logger = Logger(FileConfigurationReader::class)
+        private val logger = Logger(JsonConfigurationParser::class)
     }
 }

@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.None
 import arrow.core.Option
+import arrow.core.Some
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
@@ -36,7 +37,14 @@ internal data class PartialConfiguration(
         val security: Option<PartialSecurityConfig> = None,
         val collector: Option<PartialCollectorConfig> = None,
         val logLevel: Option<LogLevel> = None
-)
+) {
+
+    fun withRouting(routing: Routing): PartialConfiguration =
+            collector.fold(
+                    { PartialCollectorConfig(routing = Some(routing)) },
+                    { PartialCollectorConfig(routing = Some(routing)) }
+            ).let { PartialConfiguration(server, cbs, security, Some(it), logLevel) }
+}
 
 internal data class PartialServerConfig(
         val listenPort: Option<Int> = None,

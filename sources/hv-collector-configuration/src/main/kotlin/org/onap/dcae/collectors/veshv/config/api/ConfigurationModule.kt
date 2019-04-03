@@ -26,7 +26,7 @@ import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.config.impl.CbsConfigurationProvider
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationMerger
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator
-import org.onap.dcae.collectors.veshv.config.impl.FileConfigurationReader
+import org.onap.dcae.collectors.veshv.config.impl.JsonConfigurationParser
 import org.onap.dcae.collectors.veshv.config.impl.HvVesCommandLineParser
 import org.onap.dcae.collectors.veshv.config.impl.PartialConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.throwOnLeft
@@ -40,7 +40,7 @@ import reactor.core.publisher.Mono
 class ConfigurationModule {
 
     private val cmd = HvVesCommandLineParser()
-    private val configReader = FileConfigurationReader()
+    private val configParser = JsonConfigurationParser()
     private val configValidator = ConfigurationValidator()
     private val merger = ConfigurationMerger()
 
@@ -53,7 +53,7 @@ class ConfigurationModule {
                     .throwOnLeft(::MissingArgumentException)
                     .map {
                         logger.info { "Using base configuration file: ${it.absolutePath}" }
-                        it.reader().use(configReader::loadConfig)
+                        it.reader().use(configParser::parseConfiguration)
                     }
                     .cache()
                     .flatMapMany { basePartialConfig ->
@@ -70,11 +70,13 @@ class ConfigurationModule {
             CbsConfigurationProvider(
                     CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
                     cbsConfigurationFrom(basePartialConfig),
+                    configParser,
                     configStateListener,
                     mdc)
 
     private fun cbsConfigurationFrom(basePartialConfig: PartialConfiguration) =
-            configValidator.validatedCbsConfiguration(basePartialConfig)
+            configValidator
+                    .validatedCbsConfiguration(basePartialConfig)
                     .getOrElse { throw ValidationException("Invalid CBS section defined in configuration file") }
 
     companion object {

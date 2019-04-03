@@ -55,9 +55,9 @@ internal object ConfigurationMergerTest : Spek({
         }
 
         it("merges single parameter into full config") {
-            val actual = FileConfigurationReader().loadConfig(
+            val actual = JsonConfigurationParser().parseConfiguration(
                     InputStreamReader(
-                            FileConfigurationReaderTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
+                            JsonConfigurationParserTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
             val diff = PartialConfiguration(logLevel = Some(LogLevel.INFO))
 
             val result = ConfigurationMerger().merge(actual, diff)
@@ -66,9 +66,9 @@ internal object ConfigurationMergerTest : Spek({
         }
 
         it("merges single embedded parameter into full config") {
-            val actual = FileConfigurationReader().loadConfig(
+            val actual = JsonConfigurationParser().parseConfiguration(
                     InputStreamReader(
-                            FileConfigurationReaderTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
+                            JsonConfigurationParserTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
             val serverConfig = PartialServerConfig(listenPort = Some(45))
             val diff = PartialConfiguration(server = Some(serverConfig))
 
@@ -83,9 +83,9 @@ internal object ConfigurationMergerTest : Spek({
 
         it("merges full config into single parameter") {
             val actual = PartialConfiguration(logLevel = Some(LogLevel.INFO))
-            val diff = FileConfigurationReader().loadConfig(
+            val diff = JsonConfigurationParser().parseConfiguration(
                     InputStreamReader(
-                            FileConfigurationReaderTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
+                            JsonConfigurationParserTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
 
             val result = ConfigurationMerger().merge(actual, diff)
 
