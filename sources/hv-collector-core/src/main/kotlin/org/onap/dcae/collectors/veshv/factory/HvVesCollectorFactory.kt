@@ -29,7 +29,7 @@ import org.onap.dcae.collectors.veshv.impl.HvVesCollector
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
-import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.domain.logging.ClientContext
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
