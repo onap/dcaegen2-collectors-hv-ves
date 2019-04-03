@@ -17,19 +17,29 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.boundary
+package org.onap.dcae.collectors.veshv.utils.logging.client.context
 
-import io.netty.buffer.ByteBuf
-import org.onap.dcae.collectors.veshv.utils.logging.client.context.ClientContext
-import org.onap.dcae.collectors.veshv.utils.Closeable
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
+import java.net.InetAddress
+import java.net.UnknownHostException
+import java.util.*
 
-interface Collector {
-    fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void>
+/**
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+ * @since December 2018
+ */
+object ServiceContext {
+    val instanceId = UUID.randomUUID().toString()
+    val serverFqdn = getHost().hostName!!
+
+    val mdc = mapOf(
+            OnapMdc.INSTANCE_ID to instanceId,
+            OnapMdc.SERVER_FQDN to serverFqdn
+    )
+
+    private fun getHost() = try {
+        InetAddress.getLocalHost()
+    } catch (ex: UnknownHostException) {
+        InetAddress.getLoopbackAddress()
+    }
 }
-
-interface CollectorFactory : Closeable {
-    operator fun invoke(ctx: ClientContext): Collector
-}
-

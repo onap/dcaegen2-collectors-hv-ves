@@ -22,8 +22,8 @@ package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
-import org.onap.dcae.collectors.veshv.impl.adapters.ClientContextLogging.withDebug
-import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.utils.logging.client.context.ClientContextLogging.withDebug
+import org.onap.dcae.collectors.veshv.utils.logging.client.context.ClientContext
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.FailedToConsumeMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause

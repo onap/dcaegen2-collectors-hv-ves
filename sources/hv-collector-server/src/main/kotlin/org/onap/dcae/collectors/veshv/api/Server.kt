@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.api
 
-import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
-import java.net.InetAddress
-import java.net.UnknownHostException
-import java.util.*
+import org.onap.dcae.collectors.veshv.utils.ServerHandle
+import reactor.core.publisher.Mono
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since December 2018
- */
-object ServiceContext {
-    val instanceId = UUID.randomUUID().toString()
-    val serverFqdn = getHost().hostName!!
-
-    val mdc = mapOf(
-            OnapMdc.INSTANCE_ID to instanceId,
-            OnapMdc.SERVER_FQDN to serverFqdn
-    )
-
-    private fun getHost() = try {
-        InetAddress.getLocalHost()
-    } catch (ex: UnknownHostException) {
-        InetAddress.getLoopbackAddress()
-    }
+interface Server {
+    fun start(): Mono<ServerHandle>
 }
