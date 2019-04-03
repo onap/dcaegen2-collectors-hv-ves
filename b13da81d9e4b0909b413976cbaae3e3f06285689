@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "357d0ac4_e652ca96",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-03T06:39:07Z",
+      "side": 1,
+      "message": "We have plenty of logs regarding closing the server elsewhere.",
+      "parentUuid": "965de543_fd853308",
+      "range": {
+        "startLine": 92,
+        "startChar": 0,
+        "endLine": 92,
+        "endChar": 29
+      },
+      "revId": "b13da81d9e4b0909b413976cbaae3e3f06285689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bc8fb1ab_0d191a8b",
         "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/server_handle.kt",
         "patchSetId": 2
