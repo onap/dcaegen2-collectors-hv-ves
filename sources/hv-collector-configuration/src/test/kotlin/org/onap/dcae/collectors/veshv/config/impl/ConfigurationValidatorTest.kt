@@ -28,14 +28,15 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
-import org.assertj.core.api.ObjectAssert
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator.Companion.DEFAULT_LOG_LEVEL
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.time.Duration
 
@@ -68,9 +69,7 @@ internal object ConfigurationValidatorTest : Spek({
                     Some(PartialSecurityConfig(
                             Some(mock())
                     )),
-                    Some(PartialCollectorConfig(
-                            someFromEmptyRouting
-                    )),
+                    Some(emptyList()),
                     None
             )
 
@@ -92,8 +91,7 @@ internal object ConfigurationValidatorTest : Spek({
             val firstReqDelaySec = Duration.ofSeconds(10L)
             val securityKeys = mock<SecurityKeysPaths>()
             val immutableSecurityKeys = mock<SecurityKeys>()
-            whenever(securityKeys.asImmutableSecurityKeys()).thenReturn(immutableSecurityKeys)
-
+            val sink = mock<KafkaSink>()
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
@@ -107,11 +105,12 @@ internal object ConfigurationValidatorTest : Spek({
                     Some(PartialSecurityConfig(
                             Some(securityKeys)
                     )),
-                    Some(PartialCollectorConfig(
-                            someFromEmptyRouting
-                    )),
+                    Some(listOf(sink)),
                     Some(LogLevel.INFO)
             )
+
+            whenever(securityKeys.asImmutableSecurityKeys()).thenReturn(immutableSecurityKeys)
+            whenever(sink.name()).thenReturn("sample-sink-name")
 
             it("should create valid configuration") {
                 val result = cut.validate(config)
@@ -131,8 +130,8 @@ internal object ConfigurationValidatorTest : Spek({
                             assertThat(it.cbs.firstRequestDelay)
                                     .isEqualTo(firstReqDelaySec)
 
-                            assertThat(it.collector.routing)
-                                    .isEqualTo(emptyRouting)
+                            assertThat(it.collector.routing.first())
+                                    .isEqualTo(Route(sink.name(), sink))
                         }
                 )
             }
@@ -142,7 +141,7 @@ internal object ConfigurationValidatorTest : Spek({
             val idleTimeoutSec = Duration.ofSeconds(10)
             val firstReqDelaySec = Duration.ofSeconds(10)
             val missingSecurityKeys: Option<SecurityKeysPaths> = None
-
+            val sink = mock<KafkaSink>()
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
@@ -156,11 +155,11 @@ internal object ConfigurationValidatorTest : Spek({
                     Some(PartialSecurityConfig(
                             missingSecurityKeys
                     )),
-                    Some(PartialCollectorConfig(
-                            someFromEmptyRouting
-                    )),
+                    Some(listOf(sink)),
                     Some(LogLevel.INFO)
             )
+
+            whenever(sink.name()).thenReturn("sample-sink-name")
 
             it("should create valid configuration") {
                 val result = cut.validate(config)
@@ -178,8 +177,8 @@ internal object ConfigurationValidatorTest : Spek({
                             assertThat(it.cbs.firstRequestDelay)
                                     .isEqualTo(firstReqDelaySec)
 
-                            assertThat(it.collector.routing)
-                                    .isEqualTo(emptyRouting)
+                            assertThat(it.collector.routing.first())
+                                    .isEqualTo(Route(sink.name(), sink))
                         }
                 )
             }
@@ -187,6 +186,3 @@ internal object ConfigurationValidatorTest : Spek({
 
     }
 })
-
-val emptyRouting: Routing = emptyList()
-val someFromEmptyRouting = Some(emptyRouting)

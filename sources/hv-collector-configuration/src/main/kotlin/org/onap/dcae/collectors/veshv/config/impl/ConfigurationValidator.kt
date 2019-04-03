@@ -19,20 +19,19 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
-import arrow.core.Either
-import arrow.core.None
 import arrow.core.Option
 import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
-import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
+import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
@@ -59,9 +58,10 @@ internal class ConfigurationValidator {
                             .doOnEmpty { logger.debug { "Cannot bind security configuration" } }
                             .bind()
 
-                    val collectorConfiguration = validatedCollectorConfig(partialConfig)
-                            .doOnEmpty { logger.debug { "Cannot bind collector configuration" } }
+                    val collectorConfiguration = validatedStreams(partialConfig)
+                            .doOnEmpty { logger.debug { "Cannot bind streams configuration" } }
                             .bind()
+                            .let(::CollectorConfiguration)
 
                     HvVesConfiguration(
                             serverConfiguration,
@@ -111,12 +111,10 @@ internal class ConfigurationValidator {
                 }
             }
 
-    private fun validatedCollectorConfig(partial: PartialConfiguration) =
+    private fun validatedStreams(partial: PartialConfiguration) =
             partial.mapBinding {
-                partial.collector.bind().let {
-                    CollectorConfiguration(
-                            it.routing.bind()
-                    )
+                partial.streamsPublishes.bind().let { streams ->
+                    streams.map { Route(it.name(), it) }
                 }
             }
 
