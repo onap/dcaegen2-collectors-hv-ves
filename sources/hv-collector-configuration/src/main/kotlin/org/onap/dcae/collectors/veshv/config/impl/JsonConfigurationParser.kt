@@ -21,11 +21,14 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Option
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.DurationOfSecondsAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityAdapter
+import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.StreamsAdapter
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
 import java.io.Reader
 import java.time.Duration
 
@@ -33,18 +36,21 @@ import java.time.Duration
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-internal class FileConfigurationReader {
+internal class JsonConfigurationParser {
     private val gson = GsonBuilder()
             .registerTypeAdapter(Option::class.java, OptionAdapter())
             .registerTypeAdapter(PartialSecurityConfig::class.java, SecurityAdapter())
             .registerTypeAdapter(Duration::class.java, DurationOfSecondsAdapter())
+            .registerTypeAdapter(
+                    TypeToken.getParameterized(List::class.java, KafkaSink::class.java).type,
+                    StreamsAdapter(StreamFromGsonParsers.kafkaSinkParser()))
             .create()
 
-    fun loadConfig(input: Reader): PartialConfiguration =
+    fun parseConfiguration(input: Reader): PartialConfiguration =
             gson.fromJson(input, PartialConfiguration::class.java)
-                    .also { logger.info { "Successfully read file and parsed json to configuration: $it" } }
+                    .also { logger.info { "Successfully parsed json to configuration: $it" } }
 
     companion object {
-        private val logger = Logger(FileConfigurationReader::class)
+        private val logger = Logger(JsonConfigurationParser::class)
     }
 }
