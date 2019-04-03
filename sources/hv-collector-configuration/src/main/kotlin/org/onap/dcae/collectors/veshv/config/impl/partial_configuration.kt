@@ -40,8 +40,8 @@ internal data class PartialConfiguration(
 
 internal data class PartialServerConfig(
         val listenPort: Option<Int> = None,
-        val idleTimeoutSec: Option<Duration> = None,
-        val maxPayloadSizeBytes: Option<Int> = None
+        val idleTimeoutSec: Option<Duration> = None
+
 )
 
 internal data class PartialCbsConfig(

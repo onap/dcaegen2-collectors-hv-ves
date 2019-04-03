@@ -25,9 +25,9 @@ import org.onap.dcae.collectors.veshv.boundary.Metrics
 import org.onap.dcae.collectors.veshv.boundary.SinkProvider
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
+import org.onap.dcae.collectors.veshv.impl.HvVesCollector
 import org.onap.dcae.collectors.veshv.impl.Router
 import org.onap.dcae.collectors.veshv.impl.VesDecoder
-import org.onap.dcae.collectors.veshv.impl.HvVesCollector
 import org.onap.dcae.collectors.veshv.impl.wire.WireChunkDecoder
 import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -38,8 +38,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
  */
 class CollectorFactory(private val configuration: CollectorConfiguration,
                        private val sinkProvider: SinkProvider,
-                       private val metrics: Metrics,
-                       private val maxPayloadSizeBytes: Int) {
+                       private val metrics: Metrics) {
 
     fun createVesHvCollectorProvider(): CollectorProvider {
 
@@ -54,7 +53,9 @@ class CollectorFactory(private val configuration: CollectorConfiguration,
     private fun createVesHvCollector(ctx: ClientContext): Collector =
             HvVesCollector(
                     clientContext = ctx,
-                    wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maxPayloadSizeBytes), ctx),
+                    wireChunkDecoder = WireChunkDecoder(
+                            WireFrameDecoder(configuration.maxPayloadSizeBytes), ctx
+                    ),
                     protobufDecoder = VesDecoder(),
                     router = Router(configuration.routing, sinkProvider, ctx, metrics),
                     metrics = metrics)

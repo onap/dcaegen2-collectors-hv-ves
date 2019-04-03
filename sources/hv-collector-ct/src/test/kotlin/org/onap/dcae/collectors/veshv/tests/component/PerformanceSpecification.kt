@@ -33,7 +33,6 @@ import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.tests.component.Sut.Companion.MAX_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.tests.fakes.CountingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
@@ -57,7 +56,7 @@ object PerformanceSpecification : Spek({
     describe("VES High Volume Collector performance") {
         it("should handle multiple clients in reasonable time") {
             val sink = CountingSink()
-            val sut = Sut(CollectorConfiguration(basicRouting), sink)
+            val sut = Sut(CollectorConfiguration(basicRouting, MAX_PAYLOAD_SIZE_BYTES), sink)
 
             val numMessages: Long = 300_000
             val runs = 4
@@ -87,7 +86,7 @@ object PerformanceSpecification : Spek({
 
         it("should disconnect on transmission errors") {
             val sink = CountingSink()
-            val sut = Sut(CollectorConfiguration(basicRouting), sink)
+            val sut = Sut(CollectorConfiguration(basicRouting, MAX_PAYLOAD_SIZE_BYTES), sink)
 
             val numMessages: Long = 100_000
             val timeout = Duration.ofSeconds(30)

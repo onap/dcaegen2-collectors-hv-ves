@@ -32,7 +32,6 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.Route
-import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator.Companion.DEFAULT_LOG_LEVEL
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
@@ -59,8 +58,7 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
-                            Some(Duration.ofSeconds(2)),
-                            Some(3)
+                            Some(Duration.ofSeconds(2))
                     )),
                     Some(PartialCbsConfig(
                             Some(Duration.ofSeconds(5)),
@@ -95,8 +93,7 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
-                            Some(idleTimeoutSec),
-                            Some(2)
+                            Some(idleTimeoutSec)
                     )),
                     Some(PartialCbsConfig(
                             Some(firstReqDelaySec),
@@ -145,8 +142,7 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
-                            Some(idleTimeoutSec),
-                            Some(2)
+                            Some(idleTimeoutSec)
                     )),
                     Some(PartialCbsConfig(
                             Some(firstReqDelaySec),
@@ -180,6 +176,41 @@ internal object ConfigurationValidatorTest : Spek({
                             assertThat(it.collector.routing.first())
                                     .isEqualTo(Route(sink.name(), sink))
                         }
+                )
+            }
+        }
+
+        describe("validating configuration with multiple kafka sinks") {
+            val sink1 = mock<KafkaSink>()
+            val sink2 = mock<KafkaSink>()
+            val higherMaxPayloadSize = 124
+
+            val config = PartialConfiguration(
+                    Some(PartialServerConfig(
+                            Some(1),
+                            Some(Duration.ofSeconds(10))
+                    )),
+                    Some(PartialCbsConfig(
+                            Some(Duration.ofSeconds(10)),
+                            Some(Duration.ofSeconds(3))
+                    )),
+                    Some(PartialSecurityConfig(
+                            None
+                    )),
+                    Some(listOf(sink1, sink2)),
+                    Some(LogLevel.INFO)
+            )
+
+            whenever(sink1.name()).thenReturn("sample-sink-name")
+            whenever(sink1.maxPayloadSizeBytes()).thenReturn(123)
+            whenever(sink2.name()).thenReturn("sample-sink-name-2")
+            whenever(sink2.maxPayloadSizeBytes()).thenReturn(higherMaxPayloadSize)
+
+            it("should create collector config with proper maxPayload ") {
+                val result = cut.validate(config)
+                result.fold(
+                        { fail("Configuration should have been created successfully but was $it") },
+                        { assertThat(it.collector.maxPayloadSizeBytes).isEqualTo(higherMaxPayloadSize) }
                 )
             }
         }

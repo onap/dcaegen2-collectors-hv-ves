@@ -47,8 +47,7 @@ internal class ConfigurationMerger {
             applyUpdate(baseOption, updateOption) { base, update ->
                 PartialServerConfig(
                         base.listenPort.updateToGivenOrNone(update.listenPort),
-                        base.idleTimeoutSec.updateToGivenOrNone(update.idleTimeoutSec),
-                        base.maxPayloadSizeBytes.updateToGivenOrNone(update.maxPayloadSizeBytes)
+                        base.idleTimeoutSec.updateToGivenOrNone(update.idleTimeoutSec)
                 )
             }
 

@@ -2,8 +2,7 @@
   "logLevel": "DEBUG",
   "server": {
     "listenPort": 8061,
-    "idleTimeoutSec": 60,
-    "maxPayloadSizeBytes": 1048576
+    "idleTimeoutSec": 60
   },
   "cbs": {
     "firstRequestDelaySec": 10,
