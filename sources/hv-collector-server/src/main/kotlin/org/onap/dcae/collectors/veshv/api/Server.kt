@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.boundary
+package org.onap.dcae.collectors.veshv.api
 
-import io.netty.buffer.ByteBuf
-import org.onap.dcae.collectors.veshv.model.ClientContext
-import org.onap.dcae.collectors.veshv.utils.Closeable
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-interface Collector {
-    fun handleConnection(dataStream: Flux<ByteBuf>): Mono<Void>
+interface Server {
+    fun start(): Mono<ServerHandle>
 }
-
-interface CollectorProvider : Closeable {
-    operator fun invoke(ctx: ClientContext): Collector
-}
-
