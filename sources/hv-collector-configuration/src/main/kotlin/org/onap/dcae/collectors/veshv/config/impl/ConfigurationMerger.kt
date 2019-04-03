@@ -26,6 +26,7 @@ import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.toOption
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -37,10 +38,9 @@ internal class ConfigurationMerger {
                     mergeServerConfig(base.server, update.server),
                     mergeCbsConfig(base.cbs, update.cbs),
                     mergeSecurityConfig(base.security, update.security),
-                    mergeCollectorConfig(base.collector, update.collector),
+                    mergeStreamsConfig(base.streams_publishes, update.streams_publishes),
                     mergeLogLevel(base.logLevel, update.logLevel)
             )
-
 
     private fun mergeServerConfig(baseOption: Option<PartialServerConfig>,
                                   updateOption: Option<PartialServerConfig>) =
@@ -70,14 +70,9 @@ internal class ConfigurationMerger {
                 )
             }
 
-    private fun mergeCollectorConfig(baseOption: Option<PartialCollectorConfig>,
-                                     updateOption: Option<PartialCollectorConfig>) =
-            applyUpdate(baseOption, updateOption) { base, update ->
-                PartialCollectorConfig(
-                        base.routing.updateToGivenOrNone(update.routing)
-                )
-            }
-
+    private fun mergeStreamsConfig(baseOption: Option<List<KafkaSink>>,
+                                   updateOption: Option<List<KafkaSink>>) =
+            baseOption.updateToGivenOrNone(updateOption)
 
     private fun mergeLogLevel(base: Option<LogLevel>, update: Option<LogLevel>) =
             base.updateToGivenOrNone(update)
