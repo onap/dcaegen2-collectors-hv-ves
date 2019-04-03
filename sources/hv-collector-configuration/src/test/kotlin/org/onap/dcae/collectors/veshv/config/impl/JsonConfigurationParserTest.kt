@@ -27,22 +27,21 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.tests.utils.resourceAsStream
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.StringReader
-import java.net.InetSocketAddress
 import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-internal object FileConfigurationReaderTest : Spek({
-    describe("A configuration loader utility") {
-        val cut = FileConfigurationReader()
+internal object JsonConfigurationParserTest : Spek({
+    describe("A configuration parser utility") {
+        val cut = JsonConfigurationParser()
 
-        describe("partial configuration loading") {
+        describe("partial configuration parsing") {
             it("parses enumerations") {
                 val input = """{"logLevel":"ERROR"}"""
 
-                val config = cut.loadConfig(StringReader(input))
+                val config = cut.parse(StringReader(input))
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))
             }
 
@@ -54,7 +53,7 @@ internal object FileConfigurationReaderTest : Spek({
                 }
             }
             """.trimIndent()
-                val config = cut.loadConfig(StringReader(input))
+                val config = cut.parse(StringReader(input))
                 assertThat(config.server.nonEmpty()).isTrue()
                 assertThat(config.server.orNull()?.listenPort).isEqualTo(Some(12003))
             }
@@ -64,7 +63,7 @@ internal object FileConfigurationReaderTest : Spek({
                     "security": {
                     }
                 }""".trimIndent()
-                val config = cut.loadConfig(StringReader(input))
+                val config = cut.parse(StringReader(input))
 
                 assertThat(config.security.nonEmpty()).isTrue()
                 val security = config.security.orNull() as PartialSecurityConfig
@@ -75,16 +74,15 @@ internal object FileConfigurationReaderTest : Spek({
                 val input = """{
                     "logLevel": something
                 }""".trimMargin()
-                val config = cut.loadConfig(input.reader())
+                val config = cut.parse(input.reader())
 
                 assertThat(config.logLevel.isEmpty())
             }
         }
 
-        describe("complete file loading") {
-            it("loads actual file") {
-                val config = cut.loadConfig(
-                        javaClass.resourceAsStream("/sampleConfig.json"))
+        describe("complete json parsing") {
+            it("parses actual json") {
+                val config = cut.parse(javaClass.resourceAsStream("/sampleConfig.json"))
 
                 assertThat(config).isNotNull
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))

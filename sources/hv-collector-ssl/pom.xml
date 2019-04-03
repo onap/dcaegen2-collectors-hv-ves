@@ -70,12 +70,10 @@
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.onap.dcaegen2.services.sdk.security</groupId>
             <artifactId>ssl</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.arrow-kt</groupId>
             <artifactId>arrow-core-data</artifactId>
@@ -94,6 +92,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
 </project>
