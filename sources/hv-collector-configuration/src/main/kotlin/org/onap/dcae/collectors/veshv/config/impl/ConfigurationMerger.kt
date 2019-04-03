@@ -38,7 +38,7 @@ internal class ConfigurationMerger {
                     mergeServerConfig(base.server, update.server),
                     mergeCbsConfig(base.cbs, update.cbs),
                     mergeSecurityConfig(base.security, update.security),
-                    mergeStreamsConfig(base.streams_publishes, update.streams_publishes),
+                    mergeStreamsConfig(base.streamsPublishes, update.streamsPublishes),
                     mergeLogLevel(base.logLevel, update.logLevel)
             )
 
@@ -47,8 +47,7 @@ internal class ConfigurationMerger {
             applyUpdate(baseOption, updateOption) { base, update ->
                 PartialServerConfig(
                         base.listenPort.updateToGivenOrNone(update.listenPort),
-                        base.idleTimeoutSec.updateToGivenOrNone(update.idleTimeoutSec),
-                        base.maxPayloadSizeBytes.updateToGivenOrNone(update.maxPayloadSizeBytes)
+                        base.idleTimeoutSec.updateToGivenOrNone(update.idleTimeoutSec)
                 )
             }
 

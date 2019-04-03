@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.None
 import arrow.core.Option
+import com.google.gson.annotations.SerializedName
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
@@ -34,14 +35,15 @@ internal data class PartialConfiguration(
         val server: Option<PartialServerConfig> = None,
         val cbs: Option<PartialCbsConfig> = None,
         val security: Option<PartialSecurityConfig> = None,
-        val streams_publishes: Option<List<KafkaSink>> = None,
+        @SerializedName("streams_publishes")
+        val streamsPublishes: Option<List<KafkaSink>> = None,
         val logLevel: Option<LogLevel> = None
 )
 
 internal data class PartialServerConfig(
         val listenPort: Option<Int> = None,
-        val idleTimeoutSec: Option<Duration> = None,
-        val maxPayloadSizeBytes: Option<Int> = None
+        val idleTimeoutSec: Option<Duration> = None
+
 )
 
 internal data class PartialCbsConfig(

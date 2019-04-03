@@ -27,7 +27,7 @@ import org.onap.dcaegen2.services.sdk.model.streams.dmaap.ImmutableKafkaSink
 const val PERF3GPP_TOPIC = "HV_VES_PERF3GPP"
 const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
 const val KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
-private const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
+const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
 
 private val perf3gppKafkaSink = ImmutableKafkaSink.builder()
         .name("PERF3GPP")
@@ -35,13 +35,13 @@ private val perf3gppKafkaSink = ImmutableKafkaSink.builder()
         .topicName(PERF3GPP_TOPIC)
         .maxPayloadSizeBytes(MAX_PAYLOAD_SIZE_BYTES)
         .build()
+
 private val alternativeKafkaSink = ImmutableKafkaSink.builder()
         .name("ALTERNATE")
         .bootstrapServers(KAFKA_BOOTSTRAP_SERVERS)
         .topicName(ALTERNATE_PERF3GPP_TOPIC)
         .maxPayloadSizeBytes(MAX_PAYLOAD_SIZE_BYTES)
         .build()
-
 
 val basicRouting: Routing = listOf(
         Route(VesEventDomain.PERF3GPP.domainName, perf3gppKafkaSink)

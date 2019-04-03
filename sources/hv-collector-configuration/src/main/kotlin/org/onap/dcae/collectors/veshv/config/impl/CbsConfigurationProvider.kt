@@ -84,11 +84,11 @@ internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClien
                     cbsConfiguration.firstRequestDelay,
                     cbsConfiguration.requestInterval)
             .doOnNext { logger.info(mdc) { "Received new configuration:\n$it" } }
-            .map(JsonObject::reader)
-            .map(configurationParser::parse)
+            .map(::parseConfiguration)
             .onErrorLog(logger, mdc) { "Error while creating configuration" }
             .retryWhen(retry)
 
+    private fun parseConfiguration(json: JsonObject) = configurationParser.parse(json.reader())
 
     companion object {
         private const val MAX_RETRIES = 5L

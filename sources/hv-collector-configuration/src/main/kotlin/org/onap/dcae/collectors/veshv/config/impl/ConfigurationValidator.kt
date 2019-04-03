@@ -73,7 +73,6 @@ internal class ConfigurationValidator {
                 }.toEither { ValidationException("Some required configuration options are missing") }
             }
 
-
     private fun determineLogLevel(logLevel: Option<LogLevel>) =
             logLevel.getOrElse {
                 logger.warn {
@@ -83,38 +82,37 @@ internal class ConfigurationValidator {
                 DEFAULT_LOG_LEVEL
             }
 
+    private fun validatedStreams(partial: PartialConfiguration) =
+            partial.mapBinding {
+                partial.streamsPublishes.bind().let { streams ->
+                    streams.map { Route(it.name(), it) }
+                }
+            }
+
     private fun validatedServerConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                partial.server.bind().let {
+                partial.server.bind().let { config ->
                     ServerConfiguration(
-                            it.listenPort.bind(),
-                            it.idleTimeoutSec.bind(),
-                            it.maxPayloadSizeBytes.bind()
+                            config.listenPort.bind(),
+                            config.idleTimeoutSec.bind()
                     )
                 }
             }
 
     internal fun validatedCbsConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                it.cbs.bind().let {
+                it.cbs.bind().let { config ->
                     CbsConfiguration(
-                            it.firstRequestDelaySec.bind(),
-                            it.requestIntervalSec.bind()
+                            config.firstRequestDelaySec.bind(),
+                            config.requestIntervalSec.bind()
                     )
                 }
             }
 
     private fun validatedSecurityConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                it.security.bind().let {
-                    SecurityConfiguration(it.keys.map(SecurityKeysPaths::asImmutableSecurityKeys))
-                }
-            }
-
-    private fun validatedStreams(partial: PartialConfiguration) =
-            partial.mapBinding {
-                partial.streams_publishes.bind().let { streams ->
-                    streams.map { Route(it.name(), it) }
+                it.security.bind().let { config ->
+                    SecurityConfiguration(config.keys.map(SecurityKeysPaths::asImmutableSecurityKeys))
                 }
             }
 
