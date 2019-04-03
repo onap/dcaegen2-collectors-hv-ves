@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.domain.logging
 
 import arrow.core.Some
 import com.nhaarman.mockitokotlin2.mock
@@ -28,12 +28,8 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.utils.logging.OnapMdc
-import java.net.Inet4Address
 import java.net.InetAddress
-import java.net.InetSocketAddress
 import java.security.cert.X509Certificate
-import java.util.*
 import javax.security.auth.x500.X500Principal
 
 /**

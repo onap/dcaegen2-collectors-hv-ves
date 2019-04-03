@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.servers
+package org.onap.dcae.collectors.veshv.impl
 
-import org.onap.dcae.collectors.veshv.boundary.Server
+import org.onap.dcae.collectors.veshv.api.Server
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.factory.HvVesCollectorFactory
-import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.factory.AdapterFactory
-import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
-import org.onap.dcae.collectors.veshv.model.ServiceContext
+import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
+import org.onap.dcae.collectors.veshv.domain.logging.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Mono
@@ -34,36 +34,34 @@ import reactor.core.publisher.Mono
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-object VesServer {
+internal class HvVesServer(private val config: HvVesConfiguration,
+                           private val sslFactory: SslContextFactory,
+                           private val metrics: Metrics) : Server {
 
-    private val logger = Logger(VesServer::class)
+    private val logger = Logger(HvVesServer::class)
 
-    fun start(config: HvVesConfiguration): Mono<ServerHandle> =
-            createVesServer(config)
+    override fun start(): Mono<ServerHandle> =
+            createNettyTcpServer(config)
                     .start()
                     .doOnNext(::logServerStarted)
 
-    private fun createVesServer(config: HvVesConfiguration): Server =
-            createCollectorProvider(config)
-                    .let { collectorProvider ->
-                        ServerFactory.createNettyTcpServer(
-                                config.server,
-                                config.security,
-                                collectorProvider,
-                                MicrometerMetrics.INSTANCE
-                        )
-                    }
+    private fun createNettyTcpServer(config: HvVesConfiguration): Server =
+            NettyTcpServer(
+                    config.server,
+                    sslFactory.createServerContext(config.security),
+                    createCollectorProvider(config),
+                    metrics
+            )
 
     private fun createCollectorProvider(config: HvVesConfiguration): HvVesCollectorFactory =
             HvVesCollectorFactory(
                     config.collector,
                     AdapterFactory.sinkCreatorFactory(),
-                    MicrometerMetrics.INSTANCE
+                    metrics
             )
 
     private fun logServerStarted(handle: ServerHandle) =
             logger.info(ServiceContext::mdc) {
                 "HighVolume VES Collector is up and listening on ${handle.host}:${handle.port}"
             }
-
 }
