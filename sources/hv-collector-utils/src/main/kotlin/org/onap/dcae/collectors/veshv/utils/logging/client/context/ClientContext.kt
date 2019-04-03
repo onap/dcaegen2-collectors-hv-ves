@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.model
+package org.onap.dcae.collectors.veshv.utils.logging.client.context
 
 import arrow.core.None
 import arrow.core.Option

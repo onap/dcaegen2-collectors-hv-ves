@@ -17,14 +17,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.impl.socket
+package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Option
 import arrow.core.Try
 import arrow.syntax.collections.firstOption
 import io.netty.handler.ssl.SslHandler
 import io.netty.util.concurrent.Future
-import org.onap.dcae.collectors.veshv.model.ClientContext
+import org.onap.dcae.collectors.veshv.utils.logging.client.context.ClientContext
 import reactor.core.publisher.Mono
 import reactor.netty.ByteBufFlux
 import reactor.netty.Connection

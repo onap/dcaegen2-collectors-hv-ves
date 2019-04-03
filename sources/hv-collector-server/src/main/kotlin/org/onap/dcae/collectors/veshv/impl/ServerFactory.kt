@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.factory
+package org.onap.dcae.collectors.veshv.impl
 
+import org.onap.dcae.collectors.veshv.api.Server
 import org.onap.dcae.collectors.veshv.boundary.CollectorFactory
 import org.onap.dcae.collectors.veshv.boundary.Metrics
-import org.onap.dcae.collectors.veshv.boundary.Server
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
-import org.onap.dcae.collectors.veshv.impl.socket.NettyTcpServer
+import org.onap.dcae.collectors.veshv.impl.NettyTcpServer
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
 
