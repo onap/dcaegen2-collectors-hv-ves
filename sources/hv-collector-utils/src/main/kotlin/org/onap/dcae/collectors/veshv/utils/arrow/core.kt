@@ -23,16 +23,11 @@ import arrow.core.Either
 import arrow.core.ForOption
 import arrow.core.Option
 import arrow.core.Try
+import arrow.core.extensions.option.monad.monad
 import arrow.core.fix
 import arrow.core.identity
-import arrow.effects.ForIO
-import arrow.effects.IO
-import arrow.effects.fix
-import arrow.effects.instances.io.monad.monad
-import arrow.instances.option.monad.monad
 import arrow.syntax.collections.firstOption
 import arrow.typeclasses.MonadContinuation
-import arrow.typeclasses.binding
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.util.concurrent.atomic.AtomicReference
@@ -45,11 +40,6 @@ import java.util.concurrent.atomic.AtomicReference
 object OptionUtils {
     fun <A> binding(c: suspend MonadContinuation<ForOption, *>.() -> A)
             : Option<A> = Option.monad().binding(c).fix()
-}
-
-object IOUtils {
-    fun <A> binding(c: suspend MonadContinuation<ForIO, *>.() -> A)
-            : IO<A> = IO.monad().binding(c).fix()
 }
 
 fun <A> Either<A, A>.flatten() = fold(::identity, ::identity)

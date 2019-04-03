@@ -36,7 +36,7 @@ abstract class ArgBasedConfiguration<T>(private val parser: CommandLineParser) {
             Try { parseArgumentsArray(args) }
                     .toEither()
                     .mapLeft { WrongArgumentError(it, cmdLineOptionsList) }
-                    .map(this::getConfiguration)
+                    .map(::getConfiguration)
                     .flatMap {
                         it.toEither {
                             WrongArgumentError(

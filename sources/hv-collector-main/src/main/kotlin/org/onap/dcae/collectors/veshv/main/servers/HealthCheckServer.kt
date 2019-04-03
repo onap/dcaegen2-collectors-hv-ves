@@ -24,7 +24,6 @@ import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
-import org.onap.dcae.collectors.veshv.utils.arrow.then
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.net.InetSocketAddress
 
@@ -39,8 +38,7 @@ object HealthCheckServer {
     fun start(port: Int) =
             createHealthCheckServer(port)
                     .start()
-                    .then(::logServerStarted)
-                    .unsafeRunSync()
+                    .doOnSuccess(::logServerStarted)
 
     private fun createHealthCheckServer(listenPort: Int) =
             HealthCheckApiServer(

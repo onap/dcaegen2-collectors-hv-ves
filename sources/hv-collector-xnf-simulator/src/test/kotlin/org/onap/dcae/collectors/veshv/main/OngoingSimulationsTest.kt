@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import arrow.effects.IO
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -32,16 +31,17 @@ import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusNotFound
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusOngoing
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusSuccess
 import org.onap.dcae.collectors.veshv.tests.utils.waitUntilSucceeds
+import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import java.util.*
-import java.util.concurrent.Executors
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since September 2018
  */
 internal class OngoingSimulationsTest : Spek({
-    val executor = Executors.newSingleThreadExecutor()
-    val cut = OngoingSimulations(executor)
+    val scheduler = Schedulers.single()
+    val cut = OngoingSimulations(scheduler)
 
     describe("simulations repository") {
         given("not existing task task id") {
@@ -121,19 +121,22 @@ internal class OngoingSimulationsTest : Spek({
         }
 
         afterGroup {
-            executor.shutdown()
+            scheduler.dispose()
         }
     }
 
     afterEachTest { cut.clear() }
 })
 
-private fun neverendingTask() = IO.async<Unit> { }
+private fun neverendingTask() = Mono.never<Void>()
 
-private fun succesfulTask(): IO<Unit> = IO { println("great success!") }
+private fun succesfulTask(): Mono<Void> = Mono.empty<Void>()
+        .doOnSuccess {
+            println("great success")
+        }
 
-private fun failingTask(): Pair<RuntimeException, IO<Unit>> {
+private fun failingTask(): Pair<RuntimeException, Mono<Void>> {
     val cause = RuntimeException("facepalm")
-    val task = IO.raiseError<Unit>(cause)
+    val task = Mono.error<Void>(cause)
     return Pair(cause, task)
 }

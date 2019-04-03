@@ -19,7 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.healthcheck.factory
 
-import arrow.effects.IO
 import io.netty.handler.codec.http.HttpResponseStatus
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
@@ -45,9 +44,9 @@ class HealthCheckApiServer(private val healthState: HealthState,
 
     private val healthDescription: AtomicReference<HealthDescription> = AtomicReference(HealthDescription.STARTING)
 
-    fun start(): IO<ServerHandle> = IO {
+    fun start(): Mono<ServerHandle> = Mono.defer {
         healthState().subscribe(healthDescription::set)
-        val ctx = HttpServer.create()
+        HttpServer.create()
                 .tcpConfiguration {
                     it.addressSupplier { listenAddress }
                             .doOnUnbound { logClose() }
@@ -57,7 +56,9 @@ class HealthCheckApiServer(private val healthState: HealthState,
                     routes.get("/health/alive", ::livenessHandler)
                     routes.get("/monitoring/prometheus", ::monitoringHandler)
                 }
-        NettyServerHandle(ctx.bindNow())
+                .bind()
+                .map { NettyServerHandle(it) }
+
     }
 
     private fun readinessHandler(_req: HttpServerRequest, resp: HttpServerResponse) =

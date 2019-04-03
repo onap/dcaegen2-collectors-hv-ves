@@ -22,13 +22,10 @@ package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 import arrow.core.Either
 import arrow.core.Some
 import arrow.core.Try
+import arrow.core.extensions.either.monad.monad
 import arrow.core.fix
-import arrow.effects.IO
-import arrow.instances.either.monad.monad
-import arrow.typeclasses.binding
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.HvVesClient
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
-import org.onap.dcae.collectors.veshv.utils.arrow.asIo
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
@@ -60,7 +57,7 @@ class XnfSimulator(
 
     private val defaultHvVesClient by lazy { clientFactory.create() }
 
-    fun startSimulation(messageParameters: InputStream): Either<ParsingError, IO<Unit>> =
+    fun startSimulation(messageParameters: InputStream): Either<ParsingError, Mono<Void>> =
             Either.monad<ParsingError>().binding {
                 val json = parseJsonArray(messageParameters).bind()
                 val parameters = messageParametersParser.parse(json).bind()
@@ -73,7 +70,7 @@ class XnfSimulator(
                     .mapLeft { ParsingError("Failed to parse JSON", Some(it)) }
 
 
-    private fun simulationFrom(parameters: List<MessageParameters>): IO<Unit> =
+    private fun simulationFrom(parameters: List<MessageParameters>): Mono<Void> =
             parameters
                     .map(::asClientToMessages)
                     .groupMessagesByClients()
@@ -81,8 +78,7 @@ class XnfSimulator(
                     .toList()
                     .toFlux()
                     .map(::simulate)
-                    .then(Mono.just(Unit))
-                    .asIo()
+                    .then()
 
     private fun <M> List<Pair<HvVesClient, M>>.groupMessagesByClients() =
             groupBy({ it.first }, { it.second })

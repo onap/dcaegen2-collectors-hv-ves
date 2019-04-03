@@ -21,10 +21,10 @@ package org.onap.dcae.collectors.veshv.commandline
 
 import arrow.core.Option
 import arrow.core.getOrElse
-import arrow.effects.IO
 import arrow.syntax.function.curried
 import org.apache.commons.cli.CommandLine
-import org.onap.dcae.collectors.veshv.utils.arrow.ExitFailure
+import org.onap.dcae.collectors.veshv.utils.process.ExitCode
+import org.onap.dcae.collectors.veshv.utils.process.ExitFailure
 import org.onap.dcae.collectors.veshv.utils.arrow.fromNullablesChain
 
 /**
@@ -34,10 +34,11 @@ import org.onap.dcae.collectors.veshv.utils.arrow.fromNullablesChain
 
 val handleWrongArgumentErrorCurried = ::handleWrongArgumentError.curried()
 
-fun handleWrongArgumentError(programName: String, err: WrongArgumentError): IO<Unit> = IO {
+fun handleWrongArgumentError(programName: String, err: WrongArgumentError): ExitCode {
     err.printMessage()
     err.printHelp(programName)
-}.flatMap { ExitFailure(2).io() }
+    return ExitFailure(2)
+}
 
 fun CommandLine.longValue(cmdLineOpt: CommandLineOption, default: Long): Long =
         longValue(cmdLineOpt).getOrElse { default }

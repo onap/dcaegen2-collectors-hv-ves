@@ -17,16 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.utils.arrow
+package org.onap.dcae.collectors.veshv.utils.process
 
-import arrow.core.Either
-import arrow.core.Left
-import arrow.core.Right
-import arrow.effects.IO
-import org.reactivestreams.Publisher
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import reactor.core.publisher.toMono
 import kotlin.system.exitProcess
 
 /**
@@ -37,9 +29,8 @@ import kotlin.system.exitProcess
 sealed class ExitCode {
     abstract val code: Int
 
-    fun io() = IO {
-        exitProcess(code)
-    }
+    fun doExit(): Nothing = exitProcess(code)
+
 }
 
 object ExitSuccess : ExitCode() {
@@ -47,33 +38,3 @@ object ExitSuccess : ExitCode() {
 }
 
 data class ExitFailure(override val code: Int) : ExitCode()
-
-inline fun <A, B> Either<IO<A>, IO<B>>.unsafeRunEitherSync(onError: (Throwable) -> ExitCode, onSuccess: () -> Unit) =
-        flatten().attempt().unsafeRunSync().fold({ onError(it).io().unsafeRunSync() }, { onSuccess() })
-
-fun IO<Any>.unit() = map { Unit }
-
-fun <T> Mono<T>.asIo() = IO.async<T> { callback ->
-    subscribe({
-        callback(Right(it))
-    }, {
-        callback(Left(it))
-    })
-}
-
-fun <T> Publisher<T>.then(callback: () -> Unit): Mono<Unit> =
-        toMono().then(Mono.fromCallable(callback))
-
-fun <T> Flux<IO<T>>.evaluateIo(): Flux<T> =
-        flatMap { io ->
-            io.attempt().unsafeRunSync().fold(
-                    { Flux.error<T>(it) },
-                    { Flux.just<T>(it) }
-            )
-        }
-
-inline fun <T> IO<T>.then(crossinline block: (T) -> Unit): IO<T> =
-        map {
-            block(it)
-            it
-        }

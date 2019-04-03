@@ -17,28 +17,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters
 
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import org.onap.dcae.collectors.veshv.utils.rx.then
-import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.HvVesProducer
-import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options.PayloadType
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
-import java.nio.ByteBuffer
 
 /**
- * @author Jakub Dudycz <jakub.dudycz@nokia.com>
+ * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class HvVesClient(private val producer: HvVesProducer) {
+package org.onap.dcae.collectors.veshv.utils.rx
 
-    fun sendRawPayload(messages: Flux<ByteBuffer>, payloadType: PayloadType = PayloadType.UNDEFINED): Mono<Unit> =
-            producer.sendRaw(messages, payloadType)
-                    .then { logger.info { "Producer sent raw messages with payload type ${payloadType}" } }
+import org.reactivestreams.Publisher
+import reactor.core.publisher.Mono
+import reactor.core.publisher.toMono
 
-
-    companion object {
-        private val logger = Logger(HvVesClient::class)
-    }
-}
+fun <T> Publisher<T>.then(callback: () -> Unit): Mono<Unit> =
+        toMono().then(Mono.fromCallable(callback))
