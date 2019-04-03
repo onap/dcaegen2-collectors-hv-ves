@@ -19,8 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
-import arrow.core.Either
-import arrow.core.None
 import arrow.core.Option
 import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
@@ -31,8 +29,8 @@ import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
-import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
+import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
@@ -88,8 +86,7 @@ internal class ConfigurationValidator {
                 partial.server.bind().let {
                     ServerConfiguration(
                             it.listenPort.bind(),
-                            it.idleTimeoutSec.bind(),
-                            it.maxPayloadSizeBytes.bind()
+                            it.idleTimeoutSec.bind()
                     )
                 }
             }
@@ -115,7 +112,8 @@ internal class ConfigurationValidator {
             partial.mapBinding {
                 partial.collector.bind().let {
                     CollectorConfiguration(
-                            it.routing.bind()
+                            it.routing.bind(),
+                            it.maxPayloadSizeBytes.bind()
                     )
                 }
             }

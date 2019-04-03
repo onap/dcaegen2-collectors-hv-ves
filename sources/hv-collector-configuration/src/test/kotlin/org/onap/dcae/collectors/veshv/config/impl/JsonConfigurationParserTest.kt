@@ -97,13 +97,14 @@ internal object JsonConfigurationParserTest : Spek({
                 assertThat(cbs.firstRequestDelaySec).isEqualTo(Some(Duration.ofSeconds(7)))
                 assertThat(cbs.requestIntervalSec).isEqualTo(Some(Duration.ofSeconds(900)))
 
+                assertThat(config.collector.nonEmpty()).isTrue()
+                val collector = config.collector.orNull() as PartialCollectorConfig
+                assertThat(collector.maxPayloadSizeBytes).isEqualTo(Some(512000))
+
                 assertThat(config.server.nonEmpty()).isTrue()
                 val server = config.server.orNull() as PartialServerConfig
-                server.run {
-                    assertThat(idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
-                    assertThat(listenPort).isEqualTo(Some(6000))
-                    assertThat(maxPayloadSizeBytes).isEqualTo(Some(512000))
-                }
+                assertThat(server.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
+                assertThat(server.listenPort).isEqualTo(Some(6000))
             }
         }
     }

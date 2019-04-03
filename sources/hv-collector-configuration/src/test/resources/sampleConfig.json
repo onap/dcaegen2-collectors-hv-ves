@@ -3,8 +3,7 @@
   "server": {
     "healthCheckApiPort": 5000,
     "listenPort": 6000,
-    "idleTimeoutSec": 1200,
-    "maxPayloadSizeBytes": 512000
+    "idleTimeoutSec": 1200
   },
   "cbs": {
     "firstRequestDelaySec": 7,
@@ -18,5 +17,8 @@
       "trustStoreFile": "trust.ks.pkcs12",
       "trustStorePassword": "changeMeToo"
     }
+  },
+  "collector": {
+    "maxPayloadSizeBytes": 512000
   }
 }

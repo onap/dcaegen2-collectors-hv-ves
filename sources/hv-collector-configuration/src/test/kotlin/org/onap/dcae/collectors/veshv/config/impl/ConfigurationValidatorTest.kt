@@ -58,8 +58,7 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
-                            Some(Duration.ofSeconds(2)),
-                            Some(3)
+                            Some(Duration.ofSeconds(2))
                     )),
                     Some(PartialCbsConfig(
                             Some(Duration.ofSeconds(5)),
@@ -69,7 +68,8 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(mock())
                     )),
                     Some(PartialCollectorConfig(
-                            someFromEmptyRouting
+                            someFromEmptyRouting,
+                            Some(3)
                     )),
                     None
             )
@@ -97,8 +97,7 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
-                            Some(idleTimeoutSec),
-                            Some(2)
+                            Some(idleTimeoutSec)
                     )),
                     Some(PartialCbsConfig(
                             Some(firstReqDelaySec),
@@ -108,7 +107,8 @@ internal object ConfigurationValidatorTest : Spek({
                             Some(securityKeys)
                     )),
                     Some(PartialCollectorConfig(
-                            someFromEmptyRouting
+                            someFromEmptyRouting,
+                            Some(2)
                     )),
                     Some(LogLevel.INFO)
             )
@@ -146,8 +146,7 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     Some(PartialServerConfig(
                             Some(1),
-                            Some(idleTimeoutSec),
-                            Some(2)
+                            Some(idleTimeoutSec)
                     )),
                     Some(PartialCbsConfig(
                             Some(firstReqDelaySec),
@@ -157,7 +156,8 @@ internal object ConfigurationValidatorTest : Spek({
                             missingSecurityKeys
                     )),
                     Some(PartialCollectorConfig(
-                            someFromEmptyRouting
+                            someFromEmptyRouting,
+                            Some(2)
                     )),
                     Some(LogLevel.INFO)
             )

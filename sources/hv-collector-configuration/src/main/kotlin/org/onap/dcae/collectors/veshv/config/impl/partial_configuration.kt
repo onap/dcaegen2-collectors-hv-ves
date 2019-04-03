@@ -41,15 +41,14 @@ internal data class PartialConfiguration(
 
     fun withRouting(routing: Routing): PartialConfiguration =
             collector.fold(
-                    { PartialCollectorConfig(routing = Some(routing)) },
-                    { PartialCollectorConfig(routing = Some(routing)) }
+                    { PartialCollectorConfig(Some(routing)) },
+                    { PartialCollectorConfig(Some(routing), it.maxPayloadSizeBytes) }
             ).let { PartialConfiguration(server, cbs, security, Some(it), logLevel) }
 }
 
 internal data class PartialServerConfig(
         val listenPort: Option<Int> = None,
-        val idleTimeoutSec: Option<Duration> = None,
-        val maxPayloadSizeBytes: Option<Int> = None
+        val idleTimeoutSec: Option<Duration> = None
 )
 
 internal data class PartialCbsConfig(
@@ -57,8 +56,10 @@ internal data class PartialCbsConfig(
         val requestIntervalSec: Option<Duration> = None
 )
 
+internal data class PartialCollectorConfig(
+        val routing: Option<Routing> = None,
+        val maxPayloadSizeBytes: Option<Int> = None
+)
+
 internal data class PartialSecurityConfig(val keys: Option<SecurityKeysPaths> = None)
 
-internal data class PartialCollectorConfig(
-        val routing: Option<Routing> = None
-)

@@ -2,8 +2,7 @@
   "logLevel": "DEBUG",
   "server": {
     "listenPort": 6061,
-    "idleTimeoutSec": 60,
-    "maxPayloadSizeBytes": 1048576
+    "idleTimeoutSec": 60
   },
   "cbs": {
     "firstRequestDelaySec": 10,
@@ -16,5 +15,8 @@
       "trustStoreFile": "/etc/ves-hv/ssl/trust.p12",
       "trustStorePassword": "onaponap"
     }
+  },
+  "collector":{
+    "maxPayloadSizeBytes": 1048576
   }
 }

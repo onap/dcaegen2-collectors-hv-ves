@@ -20,8 +20,8 @@
 package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Some
-import org.jetbrains.spek.api.Spek
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
@@ -77,8 +77,6 @@ internal object ConfigurationMergerTest : Spek({
             assertThat(result.server.orNull()?.listenPort).isEqualTo(serverConfig.listenPort)
             assertThat(result.server.orNull()?.idleTimeoutSec?.isEmpty()).isFalse()
             assertThat(result.server.orNull()?.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
-            assertThat(result.server.orNull()?.maxPayloadSizeBytes?.isEmpty()).isFalse()
-            assertThat(result.server.orNull()?.maxPayloadSizeBytes).isEqualTo(Some(512000))
         }
 
         it("merges full config into single parameter") {
@@ -91,8 +89,9 @@ internal object ConfigurationMergerTest : Spek({
 
             assertThat(result.logLevel).isEqualTo(Some(LogLevel.ERROR))
             assertThat(result.server.isEmpty()).isFalse()
-            assertThat(result.server.orNull()?.maxPayloadSizeBytes).isEqualTo(Some(512000))
             assertThat(result.server.orNull()?.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
+
+            assertThat(result.collector.orNull()?.maxPayloadSizeBytes).isEqualTo(Some(512000))
 
             assertThat(result.security.isEmpty()).isFalse()
             assertThat(result.cbs.isEmpty()).isFalse()

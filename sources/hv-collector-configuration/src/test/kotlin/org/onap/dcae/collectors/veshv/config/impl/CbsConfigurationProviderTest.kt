@@ -84,7 +84,6 @@ internal object CbsConfigurationProviderTest : Spek({
                                 serverConfig.apply {
                                     assertThat(listenPort).isEqualTo(Some(6061))
                                     assertThat(idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(60)))
-                                    assertThat(maxPayloadSizeBytes).isEqualTo(Some(1048576))
                                 }
 
 
@@ -151,8 +150,7 @@ private val validConfiguration = JsonParser().parse("""
 {
     "server": {
         "listenPort": 6061,
-        "idleTimeoutSec": 60,
-        "maxPayloadSizeBytes": 1048576
+        "idleTimeoutSec": 60
     },
     "streams_publishes": {
         "$PERF3GPP_REGIONAL": {
@@ -184,8 +182,7 @@ private val invalidConfiguration = JsonParser().parse("""
 {
     "server": {
         "listenPort": 6061,
-        "idleTimeoutSec": 60,
-        "maxPayloadSizeBytes": 1048576
+        "idleTimeoutSec": 60
     },
     "streams_publishes": {
         "$PERF3GPP_REGIONAL": {
