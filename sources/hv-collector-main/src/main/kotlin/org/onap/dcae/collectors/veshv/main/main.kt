@@ -19,14 +19,16 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
+import org.onap.dcae.collectors.veshv.api.ServersFactory
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationModule
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
+import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
-import org.onap.dcae.collectors.veshv.main.servers.VesServer
-import org.onap.dcae.collectors.veshv.model.ServiceContext
+import org.onap.dcae.collectors.veshv.ssl.boundary.SslContextFactory
+import org.onap.dcae.collectors.veshv.domain.logging.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.registerShutdownHook
@@ -41,6 +43,7 @@ private val logger = Logger("$VES_HV_PACKAGE.main")
 
 private val hvVesServer = AtomicReference<ServerHandle>()
 private val configurationModule = ConfigurationModule()
+private val sslContextFactory = SslContextFactory()
 private val maxCloseTime = Duration.ofSeconds(10)
 
 fun main(args: Array<String>) {
@@ -81,7 +84,11 @@ private fun startServer(config: HvVesConfiguration): Mono<ServerHandle> =
 private fun deferredVesServer(config: HvVesConfiguration) = Mono.defer {
     Logger.setLogLevel(VES_HV_PACKAGE, config.logLevel)
     logger.debug(ServiceContext::mdc) { "Configuration: $config" }
-    VesServer.start(config)
+    ServersFactory.createHvVesServer(
+            config,
+            sslContextFactory,
+            MicrometerMetrics.INSTANCE
+    ).start()
 }
 
 private fun stopRunningServer() = Mono.defer {

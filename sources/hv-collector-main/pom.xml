@@ -83,12 +83,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hv-collector-core</artifactId>
+            <artifactId>hv-collector-health-check</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hv-collector-health-check</artifactId>
+            <artifactId>hv-collector-server</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
