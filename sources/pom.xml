@@ -143,6 +143,7 @@
         <module>hv-collector-domain</module>
         <module>hv-collector-health-check</module>
         <module>hv-collector-main</module>
+        <module>hv-collector-server</module>
         <module>hv-collector-ssl</module>
         <module>hv-collector-test-utils</module>
         <module>hv-collector-utils</module>

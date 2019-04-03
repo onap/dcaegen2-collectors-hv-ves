@@ -19,15 +19,14 @@
  */
 package org.onap.dcae.collectors.veshv.main.servers
 
-import org.onap.dcae.collectors.veshv.boundary.Server
+import org.onap.dcae.collectors.veshv.api.Server
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.factory.CollectorFactory
-import org.onap.dcae.collectors.veshv.factory.ServerFactory
 import org.onap.dcae.collectors.veshv.factory.AdapterFactory
+import org.onap.dcae.collectors.veshv.impl.ServerFactory
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
-import org.onap.dcae.collectors.veshv.utils.arrow.then
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Mono
 
