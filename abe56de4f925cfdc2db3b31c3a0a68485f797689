@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "13b61e60_226aa7dd",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T07:23:32Z",
+      "side": 1,
+      "message": "Can\u0027t we create GsonAdapter for this, and register it inside ConfigParser? \n\nWe would avoid this weird `withRouting` method.\n\nThis would also allow Routing inside of file-configuration, however we can approach it in few ways (@piotr.jaszczyk):\n1. let it be\n2. add one more \"validation\" in ConfModule class which checks if routing was set in file and for example log.warn() or maybe overwrite it with None",
+      "range": {
+        "startLine": 106,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 29
+      },
+      "revId": "abe56de4f925cfdc2db3b31c3a0a68485f797689",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
