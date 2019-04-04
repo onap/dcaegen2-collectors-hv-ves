@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be9718f3_68d6180c",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T10:56:40Z",
+      "side": 1,
+      "message": "For nicer reading:\n\n    .map(JsonObject::reader)\n    .map(configParser::parseConfiguration)\n\nAnd btw. rename parser\u0027s method to `parse`, so:\n\n    .map(JsonObject::reader)\n    .map(configurationParser::parse)",
+      "range": {
+        "startLine": 86,
+        "startChar": 13,
+        "endLine": 86,
+        "endChar": 65
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee42968b_0a8f0559",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T10:56:40Z",
+      "side": 1,
+      "message": "Let\u0027s not include this logic here, so that merger stays focused on \"just merging\". I believe this should be:\n\n    private fun mergeStreamsConfig(baseOption: Option\u003cList\u003cKafkaSink\u003e\u003e,\n                                   updateOption: Option\u003cList\u003cKafkaSink\u003e\u003e) \u003d\n    baseOption.updateToGivenOrNone(updateOption)",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 73
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3da463d2_b42da7f8",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/JsonConfigurationParser.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T10:56:40Z",
+      "side": 1,
+      "message": "This looks scary, can\u0027t we somehow hide it?",
+      "range": {
+        "startLine": 45,
+        "startChar": 20,
+        "endLine": 45,
+        "endChar": 92
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bad8aa04_991e2139",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/StreamsAdapter.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T10:56:40Z",
+      "side": 1,
+      "message": "Consider adding some test",
+      "range": {
+        "startLine": 37,
+        "startChar": 15,
+        "endLine": 37,
+        "endChar": 29
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7969eaa_b7569e9c",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/JsonConfigurationParserTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T10:56:40Z",
+      "side": 1,
+      "message": "parsing",
+      "range": {
+        "startLine": 83,
+        "startChar": 32,
+        "endLine": 83,
+        "endChar": 39
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d99f944_afd3e3c1",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/JsonConfigurationParserTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T10:56:40Z",
+      "side": 1,
+      "message": "parses",
+      "range": {
+        "startLine": 84,
+        "startChar": 16,
+        "endLine": 84,
+        "endChar": 21
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
