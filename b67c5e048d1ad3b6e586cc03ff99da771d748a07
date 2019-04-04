@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "347d0d32_c0306d62",
+        "filename": "sources/hv-collector-main/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T09:32:29Z",
+      "side": 1,
+      "message": "Remove `parent` here and below",
+      "range": {
+        "startLine": 90,
+        "startChar": 30,
+        "endLine": 90,
+        "endChar": 38
+      },
+      "revId": "b67c5e048d1ad3b6e586cc03ff99da771d748a07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "78938df6_a4588451",
+        "filename": "sources/hv-collector-server/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T09:32:29Z",
+      "side": 1,
+      "message": "omit parent part",
+      "range": {
+        "startLine": 62,
+        "startChar": 31,
+        "endLine": 62,
+        "endChar": 37
+      },
+      "revId": "b67c5e048d1ad3b6e586cc03ff99da771d748a07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48201ac4_6f9b359a",
+        "filename": "sources/hv-collector-server/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-04T09:32:29Z",
+      "side": 1,
+      "message": "I believe this should be SSL module",
+      "range": {
+        "startLine": 68,
+        "startChar": 37,
+        "endLine": 68,
+        "endChar": 43
+      },
+      "revId": "b67c5e048d1ad3b6e586cc03ff99da771d748a07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
