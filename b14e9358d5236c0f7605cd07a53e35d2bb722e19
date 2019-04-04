@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e2a5cbcb_88bc6e7f",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-04T13:50:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be9718f3_68d6180c",
+      "range": {
+        "startLine": 86,
+        "startChar": 13,
+        "endLine": 86,
+        "endChar": 65
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ee42968b_0a8f0559",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2019-04-04T10:56:40Z",
       "side": 1,
       "message": "Let\u0027s not include this logic here, so that merger stays focused on \"just merging\". I believe this should be:\n\n    private fun mergeStreamsConfig(baseOption: Option\u003cList\u003cKafkaSink\u003e\u003e,\n                                   updateOption: Option\u003cList\u003cKafkaSink\u003e\u003e) \u003d\n    baseOption.updateToGivenOrNone(updateOption)",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 73
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d40decd6_562115f3",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-04T13:50:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee42968b_0a8f0559",
       "range": {
         "startLine": 73,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "41972a31_e8cf8c84",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/JsonConfigurationParser.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-04T13:50:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3da463d2_b42da7f8",
+      "range": {
+        "startLine": 45,
+        "startChar": 20,
+        "endLine": 45,
+        "endChar": 92
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bad8aa04_991e2139",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/StreamsAdapter.kt",
         "patchSetId": 2
@@ -82,6 +154,30 @@
       "writtenOn": "2019-04-04T10:56:40Z",
       "side": 1,
       "message": "Consider adding some test",
+      "range": {
+        "startLine": 37,
+        "startChar": 15,
+        "endLine": 37,
+        "endChar": 29
+      },
+      "revId": "b14e9358d5236c0f7605cd07a53e35d2bb722e19",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23eb5b82_cd184e2d",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/StreamsAdapter.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-04T13:50:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bad8aa04_991e2139",
       "range": {
         "startLine": 37,
         "startChar": 15,
