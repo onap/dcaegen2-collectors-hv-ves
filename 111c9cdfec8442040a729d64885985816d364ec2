@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac7d441e_f1c987bf",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:19:38Z",
+      "side": 1,
+      "message": "Maybe the maxPayloadSize should be a property calculated inside the CollectorConfiguration by means of getter/lazy? See https://blog.frankel.ch/options-manage-derived-attributes-kotlin/",
+      "revId": "111c9cdfec8442040a729d64885985816d364ec2",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
