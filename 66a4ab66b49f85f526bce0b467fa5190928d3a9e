@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7fc5d780_ed5a0733",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:38:35Z",
+      "side": 1,
+      "message": "Currently it makes more sense to use synchronized mutable map instead.",
+      "range": {
+        "startLine": 35,
+        "startChar": 32,
+        "endLine": 35,
+        "endChar": 82
+      },
+      "revId": "66a4ab66b49f85f526bce0b467fa5190928d3a9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8b9e1e48_61fbe2cb",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:38:35Z",
+      "side": 1,
+      "message": "Please simplify this logic. Why there are so many places where we are throwing MissingConsumerException? Also this it!! looks fishy. Why not return simply Option\u003cConsumerStateProvider\u003e?\n\n```\n    private fun getConsumerState(topic: String) \u003d\n        consumerState.getOption()\n                .flatMap { Option.fromNullable(it[topic]) }\n```",
+      "revId": "66a4ab66b49f85f526bce0b467fa5190928d3a9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba6546c4_bfaab82d",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:38:35Z",
+      "side": 1,
+      "message": "Maybe 404 would be more appropriate?",
+      "range": {
+        "startLine": 118,
+        "startChar": 48,
+        "endLine": 118,
+        "endChar": 67
+      },
+      "revId": "66a4ab66b49f85f526bce0b467fa5190928d3a9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
