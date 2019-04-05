@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
+import arrow.core.Try
 import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.utils.arrow.getOption
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -31,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference
  */
 class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
                        private val messageStreamValidation: MessageStreamValidation) {
-    private val consumerState: AtomicReference<ConsumerStateProvider> = AtomicReference()
+    private val consumerState: AtomicReference<Map<String, ConsumerStateProvider>> = AtomicReference()
 
     fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))
 
@@ -42,24 +43,45 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
             throw IllegalArgumentException(message)
         }
 
-        logger.info { "Received new configuration. Creating consumer for topics: $topics" }
-        consumerState.set(consumerFactory.createConsumerForTopics(topics))
+        logger.info { "Received new configuration. Creating consumers for topics: $topics" }
+        consumerState.set(consumerFactory.createConsumersForTopics(topics))
     }
 
-    fun state() = consumerState.getOption().map { it.currentState() }
+    fun state(topic: String) =
+            getConsumerState(topic)
+                    .map(ConsumerStateProvider::currentState)
+                    .toEither {
+                        val message = "Failed to return consumer state. No consumer found for topic: $topic"
+                        logger.warn { message }
+                        MissingConsumerException(message)
+                    }
 
-    fun resetState() = consumerState.getOption().fold({ }, { it.reset() })
+    fun resetState(topic: String) =
+            getConsumerState(topic)
+                    .map { it.reset() }
+                    .toEither {
+                        val message = "Failed to reset consumer state. No consumer found for topic: $topic"
+                        logger.warn { message }
+                        MissingConsumerException(message)
+                    }
 
+    fun validate(jsonDescription: InputStream, topic: String) =
+            messageStreamValidation.validate(jsonDescription, currentMessages(topic))
 
-    fun validate(jsonDescription: InputStream)= messageStreamValidation.validate(jsonDescription, currentMessages())
+    private fun currentMessages(topic: String): List<ByteArray> =
+            state(topic).fold({ emptyList() }, { it.consumedMessages })
 
-    private fun currentMessages(): List<ByteArray> =
-            consumerState.getOption()
-                    .map { it.currentState().consumedMessages }
-                    .getOrElse(::emptyList)
+    private fun getConsumerState(topic: String) = Try {
+        consumerState.getOption()
+                .map { it.get(topic) }
+                .map { it!! }
+                .getOrElse {
+                    throw MissingConsumerException("No consumer configured for topic: $topic")
+                }
+    }
 
     private fun extractTopics(topicsString: String): Set<String> =
-            topicsString.substringAfter("=")
+            topicsString.removeSurrounding("\"")
                     .split(",")
                     .toSet()
 
@@ -67,3 +89,6 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
         private val logger = Logger(DcaeAppSimulator::class)
     }
 }
+
+
+class MissingConsumerException(message: String) : Throwable(message)

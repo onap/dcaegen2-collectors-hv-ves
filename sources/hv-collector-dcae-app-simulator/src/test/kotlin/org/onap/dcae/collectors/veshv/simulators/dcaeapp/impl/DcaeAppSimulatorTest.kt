@@ -19,8 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
-import arrow.core.None
-import arrow.core.Some
+import arrow.core.Right
 import com.google.protobuf.ByteString
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.eq
@@ -41,6 +40,7 @@ import java.lang.IllegalArgumentException
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.test.assertFailsWith
 
+
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
@@ -48,82 +48,87 @@ import kotlin.test.assertFailsWith
 internal class DcaeAppSimulatorTest : Spek({
     lateinit var consumerFactory: ConsumerFactory
     lateinit var messageStreamValidation: MessageStreamValidation
-    lateinit var consumer: Consumer
+    lateinit var perf3gpp_consumer: Consumer
+    lateinit var faults_consumer: Consumer
     lateinit var cut: DcaeAppSimulator
 
     beforeEachTest {
         consumerFactory = mock()
         messageStreamValidation = mock()
-        consumer = mock()
+        perf3gpp_consumer = mock()
+        faults_consumer = mock()
         cut = DcaeAppSimulator(consumerFactory, messageStreamValidation)
 
-        whenever(consumerFactory.createConsumerForTopics(anySet())).thenReturn(consumer)
+        whenever(consumerFactory.createConsumersForTopics(anySet())).thenReturn(mapOf(
+                PERF3GPP_TOPIC to perf3gpp_consumer,
+                FAULTS_TOPICS to faults_consumer))
     }
 
     fun consumerState(vararg messages: ByteArray) = ConsumerState(ConcurrentLinkedQueue(messages.toList()))
 
     describe("listenToTopics") {
-        val topics = setOf("perf3gpp", "faults")
-
         it("should fail when topic list is empty") {
-            assertFailsWith(IllegalArgumentException::class){
+            assertFailsWith(IllegalArgumentException::class) {
                 cut.listenToTopics(setOf())
             }
         }
 
         it("should fail when topic list contains empty strings") {
-            assertFailsWith(IllegalArgumentException::class){
-                cut.listenToTopics(setOf("perf3gpp", " ", "faults"))
+            assertFailsWith(IllegalArgumentException::class) {
+                cut.listenToTopics(setOf(PERF3GPP_TOPIC, " ", FAULTS_TOPICS))
             }
         }
 
         it("should subscribe to given topics") {
-            cut.listenToTopics(topics)
-            verify(consumerFactory).createConsumerForTopics(topics)
+            cut.listenToTopics(TWO_TOPICS)
+            verify(consumerFactory).createConsumersForTopics(TWO_TOPICS)
         }
 
         it("should subscribe to given topics when called with comma separated list") {
-            cut.listenToTopics("perf3gpp,faults")
-            verify(consumerFactory).createConsumerForTopics(topics)
+            cut.listenToTopics("$PERF3GPP_TOPIC,$FAULTS_TOPICS")
+            verify(consumerFactory).createConsumersForTopics(TWO_TOPICS)
         }
     }
 
     describe("state") {
-        it("should return None when topics hasn't been initialized") {
-            assertThat(cut.state()).isEqualTo(None)
+        it("should return Left when topics hasn't been initialized") {
+            assertThat(cut.state(PERF3GPP_TOPIC).isLeft()).isTrue()
         }
 
         describe("when topics are initialized") {
             beforeEachTest {
-                cut.listenToTopics("perf3gpp")
+                cut.listenToTopics(TWO_TOPICS)
             }
 
-            it("should return some state when it has been set") {
+            it("should return state when it has been set") {
                 val state = consumerState()
-                whenever(consumer.currentState()).thenReturn(state)
+                whenever(perf3gpp_consumer.currentState()).thenReturn(state)
+                whenever(faults_consumer.currentState()).thenReturn(state)
 
-                assertThat(cut.state()).isEqualTo(Some(state))
+                assertThat(cut.state(PERF3GPP_TOPIC)).isEqualTo(Right(state))
+                assertThat(cut.state(FAULTS_TOPICS)).isEqualTo(Right(state))
             }
         }
     }
 
     describe("resetState") {
         it("should do nothing when topics hasn't been initialized") {
-            cut.resetState()
-            verify(consumer, never()).reset()
+            cut.resetState(PERF3GPP_TOPIC)
+            cut.resetState(FAULTS_TOPICS)
+            verify(perf3gpp_consumer, never()).reset()
+            verify(faults_consumer, never()).reset()
         }
 
         describe("when topics are initialized") {
             beforeEachTest {
-                cut.listenToTopics("perf3gpp")
+                cut.listenToTopics(TWO_TOPICS)
             }
 
-            it("should reset the state") {
-                // when
-                cut.resetState()
+            it("should reset the state of given topic consumer") {
+                cut.resetState(PERF3GPP_TOPIC)
 
-                // then
-                verify(consumer).reset()
+                verify(perf3gpp_consumer).reset()
+                verify(faults_consumer, never()).reset()
             }
         }
     }
@@ -135,7 +140,7 @@ internal class DcaeAppSimulatorTest : Spek({
 
         it("should use empty list when consumer is unavailable") {
             StepVerifier
-                    .create(cut.validate("['The JSON']".byteInputStream()))
+                    .create(cut.validate("['The JSON']".byteInputStream(), PERF3GPP_TOPIC))
                     .expectNext(true)
                     .verifyComplete()
 
@@ -143,21 +148,23 @@ internal class DcaeAppSimulatorTest : Spek({
         }
 
         it("should delegate to MessageStreamValidation") {
-            // given
-            cut.listenToTopics("perf3gpp")
-            whenever(consumer.currentState()).thenReturn(consumerState(vesEvent().toByteArray()))
+            cut.listenToTopics(PERF3GPP_TOPIC)
+            whenever(perf3gpp_consumer.currentState()).thenReturn(consumerState(vesEvent().toByteArray()))
 
-           StepVerifier
-                    .create(cut.validate("['The JSON']".byteInputStream()))
-                   .expectNext(true)
+            StepVerifier
+                    .create(cut.validate("['The JSON']".byteInputStream(), PERF3GPP_TOPIC))
+                    .expectNext(true)
                     .verifyComplete()
 
-            // then
             verify(messageStreamValidation).validate(any(), any())
         }
     }
 })
 
+
+private const val PERF3GPP_TOPIC = "perf3gpp"
+private const val FAULTS_TOPICS = "faults"
+private val TWO_TOPICS = setOf(PERF3GPP_TOPIC, FAULTS_TOPICS)
 
 private const val DUMMY_EVENT_ID = "aaa"
 private const val DUMMY_PAYLOAD = "payload"

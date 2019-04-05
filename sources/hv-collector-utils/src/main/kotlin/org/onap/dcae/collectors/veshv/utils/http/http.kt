@@ -78,4 +78,24 @@ object Responses {
                                 .add("message", message)
                                 .build()))
     }
+
+    fun stringResponse(message: String, httpStatus: HttpStatus = HttpStatus.OK): Response {
+        return Response(httpStatus, Content(ContentType.JSON, message))
+    }
+
+    val Success by lazy {
+        statusResponse(
+                name = "Success",
+                message = "Request processed successfuly",
+                httpStatus = HttpStatus.OK
+        )
+    }
+
+    val InternalServerError by lazy {
+        statusResponse(
+                "Internal server error",
+                "Fatal server error",
+                HttpStatus.INTERNAL_SERVER_ERROR
+        )
+    }
 }
