@@ -34,6 +34,24 @@
       "revId": "8e2a52b2aebf8f968da02265affb6d01b0a1c166",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9215ccb_9ca99bad",
+        "filename": "dpo/data-formats/hv-ves-7.1.0.dataformatspec.json",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 3395
+      },
+      "writtenOn": "2019-04-05T09:05:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56caeff0_40c7f995",
+      "revId": "8e2a52b2aebf8f968da02265affb6d01b0a1c166",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
