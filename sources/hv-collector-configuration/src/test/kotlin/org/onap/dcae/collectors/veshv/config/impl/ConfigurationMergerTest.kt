@@ -44,14 +44,14 @@ internal object ConfigurationMergerTest : Spek({
             assertThat(result.logLevel).isEqualTo(Some(LogLevel.INFO))
         }
 
+        val someListenPort = Some(45)
         it("merges single embedded parameter into empty config") {
             val actual = PartialConfiguration()
-            val serverConfig = PartialServerConfig(listenPort = Some(45))
-            val diff = PartialConfiguration(server = Some(serverConfig))
+            val diff = PartialConfiguration(listenPort = someListenPort)
 
             val result = ConfigurationMerger().merge(actual, diff)
 
-            assertThat(result.server).isEqualTo(Some(serverConfig))
+            assertThat(result.listenPort).isEqualTo(someListenPort)
         }
 
         it("merges single parameter into full config") {
@@ -69,16 +69,15 @@ internal object ConfigurationMergerTest : Spek({
             val actual = FileConfigurationReader().loadConfig(
                     InputStreamReader(
                             FileConfigurationReaderTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
-            val serverConfig = PartialServerConfig(listenPort = Some(45))
-            val diff = PartialConfiguration(server = Some(serverConfig))
+            val diff = PartialConfiguration(listenPort = someListenPort)
 
             val result = ConfigurationMerger().merge(actual, diff)
 
-            assertThat(result.server.orNull()?.listenPort).isEqualTo(serverConfig.listenPort)
-            assertThat(result.server.orNull()?.idleTimeoutSec?.isEmpty()).isFalse()
-            assertThat(result.server.orNull()?.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
-            assertThat(result.server.orNull()?.maxPayloadSizeBytes?.isEmpty()).isFalse()
-            assertThat(result.server.orNull()?.maxPayloadSizeBytes).isEqualTo(Some(512000))
+            assertThat(result.listenPort).isEqualTo(someListenPort)
+            assertThat(result.idleTimeoutSec.isEmpty()).isFalse()
+            assertThat(result.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
+            assertThat(result.maxPayloadSizeBytes.isEmpty()).isFalse()
+            assertThat(result.maxPayloadSizeBytes).isEqualTo(Some(1048576))
         }
 
         it("merges full config into single parameter") {
@@ -90,12 +89,11 @@ internal object ConfigurationMergerTest : Spek({
             val result = ConfigurationMerger().merge(actual, diff)
 
             assertThat(result.logLevel).isEqualTo(Some(LogLevel.ERROR))
-            assertThat(result.server.isEmpty()).isFalse()
-            assertThat(result.server.orNull()?.maxPayloadSizeBytes).isEqualTo(Some(512000))
-            assertThat(result.server.orNull()?.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
+            assertThat(result.maxPayloadSizeBytes).isEqualTo(Some(1048576))
+            assertThat(result.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
 
-            assertThat(result.security.isEmpty()).isFalse()
-            assertThat(result.cbs.isEmpty()).isFalse()
+            assertThat(result.keyStoreFile.isEmpty()).isFalse()
+            assertThat(result.firstRequestDelaySec.isEmpty()).isFalse()
         }
     }
 })
