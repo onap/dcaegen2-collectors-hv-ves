@@ -1,20 +1,12 @@
 {
   "logLevel": "DEBUG",
-  "server": {
-    "listenPort": 6061,
-    "idleTimeoutSec": 60,
-    "maxPayloadSizeBytes": 1048576
-  },
-  "cbs": {
-    "firstRequestDelaySec": 10,
-    "requestIntervalSec": 5
-  },
-  "security": {
-    "keys": {
-      "keyStoreFile": "/etc/ves-hv/ssl/server.p12",
-      "keyStorePassword": "onaponap",
-      "trustStoreFile": "/etc/ves-hv/ssl/trust.p12",
-      "trustStorePassword": "onaponap"
-    }
-  }
+  "server.listenPort": 6061,
+  "server.idleTimeoutSec": 60,
+  "server.maxPayloadSizeBytes": 1048576,
+  "cbs.firstRequestDelaySec": 10,
+  "cbs.requestIntervalSec": 5,
+  "security.keys.keyStoreFile": "/etc/ves-hv/ssl/server.p12",
+  "security.keys.keyStorePassword": "onaponap",
+  "security.keys.trustStoreFile": "/etc/ves-hv/ssl/trust.p12",
+  "security.keys.trustStorePassword": "onaponap"
 }
