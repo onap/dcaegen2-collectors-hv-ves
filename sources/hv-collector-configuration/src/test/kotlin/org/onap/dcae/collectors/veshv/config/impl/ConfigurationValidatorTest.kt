@@ -23,21 +23,18 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
-import org.assertj.core.api.ObjectAssert
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator.Companion.DEFAULT_LOG_LEVEL
-import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
+import java.io.File
 import java.time.Duration
+
 
 internal object ConfigurationValidatorTest : Spek({
     describe("ConfigurationValidator") {
@@ -45,7 +42,7 @@ internal object ConfigurationValidatorTest : Spek({
 
         describe("validating partial configuration with missing fields") {
             val config = PartialConfiguration(
-                    Some(PartialServerConfig(listenPort = Some(1)))
+                    listenPort = Some(1)
             )
 
             it("should return ValidationError") {
@@ -55,23 +52,8 @@ internal object ConfigurationValidatorTest : Spek({
         }
 
         describe("validating configuration with empty log level") {
-            val config = PartialConfiguration(
-                    Some(PartialServerConfig(
-                            Some(1),
-                            Some(Duration.ofSeconds(2)),
-                            Some(3)
-                    )),
-                    Some(PartialCbsConfig(
-                            Some(Duration.ofSeconds(5)),
-                            Some(Duration.ofSeconds(3))
-                    )),
-                    Some(PartialSecurityConfig(
-                            Some(mock())
-                    )),
-                    Some(PartialCollectorConfig(
-                            someFromEmptyRouting
-                    )),
-                    None
+            val config = partialConfiguration(
+                    logLevel = None
             )
 
             it("should use default log level") {
@@ -88,29 +70,19 @@ internal object ConfigurationValidatorTest : Spek({
         }
 
         describe("validating complete configuration") {
-            val idleTimeoutSec = Duration.ofSeconds(10L)
-            val firstReqDelaySec = Duration.ofSeconds(10L)
-            val securityKeys = mock<SecurityKeysPaths>()
-            val immutableSecurityKeys = mock<SecurityKeys>()
-            whenever(securityKeys.asImmutableSecurityKeys()).thenReturn(immutableSecurityKeys)
-
             val config = PartialConfiguration(
-                    Some(PartialServerConfig(
-                            Some(1),
-                            Some(idleTimeoutSec),
-                            Some(2)
-                    )),
-                    Some(PartialCbsConfig(
-                            Some(firstReqDelaySec),
-                            Some(Duration.ofSeconds(3))
-                    )),
-                    Some(PartialSecurityConfig(
-                            Some(securityKeys)
-                    )),
-                    Some(PartialCollectorConfig(
-                            someFromEmptyRouting
-                    )),
-                    Some(LogLevel.INFO)
+                    listenPort = Some(defaultListenPort),
+                    idleTimeoutSec = Some(defaultIdleTimeoutSec),
+                    maxPayloadSizeBytes = Some(defaultMaxPayloadSizeBytes),
+                    firstRequestDelaySec = Some(defaultFirstReqDelaySec),
+                    requestIntervalSec = Some(defaultRequestIntervalSec),
+                    sslDisable = Some(false),
+                    keyStoreFile = Some(KEYSTORE),
+                    keyStorePassword = Some(KEYSTORE_PASSWORD),
+                    trustStoreFile = Some(TRUSTSTORE),
+                    trustStorePassword = Some(TRUSTSTORE_PASSWORD),
+                    routing = Some(emptyRouting),
+                    logLevel = Some(LogLevel.TRACE)
             )
 
             it("should create valid configuration") {
@@ -120,46 +92,34 @@ internal object ConfigurationValidatorTest : Spek({
                             fail("Configuration should have been created successfully")
                         },
                         {
-                            assertThat(it.server.idleTimeout)
-                                    .isEqualTo(idleTimeoutSec)
+                            assertThat(it.server.listenPort).isEqualTo(defaultListenPort)
+                            assertThat(it.server.idleTimeout).isEqualTo(defaultIdleTimeoutSec)
+                            assertThat(it.server.maxPayloadSizeBytes).isEqualTo(defaultMaxPayloadSizeBytes)
 
-                            verify(securityKeys).asImmutableSecurityKeys()
-                            assertThat(it.security.keys
-                                    .getOrElse { fail("Should be immutableSecurityKeys") })
-                                    .isEqualTo(immutableSecurityKeys)
+                            val securityKeys = it.security.keys
+                                    .getOrElse { fail("Should be immutableSecurityKeys") } as SecurityKeys
+                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(KEYSTORE).toPath())
+                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(TRUSTSTORE).toPath())
+                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(KEYSTORE_PASSWORD.toCharArray()) }
+                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(TRUSTSTORE_PASSWORD.toCharArray()) }
 
-                            assertThat(it.cbs.firstRequestDelay)
-                                    .isEqualTo(firstReqDelaySec)
+                            assertThat(it.cbs.firstRequestDelay).isEqualTo(defaultFirstReqDelaySec)
+                            assertThat(it.cbs.requestInterval).isEqualTo(defaultRequestIntervalSec)
 
-                            assertThat(it.collector.routing)
-                                    .isEqualTo(emptyRouting)
+                            assertThat(it.collector.routing).isEqualTo(emptyRouting)
+                            assertThat(it.logLevel).isEqualTo(LogLevel.TRACE)
                         }
                 )
             }
         }
 
         describe("validating configuration with security disabled") {
-            val idleTimeoutSec = Duration.ofSeconds(10)
-            val firstReqDelaySec = Duration.ofSeconds(10)
-            val missingSecurityKeys: Option<SecurityKeysPaths> = None
-
-            val config = PartialConfiguration(
-                    Some(PartialServerConfig(
-                            Some(1),
-                            Some(idleTimeoutSec),
-                            Some(2)
-                    )),
-                    Some(PartialCbsConfig(
-                            Some(firstReqDelaySec),
-                            Some(Duration.ofSeconds(3))
-                    )),
-                    Some(PartialSecurityConfig(
-                            missingSecurityKeys
-                    )),
-                    Some(PartialCollectorConfig(
-                            someFromEmptyRouting
-                    )),
-                    Some(LogLevel.INFO)
+            val config = partialConfiguration(
+                    sslDisable = Some(true),
+                    keyStoreFile = Some(""),
+                    keyStorePassword = Some(""),
+                    trustStoreFile = Some(""),
+                    trustStorePassword = Some("")
             )
 
             it("should create valid configuration") {
@@ -170,13 +130,13 @@ internal object ConfigurationValidatorTest : Spek({
                         },
                         {
                             assertThat(it.server.idleTimeout)
-                                    .isEqualTo(idleTimeoutSec)
+                                    .isEqualTo(defaultIdleTimeoutSec)
 
                             assertThat(it.security.keys)
-                                    .isEqualTo(missingSecurityKeys)
+                                    .isEqualTo(None)
 
                             assertThat(it.cbs.firstRequestDelay)
-                                    .isEqualTo(firstReqDelaySec)
+                                    .isEqualTo(defaultFirstReqDelaySec)
 
                             assertThat(it.collector.routing)
                                     .isEqualTo(emptyRouting)
@@ -185,8 +145,69 @@ internal object ConfigurationValidatorTest : Spek({
             }
         }
 
+        describe("validating configuration with ssl disable missing") {
+            val config = partialConfiguration(
+                    sslDisable = None
+            )
+
+            it("should create valid configuration with ssl enabled") {
+                val result = cut.validate(config)
+                result.fold(
+                        {
+                            fail("Configuration should have been created successfully but was $it")
+                        },
+                        {
+                            val securityKeys = it.security.keys
+                                    .getOrElse { fail("Should be immutableSecurityKeys") } as SecurityKeys
+                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(KEYSTORE).toPath())
+                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(TRUSTSTORE).toPath())
+                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(KEYSTORE_PASSWORD.toCharArray()) }
+                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(TRUSTSTORE_PASSWORD.toCharArray()) }
+                        }
+                )
+            }
+        }
+
     }
 })
 
+private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPort),
+                                 idleTimeoutSec: Option<Duration> = Some(defaultIdleTimeoutSec),
+                                 maxPayloadSizeBytes: Option<Int> = Some(defaultMaxPayloadSizeBytes),
+                                 firstReqDelaySec: Option<Duration> = Some(defaultFirstReqDelaySec),
+                                 requestIntervalSec: Option<Duration> = Some(defaultRequestIntervalSec),
+                                 sslDisable: Option<Boolean> = Some(false),
+                                 keyStoreFile: Option<String> = Some(KEYSTORE),
+                                 keyStorePassword: Option<String> = Some(KEYSTORE_PASSWORD),
+                                 trustStoreFile: Option<String> = Some(TRUSTSTORE),
+                                 trustStorePassword: Option<String> = Some(TRUSTSTORE_PASSWORD),
+                                 routing: Option<Routing> = Some(emptyRouting),
+                                 logLevel: Option<LogLevel> = Some(LogLevel.INFO)
+) =
+        PartialConfiguration(
+                listenPort = listenPort,
+                idleTimeoutSec = idleTimeoutSec,
+                maxPayloadSizeBytes = maxPayloadSizeBytes,
+                firstRequestDelaySec = firstReqDelaySec,
+                requestIntervalSec = requestIntervalSec,
+                sslDisable = sslDisable,
+                keyStoreFile = keyStoreFile,
+                keyStorePassword = keyStorePassword,
+                trustStoreFile = trustStoreFile,
+                trustStorePassword = trustStorePassword,
+                routing = routing,
+                logLevel = logLevel
+        )
+
+val defaultListenPort = 1234
+val defaultRequestIntervalSec = Duration.ofSeconds(3)
+val defaultMaxPayloadSizeBytes = 2
+val defaultIdleTimeoutSec = Duration.ofSeconds(10L)
+val defaultFirstReqDelaySec = Duration.ofSeconds(10L)
+
+val KEYSTORE = "test.ks.pkcs12"
+val KEYSTORE_PASSWORD = "changeMe"
+val TRUSTSTORE = "trust.ks.pkcs12"
+val TRUSTSTORE_PASSWORD = "changeMeToo"
+
 val emptyRouting: Routing = emptyList()
-val someFromEmptyRouting = Some(emptyRouting)

@@ -78,7 +78,7 @@ internal object CbsConfigurationProviderTest : Spek({
 
                     StepVerifier.create(configProvider().take(1))
                             .consumeNextWith {
-                                val routes = it.collector.orNull()!!.routing.orNull()!!
+                                val routes = it.routing.orNull()!!
                                 val route1 = routes.elementAt(0)
                                 val route2 = routes.elementAt(1)
                                 val receivedSink1 = route1.sink

@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Some
+import arrow.core.getOrElse
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -27,8 +28,8 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.tests.utils.resourceAsStream
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.StringReader
-import java.net.InetSocketAddress
 import java.time.Duration
+import kotlin.test.fail
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -46,29 +47,24 @@ internal object FileConfigurationReaderTest : Spek({
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))
             }
 
-            it("parses simple structure") {
+            it("parses simple structure and creates correct objects") {
                 val input = """{
-                "server" : {
-                    "healthCheckApiPort" : 12002,
-                    "listenPort" : 12003
+                    "server.listenPort" : 12003,
+                    "cbs.firstRequestDelaySec": 10
                 }
-            }
-            """.trimIndent()
+                """.trimIndent()
                 val config = cut.loadConfig(StringReader(input))
-                assertThat(config.server.nonEmpty()).isTrue()
-                assertThat(config.server.orNull()?.listenPort).isEqualTo(Some(12003))
+                assertThat(config.listenPort).isEqualTo(Some(12003))
+                assertThat(config.firstRequestDelaySec).isEqualTo(Some(Duration.ofSeconds(10)))
             }
 
             it("parses disabled security configuration") {
                 val input = """{
-                    "security": {
-                    }
+                    "security.sslDisable": true
                 }""".trimIndent()
                 val config = cut.loadConfig(StringReader(input))
 
-                assertThat(config.security.nonEmpty()).isTrue()
-                val security = config.security.orNull() as PartialSecurityConfig
-                assertThat(security.keys.nonEmpty()).isFalse()
+                assertThat(config.sslDisable.getOrElse { fail("Should be Some") }).isTrue()
             }
 
             it("parses invalid log level string to empty option") {
@@ -89,22 +85,18 @@ internal object FileConfigurationReaderTest : Spek({
                 assertThat(config).isNotNull
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))
 
-                assertThat(config.security.nonEmpty()).isTrue()
-                val security = config.security.orNull() as PartialSecurityConfig
-                assertThat(security.keys.nonEmpty()).isTrue()
+                assertThat(config.listenPort).isEqualTo(Some(6000))
+                assertThat(config.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
+                assertThat(config.maxPayloadSizeBytes).isEqualTo(Some(1048576))
 
-                assertThat(config.cbs.nonEmpty()).isTrue()
-                val cbs = config.cbs.orNull() as PartialCbsConfig
-                assertThat(cbs.firstRequestDelaySec).isEqualTo(Some(Duration.ofSeconds(7)))
-                assertThat(cbs.requestIntervalSec).isEqualTo(Some(Duration.ofSeconds(900)))
+                assertThat(config.firstRequestDelaySec).isEqualTo(Some(Duration.ofSeconds(7)))
+                assertThat(config.requestIntervalSec).isEqualTo(Some(Duration.ofSeconds(900)))
 
-                assertThat(config.server.nonEmpty()).isTrue()
-                val server = config.server.orNull() as PartialServerConfig
-                server.run {
-                    assertThat(idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
-                    assertThat(listenPort).isEqualTo(Some(6000))
-                    assertThat(maxPayloadSizeBytes).isEqualTo(Some(512000))
-                }
+                assertThat(config.sslDisable).isEqualTo(Some(false))
+                assertThat(config.keyStoreFile).isEqualTo(Some("test.ks.pkcs12"))
+                assertThat(config.keyStorePassword).isEqualTo(Some("changeMe"))
+                assertThat(config.trustStoreFile).isEqualTo(Some("trust.ks.pkcs12"))
+                assertThat(config.trustStorePassword).isEqualTo(Some("changeMeToo"))
             }
         }
     }
