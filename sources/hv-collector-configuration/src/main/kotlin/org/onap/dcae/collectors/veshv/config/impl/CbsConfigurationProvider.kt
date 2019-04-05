@@ -95,7 +95,7 @@ internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClien
             .map(::createRoutingDescription)
             .onErrorLog(logger, mdc) { "Error while creating configuration" }
             .retryWhen(retry)
-            .map { PartialConfiguration(collector = Some(PartialCollectorConfig(routing = it))) }
+            .map { PartialConfiguration(routing = it) }
 
     private fun createRoutingDescription(configuration: JsonObject): Option<Routing> = try {
         val routes = DataStreams.namedSinks(configuration)
