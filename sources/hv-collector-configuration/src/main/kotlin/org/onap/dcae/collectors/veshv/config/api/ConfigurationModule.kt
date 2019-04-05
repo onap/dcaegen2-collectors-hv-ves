@@ -57,6 +57,7 @@ class ConfigurationModule {
                     }
                     .cache()
                     .flatMapMany { basePartialConfig ->
+                        logger.info { "basePartialConfig $basePartialConfig"}
                         cbsConfigurationProvider(basePartialConfig, configStateListener, mdc)
                                 .invoke()
                                 .map { merger.merge(basePartialConfig, it) }

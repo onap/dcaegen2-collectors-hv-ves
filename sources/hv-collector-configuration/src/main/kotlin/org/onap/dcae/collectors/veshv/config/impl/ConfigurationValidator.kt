@@ -19,8 +19,6 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
-import arrow.core.Either
-import arrow.core.None
 import arrow.core.Option
 import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
@@ -35,6 +33,7 @@ import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import java.io.File
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -85,39 +84,38 @@ internal class ConfigurationValidator {
 
     private fun validatedServerConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                partial.server.bind().let {
-                    ServerConfiguration(
-                            it.listenPort.bind(),
-                            it.idleTimeoutSec.bind(),
-                            it.maxPayloadSizeBytes.bind()
-                    )
-                }
+                ServerConfiguration(
+                        it.listenPort.bind(),
+                        it.idleTimeoutSec.bind(),
+                        it.maxPayloadSizeBytes.bind()
+                )
             }
 
     internal fun validatedCbsConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                it.cbs.bind().let {
-                    CbsConfiguration(
-                            it.firstRequestDelaySec.bind(),
-                            it.requestIntervalSec.bind()
-                    )
-                }
+                CbsConfiguration(
+                        it.firstRequestDelaySec.bind(),
+                        it.requestIntervalSec.bind()
+                )
             }
 
     private fun validatedSecurityConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
-                it.security.bind().let {
-                    SecurityConfiguration(it.keys.map(SecurityKeysPaths::asImmutableSecurityKeys))
-                }
+                SecurityConfiguration(
+                        Option.fromNullable(SecurityKeysPaths(
+                                File(it.keyStoreFile.bind()).toPath(),
+                                it.keyStorePassword.bind(),
+                                File(it.trustStoreFile.bind()).toPath(),
+                                it.trustStorePassword.bind()
+                        ).asImmutableSecurityKeys())
+                )
             }
 
     private fun validatedCollectorConfig(partial: PartialConfiguration) =
             partial.mapBinding {
-                partial.collector.bind().let {
-                    CollectorConfiguration(
-                            it.routing.bind()
-                    )
-                }
+                CollectorConfiguration(
+                        it.routing.bind()
+                )
             }
 
     companion object {

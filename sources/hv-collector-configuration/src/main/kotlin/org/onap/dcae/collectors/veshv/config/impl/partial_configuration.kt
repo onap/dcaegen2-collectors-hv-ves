@@ -21,8 +21,8 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.None
 import arrow.core.Option
+import com.google.gson.annotations.SerializedName
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
-import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.time.Duration
 
@@ -31,26 +31,26 @@ import java.time.Duration
  * @since February 2019
  */
 internal data class PartialConfiguration(
-        val server: Option<PartialServerConfig> = None,
-        val cbs: Option<PartialCbsConfig> = None,
-        val security: Option<PartialSecurityConfig> = None,
-        val collector: Option<PartialCollectorConfig> = None,
-        val logLevel: Option<LogLevel> = None
-)
-
-internal data class PartialServerConfig(
+        @SerializedName("server.listenPort")
         val listenPort: Option<Int> = None,
+        @SerializedName("server.idleTimeoutSec")
         val idleTimeoutSec: Option<Duration> = None,
-        val maxPayloadSizeBytes: Option<Int> = None
-)
-
-internal data class PartialCbsConfig(
+        @SerializedName("server.maxPayloadSizeBytes")
+        val maxPayloadSizeBytes: Option<Int> = None,
+        @SerializedName("cbs.firstRequestDelaySec")
         val firstRequestDelaySec: Option<Duration> = None,
-        val requestIntervalSec: Option<Duration> = None
-)
-
-internal data class PartialSecurityConfig(val keys: Option<SecurityKeysPaths> = None)
-
-internal data class PartialCollectorConfig(
-        val routing: Option<Routing> = None
+        @SerializedName("cbs.requestIntervalSec")
+        val requestIntervalSec: Option<Duration> = None,
+        @SerializedName("security.keys.keyStoreFile")
+        val keyStoreFile: Option<String> = None,
+        @SerializedName("security.keys.keyStorePassword")
+        val keyStorePassword: Option<String> = None,
+        @SerializedName("security.keys.trustStoreFile")
+        val trustStoreFile: Option<String> = None,
+        @SerializedName("security.keys.trustStorePassword")
+        val trustStorePassword: Option<String> = None,
+        @SerializedName("collector.routing")
+        val routing: Option<Routing> = None,
+        @SerializedName("logLevel")
+        val logLevel: Option<LogLevel> = None
 )

@@ -23,7 +23,6 @@ import arrow.core.Option
 import com.google.gson.GsonBuilder
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.DurationOfSecondsAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.SecurityAdapter
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 import java.io.Reader
@@ -36,7 +35,6 @@ import java.time.Duration
 internal class FileConfigurationReader {
     private val gson = GsonBuilder()
             .registerTypeAdapter(Option::class.java, OptionAdapter())
-            .registerTypeAdapter(PartialSecurityConfig::class.java, SecurityAdapter())
             .registerTypeAdapter(Duration::class.java, DurationOfSecondsAdapter())
             .create()
 
