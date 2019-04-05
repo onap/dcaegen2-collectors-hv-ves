@@ -21,10 +21,11 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.Consumer
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import reactor.core.publisher.Flux
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOptions
+import reactor.kafka.receiver.ReceiverRecord
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -32,10 +33,9 @@ import reactor.kafka.receiver.ReceiverOptions
  */
 class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
 
-    fun start() = Consumer()
-            .also { consumer ->
-                receiver.receive().map(consumer::update).subscribe()
-            }
+    fun start(): Flux<ReceiverRecord<ByteArray, ByteArray>> =
+            receiver.receive()
+                    .also { logger.info { "Started Kafka source" } }
 
     companion object {
         private val logger = Logger(KafkaSource::class)

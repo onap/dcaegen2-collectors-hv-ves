@@ -67,16 +67,16 @@ internal class ConsumerTest : Spek({
     }
 })
 
-fun assertEmptyState(cut: Consumer) {
+private fun assertEmptyState(cut: Consumer) {
     assertState(cut)
 }
 
-fun assertState(cut: Consumer, vararg values: ByteArray) {
+private fun assertState(cut: Consumer, vararg values: ByteArray) {
     assertThat(cut.currentState().consumedMessages)
             .containsOnly(*values)
     assertThat(cut.currentState().messagesCount)
             .isEqualTo(values.size)
 }
 
-fun receiverRecord(topic: String, key: ByteArray, value: ByteArray) =
+private fun receiverRecord(topic: String, key: ByteArray, value: ByteArray) =
         ReceiverRecord(ConsumerRecord(topic, 1, 100L, key, value), null)

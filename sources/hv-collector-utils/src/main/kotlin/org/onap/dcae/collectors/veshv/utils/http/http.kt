@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@
 package org.onap.dcae.collectors.veshv.utils.http
 
 import arrow.typeclasses.Show
-import java.util.*
-import javax.json.Json
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -56,26 +54,3 @@ enum class ContentType(val value: String) {
 
 data class Response(val status: HttpStatus, val content: Content<Any>)
 data class Content<T>(val type: ContentType, val value: T, val serializer: Show<T> = Show.any())
-
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since September 2018
- */
-object Responses {
-
-    fun acceptedResponse(id: UUID): Response {
-        return Response(
-                HttpStatus.ACCEPTED,
-                Content(ContentType.TEXT, id)
-        )
-    }
-
-    fun statusResponse(name: String, message: String, httpStatus: HttpStatus = HttpStatus.OK): Response {
-        return Response(httpStatus,
-                Content(ContentType.JSON,
-                        Json.createObjectBuilder()
-                                .add("status", name)
-                                .add("message", message)
-                                .build()))
-    }
-}

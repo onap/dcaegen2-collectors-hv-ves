@@ -62,6 +62,19 @@ class Consumer : ConsumerStateProvider {
 }
 
 class ConsumerFactory(private val kafkaBootstrapServers: String) {
-    fun createConsumerForTopics(kafkaTopics: Set<String>): Consumer =
-            KafkaSource.create(kafkaBootstrapServers, kafkaTopics.toSet()).start()
+    fun createConsumersForTopics(kafkaTopics: Set<String>): Map<String, Consumer> =
+            KafkaSource.create(kafkaBootstrapServers, kafkaTopics).let { kafkaSource ->
+                val topicToConsumer = kafkaTopics.associate { it to Consumer() }
+                kafkaSource.start()
+                        .map {
+                            val topic = it.topic()
+                            topicToConsumer.get(topic)?.update(it)
+                                    ?: logger.warn { "No consumer configured for topic $topic" }
+                        }.subscribe()
+                topicToConsumer
+            }
+
+    companion object {
+        private val logger = Logger(ConsumerFactory::class)
+    }
 }
