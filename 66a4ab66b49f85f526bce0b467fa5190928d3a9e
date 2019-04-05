@@ -42,6 +42,23 @@
     },
     {
       "key": {
+        "uuid": "376315a2_5b1f87e5",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-05T13:58:18Z",
+      "side": 1,
+      "message": "I would opt for creating new task for refactor of this module, since the code is starting to look like spaghetti in some places.",
+      "revId": "66a4ab66b49f85f526bce0b467fa5190928d3a9e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba6546c4_bfaab82d",
         "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/DcaeAppApiServer.kt",
         "patchSetId": 1
