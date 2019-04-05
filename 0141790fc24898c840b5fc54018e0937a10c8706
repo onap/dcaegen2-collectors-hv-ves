@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a12e7852_e04df40a",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:14:03Z",
+      "side": 1,
+      "message": "Let\u0027s do this in single map call. It will look a little bit uglier, but we have to remember about thread safety. `Reader` is \"very stateful\" (tm) ;-) so we probably should avoid passing it in the reactive stream.\n\n\"very stateful\" - not only we can change it put almost any method call may result in a race condition",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 44
+      },
+      "revId": "0141790fc24898c840b5fc54018e0937a10c8706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce5f7622_50e932a3",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/gsonadapters/StreamsAdapter.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:14:03Z",
+      "side": 1,
+      "message": "After seeing this I\u0027m not so sure whether it\u0027s better solution than current one...",
+      "revId": "0141790fc24898c840b5fc54018e0937a10c8706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65a9724d_181c274b",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:14:03Z",
+      "side": 1,
+      "message": "Follow the Kotlin naming convention",
+      "range": {
+        "startLine": 37,
+        "startChar": 19,
+        "endLine": 37,
+        "endChar": 20
+      },
+      "revId": "0141790fc24898c840b5fc54018e0937a10c8706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "487acd7c_1c666a6c",
+        "filename": "sources/hv-collector-utils/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-05T12:14:03Z",
+      "side": 1,
+      "message": "I do not want every HV-VES sub-module to depend on gson. Please move these utilities to configuration module as it shall be used only there.",
+      "revId": "0141790fc24898c840b5fc54018e0937a10c8706",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
