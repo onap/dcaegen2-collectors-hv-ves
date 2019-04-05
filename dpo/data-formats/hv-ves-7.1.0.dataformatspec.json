@@ -8,8 +8,8 @@
     "dataformatversion": "1.0.0",
     "reference": {
         "name": "VES (NF Event Streaming) Specification",
-        "version": "7.1",
-        "format": "proto",
+        "version": "7.1.0",
+        "format": "Protocol Buffer",
         "url": "https://gerrit.onap.org/r/gitweb?p=dcaegen2.git;a=blob_plain;f=docs/sections/apis/ves-hv/VesEvent.proto;hb=HEAD"
     }
 }
