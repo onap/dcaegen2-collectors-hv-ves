@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.utils
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Mono
 import reactor.netty.DisposableServer
+import java.time.Duration
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -48,14 +49,16 @@ class NettyServerHandle(private val ctx: DisposableServer,
                     .then(dispose())
 
     private fun dispose(): Mono<Void> =
-            Mono.create { callback ->
+            Mono.create<Int> { callback ->
                 logger.debug { "About to dispose NettyServer" }
                 ctx.dispose()
                 ctx.onDispose {
                     logger.debug { "Netty server disposed" }
-                    callback.success()
+                    callback.success(1)
                 }
             }
+                    .delayElement(boundPortReleaseLatency)
+                    .then()
 
     override fun await(): Mono<Void> = Mono.create { callback ->
         ctx.channel().closeFuture().addListener {
@@ -65,5 +68,6 @@ class NettyServerHandle(private val ctx: DisposableServer,
 
     companion object {
         private val logger = Logger(NettyServerHandle::class)
+        private val boundPortReleaseLatency = Duration.ofSeconds(1)
     }
 }
