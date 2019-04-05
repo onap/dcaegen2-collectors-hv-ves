@@ -20,7 +20,88 @@
     "calls": [],
     "provides": []
   },
-  "parameters": [],
+  "parameters": [
+    {
+      "name": "logLevel",
+      "value": "DEBUG",
+      "description": "The logging level used for collector classes",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "server.listenPort",
+      "value": 6061,
+      "description": "The container listen port",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "server.idleTimeoutSec",
+      "value": 60,
+      "description": "Maximum inactive time in seconds for client connections after which client can be disconnected",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "server.maxPayloadSizeBytes",
+      "value": 1048576,
+      "description": "Maximum payload size of single Wire Transfer Protocol frame",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "cbs.firstRequestDelaySec",
+      "value": 10,
+      "description": "Delay in seconds after which the first CBS request will be made",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "cbs.requestIntervalSec",
+      "value": 5,
+      "description": "Interval in seconds of re-checking the CBS configuration",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "security.keys.keyStoreFile",
+      "value": "/etc/ves-hv/ssl/keystore.p12",
+      "description": "Points to private key store file",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "security.keys.keyStorePassword",
+      "value": "onaponap",
+      "description": "Password for the key store",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "security.keys.trustStoreFile",
+      "value": "/etc/ves-hv/ssl/truststore.p12",
+      "description": "Points to trust store file which contains trusted client certificates and/or CAs",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    },
+    {
+      "name": "security.keys.trustStorePassword",
+      "value": "onaponap",
+      "description": "Password for the trust store",
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "designer_editable": false
+    }
+  ],
   "auxilary": {
     "healthcheck": {
       "type": "script",
