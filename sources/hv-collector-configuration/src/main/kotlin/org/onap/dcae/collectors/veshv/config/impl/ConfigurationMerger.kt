@@ -33,7 +33,6 @@ internal class ConfigurationMerger {
             PartialConfiguration(
                     listenPort = base.listenPort.updateToGivenOrNone(update.listenPort),
                     idleTimeoutSec = base.idleTimeoutSec.updateToGivenOrNone(update.idleTimeoutSec),
-                    maxPayloadSizeBytes = base.maxPayloadSizeBytes.updateToGivenOrNone(update.maxPayloadSizeBytes),
 
                     firstRequestDelaySec = base.firstRequestDelaySec.updateToGivenOrNone(update.firstRequestDelaySec),
                     requestIntervalSec = base.requestIntervalSec.updateToGivenOrNone(update.requestIntervalSec),

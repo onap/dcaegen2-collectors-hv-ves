@@ -36,7 +36,7 @@ import java.io.File
  */
 object HvVesCommandLineParserTest : Spek({
     lateinit var cut: HvVesCommandLineParser
-    val DEFAULT_HEALTHCHECK_PORT = 6060
+    val defaultHealthcheckPort = 6060
     val emptyConfig = ""
     val configFilePath = javaClass.absoluteResourcePath("sampleConfig.json")
 
@@ -88,7 +88,7 @@ object HvVesCommandLineParserTest : Spek({
                 it("should return default port") {
                     assertThat(
                             cut.getHealthcheckPort(arrayOf(emptyConfig))
-                    ).isEqualTo(DEFAULT_HEALTHCHECK_PORT)
+                    ).isEqualTo(defaultHealthcheckPort)
                 }
             }
         }

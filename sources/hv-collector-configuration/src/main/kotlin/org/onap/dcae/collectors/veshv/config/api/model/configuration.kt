@@ -37,7 +37,6 @@ data class HvVesConfiguration(
 
 data class ServerConfiguration(
         val listenPort: Int,
-        val maxPayloadSizeBytes: Int,
         val idleTimeout: Duration
 )
 
@@ -48,4 +47,6 @@ data class CbsConfiguration(
 
 data class CollectorConfiguration(
         val routing: Routing
-)
+){
+    val maxPayloadSizeBytes by lazy { routing.map { it.sink.maxPayloadSizeBytes() }.max() ?: 0 }
+}

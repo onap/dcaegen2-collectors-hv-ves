@@ -51,10 +51,9 @@ class ConfigurationModule {
                                   mdc: MappedDiagnosticContext): Flux<HvVesConfiguration> =
             Mono.just(cmd.getConfigurationFile(args))
                     .throwOnLeft(::MissingArgumentException)
-                    .map {
-                        logger.info { "Using base configuration file: ${it.absolutePath}" }
-                        it.reader().use(configParser::parse)
-                    }
+                    .doOnNext { logger.info { "Using base configuration file: ${it.absolutePath}" } }
+                    .map { it.reader().use(configParser::parse) }
+                    .doOnNext { logger.info { "Successfully parsed json file to configuration: $it" } }
                     .cache()
                     .flatMapMany { basePartialConfig ->
                         cbsConfigurationProvider(basePartialConfig, configStateListener, mdc)

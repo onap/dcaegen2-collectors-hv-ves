@@ -27,7 +27,7 @@ import org.onap.dcaegen2.services.sdk.model.streams.dmaap.ImmutableKafkaSink
 const val PERF3GPP_TOPIC = "HV_VES_PERF3GPP"
 const val ALTERNATE_PERF3GPP_TOPIC = "HV_VES_PERF3GPP_ALTERNATIVE"
 const val KAFKA_BOOTSTRAP_SERVERS = "kafka:9092"
-private const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
+const val MAX_PAYLOAD_SIZE_BYTES = 1024 * 1024
 
 private val perf3gppKafkaSink = ImmutableKafkaSink.builder()
         .name("PERF3GPP")

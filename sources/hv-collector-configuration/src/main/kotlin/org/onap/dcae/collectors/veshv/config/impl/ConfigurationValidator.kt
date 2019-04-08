@@ -90,7 +90,6 @@ internal class ConfigurationValidator {
             partial.mapBinding {
                 ServerConfiguration(
                         it.listenPort.bind(),
-                        it.maxPayloadSizeBytes.bind(),
                         Duration.ofSeconds(it.idleTimeoutSec.bind())
                 )
             }

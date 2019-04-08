@@ -58,8 +58,7 @@ object VesServer {
             HvVesCollectorFactory(
                     config.collector,
                     AdapterFactory.sinkCreatorFactory(),
-                    MicrometerMetrics.INSTANCE,
-                    config.server.maxPayloadSizeBytes
+                    MicrometerMetrics.INSTANCE
             )
 
     private fun logServerStarted(handle: ServerHandle) =

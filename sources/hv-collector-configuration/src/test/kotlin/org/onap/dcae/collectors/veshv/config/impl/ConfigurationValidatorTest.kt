@@ -76,7 +76,6 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     listenPort = Some(defaultListenPort),
                     idleTimeoutSec = Some(defaultIdleTimeoutSec),
-                    maxPayloadSizeBytes = Some(defaultMaxPayloadSizeBytes),
                     firstRequestDelaySec = Some(defaultFirstReqDelaySec),
                     requestIntervalSec = Some(defaultRequestIntervalSec),
                     sslDisable = Some(false),
@@ -97,8 +96,6 @@ internal object ConfigurationValidatorTest : Spek({
                         {
                             assertThat(it.server.listenPort)
                                     .isEqualTo(defaultListenPort)
-                            assertThat(it.server.maxPayloadSizeBytes)
-                                    .isEqualTo(defaultMaxPayloadSizeBytes)
                             assertThat(it.server.idleTimeout)
                                     .isEqualTo(Duration.ofSeconds(defaultIdleTimeoutSec))
 
@@ -116,6 +113,8 @@ internal object ConfigurationValidatorTest : Spek({
 
                             assertThat(it.collector.routing)
                                     .isEqualTo(sampleRouting)
+                            assertThat(it.collector.maxPayloadSizeBytes)
+                                    .isEqualTo(higherMaxPayloadSize)
 
                             assertThat(it.logLevel).isEqualTo(LogLevel.TRACE)
                         }
@@ -183,7 +182,6 @@ internal object ConfigurationValidatorTest : Spek({
 
 private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPort),
                                  idleTimeoutSec: Option<Long> = Some(defaultIdleTimeoutSec),
-                                 maxPayloadSizeBytes: Option<Int> = Some(defaultMaxPayloadSizeBytes),
                                  firstReqDelaySec: Option<Long> = Some(defaultFirstReqDelaySec),
                                  requestIntervalSec: Option<Long> = Some(defaultRequestIntervalSec),
                                  sslDisable: Option<Boolean> = Some(false),
@@ -193,24 +191,21 @@ private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPor
                                  trustStorePassword: Option<String> = Some(TRUSTSTORE_PASSWORD),
                                  routing: Option<List<KafkaSink>> = Some(sampleStreamsDefinition),
                                  logLevel: Option<LogLevel> = Some(LogLevel.INFO)
-) =
-        PartialConfiguration(
-                listenPort = listenPort,
-                idleTimeoutSec = idleTimeoutSec,
-                maxPayloadSizeBytes = maxPayloadSizeBytes,
-                firstRequestDelaySec = firstReqDelaySec,
-                requestIntervalSec = requestIntervalSec,
-                sslDisable = sslDisable,
-                keyStoreFile = keyStoreFile,
-                keyStorePassword = keyStorePassword,
-                trustStoreFile = trustStoreFile,
-                trustStorePassword = trustStorePassword,
-                streamPublishers = routing,
-                logLevel = logLevel
-        )
+) = PartialConfiguration(
+        listenPort = listenPort,
+        idleTimeoutSec = idleTimeoutSec,
+        firstRequestDelaySec = firstReqDelaySec,
+        requestIntervalSec = requestIntervalSec,
+        sslDisable = sslDisable,
+        keyStoreFile = keyStoreFile,
+        keyStorePassword = keyStorePassword,
+        trustStoreFile = trustStoreFile,
+        trustStorePassword = trustStorePassword,
+        streamPublishers = routing,
+        logLevel = logLevel
+)
 
 const val defaultListenPort = 1234
-const val defaultMaxPayloadSizeBytes = 2
 const val defaultRequestIntervalSec = 3L
 const val defaultIdleTimeoutSec = 10L
 const val defaultFirstReqDelaySec = 10L
@@ -221,9 +216,17 @@ const val TRUSTSTORE = "trust.ks.pkcs12"
 const val TRUSTSTORE_PASSWORD = "changeMeToo"
 
 const val sampleSinkName = "perf3gpp"
+const val higherMaxPayloadSize = 2
 
-private val sampleSink = mock<KafkaSink>().also {
+private val sink1 = mock<KafkaSink>().also {
     whenever(it.name()).thenReturn(sampleSinkName)
+    whenever(it.maxPayloadSizeBytes()).thenReturn(1)
 }
-val sampleStreamsDefinition = listOf(sampleSink)
-val sampleRouting = listOf(Route(sampleSink.name(), sampleSink))
+
+private val sink2 = mock<KafkaSink>().also {
+    whenever(it.name()).thenReturn(sampleSinkName)
+    whenever(it.maxPayloadSizeBytes()).thenReturn(higherMaxPayloadSize)
+}
+
+val sampleStreamsDefinition = listOf(sink1, sink2)
+val sampleRouting = sampleStreamsDefinition.map { Route(it.name(), it) }
