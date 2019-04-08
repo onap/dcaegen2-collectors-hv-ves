@@ -82,8 +82,6 @@ internal object CbsConfigurationProviderTest : Spek({
 
                                 assertThat(it.listenPort).isEqualTo(Some(6061))
                                 assertThat(it.idleTimeoutSec).isEqualTo(Some(60L))
-                                assertThat(it.maxPayloadSizeBytes).isEqualTo(Some(1048576))
-
 
                                 val sinks = it.streamPublishers.orNull()!!
                                 val sink1 = sinks[0]
@@ -148,7 +146,6 @@ private val validConfiguration = JsonParser().parse("""
 {
     "server.listenPort": 6061,
     "server.idleTimeoutSec": 60,
-    "server.maxPayloadSizeBytes": 1048576,
     "streams_publishes": {
         "$PERF3GPP_REGIONAL": {
             "type": "kafka",
@@ -177,21 +174,16 @@ private val validConfiguration = JsonParser().parse("""
 
 private val invalidConfiguration = JsonParser().parse("""
 {
-    "server": {
-        "listenPort": 6061,
-        "idleTimeoutSec": 60,
-        "maxPayloadSizeBytes": 1048576
-    },
     "streams_publishes": {
         "$PERF3GPP_REGIONAL": {
             "type": "kafka",
             "aaf_credentials": {
-                "username": "client",
+                "user": "client",
                 "password": "very secure password"
             },
             "kafka_info": {
-                "bootstrap_servers": "dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060",
-                "popic_name": "REG_HVVES_PERF3GPP"
+                "servers": "dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060",
+                "name": "REG_HVVES_PERF3GPP"
             }
         }
     }
