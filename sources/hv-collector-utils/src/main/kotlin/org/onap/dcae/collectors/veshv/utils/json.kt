@@ -17,20 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.config.impl.gsonadapters
+package org.onap.dcae.collectors.veshv.utils
 
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import java.lang.reflect.Type
-import java.time.Duration
 
-/**
- * @author Pawel Biniek <pawel.biniek@nokia.com>
- * @since March 2019
- */
-internal class DurationOfSecondsAdapter : JsonDeserializer<Duration> {
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext) =
-        Duration.ofSeconds(json.asLong)
-
-}
+fun JsonElement.reader() = toString().reader()
