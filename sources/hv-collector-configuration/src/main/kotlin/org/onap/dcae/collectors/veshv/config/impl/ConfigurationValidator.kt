@@ -23,6 +23,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
+import arrow.core.toOption
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
@@ -30,13 +31,16 @@ import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
-import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
 import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
+import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
+import org.onap.dcaegen2.services.sdk.security.ssl.Passwords
 import java.io.File
+import java.nio.file.Path
 import java.time.Duration
 
 /**
@@ -90,7 +94,6 @@ internal class ConfigurationValidator {
             partial.mapBinding {
                 ServerConfiguration(
                         it.listenPort.bind(),
-                        it.maxPayloadSizeBytes.bind(),
                         Duration.ofSeconds(it.idleTimeoutSec.bind())
                 )
             }
@@ -115,14 +118,25 @@ internal class ConfigurationValidator {
     private fun createSecurityConfiguration(partial: PartialConfiguration): Option<SecurityConfiguration> =
             partial.mapBinding {
                 SecurityConfiguration(
-                        Option.fromNullable(SecurityKeysPaths(
+                        createSecurityKeys(
                                 File(it.keyStoreFile.bind()).toPath(),
                                 it.keyStorePassword.bind(),
                                 File(it.trustStoreFile.bind()).toPath(),
                                 it.trustStorePassword.bind()
-                        ).asImmutableSecurityKeys())
+                        ).toOption()
                 )
             }
+
+    private fun createSecurityKeys(keyStorePath: Path,
+                                   keyStorePassword: String,
+                                   trustStorePath: Path,
+                                   trustStorePassword: String) =
+            ImmutableSecurityKeys.builder()
+                    .keyStore(ImmutableSecurityKeysStore.of(keyStorePath))
+                    .keyStorePassword(Passwords.fromString(keyStorePassword))
+                    .trustStore(ImmutableSecurityKeysStore.of(trustStorePath))
+                    .trustStorePassword(Passwords.fromString(trustStorePassword))
+                    .build()
 
     private fun validatedCollectorConfig(partial: PartialConfiguration) =
             partial.mapBinding { config ->

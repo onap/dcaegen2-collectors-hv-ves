@@ -37,8 +37,7 @@ import org.onap.dcae.collectors.veshv.model.ClientContext
  */
 class HvVesCollectorFactory(private val configuration: CollectorConfiguration,
                             private val sinkFactory: SinkFactory,
-                            private val metrics: Metrics,
-                            private val maxPayloadSizeBytes: Int): CollectorFactory {
+                            private val metrics: Metrics) : CollectorFactory {
 
     override fun invoke(ctx: ClientContext): Collector =
             createVesHvCollector(ctx)
@@ -48,7 +47,9 @@ class HvVesCollectorFactory(private val configuration: CollectorConfiguration,
     private fun createVesHvCollector(ctx: ClientContext): Collector =
             HvVesCollector(
                     clientContext = ctx,
-                    wireChunkDecoder = WireChunkDecoder(WireFrameDecoder(maxPayloadSizeBytes), ctx),
+                    wireChunkDecoder = WireChunkDecoder(
+                            WireFrameDecoder(configuration.maxPayloadSizeBytes), ctx
+                    ),
                     protobufDecoder = VesDecoder(),
                     router = Router(configuration.routing, sinkFactory, ctx, metrics),
                     metrics = metrics)

@@ -93,6 +93,7 @@ internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClien
                     cbsConfiguration.requestInterval)
             .doOnNext { logger.info(mdc) { "Received new configuration:\n$it" } }
             .map(::parseConfiguration)
+            .doOnNext { logger.info(mdc) { "Successfully parsed configuration json to:\n$it" } }
             .onErrorLog(logger, mdc) { "Error while creating configuration" }
             .retryWhen(retry)
 
