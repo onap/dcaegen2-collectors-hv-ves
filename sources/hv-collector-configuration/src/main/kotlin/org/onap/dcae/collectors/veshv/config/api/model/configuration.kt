@@ -37,8 +37,8 @@ data class HvVesConfiguration(
 
 data class ServerConfiguration(
         val listenPort: Int,
-        val idleTimeout: Duration,
-        val maxPayloadSizeBytes: Int
+        val maxPayloadSizeBytes: Int,
+        val idleTimeout: Duration
 )
 
 data class CbsConfiguration(
