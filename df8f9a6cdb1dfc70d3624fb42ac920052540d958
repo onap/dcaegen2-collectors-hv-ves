@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1671da66_d60c0771",
+        "filename": "development/configuration/local.json",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-08T09:13:32Z",
+      "side": 1,
+      "message": "You missing \"keys\" part like you have in base.json",
+      "revId": "df8f9a6cdb1dfc70d3624fb42ac920052540d958",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
