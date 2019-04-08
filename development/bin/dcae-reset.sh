@@ -21,8 +21,10 @@ set -euo pipefail
 
 
 usage() {
-    echo "Resets dcae-app-simulator consumed messages count"
-    echo "Usage: $0 [-h|--help] [-v|--verbose]"
+    echo "Resets dcae-app-simulator consumed messages count on given topic"
+    echo "Usage: $0 [-h|--help] [-v|--verbose] <topic>"
+    echo ""
+    echo "  - topic : kafka topic to reset consumer for, default 'HV_VES_PERF3GPP'"
     exit 1
 }
 
@@ -57,6 +59,8 @@ while getopts "$optspec" arg; do
 done
 shift $((OPTIND-1))
 
+TOPIC=${1:-HV_VES_PERF3GPP}
+
 DEVELOPMENT_BIN_DIRECTORY=$(realpath $(dirname "$0"))
 source ${DEVELOPMENT_BIN_DIRECTORY}/constants.sh
 
@@ -64,5 +68,5 @@ if [ -n "${VERBOSE+x}" ]; then
     echo "Requesting DCAE app running on port ${DCAE_APP_PORT} to reset messages count"
 fi
 
-curl --request DELETE ${DCAE_APP_ADDRESS}/messages
+curl --request DELETE ${DCAE_APP_ADDRESS}/messages/${TOPIC}
 echo
