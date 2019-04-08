@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1070859c_dd3dddfe",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-08T13:04:43Z",
+      "side": 1,
+      "message": "If we are disabling both Ser and Des, then I believe we can replace this with @Transient",
+      "range": {
+        "startLine": 60,
+        "startChar": 7,
+        "endLine": 60,
+        "endChar": 55
+      },
+      "revId": "302b59fb870eb7fa01bd19d2748f463883a1178e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e03b400_65f4fa7a",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProviderTest.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-08T13:04:43Z",
+      "side": 1,
+      "message": "Can we make this whole invalidConf a bit more \"invalid\" ? I mean, without running this test I was not able to see if it;s wrong streams_publishes or will it throw because `server` is in wrong format (and even after running I had to look closely what is wrong with this key).",
+      "range": {
+        "startLine": 194,
+        "startChar": 17,
+        "endLine": 194,
+        "endChar": 27
+      },
+      "revId": "302b59fb870eb7fa01bd19d2748f463883a1178e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd1cd29c_b0a8356e",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidatorTest.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-08T13:04:43Z",
+      "side": 1,
+      "message": "consider rename",
+      "range": {
+        "startLine": 208,
+        "startChar": 35,
+        "endLine": 208,
+        "endChar": 42
+      },
+      "revId": "302b59fb870eb7fa01bd19d2748f463883a1178e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1df5af2d_eacf0503",
+        "filename": "sources/hv-collector-ssl/src/test/kotlin/org/onap/dcae/collectors/veshv/ssl/boundary/SecurityKeysPathsTest.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-08T13:04:43Z",
+      "side": 1,
+      "message": "This SecurityKeysPaths class is probably no longer needed at all (as far as I remember we create it and immediately call `asImmutablesSecurityKeys`). Please try to inline it if it\u0027s not a lot of effort or add this little task to jira issue for moving this logic out of Validator.",
+      "range": {
+        "startLine": 31,
+        "startChar": 16,
+        "endLine": 31,
+        "endChar": 37
+      },
+      "revId": "302b59fb870eb7fa01bd19d2748f463883a1178e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
