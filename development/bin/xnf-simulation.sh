@@ -22,6 +22,14 @@ set -euo pipefail
 usage() {
     echo "Send request to xnf-simulator"
     echo "Usage: $0 [-h|--help] [-v|--verbose] [<xnf listen port> [<messages amount> [<messages type> [<xnf endpoint>]]]]"
+    echo ""
+    echo "Default values:"
+    echo "  - xnf listen port : 6062"
+    echo "  - messages amount : 1"
+    echo "  - messages type : VALID"
+    echo "  - xnf endpoint : simulator/async"
+    echo "Example invocations:"
+    echo "./xnf-simulation.sh -v 6062 1000 VALID"
     exit 1
 }
 
