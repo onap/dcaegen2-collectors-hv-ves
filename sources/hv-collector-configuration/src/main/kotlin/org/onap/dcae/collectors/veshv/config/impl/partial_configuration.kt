@@ -34,8 +34,6 @@ internal data class PartialConfiguration(
         val listenPort: Option<Int> = None,
         @SerializedName("server.idleTimeoutSec")
         val idleTimeoutSec: Option<Long> = None,
-        @SerializedName("server.maxPayloadSizeBytes")
-        val maxPayloadSizeBytes: Option<Int> = None,
 
         @SerializedName("cbs.firstRequestDelaySec")
         val firstRequestDelaySec: Option<Long> = None,

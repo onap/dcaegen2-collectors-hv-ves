@@ -76,7 +76,6 @@ internal object ConfigurationValidatorTest : Spek({
             val config = PartialConfiguration(
                     listenPort = Some(defaultListenPort),
                     idleTimeoutSec = Some(defaultIdleTimeoutSec),
-                    maxPayloadSizeBytes = Some(defaultMaxPayloadSizeBytes),
                     firstRequestDelaySec = Some(defaultFirstReqDelaySec),
                     requestIntervalSec = Some(defaultRequestIntervalSec),
                     sslDisable = Some(false),
@@ -97,8 +96,6 @@ internal object ConfigurationValidatorTest : Spek({
                         {
                             assertThat(it.server.listenPort)
                                     .isEqualTo(defaultListenPort)
-                            assertThat(it.server.maxPayloadSizeBytes)
-                                    .isEqualTo(defaultMaxPayloadSizeBytes)
                             assertThat(it.server.idleTimeout)
                                     .isEqualTo(Duration.ofSeconds(defaultIdleTimeoutSec))
 
@@ -116,6 +113,8 @@ internal object ConfigurationValidatorTest : Spek({
 
                             assertThat(it.collector.routing)
                                     .isEqualTo(sampleRouting)
+                            assertThat(it.collector.maxPayloadSizeBytes)
+                                    .isEqualTo(sampleMaxPayloadSize)
 
                             assertThat(it.logLevel).isEqualTo(LogLevel.TRACE)
                         }
@@ -183,7 +182,6 @@ internal object ConfigurationValidatorTest : Spek({
 
 private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPort),
                                  idleTimeoutSec: Option<Long> = Some(defaultIdleTimeoutSec),
-                                 maxPayloadSizeBytes: Option<Int> = Some(defaultMaxPayloadSizeBytes),
                                  firstReqDelaySec: Option<Long> = Some(defaultFirstReqDelaySec),
                                  requestIntervalSec: Option<Long> = Some(defaultRequestIntervalSec),
                                  sslDisable: Option<Boolean> = Some(false),
@@ -196,7 +194,6 @@ private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPor
 ) = PartialConfiguration(
         listenPort = listenPort,
         idleTimeoutSec = idleTimeoutSec,
-        maxPayloadSizeBytes = maxPayloadSizeBytes,
         firstRequestDelaySec = firstReqDelaySec,
         requestIntervalSec = requestIntervalSec,
         sslDisable = sslDisable,
@@ -209,7 +206,6 @@ private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPor
 )
 
 const val defaultListenPort = 1234
-const val defaultMaxPayloadSizeBytes = 2
 const val defaultRequestIntervalSec = 3L
 const val defaultIdleTimeoutSec = 10L
 const val defaultFirstReqDelaySec = 10L
@@ -220,9 +216,12 @@ const val TRUSTSTORE = "trust.ks.pkcs12"
 const val TRUSTSTORE_PASSWORD = "changeMeToo"
 
 const val sampleSinkName = "perf3gpp"
+const val sampleMaxPayloadSize = 1024
 
-private val sampleSink = mock<KafkaSink>().also {
+private val sink = mock<KafkaSink>().also {
     whenever(it.name()).thenReturn(sampleSinkName)
+    whenever(it.maxPayloadSizeBytes()).thenReturn(sampleMaxPayloadSize)
 }
-val sampleStreamsDefinition = listOf(sampleSink)
-val sampleRouting = listOf(Route(sampleSink.name(), sampleSink))
+
+private val sampleStreamsDefinition = listOf(sink)
+private val sampleRouting = listOf(Route(sink.name(), sink))

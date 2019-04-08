@@ -53,7 +53,7 @@ class ConfigurationModule {
                     .throwOnLeft(::MissingArgumentException)
                     .doOnNext { logger.info { "Using base configuration file: ${it.absolutePath}" } }
                     .map { it.reader().use(configParser::parse) }
-                    .doOnNext { logger.info { "Successfully parsed json file to configuration: $it" } }
+                    .doOnNext { logger.info { "Successfully parsed configuration file to: $it" } }
                     .cache()
                     .flatMapMany { basePartialConfig ->
                         cbsConfigurationProvider(basePartialConfig, configStateListener, mdc)

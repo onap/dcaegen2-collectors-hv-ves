@@ -87,7 +87,6 @@ internal object JsonConfigurationParserTest : Spek({
 
                 assertThat(config.listenPort).isEqualTo(Some(6000))
                 assertThat(config.idleTimeoutSec).isEqualTo(Some(1200L))
-                assertThat(config.maxPayloadSizeBytes).isEqualTo(Some(1048576))
 
                 assertThat(config.firstRequestDelaySec).isEqualTo(Some(7L))
                 assertThat(config.requestIntervalSec).isEqualTo(Some(900L))

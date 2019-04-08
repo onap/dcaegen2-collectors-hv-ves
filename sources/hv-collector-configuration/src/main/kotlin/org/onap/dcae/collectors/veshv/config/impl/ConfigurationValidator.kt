@@ -94,7 +94,6 @@ internal class ConfigurationValidator {
             partial.mapBinding {
                 ServerConfiguration(
                         it.listenPort.bind(),
-                        it.maxPayloadSizeBytes.bind(),
                         Duration.ofSeconds(it.idleTimeoutSec.bind())
                 )
             }
@@ -138,7 +137,6 @@ internal class ConfigurationValidator {
                     .trustStore(ImmutableSecurityKeysStore.of(trustStorePath))
                     .trustStorePassword(Passwords.fromString(trustStorePassword))
                     .build()
-
 
     private fun validatedCollectorConfig(partial: PartialConfiguration) =
             partial.mapBinding { config ->
