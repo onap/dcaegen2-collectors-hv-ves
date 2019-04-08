@@ -20,8 +20,10 @@
 set -euo pipefail
 
 usage() {
-    echo "Return current amount of consumed messages by dcae-app-simulator"
-    echo "Usage: $0 [-h|--help] [-v|--verbose]"
+    echo "Return current amount of consumed messages by dcae-app-simulator on given topic"
+    echo "Usage: $0 [-h|--help] [-v|--verbose] <topic>"
+    echo ""
+    echo "  - topic : kafka topic to retrieve messages from, default `HV_VES_PERF3GPP`"
     exit 1
 }
 
@@ -56,12 +58,14 @@ while getopts "$optspec" arg; do
 done
 shift $((OPTIND-1))
 
+TOPIC=${1:-HV_VES_PERF3GPP}
+
 DEVELOPMENT_BIN_DIRECTORY=$(realpath $(dirname "$0"))
 source ${DEVELOPMENT_BIN_DIRECTORY}/constants.sh
 
 if [ -n "${VERBOSE+x}" ]; then
-    echo "All messages count currently consumed by dcae app simulator: "
+    echo "All messages count currently consumed by dcae app simulator on topic ${TOPIC}: "
 fi
 
-curl --request GET ${DCAE_APP_ADDRESS}/messages/all/count
+curl --request GET ${DCAE_APP_ADDRESS}/messages/${TOPIC}/count
 echo

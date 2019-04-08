@@ -20,8 +20,11 @@
 set -euo pipefail
 
 usage() {
-    echo "Set dcae-app-simulator to start consuming messages from given topic (HV_VES_PERF3GPP by default)"
-    echo "Usage: $0 [-h|--help] [-v|--verbose] [topic]"
+    echo "Set dcae-app-simulator to start consuming messages from given comma-separated topics (HV_VES_PERF3GPP by default)"
+    echo "Usage: $0 [-h|--help] [-v|--verbose] [topics]"
+    echo ""
+    echo "Example invocations:"
+    echo "./dcae-topic.sh FAULT_TOPIC,HEARTBEAT_TOPIC,HV_VES_PERF3GPP"
     exit 1
 }
 
@@ -62,7 +65,7 @@ source ${DEVELOPMENT_BIN_DIRECTORY}/constants.sh
 TOPIC=${1:-HV_VES_PERF3GPP}
 
 if [ -n "${VERBOSE+x}" ]; then
-    echo "Requesting DCAE app running on ${DCAE_APP_ADDRESS} to consume messages from topic: ${TOPIC}"
+    echo "Requesting DCAE app running on ${DCAE_APP_ADDRESS} to consume messages from topics: ${TOPIC}"
 fi
 
 curl --request PUT ${DCAE_APP_ADDRESS}/configuration/topics -d ${TOPIC}

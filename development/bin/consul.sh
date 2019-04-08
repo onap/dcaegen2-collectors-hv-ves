@@ -60,22 +60,22 @@ DOMAIN=${1:-perf3gpp}
 TOPIC=${2:-HV_VES_PERF3GPP}
 
 CONFIGURATION="{
-  "streams_publishes": {
-    "${DOMAIN}": {
-      "type": "kafka",
-      "kafka_info": {
-        "bootstrap_servers": "message-router-kafka:9092",
-        "topic_name": "${TOPIC}"
+  \"streams_publishes\": {
+    \"${DOMAIN}\": {
+      \"type\": \"kafka\",
+      \"kafka_info\": {
+        \"bootstrap_servers\": \"message-router-kafka:9092\",
+        \"topic_name\": \"${TOPIC}\"
       }
     }
   }
 }"
-CONFIGURATION_ENDPOINT=localhost:8500/v1/kv/veshv-config
+CONFIGURATION_ENDPOINT=localhost:8500/v1/kv/dcae-hv-ves-collector
 
 
 if [ -n "${VERBOSE+x}" ]; then
     echo "Configuration: ${CONFIGURATION}"
-    echo "Putting configuration under ${CONFIGURATION_ENDPOINT}."
+    echo "Putting configuration under ${CONFIGURATION_ENDPOINT}"
 fi
 curl --request PUT ${CONFIGURATION_ENDPOINT} -d "${CONFIGURATION}"
 echo
