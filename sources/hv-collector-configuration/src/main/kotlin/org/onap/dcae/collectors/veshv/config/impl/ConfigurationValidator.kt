@@ -26,16 +26,18 @@ import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
+import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.ServerConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityKeysPaths
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
-import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnEmpty
+import org.onap.dcae.collectors.veshv.utils.arrow.mapBinding
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import java.io.File
+import java.time.Duration
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -88,16 +90,16 @@ internal class ConfigurationValidator {
             partial.mapBinding {
                 ServerConfiguration(
                         it.listenPort.bind(),
-                        it.idleTimeoutSec.bind(),
-                        it.maxPayloadSizeBytes.bind()
+                        it.maxPayloadSizeBytes.bind(),
+                        Duration.ofSeconds(it.idleTimeoutSec.bind())
                 )
             }
 
     internal fun validatedCbsConfiguration(partial: PartialConfiguration) =
             partial.mapBinding {
                 CbsConfiguration(
-                        it.firstRequestDelaySec.bind(),
-                        it.requestIntervalSec.bind()
+                        Duration.ofSeconds(it.firstRequestDelaySec.bind()),
+                        Duration.ofSeconds(it.requestIntervalSec.bind())
                 )
             }
 
@@ -123,9 +125,9 @@ internal class ConfigurationValidator {
             }
 
     private fun validatedCollectorConfig(partial: PartialConfiguration) =
-            partial.mapBinding {
+            partial.mapBinding { config ->
                 CollectorConfiguration(
-                        it.routing.bind()
+                        config.streamPublishers.bind().map { Route(it.name(), it) }
                 )
             }
 

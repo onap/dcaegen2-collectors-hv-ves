@@ -21,11 +21,8 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 
 import arrow.core.Option
-import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.toOption
-import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -47,15 +44,11 @@ internal class ConfigurationMerger {
                     trustStoreFile = base.trustStoreFile.updateToGivenOrNone(update.trustStoreFile),
                     trustStorePassword = base.trustStorePassword.updateToGivenOrNone(update.trustStorePassword),
 
-                    routing = base.routing.updateToGivenOrNone(update.routing),
+                    streamPublishers = base.streamPublishers.updateToGivenOrNone(update.streamPublishers),
 
                     logLevel = base.logLevel.updateToGivenOrNone(update.logLevel)
             )
 
     private fun <T> Option<T>.updateToGivenOrNone(update: Option<T>) =
             update.getOrElse(this::orNull).toOption()
-
 }
-
-
-

@@ -21,28 +21,18 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Option
 import com.google.gson.GsonBuilder
-import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.DurationOfSecondsAdapter
 import org.onap.dcae.collectors.veshv.config.impl.gsonadapters.OptionAdapter
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
-
 import java.io.Reader
-import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-internal class FileConfigurationReader {
+internal class JsonConfigurationParser {
     private val gson = GsonBuilder()
             .registerTypeAdapter(Option::class.java, OptionAdapter())
-            .registerTypeAdapter(Duration::class.java, DurationOfSecondsAdapter())
             .create()
 
-    fun loadConfig(input: Reader): PartialConfiguration =
+    fun parse(input: Reader): PartialConfiguration =
             gson.fromJson(input, PartialConfiguration::class.java)
-                    .also { logger.info { "Successfully read file and parsed json to configuration: $it" } }
-
-    companion object {
-        private val logger = Logger(FileConfigurationReader::class)
-    }
 }
