@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8274767_a77979d6",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/model/ClientContextTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-09T13:06:21Z",
+      "side": 1,
+      "message": "Move to the same module as class under test",
+      "revId": "42bfd51b0b6772b987524bea60a6cf4ab98f4473",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a43072f_331dd15e",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/client/context/ClientContext.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-09T13:06:21Z",
+      "side": 1,
+      "message": "I believe ClientContext should be placed closer to the domain model. Let\u0027s do not treat utils as a bag for everything.\n\nAnother solution would be to extract hv-collector-logging module...",
+      "revId": "42bfd51b0b6772b987524bea60a6cf4ab98f4473",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5f27d8d_f2b9cf3b",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/logging/client/context/ServiceContext.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-09T13:06:21Z",
+      "side": 1,
+      "message": "Same as in case of ClientContext",
+      "revId": "42bfd51b0b6772b987524bea60a6cf4ab98f4473",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
