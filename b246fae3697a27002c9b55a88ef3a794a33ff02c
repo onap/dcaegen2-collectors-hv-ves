@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8424995d_cbbc409f",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/configuration.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-09T06:53:00Z",
+      "side": 1,
+      "message": "This is not a good default value. Use 1 MiB.",
+      "range": {
+        "startLine": 49,
+        "startChar": 93,
+        "endLine": 49,
+        "endChar": 95
+      },
+      "revId": "b246fae3697a27002c9b55a88ef3a794a33ff02c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
