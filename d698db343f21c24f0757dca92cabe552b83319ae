@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6bdf8dae_10f38734",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/configuration.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-09T06:39:39Z",
+      "side": 1,
+      "message": "I believe we should default to some bigger value",
+      "range": {
+        "startLine": 51,
+        "startChar": 93,
+        "endLine": 51,
+        "endChar": 95
+      },
+      "revId": "d698db343f21c24f0757dca92cabe552b83319ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "55032c4d_59a25a5e",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-09T06:39:39Z",
+      "side": 1,
+      "message": "Let\u0027s keep this log inside of JsonParser instead of duplicating it for every user",
+      "range": {
+        "startLine": 96,
+        "startChar": 12,
+        "endLine": 96,
+        "endChar": 96
+      },
+      "revId": "d698db343f21c24f0757dca92cabe552b83319ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
