@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "54dc5c92_f2389087",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/configuration.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-09T06:53:00Z",
+      "side": 1,
+      "message": "Write an unit test for this code.",
+      "parentUuid": "6bdf8dae_10f38734",
+      "range": {
+        "startLine": 51,
+        "startChar": 93,
+        "endLine": 51,
+        "endChar": 95
+      },
+      "revId": "d698db343f21c24f0757dca92cabe552b83319ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "55032c4d_59a25a5e",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
         "patchSetId": 5
@@ -42,6 +66,40 @@
         "endLine": 96,
         "endChar": 96
       },
+      "revId": "d698db343f21c24f0757dca92cabe552b83319ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1cb539e1_ad043d5b",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProviderTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-09T06:53:00Z",
+      "side": 1,
+      "message": "Please leave this assertion and add a maxPayloadSize to json under a specific stream with non-default value. We need to test it somewhere.",
+      "revId": "d698db343f21c24f0757dca92cabe552b83319ae",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9b27617_175a6d09",
+        "filename": "sources/hv-collector-ct/src/test/kotlin/org/onap/dcae/collectors/veshv/tests/fakes/routing.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-09T06:53:00Z",
+      "side": 1,
+      "message": "Let\u0027s use non-default value so we make sure it uses sink definitions instead of some hardcodes introduced in the future.",
       "revId": "d698db343f21c24f0757dca92cabe552b83319ae",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
