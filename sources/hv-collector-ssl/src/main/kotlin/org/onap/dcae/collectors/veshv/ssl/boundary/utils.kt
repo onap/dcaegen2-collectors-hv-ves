@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.ssl.boundary
 import arrow.core.None
 import arrow.core.Some
 import arrow.core.Try
-import arrow.core.getOrElse
 import org.apache.commons.cli.CommandLine
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.commandline.hasOption
@@ -38,7 +37,9 @@ import java.nio.file.Paths
  */
 
 const val KEY_STORE_FILE = "/etc/ves-hv/server.p12"
+const val KEY_STORE_PASSWORD_FILE = "/etc/ves-hv/server.pass"
 const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
+const val TRUST_STORE_PASSWORD_FILE = "/etc/ves-hv/trust.pass"
 
 fun createSecurityConfiguration(cmdLine: CommandLine): Try<SecurityConfiguration> =
         createSecurityConfigurationProvider(cmdLine).map { it() }
@@ -55,15 +56,15 @@ private fun disabledSecurityConfiguration() = SecurityConfiguration(None)
 
 private fun enabledSecurityConfiguration(cmdLine: CommandLine): SecurityConfiguration {
     val ksFile = cmdLine.stringValue(CommandLineOption.KEY_STORE_FILE, KEY_STORE_FILE)
-    val ksPass = cmdLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD).getOrElse { "" }
+    val ksPass = cmdLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD_FILE, KEY_STORE_PASSWORD_FILE)
     val tsFile = cmdLine.stringValue(CommandLineOption.TRUST_STORE_FILE, TRUST_STORE_FILE)
-    val tsPass = cmdLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD).getOrElse { "" }
+    val tsPass = cmdLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD_FILE, TRUST_STORE_PASSWORD_FILE)
 
     val keys = ImmutableSecurityKeys.builder()
             .keyStore(ImmutableSecurityKeysStore.of(pathFromFile(ksFile)))
-            .keyStorePassword(Passwords.fromString(ksPass))
+            .keyStorePassword(Passwords.fromPath(pathFromFile(ksPass)))
             .trustStore(ImmutableSecurityKeysStore.of(pathFromFile(tsFile)))
-            .trustStorePassword(Passwords.fromString(tsPass))
+            .trustStorePassword(Passwords.fromPath(pathFromFile(tsPass)))
             .build()
 
     return SecurityConfiguration(Some(keys))

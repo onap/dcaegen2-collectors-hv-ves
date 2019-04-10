@@ -71,32 +71,32 @@
     },
     {
       "name": "security.keys.keyStoreFile",
-      "value": "/etc/ves-hv/ssl/keystore.p12",
+      "value": "/etc/ves-hv/ssl/cert.jks",
       "description": "Points to private key store file",
       "sourced_at_deployment": false,
       "policy_editable": false,
       "designer_editable": false
     },
     {
-      "name": "security.keys.keyStorePassword",
-      "value": "onaponap",
-      "description": "Password for the key store",
+      "name": "security.keys.keyStorePasswordFile",
+      "value": "/etc/ves-hv/ssl/jks.pass",
+      "description": "File which contains password for the key store",
       "sourced_at_deployment": false,
       "policy_editable": false,
       "designer_editable": false
     },
     {
       "name": "security.keys.trustStoreFile",
-      "value": "/etc/ves-hv/ssl/truststore.p12",
+      "value": "/etc/ves-hv/ssl/trust.jks",
       "description": "Points to trust store file which contains trusted client certificates and/or CAs",
       "sourced_at_deployment": false,
       "policy_editable": false,
       "designer_editable": false
     },
     {
-      "name": "security.keys.trustStorePassword",
-      "value": "onaponap",
-      "description": "Password for the trust store",
+      "name": "security.keys.trustStorePasswordFile",
+      "value": "/etc/ves-hv/ssl/trust.pass",
+      "description": "File which contains password for the trust store",
       "sourced_at_deployment": false,
       "policy_editable": false,
       "designer_editable": false

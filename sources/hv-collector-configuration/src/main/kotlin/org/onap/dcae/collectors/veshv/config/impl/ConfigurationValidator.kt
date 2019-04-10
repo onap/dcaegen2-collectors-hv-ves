@@ -120,22 +120,22 @@ internal class ConfigurationValidator {
                 SecurityConfiguration(
                         createSecurityKeys(
                                 File(it.keyStoreFile.bind()).toPath(),
-                                it.keyStorePassword.bind(),
+                                File(it.keyStorePasswordFile.bind()).toPath(),
                                 File(it.trustStoreFile.bind()).toPath(),
-                                it.trustStorePassword.bind()
+                                File(it.trustStorePasswordFile.bind()).toPath()
                         ).toOption()
                 )
             }
 
     private fun createSecurityKeys(keyStorePath: Path,
-                                   keyStorePassword: String,
+                                   keyStorePasswordPath: Path,
                                    trustStorePath: Path,
-                                   trustStorePassword: String) =
+                                   trustStorePasswordPath: Path) =
             ImmutableSecurityKeys.builder()
                     .keyStore(ImmutableSecurityKeysStore.of(keyStorePath))
-                    .keyStorePassword(Passwords.fromString(keyStorePassword))
+                    .keyStorePassword(Passwords.fromPath(keyStorePasswordPath))
                     .trustStore(ImmutableSecurityKeysStore.of(trustStorePath))
-                    .trustStorePassword(Passwords.fromString(trustStorePassword))
+                    .trustStorePassword(Passwords.fromPath(trustStorePasswordPath))
                     .build()
 
     private fun validatedCollectorConfig(partial: PartialConfiguration) =

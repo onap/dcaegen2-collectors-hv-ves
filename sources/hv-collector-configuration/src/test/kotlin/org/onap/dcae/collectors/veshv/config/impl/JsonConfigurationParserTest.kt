@@ -28,7 +28,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.tests.utils.resourceAsStream
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.StringReader
-import java.time.Duration
 import kotlin.test.fail
 
 /**
@@ -93,9 +92,9 @@ internal object JsonConfigurationParserTest : Spek({
 
                 assertThat(config.sslDisable).isEqualTo(Some(false))
                 assertThat(config.keyStoreFile).isEqualTo(Some("test.ks.pkcs12"))
-                assertThat(config.keyStorePassword).isEqualTo(Some("changeMe"))
+                assertThat(config.keyStorePasswordFile).isEqualTo(Some("test.ks.pass"))
                 assertThat(config.trustStoreFile).isEqualTo(Some("trust.ks.pkcs12"))
-                assertThat(config.trustStorePassword).isEqualTo(Some("changeMeToo"))
+                assertThat(config.trustStorePasswordFile).isEqualTo(Some("trust.ks.pass"))
             }
         }
     }

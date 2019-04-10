@@ -44,12 +44,12 @@ internal data class PartialConfiguration(
         val sslDisable: Option<Boolean> = None,
         @SerializedName("security.keys.keyStoreFile")
         val keyStoreFile: Option<String> = None,
-        @SerializedName("security.keys.keyStorePassword")
-        val keyStorePassword: Option<String> = None,
+        @SerializedName("security.keys.keyStorePasswordFile")
+        val keyStorePasswordFile: Option<String> = None,
         @SerializedName("security.keys.trustStoreFile")
         val trustStoreFile: Option<String> = None,
-        @SerializedName("security.keys.trustStorePassword")
-        val trustStorePassword: Option<String> = None,
+        @SerializedName("security.keys.trustStorePasswordFile")
+        val trustStorePasswordFile: Option<String> = None,
 
         @SerializedName("logLevel")
         val logLevel: Option<LogLevel> = None,

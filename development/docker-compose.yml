@@ -110,8 +110,9 @@ services:
               "--ves-host", "ves-hv-collector",
               "--ves-port", "6061",
               "--key-store", "/etc/ves-hv/client.p12",
-              "--key-store-password", "onaponap",
-              "--trust-store-password", "onaponap"]
+              "--key-store-password-file", "/etc/ves-hv/client.pass",
+              "--trust-store", "/etc/ves-hv/trust.p12",
+              "--trust-store-password-file", "/etc/ves-hv/trust.pass"]
     healthcheck:
       test: curl -f http://localhost:6063/health/ready || exit 1
       interval: 10s
