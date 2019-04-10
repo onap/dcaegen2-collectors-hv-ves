@@ -29,6 +29,7 @@ import arrow.core.toOption
  * @since March 2019
  */
 internal class ConfigurationMerger {
+    @Suppress("MaxLineLength")
     fun merge(base: PartialConfiguration, update: PartialConfiguration): PartialConfiguration =
             PartialConfiguration(
                     listenPort = base.listenPort.updateToGivenOrNone(update.listenPort),
