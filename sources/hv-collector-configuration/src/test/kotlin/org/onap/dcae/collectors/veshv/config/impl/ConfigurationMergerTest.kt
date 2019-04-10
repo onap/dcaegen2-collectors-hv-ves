@@ -27,7 +27,6 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.InputStreamReader
 import java.io.Reader
-import java.time.Duration
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -37,14 +36,14 @@ internal object ConfigurationMergerTest : Spek({
     describe("Merges partial configurations into one") {
         it("merges single parameter into empty config") {
             val actual = PartialConfiguration()
-            val diff = PartialConfiguration(logLevel = Some(LogLevel.INFO))
+            val diff = PartialConfiguration(logLevel = Some(LogLevel.WARN))
 
             val result = ConfigurationMerger().merge(actual, diff)
 
-            assertThat(result.logLevel).isEqualTo(Some(LogLevel.INFO))
+            assertThat(result.logLevel).isEqualTo(Some(LogLevel.WARN))
         }
 
-        val someListenPort = Some(45)
+        val someListenPort = Some(defaultListenPort)
         it("merges single embedded parameter into empty config") {
             val actual = PartialConfiguration()
             val diff = PartialConfiguration(listenPort = someListenPort)
@@ -58,11 +57,11 @@ internal object ConfigurationMergerTest : Spek({
             val actual = JsonConfigurationParser().parse(
                     InputStreamReader(
                             JsonConfigurationParserTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
-            val diff = PartialConfiguration(logLevel = Some(LogLevel.INFO))
+            val diff = PartialConfiguration(logLevel = Some(LogLevel.WARN))
 
             val result = ConfigurationMerger().merge(actual, diff)
 
-            assertThat(result.logLevel).isEqualTo(Some(LogLevel.INFO))
+            assertThat(result.logLevel).isEqualTo(Some(LogLevel.WARN))
         }
 
         it("merges single embedded parameter into full config") {
@@ -74,7 +73,6 @@ internal object ConfigurationMergerTest : Spek({
             val result = ConfigurationMerger().merge(actual, diff)
 
             assertThat(result.listenPort).isEqualTo(someListenPort)
-            assertThat(result.idleTimeoutSec.isEmpty()).isFalse()
             assertThat(result.idleTimeoutSec).isEqualTo(Some(1200L))
         }
 
