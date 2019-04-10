@@ -46,13 +46,6 @@ data class CbsConfiguration(
 )
 
 data class CollectorConfiguration(
-        val routing: Routing
-) {
-    val maxPayloadSizeBytes by lazy {
-        routing.map { it.sink.maxPayloadSizeBytes() }.max() ?: DEFAULT_MAX_PAYLOAD_SIZE
-    }
-
-    companion object {
-        internal const val DEFAULT_MAX_PAYLOAD_SIZE = 1024 * 1024
-    }
-}
+        val routing: Routing,
+        val maxPayloadSizeBytes: Int
+)

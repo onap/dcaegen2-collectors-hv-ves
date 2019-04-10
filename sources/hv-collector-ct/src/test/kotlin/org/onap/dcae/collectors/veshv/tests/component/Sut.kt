@@ -34,6 +34,7 @@ import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysFailingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.AlwaysSuccessfulSink
 import org.onap.dcae.collectors.veshv.tests.fakes.DelayingSink
 import org.onap.dcae.collectors.veshv.tests.fakes.FakeMetrics
+import org.onap.dcae.collectors.veshv.tests.fakes.MAX_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.tests.fakes.StoringSink
 import org.onap.dcae.collectors.veshv.tests.fakes.basicRouting
 import org.onap.dcae.collectors.veshv.utils.Closeable
@@ -95,10 +96,10 @@ class DummySinkFactory(private val sink: Sink) : SinkFactory {
 }
 
 fun vesHvWithAlwaysSuccessfulSink(routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), AlwaysSuccessfulSink())
+        Sut(CollectorConfiguration(routing, MAX_PAYLOAD_SIZE_BYTES), AlwaysSuccessfulSink())
 
 fun vesHvWithAlwaysFailingSink(routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), AlwaysFailingSink())
+        Sut(CollectorConfiguration(routing, MAX_PAYLOAD_SIZE_BYTES), AlwaysFailingSink())
 
 fun vesHvWithDelayingSink(delay: Duration, routing: Routing = basicRouting): Sut =
-        Sut(CollectorConfiguration(routing), DelayingSink(delay))
+        Sut(CollectorConfiguration(routing, MAX_PAYLOAD_SIZE_BYTES), DelayingSink(delay))
