@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "424d43da_b2dc4ac0",
+        "filename": "dpo/spec/hv-ves-collector.componentspec.json",
+        "patchSetId": 4
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-10T11:32:18Z",
+      "side": 1,
+      "message": "typo ? or is it default platform name for this file?",
+      "range": {
+        "startLine": 82,
+        "startChar": 32,
+        "endLine": 82,
+        "endChar": 35
+      },
+      "revId": "c138b700030d22ae0bdbd6992fb4a4d8a3431798",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
