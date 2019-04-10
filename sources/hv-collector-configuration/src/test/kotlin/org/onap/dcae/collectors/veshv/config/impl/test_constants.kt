@@ -1,0 +1,49 @@
+/*
+ * ============LICENSE_START=======================================================
+ * dcaegen2-collectors-veshv
+ * ================================================================================
+ * Copyright (C) 2019 NOKIA
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+package org.onap.dcae.collectors.veshv.config.impl
+
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
+import org.onap.dcae.collectors.veshv.config.api.model.Route
+import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+
+
+internal val DEFAULT_LOG_LEVEL = LogLevel.INFO
+
+internal const val defaultListenPort = 1234
+internal const val defaultMaxPayloadSizeBytes = 2
+internal const val defaultRequestIntervalSec = 3L
+internal const val defaultIdleTimeoutSec = 10L
+internal const val defaultFirstReqDelaySec = 10L
+
+internal const val KEYSTORE = "test.ks.pkcs12"
+internal const val KEYSTORE_PASSWORD = "changeMe"
+internal const val TRUSTSTORE = "trust.ks.pkcs12"
+internal const val TRUSTSTORE_PASSWORD = "changeMeToo"
+
+internal const val sampleSinkName = "perf3gpp"
+
+private val sampleSink = mock<KafkaSink>().also {
+    whenever(it.name()).thenReturn(sampleSinkName)
+}
+
+internal val sampleStreamsDefinition = listOf(sampleSink)
+internal val sampleRouting = listOf(Route(sampleSink.name(), sampleSink))

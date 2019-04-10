@@ -34,6 +34,8 @@ internal data class PartialConfiguration(
         val listenPort: Option<Int> = None,
         @SerializedName("server.idleTimeoutSec")
         val idleTimeoutSec: Option<Long> = None,
+        @SerializedName("server.maxPayloadSizeBytes")
+        val maxPayloadSizeBytes: Option<Int> = None,
 
         @SerializedName("cbs.firstRequestDelaySec")
         val firstRequestDelaySec: Option<Long> = None,
@@ -44,16 +46,35 @@ internal data class PartialConfiguration(
         val sslDisable: Option<Boolean> = None,
         @SerializedName("security.keys.keyStoreFile")
         val keyStoreFile: Option<String> = None,
-        @SerializedName("security.keys.keyStorePasswordFile")
-        val keyStorePasswordFile: Option<String> = None,
+        @SerializedName("security.keys.keyStorePassword")
+        val keyStorePassword: Option<String> = None,
         @SerializedName("security.keys.trustStoreFile")
         val trustStoreFile: Option<String> = None,
-        @SerializedName("security.keys.trustStorePasswordFile")
-        val trustStorePasswordFile: Option<String> = None,
+        @SerializedName("security.keys.trustStorePassword")
+        val trustStorePassword: Option<String> = None,
 
         @SerializedName("logLevel")
         val logLevel: Option<LogLevel> = None,
 
         @Transient
         var streamPublishers: Option<List<KafkaSink>> = None
+)
+
+internal data class ValidatedPartialConfiguration(
+        val listenPort: Int,
+        val idleTimeoutSec: Long,
+        val maxPayloadSizeBytes: Int,
+        val cbsConfiguration: ValidatedCbsConfiguration,
+        val sslDisable: Option<Boolean>,
+        val keyStoreFile: Option<String>,
+        val keyStorePassword: Option<String>,
+        val trustStoreFile: Option<String>,
+        val trustStorePassword: Option<String>,
+        val logLevel: Option<LogLevel>,
+        val streamPublishers: List<KafkaSink>
+)
+
+internal data class ValidatedCbsConfiguration(
+        val firstRequestDelaySec: Long,
+        val requestIntervalSec: Long
 )
