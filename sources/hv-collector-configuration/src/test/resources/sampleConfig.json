@@ -6,7 +6,7 @@
   "cbs.requestIntervalSec": 900,
   "security.sslDisable": false,
   "security.keys.keyStoreFile": "test.ks.pkcs12",
-  "security.keys.keyStorePassword": "changeMe",
+  "security.keys.keyStorePasswordFile": "test.ks.pass",
   "security.keys.trustStoreFile": "trust.ks.pkcs12",
-  "security.keys.trustStorePassword": "changeMeToo"
+  "security.keys.trustStorePasswordFile": "trust.ks.pass"
 }

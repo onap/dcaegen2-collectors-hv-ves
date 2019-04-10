@@ -91,11 +91,11 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
                     .desc("Key store in PKCS12 format")
                     .build()
     ),
-    KEY_STORE_PASSWORD(
+    KEY_STORE_PASSWORD_FILE(
             Option.builder("kp")
-                    .longOpt("key-store-password")
+                    .longOpt("key-store-password-file")
                     .hasArg()
-                    .desc("Key store password")
+                    .desc("File with key store password")
                     .build()
     ),
     TRUST_STORE_FILE(
@@ -105,11 +105,11 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
                     .desc("File with trusted certificate bundle in PKCS12 format")
                     .build()
     ),
-    TRUST_STORE_PASSWORD(
+    TRUST_STORE_PASSWORD_FILE(
             Option.builder("tp")
-                    .longOpt("trust-store-password")
+                    .longOpt("trust-store-password-file")
                     .hasArg()
-                    .desc("Trust store password")
+                    .desc("File with trust store password")
                     .build()
     ),
     MAXIMUM_PAYLOAD_SIZE_BYTES(
