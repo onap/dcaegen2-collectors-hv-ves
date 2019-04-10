@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.getOrElse
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
@@ -30,13 +29,8 @@ import org.assertj.core.api.Assertions.fail
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.config.api.model.Route
-import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator.Companion.DEFAULT_LOG_LEVEL
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
-import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
-import java.io.File
-import java.time.Duration
 
 
 internal object ConfigurationValidatorTest : Spek({
@@ -44,35 +38,30 @@ internal object ConfigurationValidatorTest : Spek({
         val cut = ConfigurationValidator()
 
         describe("validating partial configuration with missing fields") {
-            val config = PartialConfiguration(
-                    listenPort = Some(1)
-            )
+            val config = PartialConfiguration(listenPort = Some(5))
 
-            it("should return ValidationError") {
+            it("should return ValidationException with missing required fields description") {
                 val result = cut.validate(config)
-                assertThat(result.isLeft()).isTrue()
+                result.fold({
+                    assertThat(it.message).doesNotContain(PartialConfiguration::listenPort.name)
+
+                    assertThat(it.message).contains(PartialConfiguration::idleTimeoutSec.name)
+                    assertThat(it.message).contains(PartialConfiguration::maxPayloadSizeBytes.name)
+                    assertThat(it.message).contains(PartialConfiguration::firstRequestDelaySec.name)
+                    assertThat(it.message).contains(PartialConfiguration::requestIntervalSec.name)
+                    assertThat(it.message).contains(PartialConfiguration::streamPublishers.name)
+                    assertThat(it.message).contains(PartialConfiguration::keyStoreFile.name)
+                    assertThat(it.message).contains(PartialConfiguration::keyStorePassword.name)
+                    assertThat(it.message).contains(PartialConfiguration::trustStoreFile.name)
+                    assertThat(it.message).contains(PartialConfiguration::trustStorePassword.name)
+
+                    assertThat(it.message).doesNotContain(PartialConfiguration::logLevel.name)
+                    assertThat(it.message).doesNotContain(PartialConfiguration::sslDisable.name)
+                }, { fail("Should be ValidationException") })
             }
         }
 
-        describe("validating configuration with empty log level") {
-            val config = partialConfiguration(
-                    logLevel = None
-            )
-
-            it("should use default log level") {
-                val result = cut.validate(config)
-                result.fold(
-                        {
-                            fail("Configuration should have been created successfully")
-                        },
-                        {
-                            assertThat(it.logLevel).isEqualTo(DEFAULT_LOG_LEVEL)
-                        }
-                )
-            }
-        }
-
-        describe("validating complete configuration") {
+        describe("validating complete valid configuration") {
             val config = PartialConfiguration(
                     listenPort = Some(defaultListenPort),
                     idleTimeoutSec = Some(defaultIdleTimeoutSec),
@@ -88,36 +77,31 @@ internal object ConfigurationValidatorTest : Spek({
                     logLevel = Some(LogLevel.TRACE)
             )
 
-            it("should create valid configuration") {
+            it("should create validated configuration") {
                 val result = cut.validate(config)
                 result.fold(
                         {
                             fail("Configuration should have been created successfully")
                         },
                         {
-                            assertThat(it.server.listenPort)
+                            assertThat(it.listenPort)
                                     .isEqualTo(defaultListenPort)
-                            assertThat(it.server.maxPayloadSizeBytes)
+                            assertThat(it.maxPayloadSizeBytes)
                                     .isEqualTo(defaultMaxPayloadSizeBytes)
-                            assertThat(it.server.idleTimeout)
-                                    .isEqualTo(Duration.ofSeconds(defaultIdleTimeoutSec))
+                            assertThat(it.idleTimeoutSec)
+                                    .isEqualTo(defaultIdleTimeoutSec)
 
-                            val securityKeys = it.security.keys
-                                    .getOrElse { fail("Should be immutableSecurityKeys") } as SecurityKeys
-                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(KEYSTORE).toPath())
-                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(TRUSTSTORE).toPath())
-                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(KEYSTORE_PASSWORD.toCharArray()) }
-                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(TRUSTSTORE_PASSWORD.toCharArray()) }
+                            assertThat(it.keyStoreFile).isEqualTo(Some(KEYSTORE))
+                            assertThat(it.keyStorePassword).isEqualTo(Some(KEYSTORE_PASSWORD))
+                            assertThat(it.trustStoreFile).isEqualTo(Some(TRUSTSTORE))
+                            assertThat(it.trustStorePassword).isEqualTo(Some(TRUSTSTORE_PASSWORD))
 
-                            assertThat(it.cbs.firstRequestDelay)
-                                    .isEqualTo(Duration.ofSeconds(defaultFirstReqDelaySec))
-                            assertThat(it.cbs.requestInterval)
-                                    .isEqualTo(Duration.ofSeconds(defaultRequestIntervalSec))
+                            assertThat(it.firstRequestDelaySec).isEqualTo(defaultFirstReqDelaySec)
+                            assertThat(it.requestIntervalSec).isEqualTo(defaultRequestIntervalSec)
 
-                            assertThat(it.collector.routing)
-                                    .isEqualTo(sampleRouting)
+                            assertThat(it.streamPublishers).isEqualTo(sampleStreamsDefinition)
 
-                            assertThat(it.logLevel).isEqualTo(LogLevel.TRACE)
+                            assertThat(it.logLevel).isEqualTo(Some(LogLevel.TRACE))
                         }
                 )
             }
@@ -127,29 +111,29 @@ internal object ConfigurationValidatorTest : Spek({
             val config = partialConfiguration(
                     sslDisable = Some(true),
                     keyStoreFile = Some(""),
-                    keyStorePassword = Some(""),
-                    trustStoreFile = Some(""),
+                    keyStorePassword = None,
+                    trustStoreFile = None,
                     trustStorePassword = Some("")
             )
 
-            it("should create valid configuration") {
+            it("should return validated configuration") {
                 val result = cut.validate(config)
                 result.fold(
                         {
                             fail("Configuration should have been created successfully but was $it")
                         },
                         {
-                            assertThat(it.server.idleTimeout)
-                                    .isEqualTo(Duration.ofSeconds(defaultIdleTimeoutSec))
+                            assertThat(it.idleTimeoutSec).isEqualTo(defaultIdleTimeoutSec)
 
-                            assertThat(it.security.keys)
-                                    .isEqualTo(None)
+                            assertThat(it.sslDisable).isEqualTo(Some(true))
+                            assertThat(it.keyStoreFile).isEqualTo(Some(""))
+                            assertThat(it.keyStorePassword).isEqualTo(None)
+                            assertThat(it.trustStoreFile).isEqualTo(None)
+                            assertThat(it.trustStorePassword).isEqualTo(Some(""))
 
-                            assertThat(it.cbs.firstRequestDelay)
-                                    .isEqualTo(Duration.ofSeconds(defaultFirstReqDelaySec))
+                            assertThat(it.firstRequestDelaySec).isEqualTo(defaultFirstReqDelaySec)
 
-                            assertThat(it.collector.routing)
-                                    .isEqualTo(sampleRouting)
+                            assertThat(it.streamPublishers).isEqualTo(sampleStreamsDefinition)
                         }
                 )
             }
@@ -160,19 +144,18 @@ internal object ConfigurationValidatorTest : Spek({
                     sslDisable = None
             )
 
-            it("should create valid configuration with ssl enabled") {
+            it("should return validated configuration with ssl enabled") {
                 val result = cut.validate(config)
                 result.fold(
                         {
                             fail("Configuration should have been created successfully but was $it")
                         },
                         {
-                            val securityKeys = it.security.keys
-                                    .getOrElse { fail("Should be immutableSecurityKeys") } as SecurityKeys
-                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(KEYSTORE).toPath())
-                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(TRUSTSTORE).toPath())
-                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(KEYSTORE_PASSWORD.toCharArray()) }
-                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(TRUSTSTORE_PASSWORD.toCharArray()) }
+                            assertThat(it.sslDisable).isEqualTo(None)
+                            assertThat(it.keyStoreFile).isEqualTo(Some(KEYSTORE))
+                            assertThat(it.keyStorePassword).isEqualTo(Some(KEYSTORE_PASSWORD))
+                            assertThat(it.trustStoreFile).isEqualTo(Some(TRUSTSTORE))
+                            assertThat(it.trustStorePassword).isEqualTo(Some(TRUSTSTORE_PASSWORD))
                         }
                 )
             }
@@ -225,4 +208,3 @@ private val sampleSink = mock<KafkaSink>().also {
     whenever(it.name()).thenReturn(sampleSinkName)
 }
 val sampleStreamsDefinition = listOf(sampleSink)
-val sampleRouting = listOf(Route(sampleSink.name(), sampleSink))

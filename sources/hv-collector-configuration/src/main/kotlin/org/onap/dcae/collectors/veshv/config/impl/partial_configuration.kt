@@ -21,9 +21,12 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.None
 import arrow.core.Option
+import arrow.core.getOrElse
 import com.google.gson.annotations.SerializedName
+import org.onap.dcae.collectors.veshv.config.api.model.ConfigurationException
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import kotlin.reflect.KProperty0
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -59,3 +62,38 @@ internal data class PartialConfiguration(
         @Transient
         var streamPublishers: Option<List<KafkaSink>> = None
 )
+
+internal data class ValidatedPartialConfiguration(
+        val listenPort: Int,
+        val idleTimeoutSec: Long,
+        val maxPayloadSizeBytes: Int,
+        val firstRequestDelaySec: Long,
+        val requestIntervalSec: Long,
+        val sslDisable: Option<Boolean>,
+        val keyStoreFile: Option<String>,
+        val keyStorePassword: Option<String>,
+        val trustStoreFile: Option<String>,
+        val trustStorePassword: Option<String>,
+        val logLevel: Option<LogLevel>,
+        val streamPublishers: List<KafkaSink>
+)
+
+internal fun PartialConfiguration.validated() = ValidatedPartialConfiguration(
+        listenPort = getOrThrowConfigurationException(::listenPort),
+        idleTimeoutSec = getOrThrowConfigurationException(::idleTimeoutSec),
+        maxPayloadSizeBytes = getOrThrowConfigurationException(::maxPayloadSizeBytes),
+        firstRequestDelaySec = getOrThrowConfigurationException(::firstRequestDelaySec),
+        requestIntervalSec = getOrThrowConfigurationException(::requestIntervalSec),
+        streamPublishers = getOrThrowConfigurationException(::streamPublishers),
+        sslDisable = sslDisable,
+        keyStoreFile = keyStoreFile,
+        keyStorePassword = keyStorePassword,
+        trustStoreFile = trustStoreFile,
+        trustStorePassword = trustStorePassword,
+        logLevel = logLevel
+)
+
+private fun <A> getOrThrowConfigurationException(property: KProperty0<Option<A>>) =
+        property().getOrElse {
+            throw ConfigurationException("Field `${property}` was not validated and is missing in configuration")
+        }
