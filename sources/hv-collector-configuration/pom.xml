@@ -93,5 +93,9 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.arrow-kt</groupId>
+            <artifactId>arrow-extras-data</artifactId>
+        </dependency>
     </dependencies>
 </project>
