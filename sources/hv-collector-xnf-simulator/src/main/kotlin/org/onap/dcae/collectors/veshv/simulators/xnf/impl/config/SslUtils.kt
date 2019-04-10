@@ -17,7 +17,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ssl.boundary
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl.config
+
 
 import arrow.core.None
 import arrow.core.Some
@@ -26,6 +27,7 @@ import org.apache.commons.cli.CommandLine
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.commandline.hasOption
 import org.onap.dcae.collectors.veshv.commandline.stringValue
+import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
 import org.onap.dcaegen2.services.sdk.security.ssl.Passwords
@@ -40,9 +42,6 @@ const val KEY_STORE_FILE = "/etc/ves-hv/server.p12"
 const val KEY_STORE_PASSWORD_FILE = "/etc/ves-hv/server.pass"
 const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
 const val TRUST_STORE_PASSWORD_FILE = "/etc/ves-hv/trust.pass"
-
-fun createSecurityConfiguration(cmdLine: CommandLine): Try<SecurityConfiguration> =
-        createSecurityConfigurationProvider(cmdLine).map { it() }
 
 fun createSecurityConfigurationProvider(cmdLine: CommandLine): Try<() -> SecurityConfiguration> =
         if (shouldDisableSsl(cmdLine))
