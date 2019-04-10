@@ -20,7 +20,6 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf
 
 import io.vavr.collection.HashSet
-import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentError
 import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState

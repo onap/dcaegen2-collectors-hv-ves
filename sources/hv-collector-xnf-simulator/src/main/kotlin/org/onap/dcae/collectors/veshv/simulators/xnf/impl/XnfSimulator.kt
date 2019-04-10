@@ -37,7 +37,6 @@ import org.onap.ves.VesEventOuterClass
 import reactor.core.Disposable
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.publisher.toFlux
 import java.io.InputStream
 import java.nio.ByteBuffer
 import javax.json.Json
