@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.ssl.boundary
 
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -31,15 +32,22 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.commandline.hasOption
+import org.onap.dcae.collectors.veshv.commandline.stringValue
+import java.nio.file.Paths
 
 
-internal object SecurityUtilsTest : Spek({
+internal object UtilsKtTest : Spek({
 
     describe("creating securty configuration provider") {
 
         on("command line without ssl disable") {
+            val passwordFile = resourcePathAsString("/ssl/password")
             val commandLine: CommandLine = mock()
             whenever(commandLine.hasOption(CommandLineOption.SSL_DISABLE)).doReturn(false)
+            whenever(commandLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD_FILE, TRUST_STORE_PASSWORD_FILE))
+                    .doReturn(passwordFile)
+            whenever(commandLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD_FILE, KEY_STORE_PASSWORD_FILE))
+                    .doReturn(passwordFile)
 
             it("should create configuration with some keys") {
                 val configuration = createSecurityConfiguration(commandLine)
@@ -63,3 +71,6 @@ internal object SecurityUtilsTest : Spek({
         }
     }
 })
+
+private fun resourcePathAsString(resource: String) =
+        Paths.get(UtilsKtTest::class.java.getResource(resource).toURI()).toString()

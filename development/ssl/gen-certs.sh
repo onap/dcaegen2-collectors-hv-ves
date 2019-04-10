@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
+# ============LICENSE_START=======================================================
+# csit-dcaegen2-collectors-hv-ves
+# ================================================================================
+# Copyright (C) 2018-2019 NOKIA
+# ================================================================================
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============LICENSE_END=========================================================
 
 set -eu -o pipefail -o xtrace
 
@@ -24,6 +41,8 @@ function gen_key() {
   keytool -certreq -alias ${key_name} -keyalg RSA ${keystore} | \
       keytool -alias ${ca} -gencert -ext "san=dns:${CN_PREFIX}-${ca}" ${store_opts} -keystore ${ca}.p12 | \
       keytool -alias ${key_name} -importcert ${keystore}
+
+  printf ${STORE_PASS} > ${key_name}.pass
 }
 
 
@@ -36,10 +55,11 @@ function gen_ca() {
 function gen_truststore() {
   local trusted_ca="$1"
   keytool -import -trustcacerts -alias ca -file ${trusted_ca}.crt ${store_opts} -keystore ${TRUST}.p12
+  printf ${STORE_PASS} > ${TRUST}.pass
 }
 
 function clean() {
-  rm -f *.crt *.p12
+  rm -f *.crt *.p12 *.pass
 }
 
 if [[ $# -eq 0 ]]; then

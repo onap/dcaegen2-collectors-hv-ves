@@ -25,12 +25,12 @@ import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.KEY_STORE_FILE
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.KEY_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.KEY_STORE_PASSWORD_FILE
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.LISTEN_PORT
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.MAXIMUM_PAYLOAD_SIZE_BYTES
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.SSL_DISABLE
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.TRUST_STORE_FILE
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.TRUST_STORE_PASSWORD
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.TRUST_STORE_PASSWORD_FILE
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.VES_HV_HOST
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.VES_HV_PORT
 import org.onap.dcae.collectors.veshv.commandline.intValue
@@ -55,9 +55,9 @@ internal class ArgXnfSimulatorConfiguration : ArgBasedConfiguration<SimulatorCon
             MAXIMUM_PAYLOAD_SIZE_BYTES,
             SSL_DISABLE,
             KEY_STORE_FILE,
-            KEY_STORE_PASSWORD,
+            KEY_STORE_PASSWORD_FILE,
             TRUST_STORE_FILE,
-            TRUST_STORE_PASSWORD)
+            TRUST_STORE_PASSWORD_FILE)
 
     override fun getConfiguration(cmdLine: CommandLine): Option<SimulatorConfiguration> =
             binding {
