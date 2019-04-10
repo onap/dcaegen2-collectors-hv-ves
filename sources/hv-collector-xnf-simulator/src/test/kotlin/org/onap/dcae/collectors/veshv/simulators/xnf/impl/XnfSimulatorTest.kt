@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import arrow.core.Left
 import arrow.core.None
@@ -30,7 +30,6 @@ import com.nhaarman.mockitokotlin2.whenever
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.XnfSimulator
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.HvVesClient
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
 import org.onap.dcae.collectors.veshv.tests.utils.Assertions.assertThat
