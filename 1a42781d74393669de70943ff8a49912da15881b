@@ -22,6 +22,30 @@
       "revId": "1a42781d74393669de70943ff8a49912da15881b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cbad7a90_0b550b59",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-10T07:05:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3fc097ce_e856a159",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 46,
+        "endChar": 78
+      },
+      "revId": "1a42781d74393669de70943ff8a49912da15881b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
