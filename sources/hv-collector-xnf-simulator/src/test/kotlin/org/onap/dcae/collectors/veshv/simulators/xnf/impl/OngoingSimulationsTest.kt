@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
@@ -25,11 +25,6 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.OngoingSimulations
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusFailure
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusNotFound
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusOngoing
-import org.onap.dcae.collectors.veshv.simulators.xnf.impl.StatusSuccess
 import org.onap.dcae.collectors.veshv.tests.utils.waitUntilSucceeds
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers

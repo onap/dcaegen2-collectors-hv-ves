@@ -36,7 +36,6 @@ import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.VES_HV_PORT
 import org.onap.dcae.collectors.veshv.commandline.intValue
 import org.onap.dcae.collectors.veshv.commandline.stringValue
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
-import org.onap.dcae.collectors.veshv.ssl.boundary.createSecurityConfigurationProvider
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
 import org.onap.dcae.collectors.veshv.utils.arrow.doOnFailure
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
