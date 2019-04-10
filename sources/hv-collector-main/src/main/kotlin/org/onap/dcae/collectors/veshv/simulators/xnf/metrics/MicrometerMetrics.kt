@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.metrics
+package org.onap.dcae.collectors.veshv.simulators.xnf.metrics
 
 import arrow.syntax.function.memoize
 import io.micrometer.core.instrument.Counter

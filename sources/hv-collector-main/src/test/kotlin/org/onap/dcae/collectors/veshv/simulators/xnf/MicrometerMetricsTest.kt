@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.simulators.xnf
 
 import arrow.core.Option
 import arrow.core.Try
@@ -34,8 +34,8 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
-import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics.Companion.PREFIX
+import org.onap.dcae.collectors.veshv.simulators.xnf.metrics.MicrometerMetrics
+import org.onap.dcae.collectors.veshv.simulators.xnf.metrics.MicrometerMetrics.Companion.PREFIX
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.INVALID_WIRE_FRAME_MARKER
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE

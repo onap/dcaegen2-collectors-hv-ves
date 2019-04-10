@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.metrics
+package org.onap.dcae.collectors.veshv.simulators.xnf.metrics
 
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.healthcheck.ports.PrometheusMetricsProvider

@@ -17,11 +17,11 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main.servers
+package org.onap.dcae.collectors.veshv.simulators.xnf.servers
 
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
 import org.onap.dcae.collectors.veshv.healthcheck.factory.HealthCheckApiServer
-import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
+import org.onap.dcae.collectors.veshv.simulators.xnf.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -38,7 +38,7 @@ object HealthCheckServer {
     fun start(port: Int) =
             createHealthCheckServer(port)
                     .start()
-                    .doOnSuccess(::logServerStarted)
+                    .doOnSuccess(HealthCheckServer::logServerStarted)
 
     private fun createHealthCheckServer(listenPort: Int) =
             HealthCheckApiServer(

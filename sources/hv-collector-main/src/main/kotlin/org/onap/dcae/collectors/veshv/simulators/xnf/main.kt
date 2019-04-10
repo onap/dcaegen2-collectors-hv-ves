@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.main
+package org.onap.dcae.collectors.veshv.simulators.xnf
 
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationModule
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthState
-import org.onap.dcae.collectors.veshv.main.servers.HealthCheckServer
-import org.onap.dcae.collectors.veshv.main.servers.VesServer
+import org.onap.dcae.collectors.veshv.simulators.xnf.servers.HealthCheckServer
+import org.onap.dcae.collectors.veshv.simulators.xnf.servers.VesServer
 import org.onap.dcae.collectors.veshv.model.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.logging.Logger

@@ -56,16 +56,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-commandline</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>hv-collector-domain</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
             <artifactId>hv-collector-test-utils</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>
@@ -94,6 +84,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-
 </project>
