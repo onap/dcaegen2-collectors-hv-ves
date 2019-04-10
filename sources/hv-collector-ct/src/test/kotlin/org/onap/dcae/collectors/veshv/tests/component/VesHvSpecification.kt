@@ -215,6 +215,6 @@ object VesHvSpecification : Spek({
 
 private fun vesHvWithStoringSink(routing: Routing = basicRouting): Pair<Sut, StoringSink> {
     val sink = StoringSink()
-    val sut = Sut(CollectorConfiguration(routing), sink)
+    val sut = Sut(CollectorConfiguration(routing, MAX_PAYLOAD_SIZE_BYTES), sink)
     return Pair(sut, sink)
 }

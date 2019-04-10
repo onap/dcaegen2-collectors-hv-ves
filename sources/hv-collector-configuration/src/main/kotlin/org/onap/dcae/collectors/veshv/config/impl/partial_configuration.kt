@@ -21,9 +21,16 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.None
 import arrow.core.Option
+import arrow.core.Some
+import arrow.core.getOrElse
 import com.google.gson.annotations.SerializedName
+import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
+import org.onap.dcae.collectors.veshv.utils.arrow.flatFold
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import kotlin.reflect.KProperty0
+
+internal typealias ConfigProperty<A> = KProperty0<Option<A>>
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -56,4 +63,29 @@ internal data class PartialConfiguration(
 
         @Transient
         var streamPublishers: Option<List<KafkaSink>> = None
-)
+) {
+    fun forceValidated() = ValidatedPartialConfiguration(
+            listenPort = getOrThrowValidationException(::listenPort),
+            idleTimeoutSec = getOrThrowValidationException(::idleTimeoutSec),
+            cbsConfiguration = ValidatedCbsConfiguration(
+                    firstRequestDelaySec = getOrThrowValidationException(::firstRequestDelaySec),
+                    requestIntervalSec = getOrThrowValidationException(::requestIntervalSec)
+            ),
+            streamPublishers = getOrThrowValidationException(::streamPublishers),
+            securityConfiguration = sslDisable.flatFold({ forceValidatedSecurityPaths() }, { None }),
+            logLevel = logLevel
+    )
+
+    private fun forceValidatedSecurityPaths() =
+            Some(ValidatedSecurityPaths(
+                    keyStoreFile = getOrThrowValidationException(::keyStoreFile),
+                    keyStorePasswordFile = getOrThrowValidationException(::keyStorePasswordFile),
+                    trustStoreFile = getOrThrowValidationException(::trustStoreFile),
+                    trustStorePasswordFile = getOrThrowValidationException(::trustStorePasswordFile)
+            ))
+}
+
+internal fun <A> getOrThrowValidationException(property: ConfigProperty<A>) =
+        property().getOrElse {
+            throw ValidationException("Field `${property.name}` was not validated and is missing in configuration")
+        }

@@ -78,6 +78,17 @@ fun <A> Try<A>.doOnFailure(action: (Throwable) -> Unit): Try<A> = apply {
 fun <A, B> A.mapBinding(c: suspend MonadContinuation<ForOption, *>.(A) -> B)
         : Option<B> = let { OptionUtils.binding { c(it) } }
 
+fun <T> Option<Boolean>.flatFold(ifEmptyOrFalse: () -> T, ifTrue: () -> T) =
+        fold({
+            ifEmptyOrFalse()
+        }, {
+            if (it) {
+                ifTrue()
+            } else {
+                ifEmptyOrFalse()
+            }
+        })
+
 
 
 
