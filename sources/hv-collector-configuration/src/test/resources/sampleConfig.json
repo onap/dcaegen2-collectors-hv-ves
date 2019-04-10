@@ -2,7 +2,6 @@
   "logLevel": "ERROR",
   "server.listenPort": 6000,
   "server.idleTimeoutSec": 1200,
-  "server.maxPayloadSizeBytes": 1048576,
   "cbs.firstRequestDelaySec": 7,
   "cbs.requestIntervalSec": 900,
   "security.sslDisable": false,

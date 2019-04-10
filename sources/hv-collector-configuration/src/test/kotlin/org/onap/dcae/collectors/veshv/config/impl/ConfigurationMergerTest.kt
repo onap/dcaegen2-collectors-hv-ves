@@ -76,8 +76,6 @@ internal object ConfigurationMergerTest : Spek({
             assertThat(result.listenPort).isEqualTo(someListenPort)
             assertThat(result.idleTimeoutSec.isEmpty()).isFalse()
             assertThat(result.idleTimeoutSec).isEqualTo(Some(1200L))
-            assertThat(result.maxPayloadSizeBytes.isEmpty()).isFalse()
-            assertThat(result.maxPayloadSizeBytes).isEqualTo(Some(1048576))
         }
 
         it("merges full config into single parameter") {
@@ -89,7 +87,6 @@ internal object ConfigurationMergerTest : Spek({
             val result = ConfigurationMerger().merge(actual, diff)
 
             assertThat(result.logLevel).isEqualTo(Some(LogLevel.ERROR))
-            assertThat(result.maxPayloadSizeBytes).isEqualTo(Some(1048576))
             assertThat(result.idleTimeoutSec).isEqualTo(Some(1200L))
 
             assertThat(result.keyStoreFile.isEmpty()).isFalse()

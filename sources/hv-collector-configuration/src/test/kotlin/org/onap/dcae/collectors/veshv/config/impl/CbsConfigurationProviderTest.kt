@@ -82,8 +82,6 @@ internal object CbsConfigurationProviderTest : Spek({
 
                                 assertThat(it.listenPort).isEqualTo(Some(6061))
                                 assertThat(it.idleTimeoutSec).isEqualTo(Some(60L))
-                                assertThat(it.maxPayloadSizeBytes).isEqualTo(Some(1048576))
-
 
                                 val sinks = it.streamPublishers.orNull()!!
                                 val sink1 = sinks[0]
@@ -148,7 +146,6 @@ private val validConfiguration = JsonParser().parse("""
 {
     "server.listenPort": 6061,
     "server.idleTimeoutSec": 60,
-    "server.maxPayloadSizeBytes": 1048576,
     "streams_publishes": {
         "$PERF3GPP_REGIONAL": {
             "type": "kafka",
