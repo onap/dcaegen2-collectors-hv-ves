@@ -19,12 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.config.api
 
-import arrow.core.getOrElse
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
-import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.config.impl.CbsConfigurationProvider
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationMerger
+import org.onap.dcae.collectors.veshv.config.impl.ConfigurationTransformer
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator
 import org.onap.dcae.collectors.veshv.config.impl.HvVesCommandLineParser
 import org.onap.dcae.collectors.veshv.config.impl.JsonConfigurationParser
@@ -42,7 +41,8 @@ class ConfigurationModule {
     private val cmd = HvVesCommandLineParser()
     private val configParser = JsonConfigurationParser()
     private val configValidator = ConfigurationValidator()
-    private val merger = ConfigurationMerger()
+    private val configTransformer = ConfigurationTransformer()
+    private val configMerger = ConfigurationMerger()
 
     fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
 
@@ -58,14 +58,16 @@ class ConfigurationModule {
                     .flatMapMany { basePartialConfig ->
                         cbsConfigurationProvider(basePartialConfig, configStateListener, mdc)
                                 .invoke()
-                                .map { merger.merge(basePartialConfig, it) }
+                                .map { configMerger.merge(basePartialConfig, it) }
                                 .map(configValidator::validate)
                                 .throwOnLeft()
+                                .map(configTransformer::toFinalConfiguration)
+
                     }
 
     private fun cbsConfigurationProvider(basePartialConfig: PartialConfiguration,
                                          configStateListener: ConfigurationStateListener,
-                                         mdc: MappedDiagnosticContext): CbsConfigurationProvider =
+                                         mdc: MappedDiagnosticContext) =
             CbsConfigurationProvider(
                     CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
                     cbsConfigurationFrom(basePartialConfig),
@@ -73,11 +75,12 @@ class ConfigurationModule {
                     configStateListener,
                     mdc)
 
-    private fun cbsConfigurationFrom(basePartialConfig: PartialConfiguration) = configValidator
-            .validatedCbsConfiguration(basePartialConfig)
-            .getOrElse { throw ValidationException("Invalid CBS section defined in configuration file") }
+    private fun cbsConfigurationFrom(basePartialConfig: PartialConfiguration) =
+            configValidator.validatedCbsConfiguration(basePartialConfig)
+                    .let { configTransformer.toCbsConfiguration(it) }
 
     companion object {
         private val logger = Logger(ConfigurationModule::class)
     }
+
 }

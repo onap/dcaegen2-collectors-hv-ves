@@ -59,3 +59,22 @@ internal data class PartialConfiguration(
         @Transient
         var streamPublishers: Option<List<KafkaSink>> = None
 )
+
+internal data class ValidatedPartialConfiguration(
+        val listenPort: Int,
+        val idleTimeoutSec: Long,
+        val maxPayloadSizeBytes: Int,
+        val cbsConfiguration: ValidatedCbsConfiguration,
+        val sslDisable: Option<Boolean>,
+        val keyStoreFile: Option<String>,
+        val keyStorePassword: Option<String>,
+        val trustStoreFile: Option<String>,
+        val trustStorePassword: Option<String>,
+        val logLevel: Option<LogLevel>,
+        val streamPublishers: List<KafkaSink>
+)
+
+internal data class ValidatedCbsConfiguration(
+        val firstRequestDelaySec: Long,
+        val requestIntervalSec: Long
+)
