@@ -36,6 +36,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.io.File
+import java.nio.file.Paths
 import java.time.Duration
 
 
@@ -80,10 +81,10 @@ internal object ConfigurationValidatorTest : Spek({
                     firstRequestDelaySec = Some(defaultFirstReqDelaySec),
                     requestIntervalSec = Some(defaultRequestIntervalSec),
                     sslDisable = Some(false),
-                    keyStoreFile = Some(KEYSTORE),
-                    keyStorePassword = Some(KEYSTORE_PASSWORD),
-                    trustStoreFile = Some(TRUSTSTORE),
-                    trustStorePassword = Some(TRUSTSTORE_PASSWORD),
+                    keyStoreFile = Some(keyStore),
+                    keyStorePasswordFile = Some(keyStorePassFile),
+                    trustStoreFile = Some(trustStore),
+                    trustStorePasswordFile = Some(trustStorePassFile),
                     streamPublishers = Some(sampleStreamsDefinition),
                     logLevel = Some(LogLevel.TRACE)
             )
@@ -104,10 +105,10 @@ internal object ConfigurationValidatorTest : Spek({
 
                             val securityKeys = it.security.keys
                                     .getOrElse { fail("Should be immutableSecurityKeys") } as SecurityKeys
-                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(KEYSTORE).toPath())
-                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(TRUSTSTORE).toPath())
-                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(KEYSTORE_PASSWORD.toCharArray()) }
-                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(TRUSTSTORE_PASSWORD.toCharArray()) }
+                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(keyStore).toPath())
+                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(trustStore).toPath())
+                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(keyStorePass.toCharArray()) }
+                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(trustStorePass.toCharArray()) }
 
                             assertThat(it.cbs.firstRequestDelay)
                                     .isEqualTo(Duration.ofSeconds(defaultFirstReqDelaySec))
@@ -169,10 +170,10 @@ internal object ConfigurationValidatorTest : Spek({
                         {
                             val securityKeys = it.security.keys
                                     .getOrElse { fail("Should be immutableSecurityKeys") } as SecurityKeys
-                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(KEYSTORE).toPath())
-                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(TRUSTSTORE).toPath())
-                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(KEYSTORE_PASSWORD.toCharArray()) }
-                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(TRUSTSTORE_PASSWORD.toCharArray()) }
+                            assertThat(securityKeys.keyStore().path()).isEqualTo(File(keyStore).toPath())
+                            assertThat(securityKeys.trustStore().path()).isEqualTo(File(trustStore).toPath())
+                            securityKeys.keyStorePassword().use { assertThat(it).isEqualTo(keyStorePass.toCharArray()) }
+                            securityKeys.trustStorePassword().use { assertThat(it).isEqualTo(trustStorePass.toCharArray()) }
                         }
                 )
             }
@@ -187,10 +188,10 @@ private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPor
                                  firstReqDelaySec: Option<Long> = Some(defaultFirstReqDelaySec),
                                  requestIntervalSec: Option<Long> = Some(defaultRequestIntervalSec),
                                  sslDisable: Option<Boolean> = Some(false),
-                                 keyStoreFile: Option<String> = Some(KEYSTORE),
-                                 keyStorePassword: Option<String> = Some(KEYSTORE_PASSWORD),
-                                 trustStoreFile: Option<String> = Some(TRUSTSTORE),
-                                 trustStorePassword: Option<String> = Some(TRUSTSTORE_PASSWORD),
+                                 keyStoreFile: Option<String> = Some(keyStore),
+                                 keyStorePassword: Option<String> = Some(keyStorePassFile),
+                                 trustStoreFile: Option<String> = Some(trustStore),
+                                 trustStorePassword: Option<String> = Some(trustStorePassFile),
                                  streamPublishers: Option<List<KafkaSink>> = Some(sampleStreamsDefinition),
                                  logLevel: Option<LogLevel> = Some(LogLevel.INFO)
 ) = PartialConfiguration(
@@ -201,28 +202,32 @@ private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPor
         requestIntervalSec = requestIntervalSec,
         sslDisable = sslDisable,
         keyStoreFile = keyStoreFile,
-        keyStorePassword = keyStorePassword,
+        keyStorePasswordFile = keyStorePassword,
         trustStoreFile = trustStoreFile,
-        trustStorePassword = trustStorePassword,
+        trustStorePasswordFile = trustStorePassword,
         streamPublishers = streamPublishers,
         logLevel = logLevel
 )
 
-const val defaultListenPort = 1234
-const val defaultMaxPayloadSizeBytes = 2
-const val defaultRequestIntervalSec = 3L
-const val defaultIdleTimeoutSec = 10L
-const val defaultFirstReqDelaySec = 10L
+private fun resourcePathAsString(resource: String) = Paths.get(ConfigurationValidatorTest::class.java.getResource(resource).toURI()).toString()
 
-const val KEYSTORE = "test.ks.pkcs12"
-const val KEYSTORE_PASSWORD = "changeMe"
-const val TRUSTSTORE = "trust.ks.pkcs12"
-const val TRUSTSTORE_PASSWORD = "changeMeToo"
+private const val defaultListenPort = 1234
+private const val defaultMaxPayloadSizeBytes = 2
+private const val defaultRequestIntervalSec = 3L
+private const val defaultIdleTimeoutSec = 10L
+private const val defaultFirstReqDelaySec = 10L
 
-const val sampleSinkName = "perf3gpp"
+private const val keyStore = "test.ks.pkcs12"
+private const val trustStore = "trust.ks.pkcs12"
+private const val keyStorePass = "change.me"
+private const val trustStorePass = "change.me.too"
+private val keyStorePassFile = resourcePathAsString("/test.ks.pass")
+private val trustStorePassFile = resourcePathAsString("/trust.ks.pass")
+
+private const val sampleSinkName = "perf3gpp"
 
 private val sampleSink = mock<KafkaSink>().also {
     whenever(it.name()).thenReturn(sampleSinkName)
 }
-val sampleStreamsDefinition = listOf(sampleSink)
-val sampleRouting = listOf(Route(sampleSink.name(), sampleSink))
+private val sampleStreamsDefinition = listOf(sampleSink)
+private val sampleRouting = listOf(Route(sampleSink.name(), sampleSink))

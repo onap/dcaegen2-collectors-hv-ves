@@ -93,9 +93,9 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
     ),
     KEY_STORE_PASSWORD(
             Option.builder("kp")
-                    .longOpt("key-store-password")
+                    .longOpt("key-store-password-file")
                     .hasArg()
-                    .desc("Key store password")
+                    .desc("File with key store password")
                     .build()
     ),
     TRUST_STORE_FILE(
@@ -107,9 +107,9 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
     ),
     TRUST_STORE_PASSWORD(
             Option.builder("tp")
-                    .longOpt("trust-store-password")
+                    .longOpt("trust-store-password-file")
                     .hasArg()
-                    .desc("Trust store password")
+                    .desc("File with trust store password")
                     .build()
     ),
     MAXIMUM_PAYLOAD_SIZE_BYTES(
