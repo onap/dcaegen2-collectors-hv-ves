@@ -17,15 +17,15 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.ssl.boundary
+package org.onap.dcae.collectors.veshv.main
 
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.apache.commons.cli.CommandLine
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -33,6 +33,9 @@ import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.commandline.hasOption
 import org.onap.dcae.collectors.veshv.commandline.stringValue
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.KEY_STORE_PASSWORD_FILE
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.TRUST_STORE_PASSWORD_FILE
+import org.onap.dcae.collectors.veshv.simulators.xnf.impl.config.createSecurityConfigurationProvider
 import java.nio.file.Paths
 
 
@@ -50,23 +53,24 @@ internal object UtilsKtTest : Spek({
                     .doReturn(passwordFile)
 
             it("should create configuration with some keys") {
-                val configuration = createSecurityConfiguration(commandLine)
+                val configuration = createSecurityConfigurationProvider(commandLine)
 
                 verify(commandLine).hasOption(CommandLineOption.SSL_DISABLE)
                 assertThat(configuration.isSuccess()).isTrue()
-                configuration.map { assertThat(it.keys.isDefined()).isTrue() }
+                configuration.map { assertThat(it().keys.isDefined()).isTrue() }
             }
         }
+
         on("command line with ssl disabled") {
             val commandLine: CommandLine = mock()
             whenever(commandLine.hasOption(CommandLineOption.SSL_DISABLE)).doReturn(true)
 
             it("should create configuration without keys") {
-                val configuration = createSecurityConfiguration(commandLine)
+                val configuration = createSecurityConfigurationProvider(commandLine)
 
                 verify(commandLine).hasOption(CommandLineOption.SSL_DISABLE)
                 assertThat(configuration.isSuccess()).isTrue()
-                configuration.map { assertThat(it.keys.isEmpty()).isTrue() }
+                configuration.map { assertThat(it().keys.isEmpty()).isTrue() }
             }
         }
     }
