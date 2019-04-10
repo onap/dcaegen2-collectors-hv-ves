@@ -26,9 +26,9 @@ import org.onap.dcae.collectors.veshv.boundary.Sink
 import org.onap.dcae.collectors.veshv.boundary.SinkFactory
 import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
-import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.model.ClientContext
 import org.onap.dcae.collectors.veshv.model.ConsumedMessage
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
@@ -43,12 +43,8 @@ class Router internal constructor(private val routing: Routing,
                 sinkFactory: SinkFactory,
                 ctx: ClientContext,
                 metrics: Metrics) :
-            this(routing,
-                    constructMessageSinks(routing, sinkFactory, ctx),
-                    ctx,
-                    metrics) {
-        logger.debug(ctx::mdc) { "Routing for client: $routing" }
-        logger.trace(ctx::mdc) { "Message sinks configured for client: $messageSinks" }
+            this(routing, constructMessageSinks(routing, sinkFactory, ctx), ctx, metrics) {
+        logger.debug(ctx::mdc) { "Routing configuration for client: $routing" }
     }
 
     fun route(message: VesMessage): Flux<ConsumedMessage> =
