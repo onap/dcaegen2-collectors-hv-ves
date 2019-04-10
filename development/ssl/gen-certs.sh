@@ -24,6 +24,8 @@ function gen_key() {
   keytool -certreq -alias ${key_name} -keyalg RSA ${keystore} | \
       keytool -alias ${ca} -gencert -ext "san=dns:${CN_PREFIX}-${ca}" ${store_opts} -keystore ${ca}.p12 | \
       keytool -alias ${key_name} -importcert ${keystore}
+
+  echo ${STORE_PASS} > ${key_name}.pass
 }
 
 
@@ -36,10 +38,11 @@ function gen_ca() {
 function gen_truststore() {
   local trusted_ca="$1"
   keytool -import -trustcacerts -alias ca -file ${trusted_ca}.crt ${store_opts} -keystore ${TRUST}.p12
+  echo ${STORE_PASS} > ${TRUST}.pass
 }
 
 function clean() {
-  rm -f *.crt *.p12
+  rm -f *.crt *.p12 *.pass
 }
 
 if [[ $# -eq 0 ]]; then

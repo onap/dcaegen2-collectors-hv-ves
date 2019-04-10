@@ -40,9 +40,9 @@ internal class ConfigurationMerger {
 
                     sslDisable = base.sslDisable.updateToGivenOrNone(update.sslDisable),
                     keyStoreFile = base.keyStoreFile.updateToGivenOrNone(update.keyStoreFile),
-                    keyStorePassword = base.keyStorePassword.updateToGivenOrNone(update.keyStorePassword),
+                    keyStorePasswordFile = base.keyStorePasswordFile.updateToGivenOrNone(update.keyStorePasswordFile),
                     trustStoreFile = base.trustStoreFile.updateToGivenOrNone(update.trustStoreFile),
-                    trustStorePassword = base.trustStorePassword.updateToGivenOrNone(update.trustStorePassword),
+                    trustStorePasswordFile = base.trustStorePasswordFile.updateToGivenOrNone(update.trustStorePasswordFile),
 
                     streamPublishers = base.streamPublishers.updateToGivenOrNone(update.streamPublishers),
 
