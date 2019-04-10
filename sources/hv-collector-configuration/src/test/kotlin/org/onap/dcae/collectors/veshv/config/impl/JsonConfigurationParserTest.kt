@@ -35,15 +35,15 @@ import kotlin.test.fail
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-internal object FileConfigurationReaderTest : Spek({
-    describe("A configuration loader utility") {
-        val cut = FileConfigurationReader()
+internal object JsonConfigurationParserTest : Spek({
+    describe("A configuration parser utility") {
+        val cut = JsonConfigurationParser()
 
-        describe("partial configuration loading") {
+        describe("partial configuration parsing") {
             it("parses enumerations") {
                 val input = """{"logLevel":"ERROR"}"""
 
-                val config = cut.loadConfig(StringReader(input))
+                val config = cut.parse(StringReader(input))
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))
             }
 
@@ -53,16 +53,16 @@ internal object FileConfigurationReaderTest : Spek({
                     "cbs.firstRequestDelaySec": 10
                 }
                 """.trimIndent()
-                val config = cut.loadConfig(StringReader(input))
+                val config = cut.parse(StringReader(input))
                 assertThat(config.listenPort).isEqualTo(Some(12003))
-                assertThat(config.firstRequestDelaySec).isEqualTo(Some(Duration.ofSeconds(10)))
+                assertThat(config.firstRequestDelaySec).isEqualTo(Some(10L))
             }
 
             it("parses disabled security configuration") {
                 val input = """{
                     "security.sslDisable": true
                 }""".trimIndent()
-                val config = cut.loadConfig(StringReader(input))
+                val config = cut.parse(StringReader(input))
 
                 assertThat(config.sslDisable.getOrElse { fail("Should be Some") }).isTrue()
             }
@@ -71,26 +71,26 @@ internal object FileConfigurationReaderTest : Spek({
                 val input = """{
                     "logLevel": something
                 }""".trimMargin()
-                val config = cut.loadConfig(input.reader())
+                val config = cut.parse(input.reader())
 
                 assertThat(config.logLevel.isEmpty())
             }
         }
 
-        describe("complete file loading") {
-            it("loads actual file") {
-                val config = cut.loadConfig(
+        describe("complete json parsing") {
+            it("parses actual json") {
+                val config = cut.parse(
                         javaClass.resourceAsStream("/sampleConfig.json"))
 
                 assertThat(config).isNotNull
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))
 
                 assertThat(config.listenPort).isEqualTo(Some(6000))
-                assertThat(config.idleTimeoutSec).isEqualTo(Some(Duration.ofSeconds(1200)))
+                assertThat(config.idleTimeoutSec).isEqualTo(Some(1200L))
                 assertThat(config.maxPayloadSizeBytes).isEqualTo(Some(1048576))
 
-                assertThat(config.firstRequestDelaySec).isEqualTo(Some(Duration.ofSeconds(7)))
-                assertThat(config.requestIntervalSec).isEqualTo(Some(Duration.ofSeconds(900)))
+                assertThat(config.firstRequestDelaySec).isEqualTo(Some(7L))
+                assertThat(config.requestIntervalSec).isEqualTo(Some(900L))
 
                 assertThat(config.sslDisable).isEqualTo(Some(false))
                 assertThat(config.keyStoreFile).isEqualTo(Some("test.ks.pkcs12"))
@@ -101,4 +101,3 @@ internal object FileConfigurationReaderTest : Spek({
         }
     }
 })
-

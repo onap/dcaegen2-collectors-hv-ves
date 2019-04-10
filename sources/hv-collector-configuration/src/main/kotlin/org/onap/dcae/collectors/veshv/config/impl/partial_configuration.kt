@@ -22,9 +22,8 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.None
 import arrow.core.Option
 import com.google.gson.annotations.SerializedName
-import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
-import java.time.Duration
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 
 /**
  * @author Pawel Biniek <pawel.biniek@nokia.com>
@@ -34,14 +33,14 @@ internal data class PartialConfiguration(
         @SerializedName("server.listenPort")
         val listenPort: Option<Int> = None,
         @SerializedName("server.idleTimeoutSec")
-        val idleTimeoutSec: Option<Duration> = None,
+        val idleTimeoutSec: Option<Long> = None,
         @SerializedName("server.maxPayloadSizeBytes")
         val maxPayloadSizeBytes: Option<Int> = None,
 
         @SerializedName("cbs.firstRequestDelaySec")
-        val firstRequestDelaySec: Option<Duration> = None,
+        val firstRequestDelaySec: Option<Long> = None,
         @SerializedName("cbs.requestIntervalSec")
-        val requestIntervalSec: Option<Duration> = None,
+        val requestIntervalSec: Option<Long> = None,
 
         @SerializedName("security.sslDisable")
         val sslDisable: Option<Boolean> = None,
@@ -54,9 +53,9 @@ internal data class PartialConfiguration(
         @SerializedName("security.keys.trustStorePassword")
         val trustStorePassword: Option<String> = None,
 
-        @SerializedName("collector.routing")
-        val routing: Option<Routing> = None,
-
         @SerializedName("logLevel")
-        val logLevel: Option<LogLevel> = None
+        val logLevel: Option<LogLevel> = None,
+
+        @Transient
+        var streamPublishers: Option<List<KafkaSink>> = None
 )
