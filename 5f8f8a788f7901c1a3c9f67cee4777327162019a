@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "54ed8b00_1f04ced8",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-11T12:38:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0306188a_b67cb3fd",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4542f04b_d5fd276c",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
         "patchSetId": 8
@@ -70,6 +88,24 @@
     },
     {
       "key": {
+        "uuid": "82374137_35737253",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-11T12:38:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd20f927_343fb439",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f2a6a6d7_0147a395",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidator.kt",
         "patchSetId": 8
@@ -81,6 +117,24 @@
       "writtenOn": "2019-04-11T11:26:46Z",
       "side": 1,
       "message": "Consider moving lambda ouside parentheses",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7c26c67_8c27a5d3",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-11T12:38:18Z",
+      "side": 1,
+      "message": "I felt that way is more understandable\n\nfromOption(something){\n  alsoSomething\n}\n\nlooks for me like I would be calling `.also{}`.",
+      "parentUuid": "f2a6a6d7_0147a395",
       "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -104,6 +158,24 @@
     },
     {
       "key": {
+        "uuid": "36cd103b_f9e40333",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-11T12:38:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aab1c0f1_5bed1931",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c37f49c_86661b3b",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configurations.kt",
         "patchSetId": 8
@@ -115,6 +187,24 @@
       "writtenOn": "2019-04-11T11:26:46Z",
       "side": 1,
       "message": "What do you think about moving validated classes to separate file? Also you could create structure similar to final configuration (introduce validated server and security config) to be more consistent. It could also help to understand what is going on easier.",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "130c666b_05a27624",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configurations.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-11T12:38:18Z",
+      "side": 1,
+      "message": "Done something, have a closer look",
+      "parentUuid": "1c37f49c_86661b3b",
       "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
