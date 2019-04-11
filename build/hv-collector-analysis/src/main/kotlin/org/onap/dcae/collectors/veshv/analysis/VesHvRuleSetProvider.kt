@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ class VesHvRuleSetProvider : RuleSetProvider {
     override val ruleSetId: String
         get() = "HvVesCustomRules"
 
-    override fun instance(config: Config) = RuleSet(ruleSetId, listOf(SuboptimalLoggerUsage(config)))
+    override fun instance(config: Config) = RuleSet(ruleSetId,
+            listOf(SuboptimalLoggerUsage(config), PublicModifiersInImpl(config)))
 
 }
