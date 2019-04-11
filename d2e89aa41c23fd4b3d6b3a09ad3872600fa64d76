@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ef26e14_63d8f5c1",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/configuration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T13:53:29Z",
+      "side": 1,
+      "message": "We don\u0027t use that field anymore, since the cbs configuration has its own validation + transformation path.",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 34
+      },
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "823fe266_14c16e43",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T13:53:29Z",
+      "side": 1,
+      "message": "Instead of suppressing the warning you can just break the line after base.[fieldName] for each field. It actually doesn\u0027t look bad",
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd6ac9ca_ec8250f0",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T13:53:29Z",
+      "side": 1,
+      "message": "Well, i thought either about this:\n\n   private fun determineMaxPayloadSize(routing: List\u003cRoute\u003e) \u003d\n            routing.map { it.sink.maxPayloadSizeBytes() }.max()\n                    ?: let {\n                        logger.warn {\n                            \"Failed to determine \\\"maxPayloadSizeBytes\\\" field from routing.\" +\n                                    \" Using default ($DEFAULT_MAX_PAYLOAD_SIZE)\"\n                        }\n                        DEFAULT_MAX_PAYLOAD_SIZE\n                    }\n\nor that:\n\n     private fun useDefaultMaxPayloadSize(): Int {\n        logger.warn {\n            \"Failed to determine \\\"maxPayloadSizeBytes\\\" field from routing. Using default ($DEFAULT_MAX_PAYLOAD_SIZE)\"\n        }\n        return DEFAULT_MAX_PAYLOAD_SIZE\n    }\n\nIf you don\u0027t find the second solution better, use \"it\" in the log message instead of fully specifying the constant name, to actually benefit from the \"also\" usage.",
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2169afe_f2f21d05",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T13:53:29Z",
+      "side": 1,
+      "message": "I really dont think keeping that logic in data class is a good idea. It actually fits well inside the validator.",
+      "range": {
+        "startLine": 67,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 9
+      },
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4fd12ca2_b205238a",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/validated_configuration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T13:53:29Z",
+      "side": 1,
+      "message": "It would be nice to also extract these fields to separate validated class to reflect final config structure.",
+      "range": {
+        "startLine": 28,
+        "startChar": 6,
+        "endLine": 29,
+        "endChar": 33
+      },
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
