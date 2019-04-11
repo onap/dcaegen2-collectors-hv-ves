@@ -34,6 +34,24 @@
       "revId": "62efa7801d4d83ee00c5cc7c35104db9f1e7f0c0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97c109ad_54d5c6e9",
+        "filename": "sources/hv-collector-main/src/main/kotlin/org/onap/dcae/collectors/veshv/main/servers/HealthCheckServer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T10:01:32Z",
+      "side": 1,
+      "message": "Ok, fair enough. \n\nThe reason i proposed this change was, you moving the equivalent class VesServer (now HvVesServer) to server module. From what i remember it was doing the exact same thing as HealthcheckServer - delegating to the factory.",
+      "parentUuid": "d8759581_352f06cc",
+      "revId": "62efa7801d4d83ee00c5cc7c35104db9f1e7f0c0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
