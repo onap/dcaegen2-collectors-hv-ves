@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0306188a_b67cb3fd",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T11:26:46Z",
+      "side": 1,
+      "message": "Move merger field between parser and validator to reflect pipe order.",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4542f04b_d5fd276c",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T11:26:46Z",
+      "side": 1,
+      "message": "You\u0027re repeating the fold from ConfigurationValidator. Since you already know, if we have ssl disabled or not and if all security keys are present in validator, could you think of a way to skip the options in security related fields? You would probably need two different validated security configuration classes (that\u0027s related to my comment in partial_configurations). Just an idea.",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fe55394_1384824c",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T11:26:46Z",
+      "side": 1,
+      "message": "You don\u0027t need the binding here, since you already know at this point ssl is enabled and the config is valid. Consider the idea i presented in the comment above. You could gain on validated security config without options here.",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd20f927_343fb439",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T11:26:46Z",
+      "side": 1,
+      "message": "You can use \"let\" or \"run\" scope functions to get rid of that invoke (or just extract to method)",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f2a6a6d7_0147a395",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T11:26:46Z",
+      "side": 1,
+      "message": "Consider moving lambda ouside parentheses",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aab1c0f1_5bed1931",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationValidator.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T11:26:46Z",
+      "side": 1,
+      "message": "Consider this version:\nprivate fun \u003cA\u003e validationMessageFrom(invalidFields: List\u003cValidated\u003cString, A\u003e\u003e): String \u003d\n            invalidFields\n                    .map { it as Invalid }\n                    .map { it.e }\n                    .fold(\"\", String::plus)\n                    .let { \"Some required configuration properties are missing: \\n $it\" }\n\nImo it looks cleaner.",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c37f49c_86661b3b",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configurations.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-04-11T11:26:46Z",
+      "side": 1,
+      "message": "What do you think about moving validated classes to separate file? Also you could create structure similar to final configuration (introduce validated server and security config) to be more consistent. It could also help to understand what is going on easier.",
+      "revId": "5f8f8a788f7901c1a3c9f67cee4777327162019a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
