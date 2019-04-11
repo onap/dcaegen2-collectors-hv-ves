@@ -479,3 +479,5 @@ HvVesCustomRules:
   active: true
   SuboptimalLoggerUsage:
     active: false
+  PublicModifiersInImpl:
+    active: false
