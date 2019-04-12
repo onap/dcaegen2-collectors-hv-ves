@@ -19,6 +19,75 @@
     },
     {
       "key": {
+        "uuid": "0ea16016_f7e7f8c3",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T07:52:14Z",
+      "side": 1,
+      "message": "You could make this class object to adrress memory issue mentioned by Jakub. \n\nThis would however impose changing logic inside of it as `publicDeclarations` field would be shared across all visited files.",
+      "range": {
+        "startLine": 35,
+        "startChar": 12,
+        "endLine": 35,
+        "endChar": 23
+      },
+      "revId": "52af67308b1749c988a0281e3156864520669b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0f0de4cd_cab69fe3",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T07:52:14Z",
+      "side": 1,
+      "message": "We can add hint for action, e.g. \n\n\"Implementation files cannot have public declarations. Please add `internal` modifier for this element to disallow usage outside of module\"\n\nAlso isn\u0027t \"files\" wrong in first sentence - shouldn\u0027t be \"Implementation package members\" or maybe \"cannot have public members declarations\"?",
+      "range": {
+        "startLine": 44,
+        "startChar": 42,
+        "endLine": 44,
+        "endChar": 97
+      },
+      "revId": "52af67308b1749c988a0281e3156864520669b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "675bbee6_86f49787",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T07:52:14Z",
+      "side": 1,
+      "message": "We could use List\u003cEntity\u003e instead.\n\nThis would result in more detailed inspections (with exact line of missing modifier instead of \"File:1:1\"):\n```\nImplVisitor().also {\n                file.accept(it)\n                if (it.containsPublicDeclarations()) {\n                    for (entity in it.publicDeclarations)\n                        report(CodeSmell(issue, entity, REPORT_MESSAGE))\n                }\n            }\n```",
+      "range": {
+        "startLine": 50,
+        "startChar": 4,
+        "endLine": 50,
+        "endChar": 38
+      },
+      "revId": "52af67308b1749c988a0281e3156864520669b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "40c3d601_cbb7439a",
         "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
         "patchSetId": 4
@@ -35,6 +104,53 @@
         "startChar": 43,
         "endLine": 61,
         "endChar": 51
+      },
+      "revId": "52af67308b1749c988a0281e3156864520669b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "445731e6_9318c697",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T07:52:14Z",
+      "side": 1,
+      "message": "I believe this is equivalent. \n\nAlso at quick glance I have not seen `isInternal` method, from my understanding it\u0027s only compile-time (during kotlin compilation) modifier - e.g. you can still see and use internal classes from Java module.",
+      "parentUuid": "40c3d601_cbb7439a",
+      "range": {
+        "startLine": 61,
+        "startChar": 43,
+        "endLine": 61,
+        "endChar": 51
+      },
+      "revId": "52af67308b1749c988a0281e3156864520669b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "136eb0c5_4babb8d3",
+        "filename": "build/hv-collector-analysis/src/main/resources/onap-detekt-config.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T07:52:14Z",
+      "side": 1,
+      "message": "Instead of disabling:\n\n1. build project with enabled\n2. correct errors and make new commit with fixes\n3. change commits order",
+      "range": {
+        "startLine": 483,
+        "startChar": 12,
+        "endLine": 483,
+        "endChar": 17
       },
       "revId": "52af67308b1749c988a0281e3156864520669b0c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
