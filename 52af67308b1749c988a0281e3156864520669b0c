@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a6a9a4ff_8bace386",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-12T06:14:10Z",
+      "side": 1,
+      "message": "Write unit tests for this code.",
+      "revId": "52af67308b1749c988a0281e3156864520669b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "40c3d601_cbb7439a",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-12T06:14:10Z",
+      "side": 1,
+      "message": "What does this `isPublic` mean? What we want to achieve is that all these top-level classes/functions/properties are `internal`. Is it the same?",
+      "range": {
+        "startLine": 61,
+        "startChar": 43,
+        "endLine": 61,
+        "endChar": 51
+      },
+      "revId": "52af67308b1749c988a0281e3156864520669b0c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
