@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "957d4e6f_482670a1",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/model/configuration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:04:03Z",
+      "side": 1,
+      "message": "Currently we are not, however we most likely will in near future - there is task assigned to our team for that. Also it makes sense to leave it here to reflect configuration structure.",
+      "parentUuid": "8ef26e14_63d8f5c1",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 34
+      },
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "823fe266_14c16e43",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
         "patchSetId": 9
@@ -36,6 +60,24 @@
       "writtenOn": "2019-04-11T13:53:29Z",
       "side": 1,
       "message": "Instead of suppressing the warning you can just break the line after base.[fieldName] for each field. It actually doesn\u0027t look bad",
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f658f571_e8e06593",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationMerger.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:04:03Z",
+      "side": 1,
+      "message": "Done another way",
+      "parentUuid": "823fe266_14c16e43",
       "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -59,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "fac45fb0_6cfa9319",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:04:03Z",
+      "side": 1,
+      "message": "I benefit from using `also` anyway - by not needing to use return or double-braces ;)\n\nAlso { \n  I don\u0027t feel like using `it` makes code more readable\n}.let {\n  Done x2 though\n}",
+      "parentUuid": "dd6ac9ca_ec8250f0",
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c2169afe_f2f21d05",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
         "patchSetId": 9
@@ -70,6 +130,30 @@
       "writtenOn": "2019-04-11T13:53:29Z",
       "side": 1,
       "message": "I really dont think keeping that logic in data class is a good idea. It actually fits well inside the validator.",
+      "range": {
+        "startLine": 67,
+        "startChar": 3,
+        "endLine": 91,
+        "endChar": 9
+      },
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c9cfc4bd_21dab4c4",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:04:03Z",
+      "side": 1,
+      "message": "I also dislike this solution a bit, however:\n\n1. I believe method name and body clearly say that usage is \"unsafe\", so user was warned. We can even try to rename it to \"unsafeForceValidated\"\n2. Moving it to Validator would litter this class (now it looks tidied) and would impose antoher Suppress(TooManyFunctions)\n3. This solution does provide great advantage in simplyfing tests - try it yourself with it being private in Validator ;)",
+      "parentUuid": "c2169afe_f2f21d05",
       "range": {
         "startLine": 67,
         "startChar": 3,
