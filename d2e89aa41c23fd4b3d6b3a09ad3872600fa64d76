@@ -186,6 +186,30 @@
       "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d0b5029_61558257",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/validated_configuration.kt",
+        "patchSetId": 9
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:22:33Z",
+      "side": 1,
+      "message": "I thought about it, but actually all it does is making more code - we have Transformer for this job of translating a-bit-chaotic ValidatedConfig into full-fledged HvVesConfiguration structure. \n\nValidated config does not need to reflect any \u0027actual\u0027 config as it\u0027s not deserialized from json or is not used outside this module.",
+      "parentUuid": "4fd12ca2_b205238a",
+      "range": {
+        "startLine": 28,
+        "startChar": 6,
+        "endLine": 29,
+        "endChar": 33
+      },
+      "revId": "d2e89aa41c23fd4b3d6b3a09ad3872600fa64d76",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
