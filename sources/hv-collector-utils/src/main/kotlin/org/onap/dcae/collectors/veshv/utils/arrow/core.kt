@@ -17,6 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
+
+@file:Suppress("TooManyFunctions")
+
 package org.onap.dcae.collectors.veshv.utils.arrow
 
 import arrow.core.Either
@@ -36,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since July 2018
  */
+
 
 object OptionUtils {
     fun <A> binding(c: suspend MonadContinuation<ForOption, *>.() -> A)
@@ -77,6 +81,17 @@ fun <A> Try<A>.doOnFailure(action: (Throwable) -> Unit): Try<A> = apply {
 
 fun <A, B> A.mapBinding(c: suspend MonadContinuation<ForOption, *>.(A) -> B)
         : Option<B> = let { OptionUtils.binding { c(it) } }
+
+fun <T> Option<Boolean>.flatFold(ifEmptyOrFalse: () -> T, ifTrue: () -> T) =
+        fold({
+            ifEmptyOrFalse()
+        }, {
+            if (it) {
+                ifTrue()
+            } else {
+                ifEmptyOrFalse()
+            }
+        })
 
 
 

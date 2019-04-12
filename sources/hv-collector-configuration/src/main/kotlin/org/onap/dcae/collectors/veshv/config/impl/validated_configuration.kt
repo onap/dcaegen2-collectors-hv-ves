@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +17,30 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.config.api.model
+package org.onap.dcae.collectors.veshv.config.impl
 
-import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
+import arrow.core.Option
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
-import java.time.Duration
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since May 2018
- */
-data class HvVesConfiguration(
-        val server: ServerConfiguration,
-        val cbs: CbsConfiguration,
-        val security: SecurityConfiguration,
-        val collector: CollectorConfiguration,
-        val logLevel: LogLevel
-)
 
-data class ServerConfiguration(
+internal data class ValidatedPartialConfiguration(
         val listenPort: Int,
-        val idleTimeout: Duration
+        val idleTimeoutSec: Long,
+        val cbsConfiguration: ValidatedCbsConfiguration,
+        val securityConfiguration: Option<ValidatedSecurityPaths>,
+        val logLevel: Option<LogLevel>,
+        val streamPublishers: List<KafkaSink>
 )
 
-data class CbsConfiguration(
-        val firstRequestDelay: Duration,
-        val requestInterval: Duration
+internal data class ValidatedCbsConfiguration(
+        val firstRequestDelaySec: Long,
+        val requestIntervalSec: Long
 )
 
-data class CollectorConfiguration(
-        val routing: Routing,
-        val maxPayloadSizeBytes: Int
+internal data class ValidatedSecurityPaths(
+        val keyStoreFile: String,
+        val keyStorePasswordFile: String,
+        val trustStoreFile: String,
+        val trustStorePasswordFile: String
 )

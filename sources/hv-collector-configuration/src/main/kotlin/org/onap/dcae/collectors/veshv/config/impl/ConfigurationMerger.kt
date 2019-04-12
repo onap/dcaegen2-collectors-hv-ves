@@ -29,24 +29,23 @@ import arrow.core.toOption
  * @since March 2019
  */
 internal class ConfigurationMerger {
-    fun merge(base: PartialConfiguration, update: PartialConfiguration): PartialConfiguration =
-            PartialConfiguration(
-                    listenPort = base.listenPort.updateToGivenOrNone(update.listenPort),
-                    idleTimeoutSec = base.idleTimeoutSec.updateToGivenOrNone(update.idleTimeoutSec),
+    fun merge(base: PartialConfiguration, update: PartialConfiguration) = PartialConfiguration(
+            listenPort = base.listenPort.updateToGivenOrNone(update.listenPort),
+            idleTimeoutSec = base.idleTimeoutSec.updateToGivenOrNone(update.idleTimeoutSec),
 
-                    firstRequestDelaySec = base.firstRequestDelaySec.updateToGivenOrNone(update.firstRequestDelaySec),
-                    requestIntervalSec = base.requestIntervalSec.updateToGivenOrNone(update.requestIntervalSec),
+            firstRequestDelaySec = base.firstRequestDelaySec.updateToGivenOrNone(update.firstRequestDelaySec),
+            requestIntervalSec = base.requestIntervalSec.updateToGivenOrNone(update.requestIntervalSec),
 
-                    sslDisable = base.sslDisable.updateToGivenOrNone(update.sslDisable),
-                    keyStoreFile = base.keyStoreFile.updateToGivenOrNone(update.keyStoreFile),
-                    keyStorePasswordFile = base.keyStorePasswordFile.updateToGivenOrNone(update.keyStorePasswordFile),
-                    trustStoreFile = base.trustStoreFile.updateToGivenOrNone(update.trustStoreFile),
-                    trustStorePasswordFile = base.trustStorePasswordFile.updateToGivenOrNone(update.trustStorePasswordFile),
+            sslDisable = base.sslDisable.updateToGivenOrNone(update.sslDisable),
+            keyStoreFile = base.keyStoreFile.updateToGivenOrNone(update.keyStoreFile),
+            keyStorePasswordFile = base.keyStorePasswordFile.updateToGivenOrNone(update.keyStorePasswordFile),
+            trustStoreFile = base.trustStoreFile.updateToGivenOrNone(update.trustStoreFile),
+            trustStorePasswordFile = base.trustStorePasswordFile.updateToGivenOrNone(update.trustStorePasswordFile),
 
-                    streamPublishers = base.streamPublishers.updateToGivenOrNone(update.streamPublishers),
+            streamPublishers = base.streamPublishers.updateToGivenOrNone(update.streamPublishers),
 
-                    logLevel = base.logLevel.updateToGivenOrNone(update.logLevel)
-            )
+            logLevel = base.logLevel.updateToGivenOrNone(update.logLevel)
+    )
 
     private fun <T> Option<T>.updateToGivenOrNone(update: Option<T>) =
             update.getOrElse(this::orNull).toOption()
