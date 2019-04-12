@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a3f7108b_1fbcf582",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:22:33Z",
+      "side": 1,
+      "message": "yep, copy-paste ;)",
+      "parentUuid": "d4c51f1c_37d56238",
+      "range": {
+        "startLine": 43,
+        "startChar": 29,
+        "endLine": 43,
+        "endChar": 36
+      },
+      "revId": "854337c60010ef818f0b9d9465174388fb8a9e9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a912e8d5_c97d64eb",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
         "patchSetId": 10
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "a3a0ebb5_da36159d",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:22:33Z",
+      "side": 1,
+      "message": "extracting both toServerConfiguration, toCollectorConfiguration did the job (20 lines is TooLong)",
+      "parentUuid": "a912e8d5_c97d64eb",
+      "range": {
+        "startLine": 53,
+        "startChar": 37,
+        "endLine": 59,
+        "endChar": 17
+      },
+      "revId": "854337c60010ef818f0b9d9465174388fb8a9e9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81a24cc5_3923ac36",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
         "patchSetId": 10
@@ -59,6 +107,30 @@
       "writtenOn": "2019-04-12T06:00:23Z",
       "side": 1,
       "message": "force -\u003e unsafe\n\nWill be more consistent with rest of our code base and more scary to use ;)",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 13
+      },
+      "revId": "854337c60010ef818f0b9d9465174388fb8a9e9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b98e07e_40545109",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-04-12T06:22:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81a24cc5_3923ac36",
       "range": {
         "startLine": 67,
         "startChar": 8,
