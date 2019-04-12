@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d4c51f1c_37d56238",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-12T06:00:23Z",
+      "side": 1,
+      "message": "IMO, more important is that it\u0027s validated than it\u0027s partial.",
+      "range": {
+        "startLine": 43,
+        "startChar": 29,
+        "endLine": 43,
+        "endChar": 36
+      },
+      "revId": "854337c60010ef818f0b9d9465174388fb8a9e9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a912e8d5_c97d64eb",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/ConfigurationTransformer.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-12T06:00:23Z",
+      "side": 1,
+      "message": "Would extracting this to a method allow us to get rid of @Supress?",
+      "range": {
+        "startLine": 53,
+        "startChar": 37,
+        "endLine": 59,
+        "endChar": 17
+      },
+      "revId": "854337c60010ef818f0b9d9465174388fb8a9e9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "81a24cc5_3923ac36",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/partial_configuration.kt",
+        "patchSetId": 10
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-12T06:00:23Z",
+      "side": 1,
+      "message": "force -\u003e unsafe\n\nWill be more consistent with rest of our code base and more scary to use ;)",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 13
+      },
+      "revId": "854337c60010ef818f0b9d9465174388fb8a9e9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
