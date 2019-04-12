@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.ves.message.generator.generators
 
+import com.google.protobuf.ByteString
 import io.netty.buffer.Unpooled
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType
@@ -45,9 +46,14 @@ class RawMessageGenerator : MessageGenerator<WireFrameParameters, ByteBuffer>() 
 
     private fun createMessage(messageType: WireFrameType): ByteBuffer =
             when (messageType) {
-                INVALID_WIRE_FRAME -> wrap(VesEvent.getDefaultInstance().toByteArray())
+                INVALID_WIRE_FRAME -> wrap(constructSampleVesEvent().toByteArray())
                 INVALID_GPB_DATA -> wrap("invalid vesEvent".toByteArray(Charset.defaultCharset()))
             }
+
+    private fun constructSampleVesEvent() =
+            VesEvent.newBuilder()
+                    .setEventFields(ByteString.copyFromUtf8("irrelevant"))
+                    .build()
 
     private fun wrap(bytes: ByteArray) = Unpooled.wrappedBuffer(bytes).nioBuffer()
 
