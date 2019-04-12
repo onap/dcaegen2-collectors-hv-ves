@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f71b9221_9c503d76",
+        "filename": "sources/hv-collector-xnf-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/xnf/impl/config/SslUtils.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-12T06:09:00Z",
+      "side": 1,
+      "message": "Can\u0027t we remove `hv-collector-commandline` dependency from the `hv-collector-ssl` module?",
+      "revId": "44b2280574855e7ffe14902acbb3790085592bf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d8e09557_ad1264f3",
+        "filename": "sources/hv-collector-xnf-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/main/SslUtilsTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-12T06:09:00Z",
+      "side": 1,
+      "message": "Change the package name. This is reserved for main part of the collector. Move to org.onap.dcae.collectors.veshv.simulators.xnf.impl.config",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 43
+      },
+      "revId": "44b2280574855e7ffe14902acbb3790085592bf5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
