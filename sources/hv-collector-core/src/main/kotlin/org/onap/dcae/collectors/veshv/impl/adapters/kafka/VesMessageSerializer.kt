@@ -26,7 +26,7 @@ import org.onap.dcae.collectors.veshv.domain.VesMessage
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class VesMessageSerializer : Serializer<VesMessage> {
+internal class VesMessageSerializer : Serializer<VesMessage> {
     override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {
         // not needed
     }

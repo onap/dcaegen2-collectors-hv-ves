@@ -29,7 +29,7 @@ import org.onap.dcaegen2.services.sdk.services.hvves.client.producer.api.options
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since February 2019
  */
-class ClientFactory(private val configuration: ClientConfiguration) {
+internal class ClientFactory(private val configuration: ClientConfiguration) {
 
     fun create() = hvVesClient(partialConfiguration().build())
 

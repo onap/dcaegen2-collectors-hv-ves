@@ -38,12 +38,12 @@ import java.nio.file.Paths
  * @since September 2018
  */
 
-const val KEY_STORE_FILE = "/etc/ves-hv/server.p12"
-const val KEY_STORE_PASSWORD_FILE = "/etc/ves-hv/server.pass"
-const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
-const val TRUST_STORE_PASSWORD_FILE = "/etc/ves-hv/trust.pass"
+internal const val KEY_STORE_FILE = "/etc/ves-hv/server.p12"
+internal const val KEY_STORE_PASSWORD_FILE = "/etc/ves-hv/server.pass"
+internal const val TRUST_STORE_FILE = "/etc/ves-hv/trust.p12"
+internal const val TRUST_STORE_PASSWORD_FILE = "/etc/ves-hv/trust.pass"
 
-fun createSecurityConfigurationProvider(cmdLine: CommandLine): Try<() -> SecurityConfiguration> =
+internal fun createSecurityConfigurationProvider(cmdLine: CommandLine): Try<() -> SecurityConfiguration> =
         if (shouldDisableSsl(cmdLine))
             Try { { disabledSecurityConfiguration() } }
         else

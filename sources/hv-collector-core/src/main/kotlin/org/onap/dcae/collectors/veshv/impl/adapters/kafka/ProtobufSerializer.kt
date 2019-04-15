@@ -26,7 +26,7 @@ import org.apache.kafka.common.serialization.Serializer
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class ProtobufSerializer : Serializer<MessageLite> {
+internal class ProtobufSerializer : Serializer<MessageLite> {
     override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {
         // no configuration
     }
