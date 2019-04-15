@@ -31,7 +31,7 @@ import reactor.kafka.receiver.ReceiverRecord
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
+internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
 
     fun start(): Flux<ReceiverRecord<ByteArray, ByteArray>> =
             receiver.receive()

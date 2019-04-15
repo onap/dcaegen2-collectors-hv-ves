@@ -21,7 +21,7 @@ package org.onap.dcae.collectors.veshv.impl
 
 import org.onap.dcae.collectors.veshv.domain.vesEventListenerVersionRegex
 
-sealed class ValidationError(val errorMessage: String) {
+internal sealed class ValidationError(val errorMessage: String) {
     class MissingField<A>(field: A) : ValidationError(
         "Invalid header - missing $field field"
     )

@@ -31,7 +31,7 @@ import reactor.core.publisher.Mono
 import java.io.InputStream
 import javax.json.Json
 
-class MessageStreamValidation(
+internal class MessageStreamValidation(
         private val messageGenerator: VesEventGenerator,
         private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {
 

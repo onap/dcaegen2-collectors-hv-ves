@@ -31,15 +31,22 @@ class PublicModifiersInImpl(config: Config = Config.empty) : Rule(config) {
         super.visitKtFile(file)
 
         if(file.packageFqName.toString().contains("impl")) {
-            ImplVisitor.also {
-                file.accept(it)
-                if(it.publicDeclarations.isNotEmpty()){
-                    for(entity in it.publicDeclarations)
-                        report(CodeSmell(issue, entity, REPORT_MESSAGE))
-                    it.publicDeclarations.clear()
-                }
-            }
+            checkAccessModifiers(file)
         }
+    }
+
+    private fun checkAccessModifiers(file: KtFile) {
+        val implVisitor = ImplVisitor()
+
+            file.accept(implVisitor)
+            if (implVisitor.publicDeclarations.isNotEmpty()) {
+                reportCodeSmells(implVisitor)
+            }
+    }
+
+    private fun reportCodeSmells(it: ImplVisitor) {
+        for (entity in it.publicDeclarations)
+            report(CodeSmell(issue, entity, REPORT_MESSAGE))
     }
 
     companion object {
@@ -51,7 +58,7 @@ class PublicModifiersInImpl(config: Config = Config.empty) : Rule(config) {
     }
 }
 
-private object ImplVisitor: DetektVisitor(){
+private class ImplVisitor: DetektVisitor(){
     var publicDeclarations = mutableListOf<Entity>()
 
     override fun visitClassOrObject(classOrObject: KtClassOrObject) {

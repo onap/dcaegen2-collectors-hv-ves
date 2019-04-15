@@ -47,7 +47,7 @@ import javax.json.JsonArray
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class XnfSimulator(
+internal class XnfSimulator(
         private val clientFactory: ClientFactory,
         private val generatorFactory: MessageGeneratorFactory,
         private val messageParametersParser: MessageParametersParser = MessageParametersParser.INSTANCE) {

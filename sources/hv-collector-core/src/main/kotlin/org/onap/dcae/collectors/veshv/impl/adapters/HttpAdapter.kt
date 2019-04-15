@@ -30,7 +30,7 @@ import java.util.*
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-open class HttpAdapter(private val httpClient: HttpClient) {
+internal open class HttpAdapter(private val httpClient: HttpClient) {
 
     open fun get(url: String, invocationId: UUID, queryParams: Map<String, Any> = emptyMap()): Mono<String> =
             httpClient

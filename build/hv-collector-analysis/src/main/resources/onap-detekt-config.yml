@@ -480,4 +480,4 @@ HvVesCustomRules:
   SuboptimalLoggerUsage:
     active: false
   PublicModifiersInImpl:
-    active: false
+    active: true

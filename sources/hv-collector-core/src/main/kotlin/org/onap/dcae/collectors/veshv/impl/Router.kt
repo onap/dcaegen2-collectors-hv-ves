@@ -35,7 +35,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.core.publisher.Flux
 
-class Router internal constructor(private val routing: Routing,
+internal class Router internal constructor(private val routing: Routing,
                                   private val messageSinks: Map<String, Lazy<Sink>>,
                                   private val ctx: ClientContext,
                                   private val metrics: Metrics) {

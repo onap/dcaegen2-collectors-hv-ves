@@ -34,7 +34,7 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
 import java.net.InetSocketAddress
 
-class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
+internal class ArgDcaeAppSimConfiguration : ArgBasedConfiguration<DcaeAppSimConfiguration>(DefaultParser()) {
     override val cmdLineOptionsList: List<CommandLineOption> = listOf(
             LISTEN_PORT,
             MAXIMUM_PAYLOAD_SIZE_BYTES,

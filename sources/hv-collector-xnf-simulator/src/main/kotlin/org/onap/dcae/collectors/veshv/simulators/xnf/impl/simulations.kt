@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class OngoingSimulations(private val scheduler: Scheduler = Schedulers.elastic(),
+internal class OngoingSimulations(private val scheduler: Scheduler = Schedulers.elastic(),
                          private val healthState: HealthState = HealthState.INSTANCE) {
     private val simulations = ConcurrentHashMap<UUID, Status>()
 
@@ -76,11 +76,11 @@ class OngoingSimulations(private val scheduler: Scheduler = Schedulers.elastic()
     }
 }
 
-sealed class Status(val message: String) {
+internal sealed class Status(val message: String) {
     override fun toString() = this::class.simpleName ?: "null"
 }
 
-object StatusNotFound : Status("not found")
-object StatusOngoing : Status("ongoing")
-object StatusSuccess : Status("success")
-data class StatusFailure(val cause: Throwable) : Status("Error ${cause.message}")
+internal object StatusNotFound : Status("not found")
+internal object StatusOngoing : Status("ongoing")
+internal object StatusSuccess : Status("success")
+internal data class StatusFailure(val cause: Throwable) : Status("Error ${cause.message}")

@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-class ConsumerState(private val messages: ConcurrentLinkedQueue<ByteArray>) {
+internal class ConsumerState(private val messages: ConcurrentLinkedQueue<ByteArray>) {
     val messagesCount: Int by lazy {
         messages.size
     }
@@ -38,12 +38,12 @@ class ConsumerState(private val messages: ConcurrentLinkedQueue<ByteArray>) {
     }
 }
 
-interface ConsumerStateProvider {
+internal interface ConsumerStateProvider {
     fun currentState(): ConsumerState
     fun reset()
 }
 
-class Consumer : ConsumerStateProvider {
+internal class Consumer : ConsumerStateProvider {
 
     private var consumedMessages: ConcurrentLinkedQueue<ByteArray> = ConcurrentLinkedQueue()
 
@@ -61,7 +61,7 @@ class Consumer : ConsumerStateProvider {
     }
 }
 
-class ConsumerFactory(private val kafkaBootstrapServers: String) {
+internal class ConsumerFactory(private val kafkaBootstrapServers: String) {
     fun createConsumersForTopics(kafkaTopics: Set<String>): Map<String, Consumer> =
             KafkaSource.create(kafkaBootstrapServers, kafkaTopics).let { kafkaSource ->
                 val topicToConsumer = kafkaTopics.associate { it to Consumer() }

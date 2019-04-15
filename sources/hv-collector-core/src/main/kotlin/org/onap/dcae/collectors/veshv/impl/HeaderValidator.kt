@@ -28,9 +28,9 @@ import org.onap.dcae.collectors.veshv.domain.headerRequiredFieldDescriptors
 import org.onap.dcae.collectors.veshv.domain.vesEventListenerVersionRegex
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 
-typealias Validator = (CommonEventHeader) -> List<ValidationError>
+internal typealias Validator = (CommonEventHeader) -> List<ValidationError>
 
-object HeaderValidator {
+internal object HeaderValidator {
     private val validators = (listOf(validateEventListenerVersion()) +
             headerRequiredFieldDescriptors.map { fieldDescriptor ->
                 validateRequiredField(fieldDescriptor)
