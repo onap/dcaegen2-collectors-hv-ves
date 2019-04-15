@@ -28,7 +28,7 @@ import java.util.Collections.synchronizedMap
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
+internal class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
                        private val messageStreamValidation: MessageStreamValidation) {
     private val consumerState: MutableMap<String, ConsumerStateProvider> = synchronizedMap(mutableMapOf())
 
@@ -85,4 +85,4 @@ class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
     }
 }
 
-class MissingConsumerException(message: String) : Throwable(message)
+internal class MissingConsumerException(message: String) : Throwable(message)

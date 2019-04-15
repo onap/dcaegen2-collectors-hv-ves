@@ -41,7 +41,7 @@ import java.net.InetSocketAddress
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
+internal class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
 
     fun start(socketAddress: InetSocketAddress, kafkaTopics: Set<String>): Mono<ServerHandle> =
             Mono.defer {

@@ -27,5 +27,5 @@ import java.net.InetSocketAddress
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since February 2019
  */
-data class ClientConfiguration(val collectorAddresses: Set<InetSocketAddress>,
+internal data class ClientConfiguration(val collectorAddresses: Set<InetSocketAddress>,
                                val securityProvider: () -> SecurityConfiguration)

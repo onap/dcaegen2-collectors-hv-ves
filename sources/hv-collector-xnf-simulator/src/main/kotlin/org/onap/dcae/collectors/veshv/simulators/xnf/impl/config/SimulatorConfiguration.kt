@@ -26,7 +26,7 @@ import java.net.InetSocketAddress
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-data class SimulatorConfiguration(
+internal data class SimulatorConfiguration(
         val listenAddress: InetSocketAddress,
         val healthCheckApiListenAddress: InetSocketAddress,
         val hvVesAddress: InetSocketAddress,
