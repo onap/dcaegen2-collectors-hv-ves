@@ -31,7 +31,7 @@ import java.nio.ByteBuffer
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-class HvVesClient(private val producer: HvVesProducer) {
+internal class HvVesClient(private val producer: HvVesProducer) {
 
     fun sendRawPayload(messages: Flux<ByteBuffer>, payloadType: PayloadType = PayloadType.UNDEFINED): Mono<Unit> =
             producer.sendRaw(messages, payloadType)

@@ -25,25 +25,32 @@ import org.jetbrains.kotlin.psi.psiUtil.isPublic
 
 class PublicModifiersInImpl(config: Config = Config.empty) : Rule(config) {
     override val issue: Issue = Issue(javaClass.simpleName, Severity.Maintainability,
-            ISSUE_DESCRIPTION, Debt(mins=10))
+            ISSUE_DESCRIPTION, Debt(mins = 10))
 
     override fun visitKtFile(file: KtFile) {
         super.visitKtFile(file)
 
-        if(file.packageFqName.toString().contains("impl")) {
-            ImplVisitor.also {
-                file.accept(it)
-                if(it.publicDeclarations.isNotEmpty()){
-                    for(entity in it.publicDeclarations)
-                        report(CodeSmell(issue, entity, REPORT_MESSAGE))
-                    it.publicDeclarations.clear()
-                }
-            }
+        if (file.packageFqName.toString().contains("impl")) {
+            checkAccessModifiers(file)
         }
     }
 
+    private fun checkAccessModifiers(file: KtFile) {
+        val implVisitor = ImplVisitor()
+
+        file.accept(implVisitor)
+        if (implVisitor.publicDeclarations.isNotEmpty()) {
+            reportCodeSmells(implVisitor)
+        }
+    }
+
+    private fun reportCodeSmells(it: ImplVisitor) {
+        for (entity in it.publicDeclarations)
+            report(CodeSmell(issue, entity, REPORT_MESSAGE))
+    }
+
     companion object {
-        private val REPORT_MESSAGE =  """
+        private val REPORT_MESSAGE = """
                                 Implementation package members cannot have public declarations.
                                 Please, add `internal` modifier for this element to disallow usage outside of module
                             """.trimIndent()
@@ -51,22 +58,22 @@ class PublicModifiersInImpl(config: Config = Config.empty) : Rule(config) {
     }
 }
 
-private object ImplVisitor: DetektVisitor(){
+private class ImplVisitor : DetektVisitor() {
     var publicDeclarations = mutableListOf<Entity>()
 
     override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-        if(classOrObject.isTopLevel() && classOrObject.isPublic){
+        if (classOrObject.isTopLevel() && classOrObject.isPublic) {
             publicDeclarations.add(Entity.from(classOrObject))
         }
     }
 
     override fun visitNamedFunction(function: KtNamedFunction) {
-        if(function.isTopLevel && function.isPublic){
+        if (function.isTopLevel && function.isPublic) {
             publicDeclarations.add(Entity.from(function))
         }
     }
 
     override fun visitProperty(property: KtProperty) {
-        if(property.isTopLevel && property.isPublic) publicDeclarations.add(Entity.from(property))
+        if (property.isTopLevel && property.isPublic) publicDeclarations.add(Entity.from(property))
     }
 }
