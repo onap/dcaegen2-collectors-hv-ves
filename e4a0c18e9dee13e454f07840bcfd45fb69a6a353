@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a91ae1f5_a3f28f3f",
+        "filename": "build/hv-collector-analysis/src/main/kotlin/org/onap/dcae/collectors/veshv/analysis/PublicModifiersInImpl.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-16T06:23:13Z",
+      "side": 1,
+      "message": "fix indentation",
+      "range": {
+        "startLine": 41,
+        "startChar": 10,
+        "endLine": 44,
+        "endChar": 13
+      },
+      "revId": "e4a0c18e9dee13e454f07840bcfd45fb69a6a353",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
