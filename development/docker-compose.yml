@@ -6,22 +6,37 @@ services:
   #
 
   message-router-zookeeper:
-    image: wurstmeister/zookeeper
+    image: nexus3.onap.org:10001/onap/dmaap/zookeeper:4.0.0
     ports:
       - "2181:2181"
 
-  message-router-kafka:
-    #    image: nexus3.onap.org:10001/onap/dmaap/kafka01101:0.0.1
-    image: wurstmeister/kafka
+  message-router-kafka-0:
+    image: nexus3.onap.org:10001/onap/dmaap/kafka111:0.0.6
     ports:
       - "9092:9092"
+      - "9093:9093"
+#    command: "start-kafka.sh"
     environment:
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_ZOOKEEPER_CONNECT: "message-router-zookeeper:2181"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL_PLAINTEXT:PLAINTEXT,EXTERNAL_PLAINTEXT:PLAINTEXT"
-      KAFKA_ADVERTISED_LISTENERS: "INTERNAL_PLAINTEXT://message-router-kafka:9092"
-      KAFKA_LISTENERS: "INTERNAL_PLAINTEXT://0.0.0.0:9092"
-      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL_PLAINTEXT"
+      HOST_IP:                                     127.0.0.1
+      KAFKA_BROKER_ID:                             0
+      ENDPOINT_PORT:                               30490
+      KAFKA_ZOOKEEPER_CONNECT:                     "message-router-zookeeper:2181"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE:             'true'
+      KAFKA_DELETE_TOPIC_ENABLE:                   "true"
+
+      KAFKA_LISTENERS:                             "INTERNAL_SASL_PLAINTEXT://0.0.0.0:9092,EXTERNAL_SASL_PLAINTEXT://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS:                  "INTERNAL_SASL_PLAINTEXT://:9092,EXTERNAL_SASL_PLAINTEXT://:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:        "INTERNAL_SASL_PLAINTEXT:SASL_PLAINTEXT,EXTERNAL_SASL_PLAINTEXT:SASL_PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME:            "INTERNAL_SASL_PLAINTEXT"
+      KAFKA_SASL_ENABLED_MECHANISMS:               "PLAIN"
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL:  "PLAIN"
+      KAFKA_AUTHORIZER_CLASS_NAME:                 "org.onap.dmaap.kafkaAuthorize.KafkaCustomAuthorizer"
+
+      aaf_locate_url:                              https://aaf-locate:8095
+      KAFKA_LOG_DIRS:                              /opt/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:      1
+      KAFKA_DEFAULT_REPLICATION_FACTOR:            1
+      KAFKA_NUM_PARTITIONS:                        1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -47,7 +62,7 @@ services:
                                                 "perf3gpp": {
                                                   "type": "kafka",
                                                   "kafka_info": {
-                                                    "bootstrap_servers": "message-router-kafka:9092",
+                                                    "bootstrap_servers": "message-router-kafka-0:9093",
                                                     "topic_name": "HV_VES_PERF3GPP"
                                                   }
                                                 }
@@ -88,7 +103,7 @@ services:
       retries: 3
       start_period: 15s
     depends_on:
-      - message-router-kafka
+      - message-router-kafka-0
       - config-binding-service
     volumes:
       - ./configuration/:/etc/ves-hv/configuration/
@@ -129,10 +144,10 @@ services:
     ports:
       - "6064:6064/tcp"
     command: ["--listen-port", "6064",
-              "--kafka-bootstrap-servers", "message-router-kafka:9092",
+              "--kafka-bootstrap-servers", "message-router-kafka-0:9092",
               "--kafka-topics", "HV_VES_PERF3GPP"]
     depends_on:
-      - message-router-kafka
+      - message-router-kafka-0
 
   #
   # Monitoring
