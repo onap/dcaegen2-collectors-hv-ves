@@ -19,7 +19,11 @@
  */
 package org.onap.dcae.collectors.veshv.impl
 
+import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.config.SaslConfigs
+import org.apache.kafka.common.security.auth.SecurityProtocol
+import org.apache.kafka.common.security.plain.internals.PlainSaslServer
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.impl.adapters.kafka.ProtobufSerializer
 import org.onap.dcae.collectors.veshv.impl.adapters.kafka.VesMessageSerializer
@@ -34,6 +38,12 @@ private const val MAXIMUM_REQUEST_SIZE_MULTIPLIER = 1.2f
 private const val BUFFER_MEMORY_MULTIPLIER = 32
 private const val MINIMUM_BUFFER_MEMORY = 32 * 1024 * 1024
 
+private const val LOGIN_MODULE_CLASS = "org.apache.kafka.common.security.plain.PlainLoginModule"
+private const val USERNAME = "admin"
+private const val PASSWORD = "admin_secret"
+private const val JAAS_CONFIG = "$LOGIN_MODULE_CLASS required username=$USERNAME password=$PASSWORD;"
+private val SASL_PLAINTEXT = (SecurityProtocol.SASL_PLAINTEXT as Enum<SecurityProtocol>).name
+
 internal fun createKafkaSender(sinkStream: SinkStream) =
         (sinkStream as KafkaSink).let { kafkaSink ->
             KafkaSender.create(SenderOptions.create<CommonEventHeader, VesMessage>()
@@ -45,6 +55,9 @@ internal fun createKafkaSender(sinkStream: SinkStream) =
                     .producerProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
                     .producerProperty(ProducerConfig.RETRIES_CONFIG, 1)
                     .producerProperty(ProducerConfig.ACKS_CONFIG, "1")
+                    .producerProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SASL_PLAINTEXT)
+                    .producerProperty(SaslConfigs.SASL_MECHANISM, PlainSaslServer.PLAIN_MECHANISM)
+                    .producerProperty(SaslConfigs.SASL_JAAS_CONFIG, JAAS_CONFIG)
                     .stopOnError(false)
             )
         }
