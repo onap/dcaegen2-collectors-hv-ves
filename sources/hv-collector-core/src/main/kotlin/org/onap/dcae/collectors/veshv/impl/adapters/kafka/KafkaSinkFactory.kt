@@ -21,11 +21,11 @@ package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import org.onap.dcae.collectors.veshv.boundary.SinkFactory
 import org.onap.dcae.collectors.veshv.domain.VesMessage
-import org.onap.dcae.collectors.veshv.impl.createKafkaSender
 import org.onap.dcae.collectors.veshv.domain.logging.ClientContext
 import org.onap.dcae.collectors.veshv.domain.logging.ServiceContext
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcaegen2.services.sdk.model.streams.SinkStream
+import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -39,13 +39,11 @@ import java.util.Collections.synchronizedMap
  */
 internal class KafkaSinkFactory : SinkFactory {
     private val messageSinks = synchronizedMap(
-            mutableMapOf<SinkStream, KafkaSender<CommonEventHeader, VesMessage>>()
+            mutableMapOf<KafkaSink, KafkaSender<CommonEventHeader, VesMessage>>()
     )
 
     override fun invoke(stream: SinkStream, ctx: ClientContext) = lazy {
-        messageSinks.computeIfAbsent(stream, ::createKafkaSender).let {
-            KafkaPublisher(it, ctx)
-        }
+        KafkaPublisher(messageSinks.computeIfAbsent(stream as KafkaSink, this::createKafkaSender), ctx)
     }
 
     override fun close(): Mono<Void> =
@@ -56,6 +54,9 @@ internal class KafkaSinkFactory : SinkFactory {
                     .doOnSuccess {
                         logger.info(ServiceContext::mdc) { "Message sinks flushed and closed" }
                     }
+
+    private fun createKafkaSender(stream: KafkaSink) =
+            KafkaSender.create(KafkaSenderOptionsFactory.createSenderOptions(stream))
 
     companion object {
         private val logger = Logger(KafkaSinkFactory::class)
