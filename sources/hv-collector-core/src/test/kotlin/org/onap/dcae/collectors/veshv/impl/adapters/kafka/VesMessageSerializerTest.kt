@@ -29,7 +29,7 @@ import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
 
 
-class VesMessageSerializerTest : Spek({
+internal class VesMessageSerializerTest : Spek({
 
     describe("VesMessageSerializer") {
         val serializer = VesMessageSerializer()
