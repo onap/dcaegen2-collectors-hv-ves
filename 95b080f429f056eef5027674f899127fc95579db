@@ -22,6 +22,23 @@
       "revId": "95b080f429f056eef5027674f899127fc95579db",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e09e1526_a9ecf0bf",
+        "filename": "development/docker-compose.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-04-23T14:02:08Z",
+      "side": 1,
+      "message": "Use double quotes.",
+      "revId": "95b080f429f056eef5027674f899127fc95579db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
