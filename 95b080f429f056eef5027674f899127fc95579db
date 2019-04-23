@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c75740f_ff6cdbf4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-04-23T13:14:46Z",
+      "side": 1,
+      "message": "Attach to https://jira.onap.org/browse/DCAEGEN2-1448",
+      "range": {
+        "startLine": 10,
+        "startChar": 10,
+        "endLine": 10,
+        "endChar": 22
+      },
+      "revId": "95b080f429f056eef5027674f899127fc95579db",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
