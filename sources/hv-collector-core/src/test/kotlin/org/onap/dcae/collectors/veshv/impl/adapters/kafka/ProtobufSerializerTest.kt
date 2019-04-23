@@ -29,7 +29,7 @@ import org.jetbrains.spek.api.dsl.on
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
 
 
-class ProtobufSerializerTest : Spek({
+internal class ProtobufSerializerTest : Spek({
 
     describe("ProtobufSerializerTest") {
         val serializer = ProtobufSerializer()
