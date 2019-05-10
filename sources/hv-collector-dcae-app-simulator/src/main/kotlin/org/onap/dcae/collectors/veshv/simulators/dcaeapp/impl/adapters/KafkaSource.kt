@@ -64,6 +64,7 @@ internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteAr
                     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
                     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+                    ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to true,
 
                     CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to SASL_PLAINTEXT,
                     SaslConfigs.SASL_MECHANISM to PLAIN_MECHANISM,
