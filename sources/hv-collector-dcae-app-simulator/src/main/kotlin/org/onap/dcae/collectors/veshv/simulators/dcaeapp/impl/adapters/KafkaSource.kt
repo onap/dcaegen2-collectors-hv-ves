@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018,2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
 
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.security.plain.internals.PlainSaslServer.PLAIN_MECHANISM
@@ -29,7 +30,6 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Flux
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOptions
-import reactor.kafka.receiver.ReceiverRecord
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
@@ -37,8 +37,9 @@ import reactor.kafka.receiver.ReceiverRecord
  */
 internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
 
-    fun start(): Flux<ReceiverRecord<ByteArray, ByteArray>> =
-            receiver.receive()
+    fun start(): Flux<ConsumerRecord<ByteArray, ByteArray>> =
+            receiver.receiveAutoAck()
+                    .concatMap { it }
                     .also { logger.info { "Started Kafka source" } }
 
     companion object {
@@ -50,10 +51,8 @@ internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteAr
         private const val JAAS_CONFIG = "$LOGIN_MODULE_CLASS required username=$USERNAME password=$PASSWORD;"
         private val SASL_PLAINTEXT = (SecurityProtocol.SASL_PLAINTEXT as Enum<SecurityProtocol>).name
 
-        fun create(bootstrapServers: String, topics: Set<String>): KafkaSource {
-            return KafkaSource(KafkaReceiver.create(createReceiverOptions(bootstrapServers, topics)))
-        }
-
+        fun create(bootstrapServers: String, topics: Set<String>) =
+                KafkaSource(KafkaReceiver.create(createReceiverOptions(bootstrapServers, topics)))
 
         fun createReceiverOptions(bootstrapServers: String,
                                   topics: Set<String>): ReceiverOptions<ByteArray, ByteArray>? {

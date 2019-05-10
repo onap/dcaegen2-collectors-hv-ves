@@ -19,9 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.KafkaSource
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import reactor.kafka.receiver.ReceiverRecord
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
@@ -51,7 +51,7 @@ internal class Consumer : ConsumerStateProvider {
 
     override fun reset() = consumedMessages.clear()
 
-    fun update(record: ReceiverRecord<ByteArray, ByteArray>) {
+    fun update(record: ConsumerRecord<ByteArray, ByteArray>) {
         logger.trace { "Updating stats for message from ${record.topic()}:${record.partition()}" }
         consumedMessages.add(record.value())
     }
