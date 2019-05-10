@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018,2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteAr
 
     fun start(): Flux<ReceiverRecord<ByteArray, ByteArray>> =
             receiver.receive()
+                    .doOnNext { it.receiverOffset().acknowledge() }
                     .also { logger.info { "Started Kafka source" } }
 
     companion object {
@@ -50,10 +51,8 @@ internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteAr
         private const val JAAS_CONFIG = "$LOGIN_MODULE_CLASS required username=$USERNAME password=$PASSWORD;"
         private val SASL_PLAINTEXT = (SecurityProtocol.SASL_PLAINTEXT as Enum<SecurityProtocol>).name
 
-        fun create(bootstrapServers: String, topics: Set<String>): KafkaSource {
-            return KafkaSource(KafkaReceiver.create(createReceiverOptions(bootstrapServers, topics)))
-        }
-
+        fun create(bootstrapServers: String, topics: Set<String>) =
+                KafkaSource(KafkaReceiver.create(createReceiverOptions(bootstrapServers, topics)))
 
         fun createReceiverOptions(bootstrapServers: String,
                                   topics: Set<String>): ReceiverOptions<ByteArray, ByteArray>? {
@@ -64,6 +63,8 @@ internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteAr
                     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
                     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+                    ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG to "3000",
+
 
                     CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to SASL_PLAINTEXT,
                     SaslConfigs.SASL_MECHANISM to PLAIN_MECHANISM,
