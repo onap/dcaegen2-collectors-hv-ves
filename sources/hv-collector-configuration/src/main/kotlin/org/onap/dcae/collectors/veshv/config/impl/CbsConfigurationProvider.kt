@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.config.impl
 
+import arrow.core.getOrElse
 import arrow.core.toOption
 import com.google.gson.JsonObject
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
@@ -35,11 +36,14 @@ import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.DataS
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParser
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamPredicates.streamOfType
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.CbsRequest
 import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.retry.Jitter
 import reactor.retry.Retry
+import java.time.Duration
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -54,6 +58,8 @@ internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClien
                                         retrySpec: Retry<Any>
 
 ) {
+    var currentCbsRequestInterval: AtomicLong
+
     constructor(cbsClientMono: Mono<CbsClient>,
                 cbsConfig: CbsConfiguration,
                 configParser: JsonConfigurationParser,
@@ -72,6 +78,10 @@ internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClien
                             .jitter(Jitter.random())
             )
 
+    init {
+        this.currentCbsRequestInterval = AtomicLong(cbsConfiguration.requestInterval.toNanos())
+    }
+
     private val retry = retrySpec.doOnRetry {
         logger.withWarn(mdc) {
             log("Exception from configuration provider client, retrying subscription", it.exception())
@@ -88,14 +98,40 @@ internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClien
                     .flatMapMany(::handleUpdates)
 
     private fun handleUpdates(cbsClient: CbsClient) = cbsClient
-            .updates(CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
-                    cbsConfiguration.firstRequestDelay,
-                    cbsConfiguration.requestInterval)
+            .periodicalConfigurationUpdate(
+                    CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
+                    cbsConfiguration.firstRequestDelay)
             .doOnNext { logger.info(mdc) { "Received new configuration:\n$it" } }
             .map(::parseConfiguration)
+            .doOnNext { updateCurrentCbsInterval(it) }
             .doOnNext { logger.info(mdc) { "Successfully parsed configuration json to:\n$it" } }
             .onErrorLog(logger, mdc) { "Error while creating configuration" }
             .retryWhen(retry)
+
+    fun CbsClient.periodicalConfigurationUpdate(cbsRequest: CbsRequest, initialDelay: Duration): Flux<JsonObject> =
+            Flux.interval(initialDelay, Duration.ofNanos(currentCbsRequestInterval.get()))
+                    .map { cbsRequest.withNewInvocationId() }
+                    .flatMap(::get)
+                    .distinctUntilChanged()
+
+    private fun updateCurrentCbsInterval(partialConfiguration: PartialConfiguration) {
+        val fetchedIntervalInNanoSeconds: Long = partialConfiguration.requestIntervalSec
+                .getOrElse { currentCbsRequestInterval.get() }
+        if (currentCbsRequestInterval.get() != fetchedIntervalInNanoSeconds) {
+            currentCbsRequestInterval.set(fetchedIntervalInNanoSeconds)
+            logger.info(mdc) {
+                "Successfully changed interval value to \n " +
+                        "${Duration.ofNanos(fetchedIntervalInNanoSeconds)} "
+            }
+        }
+    }
+
+//    fun periodicalConfigurationUpdate(cbsClient: CbsClient, cbsRequest: CbsRequest, initialDelay: Duration)
+//            : Flux<JsonObject> =
+//            Flux.interval(initialDelay, Duration.ofNanos(currentCbsRequestInterval.get()))
+//                    .map { cbsRequest.withNewInvocationId() }
+//                    .flatMap { cbsClient.get(it) }
+//                    .distinctUntilChanged()
 
     private fun parseConfiguration(json: JsonObject) =
             configParser

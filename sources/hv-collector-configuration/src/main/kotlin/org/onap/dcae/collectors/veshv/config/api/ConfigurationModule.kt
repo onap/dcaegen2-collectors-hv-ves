@@ -19,6 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.config.api
 
+import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
 import org.onap.dcae.collectors.veshv.config.impl.CbsConfigurationProvider
@@ -66,7 +67,7 @@ class ConfigurationModule {
 
     private fun cbsConfigurationProvider(basePartialConfig: PartialConfiguration,
                                          configStateListener: ConfigurationStateListener,
-                                         mdc: MappedDiagnosticContext) =
+                                         mdc: MappedDiagnosticContext): CbsConfigurationProvider =
             CbsConfigurationProvider(
                     CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
                     cbsConfigurationFrom(basePartialConfig),
