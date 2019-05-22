@@ -21,13 +21,7 @@ package org.onap.dcae.collectors.veshv.config.api
 
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
-import org.onap.dcae.collectors.veshv.config.impl.CbsConfigurationProvider
-import org.onap.dcae.collectors.veshv.config.impl.ConfigurationMerger
-import org.onap.dcae.collectors.veshv.config.impl.ConfigurationTransformer
-import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator
-import org.onap.dcae.collectors.veshv.config.impl.HvVesCommandLineParser
-import org.onap.dcae.collectors.veshv.config.impl.JsonConfigurationParser
-import org.onap.dcae.collectors.veshv.config.impl.PartialConfiguration
+import org.onap.dcae.collectors.veshv.config.impl.*
 import org.onap.dcae.collectors.veshv.utils.arrow.throwOnLeft
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
@@ -44,39 +38,42 @@ class ConfigurationModule {
     private val configValidator = ConfigurationValidator()
     private val configTransformer = ConfigurationTransformer()
 
+    private lateinit var cbsClient: CustomCbsClient
+
     fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
 
     fun hvVesConfigurationUpdates(args: Array<String>,
                                   configStateListener: ConfigurationStateListener,
-                                  mdc: MappedDiagnosticContext): Flux<HvVesConfiguration> =
-            Mono.just(cmd.getConfigurationFile(args))
-                    .throwOnLeft(::MissingArgumentException)
-                    .doOnNext { logger.info { "Using base configuration file: ${it.absolutePath}" } }
-                    .map { it.reader().use(configParser::parse) }
-                    .doOnNext { logger.info { "Successfully parsed configuration file to: $it" } }
-                    .cache()
-                    .flatMapMany { basePartialConfig ->
-                        cbsConfigurationProvider(basePartialConfig, configStateListener, mdc)
-                                .invoke()
-                                .map { configMerger.merge(basePartialConfig, it) }
-                                .map(configValidator::validate)
-                                .throwOnLeft()
-                                .map(configTransformer::toFinalConfiguration)
-                    }
+                                  mdc: MappedDiagnosticContext): Flux<HvVesConfiguration> {
+        cbsClient = CustomCbsClient(
+                CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
+                configStateListener,
+                mdc)
 
-    private fun cbsConfigurationProvider(basePartialConfig: PartialConfiguration,
-                                         configStateListener: ConfigurationStateListener,
-                                         mdc: MappedDiagnosticContext) =
+        return Mono.just(cmd.getConfigurationFile(args))
+                .throwOnLeft(::MissingArgumentException)
+                .doOnNext { logger.info { "Using base configuration file: ${it.absolutePath}" } }
+                .map { it.reader().use(configParser::parse) }
+                .doOnNext { logger.info { "Successfully parsed configuration file to: $it" } }
+                .cache()
+                .flatMapMany { basePartialConfig ->
+                    cbsConfigurationProvider(configStateListener, mdc)
+                            .invoke()
+                            .map { configMerger.merge(basePartialConfig, it) }
+                            .map(configValidator::validate)
+                            .throwOnLeft()
+                            .map(configTransformer::toFinalConfiguration)
+                    // .doOnNext()...
+                }
+    }
+
+    private fun cbsConfigurationProvider(configStateListener: ConfigurationStateListener,
+                                         mdc: MappedDiagnosticContext): CbsConfigurationProvider =
             CbsConfigurationProvider(
-                    CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
-                    cbsConfigurationFrom(basePartialConfig),
+                    cbsClient,
                     configParser,
                     configStateListener,
                     mdc)
-
-    private fun cbsConfigurationFrom(basePartialConfig: PartialConfiguration) =
-            configValidator.validatedCbsConfiguration(basePartialConfig)
-                    .let { configTransformer.toCbsConfiguration(it) }
 
     companion object {
         private val logger = Logger(ConfigurationModule::class)
