@@ -21,12 +21,7 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Some
 import com.google.gson.JsonParser
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -34,7 +29,6 @@ import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
-import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcaegen2.services.sdk.model.streams.ImmutableAafCredentials
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParsers
@@ -52,12 +46,14 @@ internal object CbsConfigurationProviderTest : Spek({
 
     describe("Configuration provider") {
 
-        val cbsClient = mock<CbsClient>()
-        val cbsClientMock = Mono.just(cbsClient)
+        val hvVesCbsClient = mock<HvVesCbsClient>()
         val configStateListener = mock<ConfigurationStateListener>()
 
         given("configuration is never in cbs") {
-            val configProvider = constructConfigurationProvider(cbsClientMock, configStateListener)
+            val cbsClientMock = mock<CbsClient>()
+            val configProvider = constructConfigurationProvider(
+                    emptyHvVesCbsClient(cbsClientMock, configStateListener),
+                    configStateListener)
 
             on("waiting for configuration") {
                 val waitTime = Duration.ofMillis(100)
@@ -70,10 +66,10 @@ internal object CbsConfigurationProviderTest : Spek({
         }
 
         given("valid configuration from cbs") {
-            val configProvider = constructConfigurationProvider(cbsClientMock, configStateListener)
+            val configProvider = constructConfigurationProvider(hvVesCbsClient, configStateListener)
 
             on("new configuration") {
-                whenever(cbsClient.updates(any(), eq(firstRequestDelay), eq(requestInterval)))
+                whenever(hvVesCbsClient.updates(any(), any()))
                         .thenReturn(Flux.just(validConfiguration))
                 it("should use received configuration") {
 
@@ -101,16 +97,29 @@ internal object CbsConfigurationProviderTest : Spek({
                             }.verifyComplete()
                 }
             }
+
+            on("new configuration with changed interval") {
+                whenever(hvVesCbsClient.updates(any(), any()))
+                        .thenReturn(Flux.just(cbsIntervalChangedConfiguration))
+                it("should use received configuration") {
+
+                    StepVerifier.create(configProvider().take(1))
+                            .consumeNextWith {
+                                assertThat(it.requestIntervalSec.orNull()).isEqualTo(5L)
+                            }.verifyComplete()
+                }
+            }
+
         }
 
         given("invalid configuration from cbs") {
             val iterationCount = 3L
             val configProvider = constructConfigurationProvider(
-                    cbsClientMock, configStateListener, iterationCount
+                    hvVesCbsClient, configStateListener, iterationCount
             )
 
             on("new configuration") {
-                whenever(cbsClient.updates(any(), eq(firstRequestDelay), eq(requestInterval)))
+                whenever(hvVesCbsClient.updates(any(), any()))
                         .thenReturn(Flux.just(invalidConfiguration))
 
                 it("should interrupt the flux") {
@@ -172,6 +181,11 @@ private val validConfiguration = JsonParser().parse("""
     }
 }""").asJsonObject
 
+private val cbsIntervalChangedConfiguration = JsonParser().parse("""
+{
+    "cbs.requestIntervalSec": 5
+}""").asJsonObject
+
 private val invalidConfiguration = JsonParser().parse("""
 {
     "streams_publishes": {
@@ -190,26 +204,25 @@ private val invalidConfiguration = JsonParser().parse("""
 }""").asJsonObject
 
 private val firstRequestDelay = Duration.ofMillis(1)
-private val requestInterval = Duration.ofMillis(1)
 private val streamParser = StreamFromGsonParsers.kafkaSinkParser()
 private val configParser = JsonConfigurationParser()
 
-private fun constructConfigurationProvider(cbsClientMono: Mono<CbsClient>,
+private fun retry(iterationCount :Long = 1) = Retry
+        .onlyIf<Any> { it.iteration() <= iterationCount }
+        .fixedBackoff(Duration.ofNanos(1))
+
+private fun emptyHvVesCbsClient(cbsClientMock: CbsClient, configStateListener: ConfigurationStateListener) =
+        HvVesCbsClient(Mono.just(cbsClientMock), configStateListener, firstRequestDelay, retry())
+
+private fun constructConfigurationProvider(hvVesCbsClient: HvVesCbsClient,
                                            configurationStateListener: ConfigurationStateListener,
                                            iterationCount: Long = 1
-): CbsConfigurationProvider {
-
-    val retry = Retry
-            .onlyIf<Any> { it.iteration() <= iterationCount }
-            .fixedBackoff(Duration.ofNanos(1))
-
-    return CbsConfigurationProvider(
-            cbsClientMono,
-            CbsConfiguration(firstRequestDelay, requestInterval),
-            configParser,
-            streamParser,
-            configurationStateListener,
-            { mapOf("k" to "v") },
-            retry
-    )
-}
+): CbsConfigurationProvider =
+        CbsConfigurationProvider(
+                hvVesCbsClient,
+                configParser,
+                streamParser,
+                configurationStateListener,
+                { mapOf("k" to "v") },
+                retry(iterationCount)
+        )
