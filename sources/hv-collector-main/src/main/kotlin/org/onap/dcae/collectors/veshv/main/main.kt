@@ -42,7 +42,6 @@ private const val VES_HV_PACKAGE = "org.onap.dcae.collectors.veshv"
 private val logger = Logger("$VES_HV_PACKAGE.main")
 
 private val hvVesServer = AtomicReference<ServerHandle>()
-private val configurationModule = ConfigurationModule()
 private val sslContextFactory = SslContextFactory()
 private val maxCloseTime = Duration.ofSeconds(10)
 
@@ -52,10 +51,10 @@ fun main(args: Array<String>) {
             HealthState.INSTANCE.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
         }
     }
-
+    val configurationModule = ConfigurationModule(configStateListener)
     HealthCheckServer.start(configurationModule.healthCheckPort(args)).block()
     configurationModule
-            .hvVesConfigurationUpdates(args, configStateListener, ServiceContext::mdc)
+            .hvVesConfigurationUpdates(args, ServiceContext::mdc)
             .publishOn(Schedulers.single(Schedulers.elastic()))
             .doOnNext {
                 logger.info(ServiceContext::mdc) { "Using updated configuration for new connections" }
