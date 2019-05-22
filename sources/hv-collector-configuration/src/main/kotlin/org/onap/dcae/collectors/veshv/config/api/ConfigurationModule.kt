@@ -21,13 +21,12 @@ package org.onap.dcae.collectors.veshv.config.api
 
 import org.onap.dcae.collectors.veshv.config.api.model.HvVesConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.MissingArgumentException
-import org.onap.dcae.collectors.veshv.config.impl.CbsConfigurationProvider
+import org.onap.dcae.collectors.veshv.config.impl.*
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationMerger
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationTransformer
 import org.onap.dcae.collectors.veshv.config.impl.ConfigurationValidator
 import org.onap.dcae.collectors.veshv.config.impl.HvVesCommandLineParser
 import org.onap.dcae.collectors.veshv.config.impl.JsonConfigurationParser
-import org.onap.dcae.collectors.veshv.config.impl.PartialConfiguration
 import org.onap.dcae.collectors.veshv.utils.arrow.throwOnLeft
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
@@ -36,7 +35,8 @@ import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.EnvProperti
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-class ConfigurationModule {
+class ConfigurationModule internal constructor(private val configStateListener: ConfigurationStateListener,
+                                              private val hvVesCbsClient: HvVesCbsClient) {
 
     private val cmd = HvVesCommandLineParser()
     private val configParser = JsonConfigurationParser()
@@ -44,10 +44,18 @@ class ConfigurationModule {
     private val configValidator = ConfigurationValidator()
     private val configTransformer = ConfigurationTransformer()
 
+    constructor(configStateListener: ConfigurationStateListener) : this(
+            configStateListener,
+            HvVesCbsClient(
+                    CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
+                    configStateListener
+            )
+    )
+
+
     fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
 
     fun hvVesConfigurationUpdates(args: Array<String>,
-                                  configStateListener: ConfigurationStateListener,
                                   mdc: MappedDiagnosticContext): Flux<HvVesConfiguration> =
             Mono.just(cmd.getConfigurationFile(args))
                     .throwOnLeft(::MissingArgumentException)
@@ -56,19 +64,22 @@ class ConfigurationModule {
                     .doOnNext { logger.info { "Successfully parsed configuration file to: $it" } }
                     .cache()
                     .flatMapMany { basePartialConfig ->
-                        cbsConfigurationProvider(basePartialConfig, configStateListener, mdc)
+                        cbsConfigurationProvider(basePartialConfig, mdc)
                                 .invoke()
                                 .map { configMerger.merge(basePartialConfig, it) }
                                 .map(configValidator::validate)
                                 .throwOnLeft()
                                 .map(configTransformer::toFinalConfiguration)
+                                .doOnNext {
+                                    hvVesCbsClient.updateCbsInterval(it.cbs.requestInterval)
+                                }
                     }
 
+
     private fun cbsConfigurationProvider(basePartialConfig: PartialConfiguration,
-                                         configStateListener: ConfigurationStateListener,
                                          mdc: MappedDiagnosticContext) =
             CbsConfigurationProvider(
-                    CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment()),
+                    hvVesCbsClient,
                     cbsConfigurationFrom(basePartialConfig),
                     configParser,
                     configStateListener,
