@@ -22,6 +22,7 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.toOption
 import com.google.gson.JsonObject
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
+import org.onap.dcae.collectors.veshv.config.api.CustomCbsClient
 import org.onap.dcae.collectors.veshv.config.api.model.CbsConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
@@ -29,7 +30,6 @@ import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
 import org.onap.dcae.collectors.veshv.utils.reader
 import org.onap.dcaegen2.services.sdk.model.streams.StreamType.KAFKA
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
-import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsRequests
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.DataStreams
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamFromGsonParser
@@ -37,7 +37,6 @@ import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.Strea
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamPredicates.streamOfType
 import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import reactor.retry.Jitter
 import reactor.retry.Retry
 
@@ -45,30 +44,30 @@ import reactor.retry.Retry
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClient>,
+internal class CbsConfigurationProvider(private val customCbsClient: CustomCbsClient,
                                         private val cbsConfiguration: CbsConfiguration,
                                         private val configParser: JsonConfigurationParser,
                                         private val streamParser: StreamFromGsonParser<KafkaSink>,
                                         private val configurationStateListener: ConfigurationStateListener,
                                         private val mdc: MappedDiagnosticContext,
                                         retrySpec: Retry<Any>
-
 ) {
-    constructor(cbsClientMono: Mono<CbsClient>,
-                cbsConfig: CbsConfiguration,
+
+    constructor(customCbsClient: CustomCbsClient,
+                cbsConfiguration: CbsConfiguration,
                 configParser: JsonConfigurationParser,
                 configurationStateListener: ConfigurationStateListener,
                 mdc: MappedDiagnosticContext) :
             this(
-                    cbsClientMono,
-                    cbsConfig,
+                    customCbsClient,
+                    cbsConfiguration,
                     configParser,
                     StreamFromGsonParsers.kafkaSinkParser(),
                     configurationStateListener,
                     mdc,
                     Retry.any<Any>()
                             .retryMax(MAX_RETRIES)
-                            .fixedBackoff(cbsConfig.requestInterval)
+                            .fixedBackoff(cbsConfiguration.requestInterval)
                             .jitter(Jitter.random())
             )
 
@@ -80,22 +79,14 @@ internal class CbsConfigurationProvider(private val cbsClientMono: Mono<CbsClien
     }
 
     operator fun invoke(): Flux<PartialConfiguration> =
-            cbsClientMono
-                    .doOnNext { logger.info(mdc) { "CBS client successfully created" } }
-                    .onErrorLog(logger, mdc) { "Failed to retrieve CBS client" }
-                    .retryWhen(retry)
-                    .doFinally { logger.trace(mdc) { "CBS client subscription finished" } }
-                    .flatMapMany(::handleUpdates)
-
-    private fun handleUpdates(cbsClient: CbsClient) = cbsClient
-            .updates(CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
+            customCbsClient.updates(CbsRequests.getConfiguration(RequestDiagnosticContext.create()),
                     cbsConfiguration.firstRequestDelay,
                     cbsConfiguration.requestInterval)
-            .doOnNext { logger.info(mdc) { "Received new configuration:\n$it" } }
-            .map(::parseConfiguration)
-            .doOnNext { logger.info(mdc) { "Successfully parsed configuration json to:\n$it" } }
-            .onErrorLog(logger, mdc) { "Error while creating configuration" }
-            .retryWhen(retry)
+                    .doOnNext { logger.info(mdc) { "Received new configuration:\n$it" } }
+                    .map(::parseConfiguration)
+                    .doOnNext { logger.info(mdc) { "Successfully parsed configuration json to:\n$it" } }
+                    .onErrorLog(logger, mdc) { "Error while creating configuration" }
+                    .retryWhen(retry)
 
     private fun parseConfiguration(json: JsonObject) =
             configParser
