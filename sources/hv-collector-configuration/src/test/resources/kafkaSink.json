@@ -1,0 +1,8 @@
+{
+  "name": "perf3gpp_regional",
+  "type": "kafka",
+  "kafka_info": {
+    "bootstrap_servers": "dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060",
+    "topic_name": "REG_HVVES_PERF3GPP"
+  }
+}
