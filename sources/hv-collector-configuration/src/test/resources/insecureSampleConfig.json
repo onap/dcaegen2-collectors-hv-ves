@@ -1,0 +1,8 @@
+{
+  "logLevel": "DEBUG",
+  "server.listenPort": 6061,
+  "server.idleTimeoutSec": 60,
+  "cbs.firstRequestDelaySec": 3,
+  "cbs.requestIntervalSec": 5,
+  "security.sslDisable": "true"
+}
