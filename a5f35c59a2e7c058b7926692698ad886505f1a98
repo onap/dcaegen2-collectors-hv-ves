@@ -1,0 +1,228 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1d04b22_ef1780f3",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "Let\u0027s add information about `firstRequestDelay` here",
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98685204_3f4ea0f8",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "This log message is misleading for me, what does it even mean? Isn\u0027t log done on `doOnNext` enough?",
+      "range": {
+        "startLine": 47,
+        "startChar": 54,
+        "endLine": 47,
+        "endChar": 86
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fd30a4d_8ed36ae0",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "The convention is usually \"cbsClientMock\", \"configStateListenerMock\"",
+      "range": {
+        "startLine": 45,
+        "startChar": 12,
+        "endLine": 45,
+        "endChar": 27
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e02c635_7d81700a",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "We should make this test more verbose. Probably something along:\n\n\"given sample configuration in file with ${cbs-configuration-in-file}\"\n\"on configuration changes in Config Binding Service\"\n\"it should wait ${firstRD} as specified in file and later fetch configuration from CBS as specified in configurations received from it\"",
+      "range": {
+        "startLine": 48,
+        "startChar": 9,
+        "endLine": 48,
+        "endChar": 39
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7443eff_e98cd771",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "Create it closer to `describe(configuration module)`",
+      "range": {
+        "startLine": 49,
+        "startChar": 11,
+        "endLine": 49,
+        "endChar": 96
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "793476be_66dcaf32",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "This (and below) probably should be renamed to emphasize that it\u0027s coming (not coming) from file configuration",
+      "range": {
+        "startLine": 79,
+        "startChar": 12,
+        "endLine": 79,
+        "endChar": 29
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ecbff4b2_844297e5",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "Can\u0027t we obtain this path using something along ConfModuleIT.resource(\"...\").path() ?",
+      "range": {
+        "startLine": 88,
+        "startChar": 9,
+        "endLine": 88,
+        "endChar": 92
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f10cb10_89af2ebf",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "Do we even need this streams definition here? We are not in any way testing it in the integration test that you wrote",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 105,
+        "endChar": 5
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6dfbe109_b508bce4",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "These two params do not change  in all three configurations and the integration test that you wrote does not verify logic related to them, let\u0027s get rid of them (x3).",
+      "range": {
+        "startLine": 135,
+        "startChar": 1,
+        "endLine": 136,
+        "endChar": 32
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6ac2e90_f7e4bf7b",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:18:45Z",
+      "side": 1,
+      "message": "Remove duplicate code:\n\np val someConf \u003d hvVesConfiguration(fRD, iRI)\n\n...\n\nprivate fun hvVesConfiguration(firstRequestDelay: Duration,\n                               requestInterval: Duration,\n                               routing: List\u003cRoute\u003e \u003d listOf()) \u003d HvVesConfiguration(\n        ServerConfiguration(6061, Duration.ofSeconds(10)),\n        CbsConfiguration(firstRequestDelay, requestInterval),\n        SecurityConfiguration(Option.empty()),\n        CollectorConfiguration(routing, 1024 * 1024),\n        LogLevel.DEBUG\n)",
+      "range": {
+        "startLine": 140,
+        "startChar": 12,
+        "endLine": 144,
+        "endChar": 23
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
