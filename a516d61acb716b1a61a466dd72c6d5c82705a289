@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "2fbb61f2_cd5956cd",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModule.kt",
+        "patchSetId": 11
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-04T07:52:21Z",
+      "side": 1,
+      "message": "alignment",
+      "revId": "a516d61acb716b1a61a466dd72c6d5c82705a289",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a6731a3_78d5d257",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
         "patchSetId": 11
@@ -13,6 +30,86 @@
       "writtenOn": "2019-06-03T12:12:46Z",
       "side": 1,
       "message": "I got it :)",
+      "revId": "a516d61acb716b1a61a466dd72c6d5c82705a289",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06a97fa5_7fa96f40",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 11
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-04T07:52:21Z",
+      "side": 1,
+      "message": "remove",
+      "revId": "a516d61acb716b1a61a466dd72c6d5c82705a289",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0fa46182_ff0bda4c",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 11
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-04T07:52:21Z",
+      "side": 1,
+      "message": "Remove first... as first request have been already issued few days ago ;)",
+      "range": {
+        "startLine": 51,
+        "startChar": 13,
+        "endLine": 51,
+        "endChar": 30
+      },
+      "revId": "a516d61acb716b1a61a466dd72c6d5c82705a289",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e88402f4_c9870cd0",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 11
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-04T07:52:21Z",
+      "side": 1,
+      "message": "delayElement by firstRequestDelay",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 17
+      },
+      "revId": "a516d61acb716b1a61a466dd72c6d5c82705a289",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3068ff4_64f78d56",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 11
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-04T07:52:21Z",
+      "side": 1,
+      "message": "Remove this check",
       "revId": "a516d61acb716b1a61a466dd72c6d5c82705a289",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
