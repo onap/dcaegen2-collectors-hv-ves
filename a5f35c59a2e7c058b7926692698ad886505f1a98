@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "53315d9f_b13b0ab2",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:39:32Z",
+      "side": 1,
+      "message": "This constructor is not needed anymore",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 15
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30d32981_89a5eaed",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProvider.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:39:32Z",
+      "side": 1,
+      "message": "I believe we can create this request inside of HvVesCbsClient - in which case simply rename method `updates` -\u003e `configurationUpdates`",
+      "range": {
+        "startLine": 78,
+        "startChar": 20,
+        "endLine": 78,
+        "endChar": 84
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b1d04b22_ef1780f3",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
         "patchSetId": 13
@@ -219,6 +265,29 @@
         "startChar": 12,
         "endLine": 144,
         "endChar": 23
+      },
+      "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40008bd0_5c5411c6",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProviderTest.kt",
+        "patchSetId": 13
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-04T11:39:32Z",
+      "side": 1,
+      "message": "add  `\"cbs.requestIntervalSec\": 5` to `validConfiguration` field and simply add assertion to testcase above (`assertThat(it.requestIntervalSec).isEqualTo(Some(5L))`)",
+      "range": {
+        "startLine": 101,
+        "startChar": 10,
+        "endLine": 110,
+        "endChar": 17
       },
       "revId": "a5f35c59a2e7c058b7926692698ad886505f1a98",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
