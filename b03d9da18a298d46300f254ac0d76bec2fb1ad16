@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "2b1a4a9a_5e5bedbb",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-05T06:38:40Z",
+      "side": 1,
+      "message": "Let\u0027s rename it to CbsClientAdapter or similar so it reflects what it actually is",
+      "range": {
+        "startLine": 37,
+        "startChar": 15,
+        "endLine": 37,
+        "endChar": 29
+      },
+      "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3e24adf7_39b37c1d",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
         "patchSetId": 15
@@ -25,6 +48,52 @@
     },
     {
       "key": {
+        "uuid": "9117ad2c_286730ff",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-05T06:38:40Z",
+      "side": 1,
+      "message": "This can also be extracted to our Rx utilities. Possible usage: \n\n```\n.transform(delayElement(requestInterval::get))\n```\n\nNote the method reference (Supplier\u003cDuration\u003e) used here - we want it to be called for each element, as we\u0027ve discussed f2f.",
+      "range": {
+        "startLine": 61,
+        "startChar": 28,
+        "endLine": 63,
+        "endChar": 29
+      },
+      "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "163db947_d572b27b",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-05T06:38:40Z",
+      "side": 1,
+      "message": "Let\u0027s extract it to a separate private function",
+      "range": {
+        "startLine": 56,
+        "startChar": 31,
+        "endLine": 65,
+        "endChar": 16
+      },
+      "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "47ef886b_b1c4f130",
         "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
         "patchSetId": 15
@@ -45,6 +114,23 @@
       "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "688895e9_1de55a16",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/ConfigurationModuleIT.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-05T06:38:40Z",
+      "side": 1,
+      "message": "Nice integration test. We should probably also test the CbsClientAdapter (or whatever the new name is) on unit level. But let\u0027s do it separately and close this MR soon.",
+      "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
