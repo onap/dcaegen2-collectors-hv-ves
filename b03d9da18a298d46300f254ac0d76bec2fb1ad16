@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e24adf7_39b37c1d",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-05T06:08:40Z",
+      "side": 1,
+      "message": "Just to polish this function:\n1. there is typo in first log at the end\n2. we can extract `CbsRequests.getConf...` to method and inline variable\n3. in mapping and flatMapping we can use references\n\nSo final would look like:\n```\n    fun configurationUpdates(mdc: MappedDiagnosticContext) \u003d cbsClientMono\n            .doOnNext {\n                logger.info(mdc) {\n                    \"CBS client successfully created, first request will be sent in ${firstRequestDelay.seconds} s\"\n                }\n            }\n            .onErrorLog(logger, mdc) { \"Failed to retrieve CBS client\" }\n            .retryWhen(retry(mdc))\n            .delayElement(firstRequestDelay)\n            .flatMapMany { cbsClient -\u003e\n                Mono.just(configurationRequest())\n                        .repeat()\n                        .map(CbsRequest::withNewInvocationId)\n                        .flatMap(cbsClient::get)\n                        .concatMap {\n                            Mono.just(it).delayElement(requestInterval.get())\n                        }\n                        .distinctUntilChanged()\n            }\n\n    private fun configurationRequest() \u003d CbsRequests.getConfiguration(RequestDiagnosticContext.create())\n```",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 28
+      },
+      "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47ef886b_b1c4f130",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/HvVesCbsClient.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-05T06:08:40Z",
+      "side": 1,
+      "message": "Think about debug-logging this change",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 69,
+        "endChar": 43
+      },
+      "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c44d7582_07153802",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsConfigurationProviderTest.kt",
+        "patchSetId": 15
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-05T06:08:40Z",
+      "side": 1,
+      "message": "empty? What does it mean? :)",
+      "range": {
+        "startLine": 58,
+        "startChar": 20,
+        "endLine": 58,
+        "endChar": 25
+      },
+      "revId": "b03d9da18a298d46300f254ac0d76bec2fb1ad16",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
