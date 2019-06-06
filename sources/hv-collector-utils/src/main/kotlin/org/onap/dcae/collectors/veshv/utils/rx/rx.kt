@@ -26,8 +26,14 @@
 package org.onap.dcae.collectors.veshv.utils.rx
 
 import org.reactivestreams.Publisher
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.toMono
+import java.time.Duration
 
 fun <T> Publisher<T>.then(callback: () -> Unit): Mono<Unit> =
         toMono().then(Mono.fromCallable(callback))
+
+fun <T> delayElements(intervalSupplier: () -> Duration): (Flux<T>) -> Flux<T> = { flux ->
+    flux.concatMap { Mono.just(it).delayElement(intervalSupplier()) }
+}
