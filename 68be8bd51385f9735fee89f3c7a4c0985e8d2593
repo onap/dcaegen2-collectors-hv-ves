@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "934653b5_e23826f0",
+        "filename": "sources/hv-collector-main/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-06T12:25:25Z",
+      "side": 1,
+      "message": "I\u0027d rather make it an ARG",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 3
+      },
+      "revId": "68be8bd51385f9735fee89f3c7a4c0985e8d2593",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1040fcb3_bb6ca844",
+        "filename": "sources/hv-collector-main/Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-06T12:25:25Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we merge it with an existing RUN layer?",
+      "revId": "68be8bd51385f9735fee89f3c7a4c0985e8d2593",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
