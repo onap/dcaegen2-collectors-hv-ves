@@ -2,7 +2,7 @@
   "logLevel": "DEBUG",
   "server.listenPort": 6061,
   "server.idleTimeoutSec": 60,
-  "cbs.firstRequestDelaySec": 10,
+  "cbs.firstRequestDelaySec": 5,
   "cbs.requestIntervalSec": 5,
   "security.keys.keyStoreFile": "/etc/ves-hv/ssl/server.p12",
   "security.keys.keyStorePasswordFile": "/etc/ves-hv/ssl/server.pass",
