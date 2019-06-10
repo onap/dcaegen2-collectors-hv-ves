@@ -19,41 +19,109 @@
  */
 package org.onap.dcae.collectors.veshv.config.api
 
-import arrow.core.Option
-import com.google.gson.JsonParser
+import arrow.core.Some
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.reset
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.config.api.model.*
-import org.onap.dcae.collectors.veshv.ssl.boundary.SecurityConfiguration
+import org.onap.dcae.collectors.veshv.config.impl.mdc
 import org.onap.dcae.collectors.veshv.tests.utils.absoluteResourcePath
-import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
-import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.Duration
 
 
 internal object ConfigurationModuleIT : Spek({
-    describe("configuration module") {
-        val cbsClientMock = mock<CbsClient>()
-        val configStateListenerMock = mock<ConfigurationStateListener>()
-        val sut = ConfigurationModule(configStateListenerMock, Mono.just(cbsClientMock))
-        val configPath = javaClass.absoluteResourcePath("/insecureSampleConfig.json")
+    StepVerifier.setDefaultTimeout(Duration.ofSeconds(5))
 
-        given("sample configuration in file: $configPath") {
-            val arguments = arrayOf(
-                    "--configuration-file",
-                    configPath,
-                    "--health-check-api-port",
-                    "6062")
+    describe("Configuration Module") {
+        val configStateListenerMock = mock<ConfigurationStateListener>()
+        val cbsClientMono = Mono.fromSupplier(CbsClientMockSupplier)
+
+        val sut = ConfigurationModule(configStateListenerMock, cbsClientMono)
+
+        beforeEachTest {
+            reset(configStateListenerMock)
+            CbsClientMockSupplier.reset()
+        }
+
+        given("sample configuration in file") {
+            val configurationPath = javaClass.absoluteResourcePath("/insecureSampleConfig.json")
+
+            val configurationUpdates = sut.hvVesConfigurationUpdates(arguments(configurationPath), mdc)
+
+            on("Config Binding Service permanently not available") {
+                CbsClientMockSupplier.setIsCbsClientCreationSuccessful(false)
+                val testVirtualDuration = Duration.ofMinutes(10)
+
+                it("should retry as long as possible until failing") {
+                    StepVerifier
+                            .withVirtualTime { configurationUpdates.last() }
+                            .expectSubscription()
+                            .expectNoEvent(testVirtualDuration)
+                            .thenCancel()
+                            .verifyThenAssertThat()
+                            .allOperatorErrorsAre(CbsClientMockSupplier.throwedException())
+                }
+
+                it("should notify configuration state listener about each retry") {
+                    val requestsAmount = CbsClientMockSupplier.requestsAmount.get()
+                    assertThat(requestsAmount).describedAs("CBS client requests amount").isGreaterThan(0)
+                    verify(configStateListenerMock, times(requestsAmount)).retrying()
+                }
+            }
+
+            on("Config Binding Service temporarily not available") {
+                CbsClientMockSupplier.setIsCbsClientCreationSuccessful(false)
+                val cbsUnavailabilityTime = Duration.ofMinutes(10)
+                whenever(CbsClientMockSupplier.cbsClientMock.get(any()))
+                        .thenReturn(Mono.just(configurationJsonWithIntervalChanged))
+
+                it("should return configuration after CBS is available again") {
+                    StepVerifier
+                            .withVirtualTime { configurationUpdates.take(1) }
+                            .expectSubscription()
+                            .expectNoEvent(cbsUnavailabilityTime)
+                            .then { CbsClientMockSupplier.setIsCbsClientCreationSuccessful(true) }
+                            .thenAwait(MAX_BACKOFF_INTERVAL)
+                            .expectNext(configurationWithIntervalChanged)
+                            .verifyComplete()
+                }
+            }
+
+            on("failure from CBS client during getting configuration") {
+                val exceptionFromCbsClient = MyCustomTestCbsClientException("I'm such a failure")
+                whenever(CbsClientMockSupplier.cbsClientMock.get(any()))
+                        .thenReturn(Mono.error(exceptionFromCbsClient))
+                val testVirtualDuration = Duration.ofMinutes(2)
+
+                it("should retry as long as possible until failing") {
+                    StepVerifier
+                            .withVirtualTime { configurationUpdates.last() }
+                            .expectSubscription()
+                            .expectNoEvent(testVirtualDuration)
+                            .thenCancel()
+                            .verifyThenAssertThat()
+                            .allOperatorErrorsAre(exceptionFromCbsClient)
+                }
+
+                it("should notify configuration state listener about each retry") {
+                    val requestsAmount = CbsClientMockSupplier.requestsAmount.get()
+                    assertThat(requestsAmount).describedAs("CBS client requests amount").isGreaterThan(0)
+                    verify(configStateListenerMock, times(requestsAmount)).retrying()
+                }
+            }
+
             on("configuration changes in Config Binding Service") {
-                whenever(cbsClientMock.get(any()))
+                whenever(CbsClientMockSupplier.cbsClientMock.get(any()))
                         .thenReturn(
                                 Mono.just(configurationJsonWithIntervalChanged),
                                 Mono.just(configurationJsonWithIntervalChangedAgain),
@@ -62,10 +130,7 @@ internal object ConfigurationModuleIT : Spek({
                 it("should wait $firstRequestDelayFromFile s as provided in configuration file and later" +
                         " fetch configurations in intervals specified within them") {
                     StepVerifier
-                            .withVirtualTime {
-                                sut.hvVesConfigurationUpdates(arguments, sampleMdc)
-                                        .take(3)
-                            }
+                            .withVirtualTime { configurationUpdates.take(3) }
                             .expectSubscription()
                             .expectNoEvent(firstRequestDelayFromFile)
                             .expectNext(configurationWithIntervalChanged)
@@ -80,26 +145,35 @@ internal object ConfigurationModuleIT : Spek({
     }
 })
 
+private data class MyCustomTestCbsClientException(val msg: String) : Exception(msg)
+
+private val MAX_BACKOFF_INTERVAL = Duration.ofMinutes(5)
+
+fun StepVerifier.Assertions.allOperatorErrorsAre(ex: Throwable) = hasOperatorErrorsMatching {
+    it.all { tuple -> tuple.t1.get() === ex }
+}
+
+private fun arguments(configurationPath: String) = arrayOf(
+        "--configuration-file",
+        configurationPath,
+        "--health-check-api-port",
+        "6062")
+
+
 private val firstRequestDelayFromFile = Duration.ofSeconds(3)
 private val firstRequestDelayFromCBS = Duration.ofSeconds(999)
 private val requestIntervalFromCBS = Duration.ofSeconds(10)
 private val anotherRequestIntervalFromCBS = Duration.ofSeconds(20)
 
-private val sampleMdc = { mapOf("k" to "v") }
-private val emptyRouting = listOf<Route>()
+private val configurationJsonWithIntervalChanged =
+        hvVesConfigurationJson(requestInterval = Some(requestIntervalFromCBS))
 
-private val configurationJsonWithIntervalChanged = JsonParser().parse("""{
-    "cbs.requestIntervalSec": ${requestIntervalFromCBS.seconds}
-}""").asJsonObject
+private val configurationJsonWithIntervalChangedAgain =
+        hvVesConfigurationJson(requestInterval = Some(anotherRequestIntervalFromCBS),
+                firstRequestDelay = Some(firstRequestDelayFromCBS))
 
-private val configurationJsonWithIntervalChangedAgain = JsonParser().parse("""{
-    "cbs.firstRequestDelaySec": ${firstRequestDelayFromCBS.seconds},
-    "cbs.requestIntervalSec": ${anotherRequestIntervalFromCBS.seconds}
-}""").asJsonObject
-
-private val configurationJsonWithIntervalRestored = JsonParser().parse("""{
-    "cbs.requestIntervalSec": ${requestIntervalFromCBS.seconds}
-}""").asJsonObject
+private val configurationJsonWithIntervalRestored =
+        hvVesConfigurationJson(requestInterval = Some(requestIntervalFromCBS))
 
 private val configurationWithIntervalChanged =
         hvVesConfiguration(firstRequestDelayFromFile, requestIntervalFromCBS)
@@ -110,11 +184,4 @@ private val configurationWithIntervalChangedAgain =
 private val configurationWithIntervalRestored =
         hvVesConfiguration(firstRequestDelayFromFile, requestIntervalFromCBS)
 
-private fun hvVesConfiguration(firstRequestDelay: Duration, requestInterval: Duration): HvVesConfiguration {
-    return HvVesConfiguration(
-            ServerConfiguration(6061, Duration.ofSeconds(60)),
-            CbsConfiguration(firstRequestDelay, requestInterval),
-            SecurityConfiguration(Option.empty()),
-            CollectorConfiguration(emptyRouting, 1024 * 1024),
-            LogLevel.DEBUG)
-}
+

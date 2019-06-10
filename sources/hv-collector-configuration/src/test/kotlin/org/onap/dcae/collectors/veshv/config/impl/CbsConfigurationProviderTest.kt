@@ -21,7 +21,6 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Some
 import com.google.gson.JsonParser
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
@@ -73,7 +72,7 @@ internal object CbsConfigurationProviderTest : Spek({
             val configProvider = constructConfigurationProvider(cbsClientAdapter, configStateListener)
 
             on("new configuration") {
-                whenever(cbsClientAdapter.configurationUpdates(any()))
+                whenever(cbsClientAdapter.configurationUpdates())
                         .thenReturn(Flux.just(validConfiguration))
                 it("should use received configuration") {
 
@@ -110,7 +109,7 @@ internal object CbsConfigurationProviderTest : Spek({
             )
 
             on("new configuration") {
-                whenever(cbsClientAdapter.configurationUpdates(any()))
+                whenever(cbsClientAdapter.configurationUpdates())
                         .thenReturn(Flux.just(invalidConfiguration))
 
                 it("should interrupt the flux") {
@@ -193,21 +192,15 @@ private val invalidConfiguration = JsonParser().parse("""
 private val firstRequestDelay = Duration.ofMillis(1)
 private val configParser = JsonConfigurationParser()
 
-private fun retry(iterationCount: Long = 1) = Retry
-        .onlyIf<Any> { it.iteration() <= iterationCount }
-        .fixedBackoff(Duration.ofNanos(1))
-
 private fun constructCbsClientAdapter(cbsClientMock: CbsClient, configStateListener: ConfigurationStateListener) =
-        CbsClientAdapter(Mono.just(cbsClientMock), configStateListener, firstRequestDelay, retry())
+        CbsClientAdapter(Mono.just(cbsClientMock), firstRequestDelay, configStateListener, mdc, retry())
 
 private fun constructConfigurationProvider(cbsClientAdapter: CbsClientAdapter,
                                            configurationStateListener: ConfigurationStateListener,
-                                           iterationCount: Long = 1
-): CbsConfigurationProvider =
-        CbsConfigurationProvider(
-                cbsClientAdapter,
-                configParser,
-                configurationStateListener,
-                { mapOf("k" to "v") },
-                retry(iterationCount)
-        )
+                                           iterationCount: Long = 1) = CbsConfigurationProvider(
+        cbsClientAdapter,
+        configParser,
+        configurationStateListener,
+        mdc,
+        retry(iterationCount)
+)

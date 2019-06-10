@@ -55,7 +55,7 @@ internal class CbsConfigurationProvider(private val cbsClientAdapter: CbsClientA
     }
 
     operator fun invoke(): Flux<PartialConfiguration> =
-            cbsClientAdapter.configurationUpdates(mdc)
+            cbsClientAdapter.configurationUpdates()
                     .doOnNext { logger.info(mdc) { "Received new configuration:\n$it" } }
                     .map(::parseConfiguration)
                     .doOnNext { logger.info(mdc) { "Successfully parsed configuration json to:\n$it" } }

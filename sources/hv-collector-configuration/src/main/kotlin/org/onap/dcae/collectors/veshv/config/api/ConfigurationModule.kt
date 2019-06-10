@@ -55,7 +55,6 @@ class ConfigurationModule internal constructor(private val configStateListener: 
             CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment())
     )
 
-
     fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
 
     fun hvVesConfigurationUpdates(args: Array<String>,
@@ -67,7 +66,7 @@ class ConfigurationModule internal constructor(private val configStateListener: 
                     .doOnNext { logger.info { "Successfully parsed configuration file to: $it" } }
                     .cache()
                     .flatMapMany { basePartialConfig ->
-                        cbsClientAdapter(basePartialConfig).let { cbsClientAdapter ->
+                        cbsClientAdapter(basePartialConfig, mdc).let { cbsClientAdapter ->
                             cbsConfigurationProvider(cbsClientAdapter, mdc)
                                     .invoke()
                                     .map { configMerger.merge(basePartialConfig, it) }
@@ -75,27 +74,28 @@ class ConfigurationModule internal constructor(private val configStateListener: 
                                     .throwOnLeft()
                                     .map(configTransformer::toFinalConfiguration)
                                     .doOnNext {
-                                        cbsClientAdapter.updateCbsInterval(it.cbs.requestInterval, mdc)
+                                        cbsClientAdapter.updateCbsInterval(it.cbs.requestInterval)
                                     }
                         }
                     }
 
-    private fun cbsClientAdapter(basePartialConfig: PartialConfiguration) =
-            CbsClientAdapter(
-                    cbsClient,
-                    configStateListener,
-                    cbsConfigurationFrom(basePartialConfig).firstRequestDelay,
-                    retrySpec
-            )
+    private fun cbsClientAdapter(basePartialConfig: PartialConfiguration,
+                                 mdc: MappedDiagnosticContext) = CbsClientAdapter(
+            cbsClient,
+            cbsConfigurationFrom(basePartialConfig).firstRequestDelay,
+            configStateListener,
+            mdc,
+            infiniteRetry
+    )
 
     private fun cbsConfigurationProvider(cbsClientAdapter: CbsClientAdapter,
-                                         mdc: MappedDiagnosticContext) =
-            CbsConfigurationProvider(
-                    cbsClientAdapter,
-                    configParser,
-                    configStateListener,
-                    mdc,
-                    retrySpec)
+                                         mdc: MappedDiagnosticContext) = CbsConfigurationProvider(
+            cbsClientAdapter,
+            configParser,
+            configStateListener,
+            mdc,
+            infiniteRetry
+    )
 
     private fun cbsConfigurationFrom(basePartialConfig: PartialConfiguration) =
             configValidator.validatedCbsConfiguration(basePartialConfig)
@@ -104,11 +104,11 @@ class ConfigurationModule internal constructor(private val configStateListener: 
     companion object {
         private val logger = Logger(ConfigurationModule::class)
 
-        private const val MAX_RETRIES = 5L
-        private const val INITIAL_BACKOFF = 10L
-        private val retrySpec: Retry<Any> = Retry.any<Any>()
-                .retryMax(MAX_RETRIES)
-                .fixedBackoff(Duration.ofSeconds(INITIAL_BACKOFF))
+        private val FIRST_BACKOFF_DURATION = Duration.ofSeconds(5)
+        private val MAX_BACKOFF_DURATION = Duration.ofMinutes(5)
+        private val infiniteRetry: Retry<Any> = Retry.any<Any>()
+                .retryMax(Long.MAX_VALUE)
+                .exponentialBackoff(FIRST_BACKOFF_DURATION, MAX_BACKOFF_DURATION)
                 .jitter(Jitter.random())
     }
 
