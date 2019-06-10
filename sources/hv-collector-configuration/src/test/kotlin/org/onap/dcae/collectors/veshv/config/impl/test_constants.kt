@@ -24,7 +24,9 @@ import com.nhaarman.mockitokotlin2.whenever
 import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import reactor.retry.Retry
 import java.nio.file.Paths
+import java.time.Duration
 
 private fun resourcePathAsString(resource: String) =
         Paths.get(ConfigurationValidatorTest::class.java.getResource(resource).toURI()).toString()
@@ -52,3 +54,10 @@ private val sampleSink = mock<KafkaSink>().also {
 
 internal val sampleStreamsDefinition = listOf(sampleSink)
 internal val sampleRouting = listOf(Route(sampleSink.name(), sampleSink))
+
+internal val mdc = { mapOf("mdc_key" to "mdc_value") }
+
+internal fun retry(iterationCount: Long = 1) = Retry
+        .onlyIf<Any> { it.iteration() <= iterationCount }
+        .fixedBackoff(Duration.ofNanos(1))
+

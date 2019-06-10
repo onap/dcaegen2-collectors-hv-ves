@@ -22,7 +22,6 @@ package org.onap.dcae.collectors.veshv.config.impl
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
-import org.onap.dcae.collectors.veshv.utils.logging.onErrorLog
 import org.onap.dcae.collectors.veshv.utils.rx.delayElements
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsRequests
@@ -35,26 +34,31 @@ import java.util.concurrent.atomic.AtomicReference
 
 
 internal class CbsClientAdapter(private val cbsClientMono: Mono<CbsClient>,
-                                private val configurationStateListener: ConfigurationStateListener,
                                 private val firstRequestDelay: Duration,
-                                private val retrySpec: Retry<Any>) {
+                                private val configurationStateListener: ConfigurationStateListener,
+                                private val mdc: MappedDiagnosticContext,
+                                retrySpec: Retry<Any>) {
 
     private val requestInterval = AtomicReference<Duration>(Duration.ZERO)
+    private val retry = retrySpec.doOnRetry {
+        logger.withWarn(mdc) {
+            log("Exception while creating CBS client, retrying. Reason: ${it.exception().localizedMessage}")
+        }
+        configurationStateListener.retrying()
+    }
 
-    fun configurationUpdates(mdc: MappedDiagnosticContext) = cbsClientMono
+    fun configurationUpdates() = cbsClientMono
             .doOnNext {
                 logger.info(mdc) {
                     "CBS client successfully created, first request will be sent in ${firstRequestDelay.seconds} s"
                 }
             }
-            .onErrorLog(logger, mdc) { "Failed to retrieve CBS client" }
-            .retryWhen(retry(mdc))
+            .retryWhen(retry)
             .delayElement(firstRequestDelay)
             .flatMapMany(::toPeriodicalConfigurations)
             .distinctUntilChanged()
 
-    fun updateCbsInterval(intervalUpdate: Duration, mdc: MappedDiagnosticContext) {
-        requestInterval.set(intervalUpdate)
+    fun updateCbsInterval(intervalUpdate: Duration) = requestInterval.set(intervalUpdate).also {
         logger.debug(mdc) { "CBS request interval changed to: ${intervalUpdate.seconds} s" }
     }
 
@@ -67,15 +71,7 @@ internal class CbsClientAdapter(private val cbsClientMono: Mono<CbsClient>,
 
     private fun configurationRequest() = CbsRequests.getConfiguration(RequestDiagnosticContext.create())
 
-    private fun retry(mdc: MappedDiagnosticContext) = retrySpec.doOnRetry {
-        logger.withWarn(mdc) {
-            log("Exception from HV-VES cbs client, retrying subscription", it.exception())
-        }
-        configurationStateListener.retrying()
-    }
-
     companion object {
         private val logger = Logger(CbsClientAdapter::class)
     }
-
 }
