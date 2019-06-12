@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99fc903e_112cadfa",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/cbs_stub.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-12T11:48:26Z",
+      "side": 1,
+      "message": "Isn\u0027t `val cbsClientMock: CbsClient \u003d mock()` more readable? Just a suggestion.",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 41
+      },
+      "revId": "c2b8743a081e5f04c2d9a8f8482d231eb4588bda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fdef80bd_a98509fd",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/cbs_stub.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-12T11:48:26Z",
+      "side": 1,
+      "message": "remove \"is\" from fun argument names.",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 73
+      },
+      "revId": "c2b8743a081e5f04c2d9a8f8482d231eb4588bda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96554470_5eca3b81",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/cbs_stub.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-12T11:48:26Z",
+      "side": 1,
+      "message": "static import?",
+      "range": {
+        "startLine": 54,
+        "startChar": 36,
+        "endLine": 54,
+        "endChar": 41
+      },
+      "revId": "c2b8743a081e5f04c2d9a8f8482d231eb4588bda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9185eac8_4b4fd114",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/api/test_configurations.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-12T11:48:26Z",
+      "side": 1,
+      "message": "Check if can\u0027t be done nicer.",
+      "range": {
+        "startLine": 46,
+        "startChar": 9,
+        "endLine": 46,
+        "endChar": 20
+      },
+      "revId": "c2b8743a081e5f04c2d9a8f8482d231eb4588bda",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
