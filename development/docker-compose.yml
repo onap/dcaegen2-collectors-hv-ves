@@ -124,7 +124,7 @@ services:
       - "6062:6062/tcp"
       - "6063:6063"
     command: ["--listen-port", "6062",
-              "--health-check-api-port", "6063",
+              "--health-check-http-port", "6063",
               "--ves-host", "ves-hv-collector",
               "--ves-port", "6061",
               "--key-store", "/etc/ves-hv/client.p12",
