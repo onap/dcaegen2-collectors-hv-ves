@@ -66,7 +66,7 @@ private fun startServers(config: SimulatorConfiguration): ExitCode {
     logger.info { "Started xNF Simulator API server" }
     HealthState.INSTANCE.changeState(HealthDescription.IDLE)
 
-    xnfApiServerHandler.await().block()
+    xnfApiServerHandler.await()
     return ExitSuccess
 }
 

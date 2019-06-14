@@ -29,7 +29,7 @@ import java.time.Duration
  * @since August 2018
  */
 abstract class ServerHandle(val host: String, val port: Int) : Closeable {
-    abstract fun await(): Mono<Void>
+    abstract fun await()
 }
 
 /**
@@ -60,10 +60,8 @@ class NettyServerHandle(private val ctx: DisposableServer,
                     .delayElement(boundPortReleaseLatency)
                     .then()
 
-    override fun await(): Mono<Void> = Mono.create { callback ->
-        ctx.channel().closeFuture().addListener {
-            callback.success()
-        }
+    override fun await() {
+        ctx.channel().closeFuture().await()
     }
 
     companion object {

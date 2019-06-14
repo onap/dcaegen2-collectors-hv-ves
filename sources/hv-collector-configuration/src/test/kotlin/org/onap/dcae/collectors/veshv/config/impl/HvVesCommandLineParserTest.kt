@@ -73,7 +73,7 @@ object HvVesCommandLineParserTest : Spek({
 
         given("healthcheck port defined via cmd") {
             val healthCheckPort = 888
-            val configWithHealthcheckPort = "--health-check-api-port $healthCheckPort"
+            val configWithHealthcheckPort = "--health-check-http-port $healthCheckPort"
             on("parsing command") {
                 it("should assign proper port") {
                     assertThat(

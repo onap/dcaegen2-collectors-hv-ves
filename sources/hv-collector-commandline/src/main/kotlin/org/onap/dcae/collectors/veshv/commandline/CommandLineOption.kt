@@ -25,9 +25,9 @@ import org.apache.commons.cli.Option
 enum class CommandLineOption(val option: Option, val required: Boolean = false) {
     HEALTH_CHECK_API_PORT(
             Option.builder("H")
-                    .longOpt("health-check-api-port")
+                    .longOpt("health-check-http-port")
                     .hasArg()
-                    .desc("Health check rest api listen port")
+                    .desc("Health check rest http listen port")
                     .build()
     ),
     CONFIGURATION_FILE(

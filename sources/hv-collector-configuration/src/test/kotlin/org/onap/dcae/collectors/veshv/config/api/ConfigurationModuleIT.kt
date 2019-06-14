@@ -156,7 +156,7 @@ fun StepVerifier.Assertions.allOperatorErrorsAre(ex: Throwable) = hasOperatorErr
 private fun arguments(configurationPath: String) = arrayOf(
         "--configuration-file",
         configurationPath,
-        "--health-check-api-port",
+        "--health-check-http-port",
         "6062")
 
 private val firstRequestDelayFromFile = Duration.ofSeconds(3)
