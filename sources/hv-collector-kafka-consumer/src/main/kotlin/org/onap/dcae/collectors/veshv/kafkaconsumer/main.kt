@@ -19,4 +19,26 @@
  */
 package org.onap.dcae.collectors.veshv.kafkaconsumer
 
-fun main(args: Array<String>) = println("Guten tag")
+import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
+import org.onap.dcae.collectors.veshv.kafkaconsumer.config.ArgKafkaConsumerConfiguration
+import org.onap.dcae.collectors.veshv.kafkaconsumer.config.KafkaConsumerConfiguration
+import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.MicrometerMetrics
+import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.api.PrometheusApiServer
+import org.onap.dcae.collectors.veshv.utils.process.ExitCode
+import org.onap.dcae.collectors.veshv.utils.process.ExitSuccess
+
+private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.kafkaconsumer"
+const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
+
+fun main(args: Array<String>): Unit =
+        ArgKafkaConsumerConfiguration().parse(args)
+                .fold(handleWrongArgumentErrorCurried(PROGRAM_NAME), ::startApp)
+                .let(ExitCode::doExit)
+
+
+private fun startApp(config: KafkaConsumerConfiguration): ExitSuccess {
+    PrometheusApiServer(config.apiAddress, MicrometerMetrics.INSTANCE.metricsProvider)
+            .start().block()?.await()
+
+    return ExitSuccess
+}
