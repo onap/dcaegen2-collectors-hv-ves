@@ -48,7 +48,7 @@ private fun startApp(config: DcaeAppSimConfiguration): ExitSuccess {
     val messageStreamValidation = MessageStreamValidation(generatorFactory.createVesEventGenerator())
     DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))
             .start(config.apiAddress, config.kafkaTopics)
-            .flatMap { it.await() }
+            .map { it.await().block() }
             .block()
     return ExitSuccess
 }
