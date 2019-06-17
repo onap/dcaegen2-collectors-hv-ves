@@ -22,7 +22,7 @@ package org.onap.dcae.collectors.veshv.config.impl
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
-import org.onap.dcae.collectors.veshv.utils.rx.delayElements
+import org.onap.dcae.collectors.veshv.utils.rx.nextWithVariableInterval
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsRequests
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.CbsRequest
@@ -63,15 +63,12 @@ internal class CbsClientAdapter(private val cbsClientMono: Mono<CbsClient>,
     }
 
     private fun toPeriodicalConfigurations(cbsClient: CbsClient) =
-            Mono.just(configurationRequest())
-                    .repeat()
-                    .map(CbsRequest::withNewInvocationId)
-                    .flatMap(cbsClient::get)
-                    .transform(delayElements(requestInterval::get))
-
-    private fun configurationRequest() = CbsRequests.getConfiguration(RequestDiagnosticContext.create())
+            Mono.defer { cbsClient.get(configurationRequest.withNewInvocationId()) }
+                    .repeatWhen { it.nextWithVariableInterval(requestInterval::get) }
 
     companion object {
         private val logger = Logger(CbsClientAdapter::class)
+
+        private val configurationRequest: CbsRequest = CbsRequests.getConfiguration(RequestDiagnosticContext.create())
     }
 }

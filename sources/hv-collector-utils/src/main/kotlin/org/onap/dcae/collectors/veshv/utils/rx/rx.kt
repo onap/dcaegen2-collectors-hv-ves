@@ -34,6 +34,6 @@ import java.time.Duration
 fun <T> Publisher<T>.then(callback: () -> Unit): Mono<Unit> =
         toMono().then(Mono.fromCallable(callback))
 
-fun <T> delayElements(intervalSupplier: () -> Duration): (Flux<T>) -> Flux<T> = { flux ->
-    flux.concatMap { Mono.just(it).delayElement(intervalSupplier()) }
-}
+fun <T> Flux<T>.nextWithVariableInterval(intervalSupplier: () -> Duration): Flux<T> =
+        concatMap { Mono.just(it).delayElement(intervalSupplier()) }
+
