@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8200c703_7c36a6ec",
+        "filename": "sources/hv-collector-configuration/src/main/kotlin/org/onap/dcae/collectors/veshv/config/impl/CbsClientAdapter.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-18T05:20:50Z",
+      "side": 1,
+      "message": "Where is withNewInvocationId call, now?",
+      "revId": "dac60d9c0da99c5b06fd2b7ca05ee9ea5646f245",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
