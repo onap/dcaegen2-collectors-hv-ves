@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
+package org.onap.dcae.collectors.veshv.kafka.impl
 
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -36,7 +36,6 @@ import reactor.kafka.receiver.ReceiverRecord
  * @since May 2018
  */
 internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
-
     fun start(): Flux<ReceiverRecord<ByteArray, ByteArray>> =
             receiver.receive()
                     .doOnNext { it.receiverOffset().acknowledge() }
@@ -58,8 +57,8 @@ internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteAr
                                   topics: Set<String>): ReceiverOptions<ByteArray, ByteArray>? {
             val props = mapOf<String, Any>(
                     ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
-                    ConsumerConfig.CLIENT_ID_CONFIG to "hv-collector-dcae-app-simulator",
-                    ConsumerConfig.GROUP_ID_CONFIG to "hv-collector-simulators",
+                    ConsumerConfig.CLIENT_ID_CONFIG to "hv-collector-consumer",
+                    ConsumerConfig.GROUP_ID_CONFIG to "hv-collector-consumers",
                     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to ByteArrayDeserializer::class.java,
                     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
