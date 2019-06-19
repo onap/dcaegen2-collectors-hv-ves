@@ -25,6 +25,23 @@
     },
     {
       "key": {
+        "uuid": "eaac4c74_09746d5f",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/KafkaSourceTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "duplicated file",
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8ef093a1_17f5aed5",
         "filename": "sources/hv-collector-kafka-consumer/pom.xml",
         "patchSetId": 2
@@ -81,6 +98,29 @@
         "startChar": 70,
         "endLine": 32,
         "endChar": 88
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63f3209a_5539de6b",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/kafka/ConsumerKafkaSource.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "What value is provided with this inheritance?\n\nAlso, this whole class is exactly the same as DcaeApKafkaSource... What is the purpose of them?",
+      "range": {
+        "startLine": 28,
+        "startChar": 94,
+        "endLine": 28,
+        "endChar": 109
       },
       "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
@@ -150,6 +190,144 @@
         "startChar": 0,
         "endLine": 41,
         "endChar": 1
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "132bf529_4deeb31f",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/watcher.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "Why is this file in main package? Why is it named `watcher`, when there is some provider and factory inside of it?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 52
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b4c7766_b4f5f782",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/watcher.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "Tests?",
+      "range": {
+        "startLine": 27,
+        "startChar": 15,
+        "endLine": 27,
+        "endChar": 39
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "792058df_dbe87ed6",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/watcher.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "unused + what does this name mean? \n\nAlso, copy-paste from ConsumerFactory. Why not extract along with other stuff that you did extract from DcaeApp module?",
+      "range": {
+        "startLine": 39,
+        "startChar": 15,
+        "endLine": 39,
+        "endChar": 41
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "161a5258_a8e3c2fb",
+        "filename": "sources/hv-collector-kafka/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "This doesn\u0027t change anything from parent configuration, what you were trying to achieve?",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 13
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f32b34f_185f01f9",
+        "filename": "sources/hv-collector-kafka/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "Micrometer in kafka-utils-module?",
+      "range": {
+        "startLine": 81,
+        "startChar": 4,
+        "endLine": 84,
+        "endChar": 17
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24955870_0af2a8de",
+        "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/KafkaSource.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:29:29Z",
+      "side": 1,
+      "message": "Class having only companion object? Why not `object KafkaSource`?",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 22
       },
       "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
