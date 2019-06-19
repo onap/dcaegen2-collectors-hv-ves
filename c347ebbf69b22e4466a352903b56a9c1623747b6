@@ -95,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "c980b4dc_6fd4ad9c",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerPrometheusMetricsProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T12:04:15Z",
+      "side": 1,
+      "message": "I guess we could use SDK-moher for this purpose, after all it\u0027s our code xd \n\nCan you try to see if using `dcaegen2-sdk-moher-metrics` wouldn\u0027t make our life easier here?",
+      "parentUuid": "27a323b4_35a7d068",
+      "range": {
+        "startLine": 30,
+        "startChar": 100,
+        "endLine": 30,
+        "endChar": 125
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b90102a0_bb04eebd",
         "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/api/PrometheusApiServer.kt",
         "patchSetId": 2
@@ -130,6 +154,30 @@
       "side": 1,
       "message": "Copied endpoint from HealthCheckApiServer in healh-check module",
       "parentUuid": "b90102a0_bb04eebd",
+      "range": {
+        "startLine": 40,
+        "startChar": 38,
+        "endLine": 40,
+        "endChar": 59
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b0a282a_e25fee5d",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/api/PrometheusApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T12:04:15Z",
+      "side": 1,
+      "message": "I think it will be nicer to use standardized path, maybe even you could use SDK MetricsRoutes here?",
+      "parentUuid": "b74a0551_1dca43b9",
       "range": {
         "startLine": 40,
         "startChar": 38,
@@ -224,6 +272,30 @@
       "side": 1,
       "message": "It does exactly same thing as previous version, but you dont have to block the returned mono, which was done in every usage of this method",
       "parentUuid": "a2f2482b_35f72243",
+      "range": {
+        "startLine": 63,
+        "startChar": 23,
+        "endLine": 65,
+        "endChar": 5
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2469afb3_98b58c2e",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/server_handle.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T12:04:15Z",
+      "side": 1,
+      "message": "I see what it does, it\u0027s just that it does not seem related at all to \u0027exposing prometheus metrics\u0027 and while reviewing it\u0027s very confusing. \n\nAnd still, `await` returns Future, so it\u0027s effect is not immediate. When you are not returning this Future, you are changing the behavior quite a lot.\n\nSo to do \"exactly same thing\" you would need to write `override fun await() \u003d ctx.channel().closeFuture().await()`",
+      "parentUuid": "5006f5d9_3c3219ad",
       "range": {
         "startLine": 63,
         "startChar": 23,
