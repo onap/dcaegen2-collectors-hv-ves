@@ -26,6 +26,9 @@ import reactor.core.publisher.Mono
 internal class MicrometerMetrics constructor(
         private val registry: PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 ) : Metrics {
+    override fun notifyOffsetChanged(size: Long) {
+        // TODO implementation here
+    }
 
     fun lastStatus(): Mono<String> = Mono.fromCallable {
         registry.scrape()
