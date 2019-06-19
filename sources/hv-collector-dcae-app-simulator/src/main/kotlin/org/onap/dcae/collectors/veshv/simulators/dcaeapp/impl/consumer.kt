@@ -19,7 +19,7 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.KafkaSource
+import org.onap.dcae.collectors.veshv.kafka.KafkaSource
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.kafka.receiver.ReceiverRecord
 import java.util.concurrent.ConcurrentLinkedQueue
