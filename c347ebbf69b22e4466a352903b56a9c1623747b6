@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "27a323b4_35a7d068",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerPrometheusMetricsProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T11:48:09Z",
+      "side": 1,
+      "message": "I implemented it as it was in main module. Didn\u0027t want to mix up few approaches. If you tell its fine, ill refactor this a little bit. Also i think it would be good to extract a metrics module in the future.",
+      "parentUuid": "511bb5fe_df8f257c",
+      "range": {
+        "startLine": 30,
+        "startChar": 100,
+        "endLine": 30,
+        "endChar": 125
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b90102a0_bb04eebd",
         "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/api/PrometheusApiServer.kt",
         "patchSetId": 2
@@ -82,6 +106,30 @@
       "writtenOn": "2019-06-19T10:42:17Z",
       "side": 1,
       "message": "As far as I remember, this path was \u0027standardized\u0027 in SDK as `/metrics`.",
+      "range": {
+        "startLine": 40,
+        "startChar": 38,
+        "endLine": 40,
+        "endChar": 59
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b74a0551_1dca43b9",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/api/PrometheusApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T11:48:09Z",
+      "side": 1,
+      "message": "Copied endpoint from HealthCheckApiServer in healh-check module",
+      "parentUuid": "b90102a0_bb04eebd",
       "range": {
         "startLine": 40,
         "startChar": 38,
@@ -117,6 +165,30 @@
     },
     {
       "key": {
+        "uuid": "b9ac18dd_ddf6c1d2",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/api/PrometheusApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T11:48:09Z",
+      "side": 1,
+      "message": "Will do some refactor",
+      "parentUuid": "451e7714_d801e91d",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 50
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a2f2482b_35f72243",
         "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/server_handle.kt",
         "patchSetId": 2
@@ -128,6 +200,30 @@
       "writtenOn": "2019-06-19T10:42:17Z",
       "side": 1,
       "message": "Please explain this change in commit message, as it seems completely unrelated to scope of this task.\n\nAlso, why no return statement?\n\nWhy not using `.sync` like it was in previous versions?",
+      "range": {
+        "startLine": 63,
+        "startChar": 23,
+        "endLine": 65,
+        "endChar": 5
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5006f5d9_3c3219ad",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/server_handle.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T11:48:09Z",
+      "side": 1,
+      "message": "It does exactly same thing as previous version, but you dont have to block the returned mono, which was done in every usage of this method",
+      "parentUuid": "a2f2482b_35f72243",
       "range": {
         "startLine": 63,
         "startChar": 23,
