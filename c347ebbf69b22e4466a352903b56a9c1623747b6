@@ -305,6 +305,30 @@
       "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dab8615d_215dbf98",
+        "filename": "sources/hv-collector-utils/src/main/kotlin/org/onap/dcae/collectors/veshv/utils/server_handle.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T12:16:46Z",
+      "side": 1,
+      "message": "I meant that the effect is the same, but you dont have to additionally block the mono.",
+      "parentUuid": "2469afb3_98b58c2e",
+      "range": {
+        "startLine": 63,
+        "startChar": 23,
+        "endLine": 65,
+        "endChar": 5
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
