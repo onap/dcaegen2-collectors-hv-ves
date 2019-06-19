@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ebcc29d4_6df3b00f",
+        "filename": "sources/hv-collector-dcae-app-simulator/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "${project.groupId} + ${project.version}, and also, move higher, closer to other project-siblings-deps",
+      "range": {
+        "startLine": 119,
+        "startChar": 21,
+        "endLine": 119,
+        "endChar": 36
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ef093a1_17f5aed5",
+        "filename": "sources/hv-collector-kafka-consumer/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "same as in other pom",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 17
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70ec19b7_25fa9556",
+        "filename": "sources/hv-collector-kafka-consumer/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "doesn\u0027t hv-collector-kafka have this dependency already?",
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40ab9f75_9ba9bdb0",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/config/ArgKafkaConsumerConfiguration.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "Add \"static\" import",
+      "range": {
+        "startLine": 32,
+        "startChar": 70,
+        "endLine": 32,
+        "endChar": 88
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "332862be_4c9561b0",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 30,
+        "startChar": 1,
+        "endLine": 30,
+        "endChar": 43
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c44d6542_78be3bd5",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "definitely not needed",
+      "range": {
+        "startLine": 33,
+        "startChar": 29,
+        "endLine": 33,
+        "endChar": 35
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a802c91e_97b6cf63",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/main.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "This does nothing, why did you implemented this whole parsing logic in this commit?",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 1
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b890383_fab35fb8",
+        "filename": "sources/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-19T14:01:03Z",
+      "side": 1,
+      "message": "This almost certainly should also be included in code-coverage module",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 145,
+        "endChar": 4
+      },
+      "revId": "f0df11a504f71e555bfbb1e8b97885a287b2b989",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
