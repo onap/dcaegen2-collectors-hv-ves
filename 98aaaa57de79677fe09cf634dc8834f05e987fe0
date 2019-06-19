@@ -45,6 +45,30 @@
       "revId": "98aaaa57de79677fe09cf634dc8834f05e987fe0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac4f7630_df0e3867",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/http/PrometheusApiServer.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T13:35:12Z",
+      "side": 1,
+      "message": "This change, just like the one with await is indeed not related to this commit. I added a todo that could potentially handle this one aswell.",
+      "parentUuid": "96ebcddb_00c75b71",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 50
+      },
+      "revId": "98aaaa57de79677fe09cf634dc8834f05e987fe0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
