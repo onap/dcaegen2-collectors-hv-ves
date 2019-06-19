@@ -28,9 +28,9 @@ import java.util.Collections.synchronizedMap
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-internal class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
-                       private val messageStreamValidation: MessageStreamValidation) {
-    private val consumerState: MutableMap<String, ConsumerStateProvider> = synchronizedMap(mutableMapOf())
+internal class DcaeAppSimulator(private val consumerFactory: DcaeAppConsumerFactory,
+                                private val messageStreamValidation: MessageStreamValidation) {
+    private val consumers: MutableMap<String, Consumer> = synchronizedMap(mutableMapOf())
 
     fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))
 
@@ -42,9 +42,9 @@ internal class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
         }
 
         logger.info { "Received new configuration. Removing old consumers and creating consumers for topics: $topics" }
-        synchronized(consumerState) {
-            consumerState.clear()
-            consumerState.putAll(consumerFactory.createConsumersForTopics(topics))
+        synchronized(consumers) {
+            consumers.clear()
+            consumers.putAll(consumerFactory.createConsumersFor(topics))
         }
     }
 
@@ -69,7 +69,7 @@ internal class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
     fun validate(jsonDescription: InputStream, topic: String) =
             messageStreamValidation.validate(jsonDescription, currentMessages(topic))
 
-    private fun consumerState(topic: String) = Option.fromNullable(consumerState[topic])
+    private fun consumerState(topic: String) = Option.fromNullable(consumers[topic])
 
 
     private fun currentMessages(topic: String): List<ByteArray> =

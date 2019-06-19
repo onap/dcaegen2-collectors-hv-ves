@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
+package org.onap.dcae.collectors.veshv.kafka.impl
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
@@ -45,8 +45,8 @@ internal class KafkaSourceTest : Spek({
         }
 
         verifyProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers)
-        verifyProperty(ConsumerConfig.CLIENT_ID_CONFIG, "hv-collector-dcae-app-simulator")
-        verifyProperty(ConsumerConfig.GROUP_ID_CONFIG, "hv-collector-simulators")
+        verifyProperty(ConsumerConfig.CLIENT_ID_CONFIG, "hv-collector-consumer")
+        verifyProperty(ConsumerConfig.GROUP_ID_CONFIG, "hv-collector-consumers")
         verifyProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
         verifyProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
         verifyProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")

@@ -63,23 +63,17 @@
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>hv-collector-commandline</artifactId>
+      <artifactId>hv-collector-kafka</artifactId>
       <version>${project.parent.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>hv-collector-test-utils</artifactId>
-      <version>${project.parent.version}</version>
-      <scope>test</scope>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib-jdk8</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -90,6 +84,25 @@
       <artifactId>logback-classic</artifactId>
       <scope>runtime</scope>
     </dependency>
-
+    <dependency>
+      <groupId>com.nhaarman.mockitokotlin2</groupId>
+      <artifactId>mockito-kotlin</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.spek</groupId>
+      <artifactId>spek-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.spek</groupId>
+      <artifactId>spek-junit-platform-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
