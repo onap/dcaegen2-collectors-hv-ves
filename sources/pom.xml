@@ -142,6 +142,7 @@
         <module>hv-collector-dcae-app-simulator</module>
         <module>hv-collector-domain</module>
         <module>hv-collector-health-check</module>
+        <module>hv-collector-kafka</module>
         <module>hv-collector-kafka-consumer</module>
         <module>hv-collector-main</module>
         <module>hv-collector-server</module>

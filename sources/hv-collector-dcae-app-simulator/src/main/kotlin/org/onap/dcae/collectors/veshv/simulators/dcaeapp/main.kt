@@ -20,7 +20,6 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
 import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.MessageStreamValidation
 import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.DcaeAppApiServer
@@ -43,7 +42,7 @@ fun main(args: Array<String>): Unit =
 
 private fun startApp(config: DcaeAppSimConfiguration): ExitSuccess {
     logger.info { "Starting DCAE-APP Simulator API server with configuration: $config" }
-    val consumerFactory = ConsumerFactory(config.kafkaBootstrapServers)
+    val consumerFactory = DcaeAppConsumerFactory(config.kafkaBootstrapServers)
     val generatorFactory = MessageGeneratorFactory(config.maxPayloadSizeBytes)
     val messageStreamValidation = MessageStreamValidation(generatorFactory.createVesEventGenerator())
     DcaeAppApiServer(DcaeAppSimulator(consumerFactory, messageStreamValidation))

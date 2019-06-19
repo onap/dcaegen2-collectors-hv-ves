@@ -32,6 +32,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.mockito.ArgumentMatchers.anySet
+import org.onap.dcae.collectors.veshv.simulators.dcaeapp.DcaeAppConsumerFactory
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
 import reactor.core.publisher.Mono
@@ -46,7 +47,7 @@ import kotlin.test.assertFailsWith
  * @since August 2018
  */
 internal class DcaeAppSimulatorTest : Spek({
-    lateinit var consumerFactory: ConsumerFactory
+    lateinit var consumerFactory: DcaeAppConsumerFactory
     lateinit var messageStreamValidation: MessageStreamValidation
     lateinit var perf3gpp_consumer: Consumer
     lateinit var faults_consumer: Consumer
@@ -59,7 +60,7 @@ internal class DcaeAppSimulatorTest : Spek({
         faults_consumer = mock()
         cut = DcaeAppSimulator(consumerFactory, messageStreamValidation)
 
-        whenever(consumerFactory.createConsumersForTopics(anySet())).thenReturn(mapOf(
+        whenever(consumerFactory.createConsumersFor(anySet())).thenReturn(mapOf(
                 PERF3GPP_TOPIC to perf3gpp_consumer,
                 FAULTS_TOPICS to faults_consumer))
     }
@@ -81,12 +82,12 @@ internal class DcaeAppSimulatorTest : Spek({
 
         it("should subscribe to given topics") {
             cut.listenToTopics(TWO_TOPICS)
-            verify(consumerFactory).createConsumersForTopics(TWO_TOPICS)
+            verify(consumerFactory).createConsumersFor(TWO_TOPICS)
         }
 
         it("should subscribe to given topics when called with comma separated list") {
             cut.listenToTopics("$PERF3GPP_TOPIC,$FAULTS_TOPICS")
-            verify(consumerFactory).createConsumersForTopics(TWO_TOPICS)
+            verify(consumerFactory).createConsumersFor(TWO_TOPICS)
         }
     }
 

@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,47 +17,25 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
+package org.onap.dcae.collectors.veshv.kafkaconsumer.state
 
 import org.onap.dcae.collectors.veshv.kafka.api.KafkaConsumer
+import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.kafka.receiver.ReceiverRecord
-import java.util.concurrent.ConcurrentLinkedQueue
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
- * @since June 2018
- */
-internal class ConsumerState(private val messages: ConcurrentLinkedQueue<ByteArray>) {
-    val messagesCount: Int by lazy {
-        messages.size
-    }
 
-    val consumedMessages: List<ByteArray> by lazy {
-        messages.toList()
-    }
-}
-
-internal interface ConsumerStateProvider {
-    fun currentState(): ConsumerState
-}
-
-internal class Consumer : KafkaConsumer, ConsumerStateProvider {
-
-    private var consumedMessages: ConcurrentLinkedQueue<ByteArray> = ConcurrentLinkedQueue()
-
-    override fun currentState(): ConsumerState = ConsumerState(consumedMessages)
-
-    override fun reset() = consumedMessages.clear()
+internal class OffsetConsumer(private val metrics: Metrics): KafkaConsumer  {
 
     override fun update(record: ReceiverRecord<ByteArray, ByteArray>) {
-        logger.trace { "Updating stats for message from ${record.topic()}:${record.partition()}" }
-        consumedMessages.add(record.value())
+        val newMessageCount = record.receiverOffset().offset()
+        logger.trace { "Received $newMessageCount messages on kafka server" }
+        metrics.notifyMessageOffset(newMessageCount)
     }
+
+    override fun reset() = Unit
 
     companion object {
-        private val logger = Logger(Consumer::class)
+        private val logger = Logger(OffsetConsumer::class)
     }
 }
-
-
