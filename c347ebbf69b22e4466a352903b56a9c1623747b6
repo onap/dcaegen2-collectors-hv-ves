@@ -119,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ef00ab7a_754dde4d",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerPrometheusMetricsProvider.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T12:21:27Z",
+      "side": 1,
+      "message": "I dont think there\u0027s time for that right now, since Kornel is already waiting with his MR. We can do it later though.",
+      "parentUuid": "27a323b4_35a7d068",
+      "range": {
+        "startLine": 30,
+        "startChar": 100,
+        "endLine": 30,
+        "endChar": 125
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b90102a0_bb04eebd",
         "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/api/PrometheusApiServer.kt",
         "patchSetId": 2
@@ -178,6 +202,30 @@
       "side": 1,
       "message": "I think it will be nicer to use standardized path, maybe even you could use SDK MetricsRoutes here?",
       "parentUuid": "b74a0551_1dca43b9",
+      "range": {
+        "startLine": 40,
+        "startChar": 38,
+        "endLine": 40,
+        "endChar": 59
+      },
+      "revId": "c347ebbf69b22e4466a352903b56a9c1623747b6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a122bb6c_757a74a7",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/api/PrometheusApiServer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-19T12:21:27Z",
+      "side": 1,
+      "message": "I would rather leave that as it is in our healthcheck module. We can create separate task for unifying these enpoints with the standard.",
+      "parentUuid": "8b0a282a_e25fee5d",
       "range": {
         "startLine": 40,
         "startChar": 38,
