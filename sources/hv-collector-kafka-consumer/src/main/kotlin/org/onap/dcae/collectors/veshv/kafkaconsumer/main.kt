@@ -19,4 +19,23 @@
  */
 package org.onap.dcae.collectors.veshv.kafkaconsumer
 
-fun main(args: Array<String>) = println("Guten tag")
+import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
+import org.onap.dcae.collectors.veshv.kafkaconsumer.config.ArgKafkaConsumerConfiguration
+import org.onap.dcae.collectors.veshv.kafkaconsumer.config.KafkaConsumerConfiguration
+import org.onap.dcae.collectors.veshv.utils.process.ExitCode
+import org.onap.dcae.collectors.veshv.utils.process.ExitSuccess
+
+
+private const val PACKAGE_NAME = "org.onap.dcae.collectors.veshv.kafkaconsumer.config"
+//private val logger = Logger(PACKAGE_NAME)
+const val PROGRAM_NAME = "java $PACKAGE_NAME.MainKt"
+
+fun main(args: Array<String>): Unit =
+    ArgKafkaConsumerConfiguration().parse(args)
+            .fold(handleWrongArgumentErrorCurried(PROGRAM_NAME), ::startApp)
+            .let(ExitCode::doExit)
+
+fun startApp(config: KafkaConsumerConfiguration): ExitCode {
+//    val stateProviderFactory = ServerStateProviderFactory(config.kafkaServers)
+    return ExitSuccess
+}

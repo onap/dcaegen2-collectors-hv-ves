@@ -29,7 +29,7 @@ import java.util.Collections.synchronizedMap
  * @since August 2018
  */
 internal class DcaeAppSimulator(private val consumerFactory: ConsumerFactory,
-                       private val messageStreamValidation: MessageStreamValidation) {
+                                private val messageStreamValidation: MessageStreamValidation) {
     private val consumerState: MutableMap<String, ConsumerStateProvider> = synchronizedMap(mutableMapOf())
 
     fun listenToTopics(topicsString: String) = listenToTopics(extractTopics(topicsString))

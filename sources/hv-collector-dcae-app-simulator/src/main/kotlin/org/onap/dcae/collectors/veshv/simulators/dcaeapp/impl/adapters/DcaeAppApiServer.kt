@@ -143,14 +143,14 @@ internal class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
         private val responseValid by lazy {
             Responses.statusResponse(
                     name = "valid",
-                    message = DcaeAppApiServer.VALID_RESPONSE_MESSAGE
+                    message = VALID_RESPONSE_MESSAGE
             )
         }
 
         private val responseInvalid by lazy {
             Responses.statusResponse(
                     name = "invalid",
-                    message = DcaeAppApiServer.INVALID_RESPONSE_MESSAGE,
+                    message = INVALID_RESPONSE_MESSAGE,
                     httpStatus = HttpStatus.BAD_REQUEST
             )
         }
