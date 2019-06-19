@@ -20,12 +20,12 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp
 
 import org.onap.dcae.collectors.veshv.commandline.handleWrongArgumentErrorCurried
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.ConsumerFactory
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.MessageStreamValidation
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.DcaeAppApiServer
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.ArgDcaeAppSimConfiguration
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config.DcaeAppSimConfiguration
+import org.onap.dcae.collectors.veshv.kafka.ConsumerFactory
+import org.onap.dcae.collectors.veshv.kafka.DcaeAppSimulator
+import org.onap.dcae.collectors.veshv.kafka.MessageStreamValidation
+import org.onap.dcae.collectors.veshv.kafka.adapters.DcaeAppApiServer
+import org.onap.dcae.collectors.veshv.kafka.config.ArgDcaeAppSimConfiguration
+import org.onap.dcae.collectors.veshv.kafka.config.DcaeAppSimConfiguration
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.process.ExitCode
 import org.onap.dcae.collectors.veshv.utils.process.ExitSuccess

@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config
+package org.onap.dcae.collectors.veshv.kafka.config
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek

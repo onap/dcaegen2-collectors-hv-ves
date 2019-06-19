@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
+package org.onap.dcae.collectors.veshv.kafka
 
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -26,22 +26,14 @@ import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.security.plain.internals.PlainSaslServer.PLAIN_MECHANISM
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
-import reactor.core.publisher.Flux
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOptions
-import reactor.kafka.receiver.ReceiverRecord
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
-
-    fun start(): Flux<ReceiverRecord<ByteArray, ByteArray>> =
-            receiver.receive()
-                    .doOnNext { it.receiverOffset().acknowledge() }
-                    .also { logger.info { "Started Kafka source" } }
-
+open class KafkaSource {
     companion object {
         private val logger = Logger(KafkaSource::class)
 
@@ -50,9 +42,6 @@ internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteAr
         private const val PASSWORD = "admin_secret"
         private const val JAAS_CONFIG = "$LOGIN_MODULE_CLASS required username=$USERNAME password=$PASSWORD;"
         private val SASL_PLAINTEXT = (SecurityProtocol.SASL_PLAINTEXT as Enum<SecurityProtocol>).name
-
-        fun create(bootstrapServers: String, topics: Set<String>) =
-                KafkaSource(KafkaReceiver.create(createReceiverOptions(bootstrapServers, topics)))
 
         fun createReceiverOptions(bootstrapServers: String,
                                   topics: Set<String>): ReceiverOptions<ByteArray, ByteArray>? {

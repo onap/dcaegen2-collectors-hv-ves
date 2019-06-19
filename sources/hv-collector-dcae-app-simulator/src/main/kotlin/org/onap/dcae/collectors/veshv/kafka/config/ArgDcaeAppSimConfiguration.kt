@@ -17,7 +17,7 @@
 * limitations under the License.
 * ============LICENSE_END=========================================================
 */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.config
+package org.onap.dcae.collectors.veshv.kafka.config
 
 import arrow.core.Option
 import org.apache.commons.cli.CommandLine

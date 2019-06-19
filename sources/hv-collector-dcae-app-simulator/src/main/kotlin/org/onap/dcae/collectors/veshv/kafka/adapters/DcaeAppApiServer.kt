@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
+package org.onap.dcae.collectors.veshv.kafka.adapters
 
 import arrow.core.Option
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.DcaeAppSimulator
+import org.onap.dcae.collectors.veshv.kafka.DcaeAppSimulator
 import org.onap.dcae.collectors.veshv.utils.NettyServerHandle
 import org.onap.dcae.collectors.veshv.utils.ServerHandle
 import org.onap.dcae.collectors.veshv.utils.http.HttpConstants
@@ -143,14 +143,14 @@ internal class DcaeAppApiServer(private val simulator: DcaeAppSimulator) {
         private val responseValid by lazy {
             Responses.statusResponse(
                     name = "valid",
-                    message = DcaeAppApiServer.VALID_RESPONSE_MESSAGE
+                    message = VALID_RESPONSE_MESSAGE
             )
         }
 
         private val responseInvalid by lazy {
             Responses.statusResponse(
                     name = "invalid",
-                    message = DcaeAppApiServer.INVALID_RESPONSE_MESSAGE,
+                    message = INVALID_RESPONSE_MESSAGE,
                     httpStatus = HttpStatus.BAD_REQUEST
             )
         }

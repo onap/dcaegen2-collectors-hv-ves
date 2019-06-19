@@ -17,9 +17,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
+package org.onap.dcae.collectors.veshv.kafka
 
-import org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters.KafkaSource
+import org.onap.dcae.collectors.veshv.kafka.adapters.DcaeAppKafkaSource
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.kafka.receiver.ReceiverRecord
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -63,7 +63,7 @@ internal class Consumer : ConsumerStateProvider {
 
 internal class ConsumerFactory(private val kafkaBootstrapServers: String) {
     fun createConsumersForTopics(kafkaTopics: Set<String>): Map<String, Consumer> =
-            KafkaSource.create(kafkaBootstrapServers, kafkaTopics).let { kafkaSource ->
+            DcaeAppKafkaSource.create(kafkaBootstrapServers, kafkaTopics).let { kafkaSource ->
                 val topicToConsumer = kafkaTopics.associate { it to Consumer() }
                 kafkaSource.start()
                         .map {
