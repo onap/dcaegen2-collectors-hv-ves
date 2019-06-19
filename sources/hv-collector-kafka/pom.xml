@@ -20,9 +20,9 @@
   </parent>
 
 
-  <artifactId>hv-collector-kafka-consumer</artifactId>
+  <artifactId>hv-collector-kafka</artifactId>
 
-  <description>VES HighVolume Collector :: Kafka consumer</description>
+  <description>VES HighVolume Collector :: Kafka</description>
 
   <build>
     <plugins>
@@ -37,43 +37,26 @@
     </plugins>
   </build>
 
-  <profiles>
-    <profile>
-      <id>docker</id>
-      <activation>
-        <property>
-          <name>!skipDocker</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>hv-collector-kafka</artifactId>
+      <artifactId>hv-collector-commandline</artifactId>
       <version>${project.parent.version}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-registry-prometheus</artifactId>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>hv-collector-test-utils</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib-jdk8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -85,14 +68,13 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.jetbrains.spek</groupId>
-      <artifactId>spek-api</artifactId>
-      <scope>test</scope>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-test</artifactId>
-      <scope>test</scope>
+      <groupId>io.projectreactor.kafka</groupId>
+      <artifactId>reactor-kafka</artifactId>
     </dependency>
+
   </dependencies>
 </project>

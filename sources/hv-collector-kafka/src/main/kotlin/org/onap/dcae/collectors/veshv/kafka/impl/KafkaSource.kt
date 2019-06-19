@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
+package org.onap.dcae.collectors.veshv.kafka.impl
 
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -36,7 +36,6 @@ import reactor.kafka.receiver.ReceiverRecord
  * @since May 2018
  */
 internal class KafkaSource(private val receiver: KafkaReceiver<ByteArray, ByteArray>) {
-
     fun start(): Flux<ReceiverRecord<ByteArray, ByteArray>> =
             receiver.receive()
                     .doOnNext { it.receiverOffset().acknowledge() }
