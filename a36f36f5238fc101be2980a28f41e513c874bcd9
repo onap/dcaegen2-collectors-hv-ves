@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4de20d9_2a7b876c",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-21T12:52:29Z",
+      "side": 1,
+      "message": "Rename to `consumers`",
+      "range": {
+        "startLine": 34,
+        "startChar": 16,
+        "endLine": 34,
+        "endChar": 29
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53816437_23fd5e96",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/KafkaServerCountProvider.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-21T12:52:29Z",
+      "side": 1,
+      "message": "Maybe `OffsetConsumer` ? \"KafkaServerCount\" suggests that this class counts Kafka servers",
+      "range": {
+        "startLine": 28,
+        "startChar": 15,
+        "endLine": 28,
+        "endChar": 39
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc343992_bb431cb2",
+        "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/impl/KafkaSource.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-21T12:52:29Z",
+      "side": 1,
+      "message": "I believe this is not exactly what we wanted with new module (hv-kafka-consumer), however extracting all those kafka-properties is great start, so let\u0027s change it further commits",
+      "range": {
+        "startLine": 29,
+        "startChar": 7,
+        "endLine": 32,
+        "endChar": 44
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
