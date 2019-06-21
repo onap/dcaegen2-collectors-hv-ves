@@ -1,0 +1,181 @@
+version: "3.5"
+services:
+
+  #
+  # DMaaP Message Router
+  #
+
+  message-router-zookeeper:
+    image: nexus3.onap.org:10001/onap/dmaap/zookeeper:4.0.0
+    ports:
+      - "2181:2181"
+
+  message-router-kafka-0:
+    image: nexus3.onap.org:10001/onap/dmaap/kafka111:0.0.6
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+#    command: "start-kafka.sh"
+    environment:
+      HOST_IP:                                     127.0.0.1
+      KAFKA_BROKER_ID:                             0
+      ENDPOINT_PORT:                               30490
+      KAFKA_ZOOKEEPER_CONNECT:                     "message-router-zookeeper:2181"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE:             "true"
+      KAFKA_DELETE_TOPIC_ENABLE:                   "true"
+
+      KAFKA_LISTENERS:                             "INTERNAL_SASL_PLAINTEXT://0.0.0.0:9092,EXTERNAL_SASL_PLAINTEXT://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS:                  "INTERNAL_SASL_PLAINTEXT://message-router-kafka-0:9092,EXTERNAL_SASL_PLAINTEXT://message-router-kafka-0:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP:        "INTERNAL_SASL_PLAINTEXT:SASL_PLAINTEXT,EXTERNAL_SASL_PLAINTEXT:SASL_PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME:            "INTERNAL_SASL_PLAINTEXT"
+      KAFKA_SASL_ENABLED_MECHANISMS:               "PLAIN"
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL:  "PLAIN"
+      KAFKA_AUTHORIZER_CLASS_NAME:                 "org.onap.dmaap.kafkaAuthorize.KafkaCustomAuthorizer"
+
+      aaf_locate_url:                              https://aaf-locate:8095
+      KAFKA_LOG_DIRS:                              /opt/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR:      1
+      KAFKA_DEFAULT_REPLICATION_FACTOR:            1
+      KAFKA_NUM_PARTITIONS:                        1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - message-router-zookeeper
+
+  #
+  # Consul / CBS
+  #
+
+  consul-server:
+    image: docker.io/consul:1.0.6
+    ports:
+      - "8500:8500"
+    volumes:
+      - ./consul/:/consul/config
+
+  consul-config:
+    image: docker.io/consul:1.0.6
+    restart: on-failure
+    command: ["kv", "put", "-http-addr=http://consul-server:8500", "dcae-hv-ves-collector", '{
+                                              "streams_publishes": {
+                                                "perf3gpp": {
+                                                  "type": "kafka",
+                                                  "aaf_credentials": {
+                                                    "username": "admin",
+                                                    "password": "admin_secret"
+                                                  },
+                                                  "kafka_info": {
+                                                    "bootstrap_servers": "message-router-kafka-0:9093",
+                                                    "topic_name": "HV_VES_PERF3GPP"
+                                                  }
+                                                }
+                                              }
+                                            }'
+    ]
+    depends_on:
+      - consul-server
+
+  config-binding-service:
+    image: nexus3.onap.org:10001/onap/org.onap.dcaegen2.platform.configbinding.app-app:2.2.4
+    ports:
+      - "10000:10000"
+    environment:
+      CONSUL_HOST: "consul-server"
+    depends_on:
+      - consul-config
+
+  #
+  # DCAE HV VES Collector
+  #
+
+  ves-hv-collector:
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:latest
+    ports:
+      - "6060:6060"
+      - "6061:6061/tcp"
+    environment:
+      JAVA_OPTS: "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
+      VESHV_CONFIGURATION_FILE: "/etc/ves-hv/configuration/base.json"
+      CONSUL_HOST: "consul-server"
+      CONFIG_BINDING_SERVICE: "CBS"
+      HOSTNAME: "dcae-hv-ves-collector"
+    healthcheck:
+      test: ./healthcheck.sh || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      - message-router-kafka-0
+      - config-binding-service
+    volumes:
+      - ./configuration/:/etc/ves-hv/configuration/
+      - ../ssl/:/etc/ves-hv/ssl/
+      - ./logs:/var/log/ONAP/dcae-hv-ves-collector
+
+
+  #
+  # Simulators
+  #
+
+  xnf-simulator:
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator
+    ports:
+      - "6062:6062/tcp"
+      - "6063:6063"
+    command: ["--listen-port", "6062",
+              "--health-check-api-port", "6063",
+              "--ves-host", "ves-hv-collector",
+              "--ves-port", "6061",
+              "--key-store", "/etc/ves-hv/client.p12",
+              "--key-store-password-file", "/etc/ves-hv/client.pass",
+              "--trust-store", "/etc/ves-hv/trust.p12",
+              "--trust-store-password-file", "/etc/ves-hv/trust.pass"]
+    healthcheck:
+      test: curl -f http://localhost:6063/health/ready || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      - ves-hv-collector
+    volumes:
+      - ./ssl/:/etc/ves-hv/
+
+  dcae-app-simulator:
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator
+    ports:
+      - "6064:6064/tcp"
+    command: ["--listen-port", "6064",
+              "--kafka-bootstrap-servers", "message-router-kafka-0:9092",
+              "--kafka-topics", "HV_VES_PERF3GPP"]
+    depends_on:
+      - message-router-kafka-0
+
+  #
+  # Monitoring
+  #
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_AUTH_DISABLE_SIGNOUT_MENU: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards-providers:/etc/grafana/provisioning/dashboards
+      # defined in ./grafana/dashboards-providers/dasboard-providers.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards/hv-ves
+
+
