@@ -119,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "d92e9348_e96818b7",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/OffsetConsumer.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "fc231134_6d135cb3",
+      "range": {
+        "startLine": 32,
+        "startChar": 24,
+        "endLine": 32,
+        "endChar": 74
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9d7475d5_28f5c8b9",
         "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/OffsetConsumerTest.kt",
         "patchSetId": 5
@@ -130,6 +154,30 @@
       "writtenOn": "2019-06-24T07:56:55Z",
       "side": 1,
       "message": "```\n    describe(\"OffsetConsumer\") {\n        val mockedMetrics \u003d mock\u003cMetrics\u003e()\n        val offsetConsumer \u003d OffsetConsumer(mockedMetrics)\n\n        on(\"update with consumer record\") {\n            val record \u003d mock\u003cRecord\u003cByteArray, ByteArray\u003e\u003e()\n           // whenever(record.something()).then(return something)\n\n         update(record)\n        it()...\n```",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 2
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99a81954_25040f78",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/OffsetConsumerTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d7475d5_28f5c8b9",
       "range": {
         "startLine": 35,
         "startChar": 0,
@@ -165,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "342ced10_41417a70",
+        "filename": "sources/hv-collector-kafka/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "ok, actually this was needed: hv-collector-utils",
+      "parentUuid": "b0bb217c_4a2a962a",
+      "range": {
+        "startLine": 42,
+        "startChar": 15,
+        "endLine": 45,
+        "endChar": 17
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "de81b902_74c91256",
         "filename": "sources/hv-collector-kafka/pom.xml",
         "patchSetId": 5
@@ -176,6 +248,30 @@
       "writtenOn": "2019-06-24T07:56:55Z",
       "side": 1,
       "message": "`test`, but actually already included with hv-collector-test-utils module. I\u0027m not sure though if this module is actually used...",
+      "range": {
+        "startLine": 59,
+        "startChar": 13,
+        "endLine": 59,
+        "endChar": 20
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf02d11b_b3a092d0",
+        "filename": "sources/hv-collector-kafka/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de81b902_74c91256",
       "range": {
         "startLine": 59,
         "startChar": 13,
@@ -211,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "63b84362_4e8f4ea0",
+        "filename": "sources/hv-collector-kafka/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69064ca2_4ae16791",
+      "range": {
+        "startLine": 62,
+        "startChar": 3,
+        "endLine": 64,
+        "endChar": 17
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "33e34173_8095c285",
         "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/api/KafkaConsumer.kt",
         "patchSetId": 5
@@ -222,6 +342,30 @@
       "writtenOn": "2019-06-24T07:56:55Z",
       "side": 1,
       "message": "I believe we could use ConsumerRecord here to make the interface generic and avoid depending on reactor kafka",
+      "range": {
+        "startLine": 26,
+        "startChar": 23,
+        "endLine": 26,
+        "endChar": 37
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cce6433e_c861b766",
+        "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/api/KafkaConsumer.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33e34173_8095c285",
       "range": {
         "startLine": 26,
         "startChar": 23,
@@ -257,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "a9838f72_4a6c68fb",
+        "filename": "sources/hv-collector-kafka/src/test/kotlin/org/onap/dcae/collectors/veshv/kafka/api/ConsumerFactoryTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5730bcdc_edcb2d8c",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 9
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "253a0ac6_a2b96a32",
         "filename": "sources/hv-collector-kafka/src/test/kotlin/org/onap/dcae/collectors/veshv/kafka/api/ConsumerFactoryTest.kt",
         "patchSetId": 5
@@ -280,6 +448,30 @@
     },
     {
       "key": {
+        "uuid": "26254cbd_5ce29ef4",
+        "filename": "sources/hv-collector-kafka/src/test/kotlin/org/onap/dcae/collectors/veshv/kafka/api/ConsumerFactoryTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "253a0ac6_a2b96a32",
+      "range": {
+        "startLine": 33,
+        "startChar": 8,
+        "endLine": 33,
+        "endChar": 55
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b65c7b0b_49794dfc",
         "filename": "sources/hv-collector-kafka/src/test/kotlin/org/onap/dcae/collectors/veshv/kafka/api/ConsumerFactoryTest.kt",
         "patchSetId": 5
@@ -291,6 +483,30 @@
       "writtenOn": "2019-06-24T07:56:55Z",
       "side": 1,
       "message": "I guess we should test that we are able to create multiple consumers (more than one). Also, assert that consumerS map has expected size and not only that it\u0027s not empty",
+      "range": {
+        "startLine": 35,
+        "startChar": 12,
+        "endLine": 44,
+        "endChar": 9
+      },
+      "revId": "27f253589ad3484f61193e9ea7efff723ddbb678",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28e767b0_8496e8b4",
+        "filename": "sources/hv-collector-kafka/src/test/kotlin/org/onap/dcae/collectors/veshv/kafka/api/ConsumerFactoryTest.kt",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T09:42:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b65c7b0b_49794dfc",
       "range": {
         "startLine": 35,
         "startChar": 12,
