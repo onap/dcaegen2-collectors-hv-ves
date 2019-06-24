@@ -68,6 +68,29 @@
       "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1db952f_f6a268e7",
+        "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/impl/KafkaSource.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-24T07:10:11Z",
+      "side": 1,
+      "message": "This should be more generic now - maybe \"hv-collector-consumer\" and \"hv-collector-consumers\"",
+      "range": {
+        "startLine": 60,
+        "startChar": 55,
+        "endLine": 61,
+        "endChar": 80
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
