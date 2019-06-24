@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "44ea0c1b_86238042",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/main/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/DcaeAppSimulator.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T07:21:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4de20d9_2a7b876c",
+      "range": {
+        "startLine": 34,
+        "startChar": 16,
+        "endLine": 34,
+        "endChar": 29
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "53816437_23fd5e96",
         "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/KafkaServerCountProvider.kt",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2019-06-21T12:52:29Z",
       "side": 1,
       "message": "Maybe `OffsetConsumer` ? \"KafkaServerCount\" suggests that this class counts Kafka servers",
+      "range": {
+        "startLine": 28,
+        "startChar": 15,
+        "endLine": 28,
+        "endChar": 39
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2f14fca_88e10ec5",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/KafkaServerCountProvider.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T07:21:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "53816437_23fd5e96",
       "range": {
         "startLine": 28,
         "startChar": 15,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "7f96a4e3_9cc6017d",
+        "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/impl/KafkaSource.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T07:21:13Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "cc343992_bb431cb2",
+      "range": {
+        "startLine": 29,
+        "startChar": 7,
+        "endLine": 32,
+        "endChar": 44
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a1db952f_f6a268e7",
         "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/impl/KafkaSource.kt",
         "patchSetId": 4
@@ -82,6 +154,30 @@
       "writtenOn": "2019-06-24T07:10:11Z",
       "side": 1,
       "message": "This should be more generic now - maybe \"hv-collector-consumer\" and \"hv-collector-consumers\"",
+      "range": {
+        "startLine": 60,
+        "startChar": 55,
+        "endLine": 61,
+        "endChar": 80
+      },
+      "revId": "a36f36f5238fc101be2980a28f41e513c874bcd9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abe6ea16_443d3c55",
+        "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/impl/KafkaSource.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-06-24T07:21:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a1db952f_f6a268e7",
       "range": {
         "startLine": 60,
         "startChar": 55,
