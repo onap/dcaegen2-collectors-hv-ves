@@ -54,7 +54,7 @@ class CommandLineOptionTest : Spek({
                     val result = opt.environmentVariableName()
 
                     it("should return prefixed upper snake cased long option name") {
-                        assertThat(result).isEqualTo("VESHV_SSL_DISABLE")
+                        assertThat(result).isEqualTo("SSL_DISABLE")
                     }
                 }
             }
