@@ -29,6 +29,7 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.CONFIGURATION_FILE
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
+import org.onap.dcae.collectors.veshv.commandline.EnvPrefix
 import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
 import org.onap.dcae.collectors.veshv.commandline.intValue
 import org.onap.dcae.collectors.veshv.commandline.stringValue
@@ -42,7 +43,7 @@ internal class HvVesCommandLineParser(private val parser: CommandLineParser = De
 
     fun getConfigurationFile(args: Array<out String>): Either<WrongArgumentError, File> =
             parse(args) {
-                it.stringValue(CONFIGURATION_FILE).map(::File)
+                it.stringValue(CONFIGURATION_FILE, HV_VES_ENV_PREFIX).map(::File)
             }.toEither {
                 WrongArgumentError(
                         message = "Base configuration filepath missing on command line",
@@ -51,7 +52,7 @@ internal class HvVesCommandLineParser(private val parser: CommandLineParser = De
 
     fun getHealthcheckPort(args: Array<out String>): Int =
             parse(args) {
-                it.intValue(HEALTH_CHECK_API_PORT)
+                it.intValue(HEALTH_CHECK_API_PORT, HV_VES_ENV_PREFIX)
             }.getOrElse {
                 logger.info { "Healthcheck port missing on command line, using default: $DEFAULT_HEALTHCHECK_PORT" }
                 DEFAULT_HEALTHCHECK_PORT
@@ -76,6 +77,7 @@ internal class HvVesCommandLineParser(private val parser: CommandLineParser = De
                     .let { parser.parse(it, args) }
 
     companion object {
+        private val HV_VES_ENV_PREFIX = EnvPrefix("VESHV")
         private const val DEFAULT_HEALTHCHECK_PORT: Int = 6060
         private val logger = Logger(HvVesCommandLineParser::class)
     }
