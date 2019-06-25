@@ -19,22 +19,40 @@
  */
 package org.onap.dcae.collectors.veshv.kafkaconsumer.metrics
 
+import io.micrometer.core.instrument.Timer
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
+import org.onap.dcae.collectors.veshv.utils.TimeUtils
 import reactor.core.publisher.Mono
+import java.time.Duration
+import java.time.Instant
+import java.util.concurrent.atomic.AtomicLong
 
 internal class MicrometerMetrics constructor(
         private val registry: PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 ) : Metrics {
-    override fun notifyOffsetChanged(size: Long) {
-        // TODO implementation here
-    }
+
+    private val currentOffset = registry.gauge(name("consumer.offset"), AtomicLong(0))
+    private val travelTime = Timer.builder(name("travel.time"))
+            .publishPercentileHistogram(true)
+            .register(registry)
 
     fun lastStatus(): Mono<String> = Mono.fromCallable {
         registry.scrape()
     }
 
+    override fun notifyOffsetChanged(offset: Long) {
+        currentOffset.lazySet(offset)
+    }
+
+    override fun notifyMessageTravelTime(messageSentTimeMicros: Long) {
+        travelTime.record(Duration.between(TimeUtils.epochMicroToInstant(messageSentTimeMicros), Instant.now()))
+    }
+
     companion object {
         val INSTANCE by lazy { MicrometerMetrics() }
+
+        private const val PREFIX = "hv-kafka-consumer"
+        private fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }

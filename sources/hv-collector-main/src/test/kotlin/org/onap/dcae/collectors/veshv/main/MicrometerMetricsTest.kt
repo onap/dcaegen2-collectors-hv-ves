@@ -20,12 +20,10 @@
 package org.onap.dcae.collectors.veshv.main
 
 import arrow.core.Option
-import arrow.core.Try
 import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.Meter
+import io.micrometer.core.instrument.Tags
 import io.micrometer.core.instrument.Timer
-import io.micrometer.core.instrument.search.RequiredSearch
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
@@ -43,6 +41,9 @@ import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
+import org.onap.dcae.collectors.veshv.tests.utils.verifyCounter
+import org.onap.dcae.collectors.veshv.tests.utils.verifyGauge
+import org.onap.dcae.collectors.veshv.tests.utils.verifyTimer
 import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
 import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
 import org.onap.ves.VesEventOuterClass
@@ -64,29 +65,6 @@ object MicrometerMetricsTest : Spek({
         registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
         cut = MicrometerMetrics(registry)
     }
-
-    fun registrySearch(counterName: String) = RequiredSearch.`in`(registry).name(counterName)
-
-    fun <M, T> verifyMeter(search: RequiredSearch, map: (RequiredSearch) -> M, verifier: (M) -> T) =
-            Try {
-                map(search)
-            }.fold(
-                    { ex -> assertThat(ex).doesNotThrowAnyException() },
-                    verifier
-            )
-
-    fun <T> verifyGauge(name: String, verifier: (Gauge) -> T) =
-            verifyMeter(registrySearch(name), RequiredSearch::gauge, verifier)
-
-    fun <T> verifyTimer(name: String, verifier: (Timer) -> T) =
-            verifyMeter(registrySearch(name), RequiredSearch::timer, verifier)
-
-    fun <T> verifyCounter(search: RequiredSearch, verifier: (Counter) -> T) =
-            verifyMeter(search, RequiredSearch::counter, verifier)
-
-    fun <T> verifyCounter(name: String, verifier: (Counter) -> T) =
-            verifyCounter(registrySearch(name), verifier)
-
 
     fun verifyCountersAndTimersAreUnchangedBut(vararg changedMeters: String) {
         fun <T : Meter> verifyAllMetersAreUnchangedBut(
@@ -120,7 +98,7 @@ object MicrometerMetricsTest : Spek({
                 val bytes = 128
                 cut.notifyBytesReceived(bytes)
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(bytes.toDouble(), doublePrecision)
                 }
             }
@@ -139,7 +117,7 @@ object MicrometerMetricsTest : Spek({
             it("should increment counter") {
                 cut.notifyMessageReceived(emptyWireProtocolFrame())
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
             }
@@ -152,7 +130,7 @@ object MicrometerMetricsTest : Spek({
                 val bytes = 888
                 cut.notifyMessageReceived(emptyWireProtocolFrame().copy(payloadSize = bytes))
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(bytes.toDouble(), doublePrecision)
                 }
             }
@@ -177,7 +155,7 @@ object MicrometerMetricsTest : Spek({
             it("should increment counter") {
                 cut.notifyMessageSent(routedMessage(topicName1))
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
                 verifyCountersAndTimersAreUnchangedBut(
@@ -196,11 +174,11 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageSent(routedMessage(topicName2))
                 cut.notifyMessageSent(routedMessage(topicName2))
 
-                verifyCounter(registrySearch(counterName).tag("topic", topicName1)) {
+                registry.verifyCounter(counterName, Tags.of("topic", topicName1)) {
                     assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
 
-                verifyCounter(registrySearch(counterName).tag("topic", topicName2)) {
+                registry.verifyCounter(counterName, Tags.of("topic", topicName2)) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
             }
@@ -214,7 +192,7 @@ object MicrometerMetricsTest : Spek({
 
                 cut.notifyMessageSent(routedMessageReceivedAt(topicName1, Instant.now().minusMillis(processingTimeMs)))
 
-                verifyTimer(counterName) { timer ->
+                registry.verifyTimer(counterName) { timer ->
                     assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
                 }
                 verifyCountersAndTimersAreUnchangedBut(
@@ -233,7 +211,7 @@ object MicrometerMetricsTest : Spek({
 
                 cut.notifyMessageSent(routedMessageSentAt(topicName1, Instant.now().minusMillis(latencyMs)))
 
-                verifyTimer(counterName) { timer ->
+                registry.verifyTimer(counterName) { timer ->
                     assertThat(timer.mean(TimeUnit.MILLISECONDS))
                             .isGreaterThanOrEqualTo(latencyMs.toDouble())
                             .isLessThanOrEqualTo(latencyMs + 10000.0)
@@ -256,7 +234,7 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
                 verifyCountersAndTimersAreUnchangedBut(counterName, "$PREFIX.messages.dropped.cause")
@@ -271,11 +249,11 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyMessageDropped(INVALID_MESSAGE)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
 
-                verifyCounter(registrySearch(counterName).tag("cause", ROUTE_NOT_FOUND.tag)) {
+                registry.verifyCounter(counterName, Tags.of("cause", ROUTE_NOT_FOUND.tag)) {
                     assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
 
-                verifyCounter(registrySearch(counterName).tag("cause", INVALID_MESSAGE.tag)) {
+                registry.verifyCounter(counterName, Tags.of("cause", INVALID_MESSAGE.tag)) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
             }
@@ -290,7 +268,7 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyClientConnected()
                 cut.notifyClientConnected()
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
                 verifyCountersAndTimersAreUnchangedBut(counterName)
@@ -307,7 +285,7 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyClientDisconnected()
                 cut.notifyClientDisconnected()
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
                 verifyCountersAndTimersAreUnchangedBut(counterName)
@@ -324,7 +302,7 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyClientRejected(INVALID_WIRE_FRAME_MARKER)
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
 
-                verifyCounter(counterName) {
+                registry.verifyCounter(counterName) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
                 verifyCountersAndTimersAreUnchangedBut(counterName, "$PREFIX.clients.rejected.cause")
@@ -338,11 +316,11 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
 
-                verifyCounter(registrySearch(counterName).tag("cause", INVALID_WIRE_FRAME_MARKER.tag)) {
+                registry.verifyCounter(counterName, Tags.of("cause", INVALID_WIRE_FRAME_MARKER.tag)) {
                     assertThat(it.count()).isCloseTo(1.0, doublePrecision)
                 }
 
-                verifyCounter(registrySearch(counterName).tag("cause", PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE.tag)) {
+                registry.verifyCounter(counterName, Tags.of("cause", PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE.tag)) {
                     assertThat(it.count()).isCloseTo(2.0, doublePrecision)
                 }
             }
@@ -359,7 +337,7 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyClientConnected()
                 cut.notifyClientDisconnected()
 
-                verifyGauge(gaugeName) {
+                registry.verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(2.0, doublePrecision)
                 }
             }
@@ -368,7 +346,7 @@ object MicrometerMetricsTest : Spek({
                 cut.notifyClientDisconnected()
                 cut.notifyClientDisconnected()
 
-                verifyGauge(gaugeName) {
+                registry.verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
@@ -376,7 +354,7 @@ object MicrometerMetricsTest : Spek({
             it("should calculate negative difference between connected and disconnected clients") {
                 cut.notifyClientDisconnected()
 
-                verifyGauge(gaugeName) {
+                registry.verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(0.0, doublePrecision)
                 }
             }
