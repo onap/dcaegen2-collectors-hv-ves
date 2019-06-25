@@ -61,7 +61,7 @@ private fun startServers(config: SimulatorConfiguration): ExitCode {
     )
     val xnfApiServerHandler = XnfApiServer(xnfSimulator, OngoingSimulations())
             .start(config.listenAddress)
-            .block()
+            .block()!!
 
     logger.info { "Started xNF Simulator API server" }
     HealthState.INSTANCE.changeState(HealthDescription.IDLE)
