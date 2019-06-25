@@ -19,23 +19,25 @@
  */
 package org.onap.dcae.collectors.veshv.kafkaconsumer.state
 
-import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.TopicPartition
 import org.onap.dcae.collectors.veshv.kafka.api.KafkaConsumer
 import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
 
-internal class OffsetConsumer(private val metrics: Metrics): KafkaConsumer  {
+internal class OffsetConsumer(private val metrics: Metrics) : KafkaConsumer {
 
-    override fun update(record: ConsumerRecord<ByteArray, ByteArray>) {
-        val offset = record.offset()
-        logger.trace { "Current consumer offset $offset" }
-        metrics.notifyOffsetChanged(offset)
+    override fun update(topicPartition: TopicPartition, offset: Long) {
+        logger.trace {
+            "Current consumer offset $offset for partition ${topicPartition.partition()}" +
+                    " of ${topicPartition.topic()} "
+        }
+        metrics.notifyOffsetChanged(topicPartition.topic(), topicPartition.partition(), offset)
     }
 
     override fun reset() = Unit
 
     companion object {
-        private val logger = Logger(OffsetConsumer::class)
+        val logger = Logger(OffsetConsumer::class)
     }
 }

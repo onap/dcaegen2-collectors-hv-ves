@@ -20,5 +20,5 @@
 package org.onap.dcae.collectors.veshv.kafkaconsumer.metrics
 
 interface Metrics {
-    fun notifyOffsetChanged(size: Long)
+    fun notifyOffsetChanged(topic: String, partition: Int, size: Long)
 }
