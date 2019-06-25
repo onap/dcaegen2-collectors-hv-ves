@@ -21,4 +21,9 @@ package org.onap.dcae.collectors.veshv.kafkaconsumer.config
 
 import java.net.InetSocketAddress
 
-internal data class KafkaConsumerConfiguration(val apiAddress: InetSocketAddress)
+internal data class KafkaConsumerConfiguration(
+        val apiAddress: InetSocketAddress,
+        val kafkaTopics: Set<String>,
+        val kafkaBootstrapServers: String,
+        val disableProcessing: Boolean
+)
