@@ -24,17 +24,35 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.onap.dcae.collectors.veshv.commandline.ArgBasedConfiguration
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.LISTEN_PORT
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.*
+import org.onap.dcae.collectors.veshv.commandline.hasOption
 import org.onap.dcae.collectors.veshv.commandline.intValue
+import org.onap.dcae.collectors.veshv.commandline.stringValue
 import org.onap.dcae.collectors.veshv.utils.arrow.OptionUtils.binding
 import java.net.InetSocketAddress
 
 internal class ArgKafkaConsumerConfiguration : ArgBasedConfiguration<KafkaConsumerConfiguration>(DefaultParser()) {
-    override val cmdLineOptionsList: List<CommandLineOption> = listOf(LISTEN_PORT)
+    override val cmdLineOptionsList: List<CommandLineOption> = listOf(
+            LISTEN_PORT,
+            KAFKA_TOPICS,
+            KAFKA_SERVERS,
+            DISABLE_PROCESSING
+    )
 
     override fun getConfiguration(cmdLine: CommandLine): Option<KafkaConsumerConfiguration> =
             binding {
                 val listenPort = cmdLine.intValue(LISTEN_PORT).bind()
-                KafkaConsumerConfiguration(InetSocketAddress(listenPort))
+                val kafkaTopics = cmdLine.stringValue(KAFKA_TOPICS)
+                        .map { it.split(',').toSet() }
+                        .bind()
+                val kafkaBootstrapServers = cmdLine.stringValue(KAFKA_SERVERS).bind()
+                val disableProcessing = cmdLine.hasOption(DISABLE_PROCESSING)
+
+                KafkaConsumerConfiguration(
+                        InetSocketAddress(listenPort),
+                        kafkaTopics,
+                        kafkaBootstrapServers,
+                        disableProcessing
+                )
             }
 }
