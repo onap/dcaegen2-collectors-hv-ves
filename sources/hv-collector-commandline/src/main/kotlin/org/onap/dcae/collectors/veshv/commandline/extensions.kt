@@ -40,28 +40,43 @@ fun handleWrongArgumentError(programName: String, err: WrongArgumentError): Exit
     return ExitFailure(2)
 }
 
-fun CommandLine.longValue(cmdLineOpt: CommandLineOption, default: Long): Long =
-        longValue(cmdLineOpt).getOrElse { default }
+inline class EnvPrefix(val it: String)
 
-fun CommandLine.stringValue(cmdLineOpt: CommandLineOption, default: String): String =
-        optionValue(cmdLineOpt).getOrElse { default }
+private val DEFAULT_PREFIX = EnvPrefix("")
 
-fun CommandLine.intValue(cmdLineOpt: CommandLineOption, default: Int): Int =
-        intValue(cmdLineOpt).getOrElse { default }
+fun CommandLine.longValue(cmdLineOpt: CommandLineOption,
+                          default: Long,
+                          envPrefix: EnvPrefix = DEFAULT_PREFIX): Long =
+        longValue(cmdLineOpt, envPrefix).getOrElse { default }
 
-fun CommandLine.intValue(cmdLineOpt: CommandLineOption): Option<Int> =
-        optionValue(cmdLineOpt).map(String::toInt)
+fun CommandLine.stringValue(cmdLineOpt: CommandLineOption,
+                            default: String,
+                            envPrefix: EnvPrefix = DEFAULT_PREFIX): String =
+        optionValue(cmdLineOpt, envPrefix).getOrElse { default }
 
-fun CommandLine.longValue(cmdLineOpt: CommandLineOption): Option<Long> =
-        optionValue(cmdLineOpt).map(String::toLong)
+fun CommandLine.intValue(cmdLineOpt: CommandLineOption,
+                         default: Int,
+                         envPrefix: EnvPrefix = DEFAULT_PREFIX): Int =
+        intValue(cmdLineOpt, envPrefix).getOrElse { default }
 
-fun CommandLine.stringValue(cmdLineOpt: CommandLineOption): Option<String> =
-        optionValue(cmdLineOpt)
+fun CommandLine.intValue(cmdLineOpt: CommandLineOption,
+                         envPrefix: EnvPrefix = DEFAULT_PREFIX): Option<Int> =
+        optionValue(cmdLineOpt, envPrefix).map(String::toInt)
 
-fun CommandLine.hasOption(cmdLineOpt: CommandLineOption): Boolean =
+fun CommandLine.longValue(cmdLineOpt: CommandLineOption,
+                          envPrefix: EnvPrefix = DEFAULT_PREFIX): Option<Long> =
+        optionValue(cmdLineOpt, envPrefix).map(String::toLong)
+
+fun CommandLine.stringValue(cmdLineOpt: CommandLineOption,
+                            envPrefix: EnvPrefix = DEFAULT_PREFIX): Option<String> =
+        optionValue(cmdLineOpt, envPrefix)
+
+fun CommandLine.hasOption(cmdLineOpt: CommandLineOption,
+                          envPrefix: EnvPrefix = DEFAULT_PREFIX): Boolean =
         this.hasOption(cmdLineOpt.option.opt) ||
-                System.getenv(cmdLineOpt.environmentVariableName()) != null
+                System.getenv(cmdLineOpt.environmentVariableName(envPrefix.it)) != null
 
-private fun CommandLine.optionValue(cmdLineOpt: CommandLineOption) = Option.fromNullablesChain(
+private fun CommandLine.optionValue(cmdLineOpt: CommandLineOption, envPrefix: EnvPrefix) = Option.fromNullablesChain(
         getOptionValue(cmdLineOpt.option.opt),
-        { System.getenv(cmdLineOpt.environmentVariableName()) })
+        { System.getenv(cmdLineOpt.environmentVariableName(envPrefix.it)) })
+
