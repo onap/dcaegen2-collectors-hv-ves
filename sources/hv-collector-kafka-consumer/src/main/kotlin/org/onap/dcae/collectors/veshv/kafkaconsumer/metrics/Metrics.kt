@@ -20,5 +20,6 @@
 package org.onap.dcae.collectors.veshv.kafkaconsumer.metrics
 
 internal interface Metrics {
-    fun notifyOffsetChanged(size: Long)
+    fun notifyOffsetChanged(offset: Long)
+    fun notifyMessageTravelTime(messageSentTimeMicros: Long)
 }
