@@ -17,14 +17,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.kafka.impl
+package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl.adapters
 
-import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
@@ -33,22 +31,10 @@ import org.jetbrains.spek.api.dsl.it
 internal class KafkaSourceTest : Spek({
     val servers = "kafka1:9080,kafka2:9080"
     val topics = setOf("topic1", "topic2")
-
     describe("receiver options") {
-        val options = KafkaSource.createReceiverOptions(servers, topics)!!.toImmutable()
-
-        fun verifyProperty(key: String, expectedValue: Any) {
-            it("should have $key option set") {
-                assertThat(options.consumerProperty(key))
-                        .isEqualTo(expectedValue)
-            }
+        val options = KafkaSource.createReceiverOptions(servers, topics)
+        on("with topics set") {
+            assertThat(options!!.subscriptionTopics()).contains("topic1", "topic2")
         }
-
-        verifyProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers)
-        verifyProperty(ConsumerConfig.CLIENT_ID_CONFIG, "hv-collector-consumer")
-        verifyProperty(ConsumerConfig.GROUP_ID_CONFIG, "hv-collector-consumers")
-        verifyProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
-        verifyProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
-        verifyProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
     }
 })
