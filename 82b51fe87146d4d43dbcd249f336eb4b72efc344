@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1c1cf6ba_a24b174a",
+        "filename": "sources/hv-collector-commandline/src/test/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOptionTest.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-26T04:28:23Z",
+      "side": 1,
+      "message": "I guess its not prefixed anymore",
+      "revId": "82b51fe87146d4d43dbcd249f336eb4b72efc344",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
