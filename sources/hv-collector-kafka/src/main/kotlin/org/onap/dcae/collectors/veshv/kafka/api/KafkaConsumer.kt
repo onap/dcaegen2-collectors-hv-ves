@@ -19,9 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.kafka.api
 
-import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.TopicPartition
 
 interface KafkaConsumer {
     fun reset()
-    fun update(record: ConsumerRecord<ByteArray, ByteArray>)
+    fun update(topicPartition: TopicPartition, offset: Long)
 }

@@ -74,7 +74,7 @@ object MicrometerMetricsTest : Spek({
             val offset = 966L
 
             it("should update $gaugeName") {
-                cut.notifyOffsetChanged(offset)
+                cut.notifyOffsetChanged("sample_topic", 1, offset)
 
                 registry.verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(offset.toDouble(), doublePrecision)
