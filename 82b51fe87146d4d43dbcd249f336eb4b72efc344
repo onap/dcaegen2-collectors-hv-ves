@@ -16,6 +16,24 @@
       "revId": "82b51fe87146d4d43dbcd249f336eb4b72efc344",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6257fea9_4b50f6c9",
+        "filename": "sources/hv-collector-commandline/src/test/kotlin/org/onap/dcae/collectors/veshv/commandline/CommandLineOptionTest.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-26T05:29:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c1cf6ba_a24b174a",
+      "revId": "82b51fe87146d4d43dbcd249f336eb4b72efc344",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
