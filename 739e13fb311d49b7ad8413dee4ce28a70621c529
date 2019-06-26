@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "14b50dd1_42401df9",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerMetrics.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-26T05:29:53Z",
+      "side": 1,
+      "message": "Hm, i\u0027ve probably copied it from somewhere else.",
+      "parentUuid": "8016ccd0_f890d3c2",
+      "revId": "739e13fb311d49b7ad8413dee4ce28a70621c529",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5553ee6f_d9f9bef4",
         "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerMetricsTest.kt",
         "patchSetId": 1
