@@ -19,12 +19,10 @@
  */
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
-import reactor.kafka.receiver.ReceiverRecord
 
 
 /**
@@ -77,6 +75,3 @@ private fun assertState(cut: Consumer, vararg values: ByteArray) {
     assertThat(cut.currentState().messagesCount)
             .isEqualTo(values.size)
 }
-
-private fun receiverRecord(topic: String, key: ByteArray, value: ByteArray) =
-        ReceiverRecord(ConsumerRecord(topic, 1, 100L, key, value), null)
