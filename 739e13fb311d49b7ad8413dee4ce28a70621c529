@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1c76828_2aa1a77a",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerMetrics.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-26T04:21:16Z",
+      "side": 1,
+      "message": "Mono.just isnt enough?",
+      "revId": "739e13fb311d49b7ad8413dee4ce28a70621c529",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5553ee6f_d9f9bef4",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerMetricsTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-26T04:21:16Z",
+      "side": 1,
+      "message": "Extract that 100L to constant/val",
+      "revId": "739e13fb311d49b7ad8413dee4ce28a70621c529",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
