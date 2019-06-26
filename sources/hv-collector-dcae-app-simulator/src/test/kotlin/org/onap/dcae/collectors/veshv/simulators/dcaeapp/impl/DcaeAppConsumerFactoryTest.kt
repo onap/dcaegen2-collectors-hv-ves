@@ -17,32 +17,38 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.kafkaconsumer.state
+package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import org.apache.kafka.common.TopicPartition
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
 
-object OffsetConsumerTest : Spek({
-    describe("OffsetConsumer with metrics") {
-        val mockedMetrics = mock<Metrics>()
-        val offsetConsumer = OffsetConsumer(mockedMetrics)
-        given("topic with partition"){
-            val topicPartition = TopicPartition("sample-topic", 1)
+object DcaeAppConsumerFactoryTest : Spek({
+    describe("DcaeAppConsumerFactory") {
+        val kafkaBootstrapServers = "0.0.0.0:40,0.0.0.1:41"
+        val dcaeAppConsumerFactory = DcaeAppConsumerFactory(kafkaBootstrapServers)
 
-            on("new update method call") {
-                offsetConsumer.update(topicPartition, 99)
+        on("creation of consumer") {
+            val kafkaTopics = setOf("topic1", "topic2")
+            val consumer = dcaeAppConsumerFactory.createConsumersFor(kafkaTopics)
 
-                it("should notify message offset metric") {
-                    verify(mockedMetrics).notifyOffsetChanged("sample-topic", 1, 99)
-                }
+            it("should create consumer") {
+                assertThat(consumer).isNotEmpty.hasSize(2)
+                assertThat(consumer).containsOnlyKeys("topic1", "topic2")
             }
         }
+
+        on("empty kafkaTopics set") {
+            val emptyKafkaTopics = emptySet<String>()
+            val consumer = dcaeAppConsumerFactory.createConsumersFor(emptyKafkaTopics)
+
+            it("should not create consumer") {
+                assertThat(consumer).isEmpty()
+            }
+        }
+
+
     }
 })
