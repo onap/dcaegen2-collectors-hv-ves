@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.kafka.api
+package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import reactor.kafka.receiver.ReceiverRecord
 
-interface KafkaConsumer {
-    fun reset()
-    fun update(record: ConsumerRecord<ByteArray, ByteArray>)
-}
+internal fun receiverRecord(topic: String, key: ByteArray, value: ByteArray) =
+        ReceiverRecord(ConsumerRecord(topic, 1, 100L, key, value), null)

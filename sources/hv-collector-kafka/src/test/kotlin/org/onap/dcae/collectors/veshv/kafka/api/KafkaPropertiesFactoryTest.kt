@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2019 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,27 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.kafka.impl
+package org.onap.dcae.collectors.veshv.kafka.api
 
+import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.config.SaslConfigs
+import org.apache.kafka.common.security.plain.internals.PlainSaslServer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
-/**
- * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
- * @since August 2018
- */
-internal class KafkaSourceTest : Spek({
+internal class KafkaPropertiesFactoryTest : Spek({
     val servers = "kafka1:9080,kafka2:9080"
-    val topics = setOf("topic1", "topic2")
 
-    describe("receiver options") {
-        val options = KafkaSource.createReceiverOptions(servers, topics)!!.toImmutable()
+    describe("KafkaPropertiesFactory") {
+        val options = KafkaPropertiesFactory.create(servers)
 
         fun verifyProperty(key: String, expectedValue: Any) {
             it("should have $key option set") {
-                assertThat(options.consumerProperty(key))
+                assertThat(options.getValue(key))
                         .isEqualTo(expectedValue)
             }
         }
@@ -50,5 +48,9 @@ internal class KafkaSourceTest : Spek({
         verifyProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
         verifyProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
         verifyProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+        verifyProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "3000")
+        verifyProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, KafkaPropertiesFactory.SASL_PLAINTEXT)
+        verifyProperty(SaslConfigs.SASL_MECHANISM, PlainSaslServer.PLAIN_MECHANISM)
+        verifyProperty(SaslConfigs.SASL_JAAS_CONFIG, KafkaPropertiesFactory.JAAS_CONFIG)
     }
 })
