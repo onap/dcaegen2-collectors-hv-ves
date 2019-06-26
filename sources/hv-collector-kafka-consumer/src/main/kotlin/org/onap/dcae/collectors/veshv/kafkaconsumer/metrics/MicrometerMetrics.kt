@@ -41,7 +41,8 @@ internal class MicrometerMetrics constructor(
         registry.scrape()
     }
 
-    override fun notifyOffsetChanged(offset: Long) {
+    override fun notifyOffsetChanged(offset: Long, topic: String, partition: Int) {
+        // TODO use topic and partition
         currentOffset.lazySet(offset)
     }
 

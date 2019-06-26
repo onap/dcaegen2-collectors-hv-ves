@@ -17,36 +17,38 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.dcae.collectors.veshv.kafkaconsumer.state
+package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import org.apache.kafka.common.TopicPartition
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
 
-object OffsetConsumerTest : Spek({
-    describe("OffsetConsumer with metrics") {
-        val mockedMetrics = mock<Metrics>()
-        val offsetConsumer = OffsetConsumer(mockedMetrics)
-        given("topicName with partition"){
-            val topicPartition = TopicPartition(topicName, partitionNumber)
+object DcaeAppConsumerFactoryTest : Spek({
+    describe("DcaeAppConsumerFactory") {
+        val kafkaBootstrapServers = "0.0.0.0:40,0.0.0.1:41"
+        val dcaeAppConsumerFactory = DcaeAppConsumerFactory(kafkaBootstrapServers)
 
-            on("new update method call") {
-                offsetConsumer.update(topicPartition, newOffset)
+        on("creation of consumer") {
+            val kafkaTopics = setOf("topic1", "topic2")
+            val consumer = dcaeAppConsumerFactory.createConsumersFor(kafkaTopics)
 
-                it("should notify message newOffset metric") {
-                    verify(mockedMetrics).notifyOffsetChanged(newOffset, topicName, partitionNumber)
-                }
+            it("should create consumer") {
+                assertThat(consumer).isNotEmpty.hasSize(2)
+                assertThat(consumer).containsOnlyKeys("topic1", "topic2")
             }
         }
+
+        on("empty kafkaTopics set") {
+            val emptyKafkaTopics = emptySet<String>()
+            val consumer = dcaeAppConsumerFactory.createConsumersFor(emptyKafkaTopics)
+
+            it("should not create consumer") {
+                assertThat(consumer).isEmpty()
+            }
+        }
+
+
     }
 })
-
-private const val partitionNumber = 1
-private const val newOffset: Long = 99
-private const val topicName = "sample-topicName"
