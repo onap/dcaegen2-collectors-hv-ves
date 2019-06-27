@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "903ee92f_21925cd8",
+        "filename": "sources/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-27T11:34:18Z",
+      "side": 1,
+      "message": "Please fix it, too.",
+      "range": {
+        "startLine": 128,
+        "startChar": 41,
+        "endLine": 128,
+        "endChar": 55
+      },
+      "revId": "ee52e5c333229e7facca0452a5a8f8bf7555797c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
