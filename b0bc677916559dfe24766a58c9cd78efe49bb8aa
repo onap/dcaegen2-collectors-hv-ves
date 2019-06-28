@@ -152,6 +152,24 @@
     },
     {
       "key": {
+        "uuid": "94b436b4_ade4e337",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-28T08:13:06Z",
+      "side": 1,
+      "message": "Right. I thought about it, but totally forgot.",
+      "parentUuid": "142af037_f382599e",
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "feb73c89_69b08cbc",
         "filename": "tools/performance/performance-test.sh",
         "patchSetId": 3
@@ -209,6 +227,24 @@
       "writtenOn": "2019-06-28T07:38:22Z",
       "side": 1,
       "message": "If \"clean\" then maybe also `docker-compose rm -f` ?",
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d0d89d4_212dae2e",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-06-28T08:13:06Z",
+      "side": 1,
+      "message": "\"down\" as far as i know does the same thing and even more",
+      "parentUuid": "8fad86ad_b171ab25",
       "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
