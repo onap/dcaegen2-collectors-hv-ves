@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7e833dcd_fe50f1af",
+        "filename": "tools/performance/local-performance-test.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T09:45:21Z",
+      "side": 1,
+      "message": "typo I believe, also for first part I guess we can use `docker-compose ps`",
+      "range": {
+        "startLine": 50,
+        "startChar": 54,
+        "endLine": 50,
+        "endChar": 63
+      },
+      "revId": "0a406bb06d8c7e26110b30b52892c85454365320",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
