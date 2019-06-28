@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "adddc4a5_0ab69e96",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-28T07:38:22Z",
+      "side": 1,
+      "message": "Let\u0027s set it to our internal repo image. If we decide to release performance test client then we shall change it to onap nexus repo. For now let\u0027s use our full image name.\n\nYou can also allow for ENV overloading this default https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html",
+      "range": {
+        "startLine": 8,
+        "startChar": 20,
+        "endLine": 8,
+        "endChar": 35
+      },
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4da3cdb6_9bba964e",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-28T07:38:22Z",
+      "side": 1,
+      "message": "remove some spaces to have nice formatting ;)",
+      "range": {
+        "startLine": 25,
+        "startChar": 28,
+        "endLine": 25,
+        "endChar": 33
+      },
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "142af037_f382599e",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-28T07:38:22Z",
+      "side": 1,
+      "message": "Maybe we can wait for all healthchecks to pass? Wait until `docker ps | grep development | grep -c unhealthy` returns 0 or something more fancy. May be done separately.",
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fad86ad_b171ab25",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-06-28T07:38:22Z",
+      "side": 1,
+      "message": "If \"clean\" then maybe also `docker-compose rm -f` ?",
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
