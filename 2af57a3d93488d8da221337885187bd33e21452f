@@ -22,6 +22,30 @@
       "revId": "2af57a3d93488d8da221337885187bd33e21452f",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "512069df_2b12841c",
+        "filename": "sources/hv-collector-kafka-consumer/k8s-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T12:17:18Z",
+      "side": 1,
+      "message": "I believe that is how we planned this component, to be able to run it in two different configurations (just-count and process). AFAIK if I were to put both in same deployment, we wouldn\u0027t be able to configure Prometheus to scrape metrics from two different ports on same pod.\nHaving separate deployments also allows us flexible runing and scaling single style of consumer, so it seemed to me logical to split them.",
+      "parentUuid": "d2c634a6_9135a078",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 35
+      },
+      "revId": "2af57a3d93488d8da221337885187bd33e21452f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
