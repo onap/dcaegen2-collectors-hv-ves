@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bcdbcc39_bfb406da",
+        "filename": "tools/performance/local-performance-test.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T12:24:32Z",
+      "side": 1,
+      "message": "Sorry, I have one more comment here - have you tested if just-after-start components are actually unhealthy? There might be some state like \"starting\" in which case you would skip this IF statement.",
+      "range": {
+        "startLine": 49,
+        "startChar": 10,
+        "endLine": 52,
+        "endChar": 8
+      },
+      "revId": "a4e526709c58d26832aee141d0f68a0b206a3717",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
