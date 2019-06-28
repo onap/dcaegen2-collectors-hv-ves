@@ -2,6 +2,46 @@
   "comments": [
     {
       "key": {
+        "uuid": "decf2060_431a4bbc",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T07:47:13Z",
+      "side": 1,
+      "message": "I guess we can name the file with `-local` suffix as we are planning to also have `-cloud`",
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b9c8338_180048d2",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T07:47:13Z",
+      "side": 1,
+      "message": "won\u0027t this fail if invoked from any other directory than `performance`?",
+      "range": {
+        "startLine": 6,
+        "startChar": 23,
+        "endLine": 6,
+        "endChar": 27
+      },
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "adddc4a5_0ab69e96",
         "filename": "tools/performance/performance-test.sh",
         "patchSetId": 3
@@ -22,6 +62,29 @@
       "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db0a6807_6dfd9342",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T07:47:13Z",
+      "side": 1,
+      "message": "Consumer or producer ? Decide on one ;)",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 28
+      },
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
@@ -48,6 +111,30 @@
     },
     {
       "key": {
+        "uuid": "d631fa53_c99ea144",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T07:47:13Z",
+      "side": 1,
+      "message": "Also there is typo in \"performance\" in first sentence",
+      "parentUuid": "4da3cdb6_9bba964e",
+      "range": {
+        "startLine": 25,
+        "startChar": 28,
+        "endLine": 25,
+        "endChar": 33
+      },
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "142af037_f382599e",
         "filename": "tools/performance/performance-test.sh",
         "patchSetId": 3
@@ -62,6 +149,52 @@
       "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "feb73c89_69b08cbc",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T07:47:13Z",
+      "side": 1,
+      "message": "Well, we could be more verbose here - maybe add some info about how this test is setup (e.g. producers amount, interval, msgcount) ?",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 4
+      },
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "928e4181_e1074312",
+        "filename": "tools/performance/performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-06-28T07:47:13Z",
+      "side": 1,
+      "message": "not needed",
+      "range": {
+        "startLine": 68,
+        "startChar": 4,
+        "endLine": 68,
+        "endChar": 11
+      },
+      "revId": "b0bc677916559dfe24766a58c9cd78efe49bb8aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
