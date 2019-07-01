@@ -1,0 +1,441 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f1c91fb_da693076",
+        "filename": "sources/hv-collector-dcae-app-simulator/src/test/kotlin/org/onap/dcae/collectors/veshv/simulators/dcaeapp/impl/adapters/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "I believe we could also test class public API here easily",
+      "range": {
+        "startLine": 31,
+        "startChar": 15,
+        "endLine": 31,
+        "endChar": 30
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf208bc5_9ed37257",
+        "filename": "sources/hv-collector-kafka-consumer/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "seems doubled",
+      "range": {
+        "startLine": 95,
+        "startChar": 16,
+        "endLine": 103,
+        "endChar": 16
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d93ddb7b_a9735e8f",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSource.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "Why don\u0027t you run it in coroutine?",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 56
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36b90b94_459a913a",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSource.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "unused",
+      "range": {
+        "startLine": 54,
+        "startChar": 20,
+        "endLine": 54,
+        "endChar": 34
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a444de3_53f775c5",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/Metrics.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "offset, also move it as first argument and assign partition-0 by defualt.\n\nAlternatively we could simply pass TopicPartition",
+      "range": {
+        "startLine": 23,
+        "startChar": 59,
+        "endLine": 23,
+        "endChar": 63
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2b2315e_eb7e5c9f",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/metrics/MicrometerMetrics.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "do we have any Jira for this issue if you don\u0027t want to implement it now?",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 39
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e19127f_6c065d7f",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/OffsetConsumer.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "\"for topic ${} on partition ${}\" or even \"for topic ${topicPartition}\"",
+      "range": {
+        "startLine": 31,
+        "startChar": 45,
+        "endLine": 32,
+        "endChar": 52
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a1da234_b2b1a04f",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "add @ExperimentalCoroutinesApi",
+      "range": {
+        "startLine": 39,
+        "startChar": 7,
+        "endLine": 39,
+        "endChar": 22
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "294ba1dc_18bb2ea9",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "\"Since TestCoroutineDispatcher is stateful in order to keep track of executing coroutines, it is important to ensure that cleanupTestCoroutines is called after every test case.\"",
+      "range": {
+        "startLine": 45,
+        "startChar": 33,
+        "endLine": 45,
+        "endChar": 56
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de12391e_13499363",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "given single topic and partition, on started KafkaSource, it should call update function on every topic in intervals",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 3
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35def00a_04911947",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "extract and reuse",
+      "range": {
+        "startLine": 49,
+        "startChar": 53,
+        "endLine": 49,
+        "endChar": 58
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8c01a19_ae7fb7c5",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "extract and reuse, avoid magic numbers",
+      "range": {
+        "startLine": 53,
+        "startChar": 82,
+        "endLine": 53,
+        "endChar": 83
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41f614e3_a55cea2a",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "Why do we not use TestDispatcher in this testcase?",
+      "range": {
+        "startLine": 70,
+        "startChar": 13,
+        "endLine": 70,
+        "endChar": 15
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6aada02a_d7c404f4",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "incorrect, you are testing that it should not interact on calling `start`",
+      "range": {
+        "startLine": 72,
+        "startChar": 16,
+        "endLine": 72,
+        "endChar": 35
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e3615fd_06fd9db0",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "no need to create separate for each testcase, reuse (same with offsetConsumer and most likely kafkaSource aka cut)",
+      "range": {
+        "startLine": 75,
+        "startChar": 20,
+        "endLine": 75,
+        "endChar": 39
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c27e7027_11b9018c",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "And what about multiple topics? do we handle this case?",
+      "range": {
+        "startLine": 88,
+        "startChar": 4,
+        "endLine": 88,
+        "endChar": 5
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d9a8653_b8cfb565",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/state/OffsetConsumerTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "magic strings and numbers all over the place",
+      "range": {
+        "startLine": 43,
+        "startChar": 62,
+        "endLine": 43,
+        "endChar": 83
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bad72e2e_741bc309",
+        "filename": "sources/hv-collector-kafka/src/test/kotlin/org/onap/dcae/collectors/veshv/kafka/api/KafkaPropertiesFactoryTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 37,
+        "startChar": 16,
+        "endLine": 37,
+        "endChar": 28
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "848229a0_e8827859",
+        "filename": "sources/hv-collector-kafka/src/test/kotlin/org/onap/dcae/collectors/veshv/kafka/api/KafkaPropertiesFactoryTest.kt",
+        "patchSetId": 7
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-01T08:01:23Z",
+      "side": 1,
+      "message": "add verification for:\n\n                ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG to \"3000\",\n\n\n                CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to SASL_PLAINTEXT,\n                SaslConfigs.SASL_MECHANISM to PLAIN_MECHANISM,\n                SaslConfigs.SASL_JAAS_CONFIG to JAAS_CONFIG",
+      "range": {
+        "startLine": 46,
+        "startChar": 8,
+        "endLine": 46,
+        "endChar": 22
+      },
+      "revId": "f30a9d0484c1a767a3f5dea2d6b65d236d2cdef6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
