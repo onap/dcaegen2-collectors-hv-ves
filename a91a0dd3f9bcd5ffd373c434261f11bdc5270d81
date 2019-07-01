@@ -16,6 +16,24 @@
       "revId": "a91a0dd3f9bcd5ffd373c434261f11bdc5270d81",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23e98387_eca96c44",
+        "filename": "tools/performance/local-performance-test.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-01T13:53:36Z",
+      "side": 1,
+      "message": "I can add a \"status\" method. What do you think it should show? Simple filtered \"docker ps\" output with all containers? Number of containers running, or maybe both?",
+      "parentUuid": "634f4c34_858a984d",
+      "revId": "a91a0dd3f9bcd5ffd373c434261f11bdc5270d81",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
