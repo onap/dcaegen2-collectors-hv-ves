@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a1ee494c_b5e11c73",
+        "filename": "sources/hv-collector-kafka-consumer/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-07-02T13:22:26Z",
+      "side": 1,
+      "message": "Why are you specifying scope here? Is this default overriden somewhere in dependencyManagement?",
+      "revId": "d622e94f12bf7c23a870744c060e0b961261bf67",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
