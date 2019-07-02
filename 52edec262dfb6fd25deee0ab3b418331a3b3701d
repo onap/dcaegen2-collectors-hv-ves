@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5d7ad878_baec11f8",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-02T11:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4fa18ac_02668ae6",
+      "range": {
+        "startLine": 63,
+        "startChar": 61,
+        "endLine": 63,
+        "endChar": 73
+      },
+      "revId": "52edec262dfb6fd25deee0ab3b418331a3b3701d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f768885f_575998c8",
         "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
         "patchSetId": 8
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "91987048_69c4f7cc",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/KafkaSourceTest.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-02T11:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f768885f_575998c8",
+      "range": {
+        "startLine": 68,
+        "startChar": 11,
+        "endLine": 68,
+        "endChar": 50
+      },
+      "revId": "52edec262dfb6fd25deee0ab3b418331a3b3701d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b64a986_8905cfc9",
         "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/api/KafkaPropertiesFactory.kt",
         "patchSetId": 8
@@ -59,6 +107,30 @@
       "writtenOn": "2019-07-01T12:57:21Z",
       "side": 1,
       "message": "It rarely good idea to change production code so that tests pass, it seems better idea to duplicate in this case",
+      "range": {
+        "startLine": 33,
+        "startChar": 4,
+        "endLine": 33,
+        "endChar": 12
+      },
+      "revId": "52edec262dfb6fd25deee0ab3b418331a3b3701d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60fa8e6f_a8763a11",
+        "filename": "sources/hv-collector-kafka/src/main/kotlin/org/onap/dcae/collectors/veshv/kafka/api/KafkaPropertiesFactory.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-02T11:19:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b64a986_8905cfc9",
       "range": {
         "startLine": 33,
         "startChar": 4,
