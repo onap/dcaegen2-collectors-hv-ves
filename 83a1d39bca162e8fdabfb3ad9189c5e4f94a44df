@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Filip Krzywka <filip.krzywka@nokia.com>
+Code-Review+2: Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+Submitted-by: Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
+Submitted-at: Wed, 03 Jul 2019 12:39:13 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/dcaegen2/collectors/hv-ves/+/90315
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
