@@ -16,15 +16,6 @@
 # limitations under the License.
 # ============LICENSE_END=========================================================
 
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kafka-servers-config
-  namespace: onap
-data:
-  kafka.bootstrapServers: message-router-kafka-0:9092,message-router-kafka-1:9092,message-router-kafka-2:9092
-  kafka.topics: HV_VES_PERF3GPP
-
 ---
 
 apiVersion: apps/v1
@@ -59,13 +50,13 @@ spec:
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:
-                  name: kafka-servers-config
-                  key: kafka.bootstrapServers
+                  name: performance-test-config
+                  key: consumer.kafka.bootstrapServers
             - name: KAFKA_TOPICS
               valueFrom:
                 configMapKeyRef:
-                  name: kafka-servers-config
-                  key: kafka.topics
+                  name: performance-test-config
+                  key: consumer.kafka.topics
             - name: DISABLE_PROCESSING
 
 ---
@@ -102,10 +93,10 @@ spec:
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:
-                  name: kafka-servers-config
-                  key: kafka.bootstrapServers
+                  name: performance-test-config
+                  key: consumer.kafka.bootstrapServers
             - name: KAFKA_TOPICS
               valueFrom:
                 configMapKeyRef:
-                  name: kafka-servers-config
-                  key: kafka.topics
+                  name: performance-test-config
+                  key: consumer.kafka.topics
