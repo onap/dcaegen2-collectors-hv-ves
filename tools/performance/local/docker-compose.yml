@@ -98,7 +98,7 @@ services:
     volumes:
       - ./configuration/:/etc/ves-hv/configuration/
       - ./logs:/var/log/ONAP/dcae-hv-ves-collector
-      - ../ssl/:/etc/ves-hv/ssl/
+      - ../../ssl/:/etc/ves-hv/ssl/
 
   kafka-consumer:
     image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer
