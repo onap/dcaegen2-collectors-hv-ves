@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "$0")"
-
+SCRIPT_DIRECTORY="$(dirname "$0")"
 CERT_FILE=${CERT_FILE:-/ssl/client.p12}
 CERT_PASS_FILE=${CERT_PASS_FILE:-/ssl/client.pass}
 HV_VES_NETWORK=${HV_VES_NETWORK:-performance_default}
@@ -16,7 +15,6 @@ MSG_SIZE=16384
 MSG_COUNT=1000
 INTERVAL_MS=0
 
-
 function usage() {
     echo ""
     echo "Run HV-VES performance test locally"
@@ -26,7 +24,7 @@ function usage() {
     echo "    Optional parameters:"
     echo "      --address    : HV-VES address in host:port format (ves-hv-collector:6061)"
     echo "      --containers : number of docker containers to create (1)"
-    echo "      --clients    : number of clients in single container (1)"
+    echo "      --clients    : number of clients in a single container (1)"
     echo "      --msg-size   : size in bytes of a single message (16384)"
     echo "      --msg-count  : amount of messages to sent by one client in single container (1000)"
     echo "      --interval   : interval between messages (0)"
@@ -41,9 +39,9 @@ function usage() {
 
 function setup_environment(){
     echo "Setting up"
-    cd ../ssl
+    cd ../../ssl
     ./gen-certs.sh
-    cd ../performance
+    cd "$SCRIPT_DIRECTORY"
     docker-compose up -d
 
     echo "Waiting for components to be healthy.."
@@ -101,7 +99,6 @@ function create_containers(){
         --address "$HV_VES_ADDRESS" \
         --certfile "$CERT_FILE" \
         --certpass "$CERT_PASS_FILE" \
-        --containers "$CONTAINERS_COUNT" \
         --clients "$CLIENTS_PER_CONTAINER" \
         --msgsize "$MSG_SIZE" \
         --msgcount "$MSG_COUNT" \
@@ -116,14 +113,16 @@ function clean(){
     docker rm --force $(docker ps -aqf "label=app=$PRODUCER_APP_NAME")
 
     echo "Clearing generated certs"
-    cd ../ssl
+    cd ../../ssl
     ./gen-certs.sh clean
-    cd ../performance
+    cd "$SCRIPT_DIRECTORY"
 
     echo "Removing HV-VES components"
     docker-compose down
     exit 0
 }
+
+cd "$SCRIPT_DIRECTORY"
 
 if [[ $# -eq 0 ]]; then
     usage
