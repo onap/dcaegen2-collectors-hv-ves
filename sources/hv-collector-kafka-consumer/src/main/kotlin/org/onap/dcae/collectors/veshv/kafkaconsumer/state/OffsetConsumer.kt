@@ -28,13 +28,10 @@ internal class OffsetConsumer(private val metrics: Metrics) {
 
     fun update(topicPartition: TopicPartition, offset: Long) {
         logger.trace {
-            "Current consumer offset $offset for topic ${topicPartition.topic()} " +
-                    "on partition ${topicPartition.partition()}"
+            "Current consumer offset $offset for topic partition $topicPartition"
         }
-        metrics.notifyOffsetChanged(offset, topicPartition.topic(), topicPartition.partition())
+        metrics.notifyOffsetChanged(offset, topicPartition)
     }
-
-    fun reset() = Unit
 
     companion object {
         val logger = Logger(OffsetConsumer::class)
