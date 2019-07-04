@@ -37,7 +37,7 @@ fun vesEvent(domain: VesEventDomain = PERF3GPP,
              eventFields: ByteString = ByteString.EMPTY,
              vesEventListenerVersion: String = "7.0.2"
 ): VesEventOuterClass.VesEvent = vesEvent(
-        commonHeader(domain, id, vesEventListenerVersion),
+        commonHeader(domain, id, vesEventListenerVersion, lastEpochMicrosec = 100000005),
         eventFields
 )
 
@@ -51,8 +51,9 @@ fun vesEvent(commonEventHeader: CommonEventHeader,
 fun commonHeader(domain: VesEventDomain = PERF3GPP,
                  id: String = randomUUID().toString(),
                  vesEventListenerVersion: String = "7.0.2",
-                 priority: Priority = Priority.NORMAL
-): CommonEventHeader =
+                 priority: Priority = Priority.NORMAL,
+                 lastEpochMicrosec: Long = 100000005
+                 ): CommonEventHeader =
         CommonEventHeader.newBuilder()
                 .setVersion("sample-version")
                 .setDomain(domain.domainName)
@@ -62,7 +63,7 @@ fun commonHeader(domain: VesEventDomain = PERF3GPP,
                 .setEventName("sample-event-name")
                 .setEventType("sample-event-type")
                 .setStartEpochMicrosec(100000000)
-                .setLastEpochMicrosec(100000005)
+                .setLastEpochMicrosec(lastEpochMicrosec)
                 .setNfNamingCode("sample-nf-naming-code")
                 .setNfcNamingCode("sample-nfc-naming-code")
                 .setNfVendorName("vendor-name")
