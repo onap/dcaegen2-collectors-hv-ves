@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4033a846_4799f652",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumerTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-04T08:06:56Z",
+      "side": 1,
+      "message": "Rename object",
+      "revId": "c89e0c8f03712a0fa85c5bdbbea6463c5c2a3dce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6dd95ec3_28bf6718",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumerTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-04T08:06:56Z",
+      "side": 1,
+      "message": "Extract parameter. It is used 3 times.",
+      "revId": "c89e0c8f03712a0fa85c5bdbbea6463c5c2a3dce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7d108c0_9b29e6c7",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumerTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-04T08:06:56Z",
+      "side": 1,
+      "message": "Sort in usage order",
+      "range": {
+        "startLine": 107,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 87
+      },
+      "revId": "c89e0c8f03712a0fa85c5bdbbea6463c5c2a3dce",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
