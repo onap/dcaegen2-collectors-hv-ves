@@ -45,6 +45,30 @@
       "revId": "4ce115bc1c8eed4304680119a091df0b9a7abf58",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97fef7a3_b26b0d13",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumerTest.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3789
+      },
+      "writtenOn": "2019-07-04T07:53:33Z",
+      "side": 1,
+      "message": "If I move `val mockedMetrics \u003d mock\u003cMetrics\u003e()` outside that `given`, I\u0027ll get \n`Unfinished coroutines during teardown. Ensure all coroutines are completed or cancelled by your test.\nkotlinx.coroutines.test.UncompletedCoroutinesError: Unfinished coroutines during teardown. Ensure all coroutines are completed or cancelled by your test`",
+      "parentUuid": "51b57c70_7bc534a5",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 53,
+        "endChar": 125
+      },
+      "revId": "4ce115bc1c8eed4304680119a091df0b9a7abf58",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
