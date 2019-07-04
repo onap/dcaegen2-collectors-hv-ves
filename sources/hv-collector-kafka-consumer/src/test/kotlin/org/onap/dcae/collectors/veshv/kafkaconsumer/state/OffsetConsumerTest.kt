@@ -40,7 +40,7 @@ object OffsetConsumerTest : Spek({
                 offsetConsumer.update(topicPartition, newOffset)
 
                 it("should notify message newOffset metric") {
-                    verify(mockedMetrics).notifyOffsetChanged(newOffset, topicName, partitionNumber)
+                    verify(mockedMetrics).notifyOffsetChanged(newOffset, topicPartition)
                 }
             }
         }

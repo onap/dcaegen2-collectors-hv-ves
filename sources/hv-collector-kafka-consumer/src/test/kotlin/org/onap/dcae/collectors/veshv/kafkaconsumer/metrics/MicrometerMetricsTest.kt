@@ -21,6 +21,7 @@ package org.onap.dcae.collectors.veshv.kafkaconsumer.metrics
 
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
+import org.apache.kafka.common.TopicPartition
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
 import org.jetbrains.spek.api.Spek
@@ -68,13 +69,14 @@ object MicrometerMetricsTest : Spek({
     }
 
     describe("Gauges") {
-        val gaugeName = "$PREFIX.consumer.offset"
+        val gaugeName = "$PREFIX.consumer.offset.topic"
 
         on("notifyOffsetChanged") {
             val offset = 966L
+            val topicPartition = TopicPartition("sample_topic", 1)
 
             it("should update $gaugeName") {
-                cut.notifyOffsetChanged(offset, "sample_topic", 1)
+                cut.notifyOffsetChanged(offset, topicPartition)
 
                 registry.verifyGauge(gaugeName) {
                     assertThat(it.value()).isCloseTo(offset.toDouble(), doublePrecision)
