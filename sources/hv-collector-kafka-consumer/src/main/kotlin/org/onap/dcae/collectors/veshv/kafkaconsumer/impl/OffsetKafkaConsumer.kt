@@ -27,22 +27,37 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.onap.dcae.collectors.veshv.kafkaconsumer.state.OffsetConsumer
+import org.apache.kafka.common.TopicPartition
+import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
+import org.onap.dcae.collectors.veshv.utils.logging.Logger
 
-internal class KafkaSource(private val kafkaConsumer: KafkaConsumer<ByteArray, ByteArray>,
-                           private val topics: Set<String>,
-                           private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
-    suspend fun start(offsetConsumer: OffsetConsumer, updateInterval: Long = 500L): Job =
+internal class OffsetKafkaConsumer(private val kafkaConsumer: KafkaConsumer<ByteArray, ByteArray>,
+                                   private val topics: Set<String>,
+                                   private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+                                   private val metrics: Metrics) {
+
+    suspend fun start(updateInterval: Long = 500L): Job =
             GlobalScope.launch(dispatcher) {
                 kafkaConsumer.subscribe(topics)
-                val topicPartitions = kafkaConsumer.assignment()
-                while (isActive) {
-                    kafkaConsumer.endOffsets(topicPartitions)
-                            .forEach { (topicPartition, offset) ->
-                                offsetConsumer.update(topicPartition, offset)
-                            }
-                    kafkaConsumer.commitSync()
-                    delay(updateInterval)
-                }
+                    val topicPartitions = kafkaConsumer.assignment()
+                    while (isActive) {
+                        kafkaConsumer.endOffsets(topicPartitions)
+                                .forEach { (topicPartition, offset) ->
+                                    update(topicPartition, offset)
+                                }
+                        kafkaConsumer.commitSync()
+                        delay(updateInterval)
+                    }
             }
+
+    private fun update(topicPartition: TopicPartition, offset: Long) {
+        logger.trace {
+            "Current consumer offset $offset for topic partition $topicPartition"
+        }
+        metrics.notifyOffsetChanged(offset, topicPartition)
+    }
+
+    companion object {
+        val logger = Logger(OffsetKafkaConsumer::class)
+    }
 }
