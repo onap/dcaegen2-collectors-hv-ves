@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d22acaf8_715c88af",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumerTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-04T13:27:54Z",
+      "side": 1,
+      "message": "minor issue: This could be deleted. In order to do so reset(mocked...) before advanceTimeBy... \nThan could be used just one pair of captors",
+      "range": {
+        "startLine": 83,
+        "startChar": 15,
+        "endLine": 84,
+        "endChar": 96
+      },
+      "revId": "3dc6f2fe929fd884c39e062d3c71adef345713b5",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
