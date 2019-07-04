@@ -36,21 +36,22 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.kafkaconsumer.state.OffsetConsumer
+import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
 
 @ExperimentalCoroutinesApi
 object KafkaSourceTest : Spek({
-    given("KafkaSource") {
+    given("OffsetKafkaConsumer") {
         val testDispatcher = TestCoroutineDispatcher()
         val mockedKafkaConsumer = mock<KafkaConsumer<ByteArray, ByteArray>>()
         afterEachTest {
             testDispatcher.cleanupTestCoroutines()
         }
         given("single topicName and partition") {
+            val mockedMetrics = mock<Metrics>()
             val topics = setOf("topicName")
-            val kafkaSource = KafkaSource(mockedKafkaConsumer, topics, testDispatcher)
-            val mockedOffsetConsumer = mock<OffsetConsumer>()
-            on("started KafkaSource") {
+            val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, topics, testDispatcher, mockedMetrics)
+
+            on("started OffsetKafkaConsumer") {
                 val topicPartition = createTopicPartition("topicName")
                 val topicPartitions = setOf(topicPartition)
                 whenever(mockedKafkaConsumer.assignment()).thenReturn(topicPartitions)
@@ -58,30 +59,36 @@ object KafkaSourceTest : Spek({
                         .thenReturn(mapOf<TopicPartition, Long>(topicPartition to newOffset))
 
                 runBlockingTest {
-                    val job = kafkaSource.start(mockedOffsetConsumer, updateIntervalInMs)
+                    val job = offsetKafkaConsumer.start(updateIntervalInMs)
                     job.cancelAndJoin()
                 }
 
-                it("should call update function on topicName") {
-                    verify(mockedOffsetConsumer).update(topicPartition, newOffset)
+                it("should notify offset changed with topicName") {
+                    verify(mockedMetrics).notifyOffsetChanged(
+                            newOffset,
+                            topicPartition)
                 }
             }
         }
 
         given("two topics with partition") {
+            val mockedMetrics = mock<Metrics>()
             val topics = setOf(topicName1, topicName2)
-            val kafkaSource = KafkaSource(mockedKafkaConsumer, topics, testDispatcher)
-            val mockedOffsetConsumer = mock<OffsetConsumer>()
+            val kafkaSource = OffsetKafkaConsumer(mockedKafkaConsumer, topics, testDispatcher, mockedMetrics)
 
-            on("started KafkaSource for two iteration of while loop") {
-                val topicPartitionArgumentCaptor = argumentCaptor<TopicPartition>()
+            on("started OffsetKafkaConsumer for two iteration of while loop") {
                 val offsetArgumentCaptor = argumentCaptor<Long>()
-                val topicPartitionArgumentCaptorAfterInterval = argumentCaptor<TopicPartition>()
+                val topicPartitionArgumentCaptor = argumentCaptor<TopicPartition>()
+
                 val offsetArgumentCaptorAfterInterval = argumentCaptor<Long>()
+                val topicPartitionArgumentCaptorAfterInterval = argumentCaptor<TopicPartition>()
+
                 val topicPartition1 = createTopicPartition(topicName1)
                 val topicPartition2 = createTopicPartition(topicName2)
                 val topicPartitions = setOf(topicPartition1, topicPartition2)
+
                 whenever(mockedKafkaConsumer.assignment()).thenReturn(topicPartitions)
+
                 val partitionToOffset1 =
                         mapOf(topicPartition1 to newOffset,
                                 topicPartition2 to anotherNewOffset)
@@ -92,26 +99,44 @@ object KafkaSourceTest : Spek({
                         .thenReturn(partitionToOffset1, partitionToOffset2)
 
                 runBlockingTest {
-                    val job = kafkaSource.start(mockedOffsetConsumer, updateIntervalInMs)
-                    verify(mockedOffsetConsumer, times(topicsAmount)).update(topicPartitionArgumentCaptor.capture(),
-                            offsetArgumentCaptor.capture())
+                    val job = kafkaSource.start(updateIntervalInMs)
+                    verify(mockedMetrics, times(topicsAmount)).notifyOffsetChanged(
+                            offsetArgumentCaptor.capture(),
+                            topicPartitionArgumentCaptor.capture()
+                    )
 
                     testDispatcher.advanceTimeBy(updateIntervalInMs)
 
-                    verify(mockedOffsetConsumer, times(topicsAmountAfterInterval))
-                            .update(topicPartitionArgumentCaptorAfterInterval.capture(), offsetArgumentCaptorAfterInterval.capture())
+                    verify(mockedMetrics, times(topicsAmountAfterInterval)).notifyOffsetChanged(
+                            offsetArgumentCaptorAfterInterval.capture(),
+                            topicPartitionArgumentCaptorAfterInterval.capture()
+                    )
 
-                    it("should calls update function with proper arguments - before interval") {
-                        assertThat(topicPartitionArgumentCaptor.firstValue).isEqualTo(topicPartition1)
+                    it("should notify offset changed with proper arguments - before interval"){
                         assertThat(offsetArgumentCaptor.firstValue).isEqualTo(newOffset)
-                        assertThat(topicPartitionArgumentCaptor.secondValue).isEqualTo(topicPartition2)
+                        assertThat(topicPartitionArgumentCaptor.firstValue.topic())
+                                .isEqualToIgnoringCase(topicPartition1.topic())
+                        assertThat(topicPartitionArgumentCaptor.firstValue.partition())
+                                .isEqualTo(topicPartition1.partition())
+
                         assertThat(offsetArgumentCaptor.secondValue).isEqualTo(anotherNewOffset)
+                        assertThat(topicPartitionArgumentCaptor.secondValue.topic())
+                                .isEqualToIgnoringCase(topicPartition2.topic())
+                        assertThat(topicPartitionArgumentCaptor.secondValue.partition())
+                                .isEqualTo(topicPartition2.partition())
                     }
-                    it("should calls update function with proper arguments - after interval") {
-                        assertThat(topicPartitionArgumentCaptorAfterInterval.thirdValue).isEqualTo(topicPartition1)
+                    it("should notify offset changed with proper arguments - after interval") {
                         assertThat(offsetArgumentCaptorAfterInterval.thirdValue).isEqualTo(anotherNewOffset)
-                        assertThat(topicPartitionArgumentCaptorAfterInterval.lastValue).isEqualTo(topicPartition2)
+                        assertThat(topicPartitionArgumentCaptorAfterInterval.thirdValue.topic())
+                                .isEqualToIgnoringCase(topicPartition1.topic())
+                        assertThat(topicPartitionArgumentCaptorAfterInterval.thirdValue.partition())
+                                .isEqualTo(topicPartition1.partition())
+
                         assertThat(offsetArgumentCaptorAfterInterval.lastValue).isEqualTo(newOffset)
+                        assertThat(topicPartitionArgumentCaptorAfterInterval.lastValue.topic())
+                                .isEqualToIgnoringCase(topicPartition2.topic())
+                        assertThat(topicPartitionArgumentCaptorAfterInterval.lastValue.partition())
+                                .isEqualTo(topicPartition2.partition())
                     }
                     job.cancelAndJoin()
                 }
@@ -119,9 +144,9 @@ object KafkaSourceTest : Spek({
         }
 
         given("empty topicName list") {
+            val mockedMetrics = mock<Metrics>()
             val emptyTopics = emptySet<String>()
-            val kafkaSource = KafkaSource(mockedKafkaConsumer, emptyTopics, testDispatcher)
-            val mockedOffsetConsumer = mock<OffsetConsumer>()
+            val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, emptyTopics, testDispatcher, mockedMetrics)
 
             on("call of function start") {
                 val emptyTopicPartitions = setOf(null)
@@ -130,12 +155,12 @@ object KafkaSourceTest : Spek({
                         .thenReturn(emptyMap())
 
                 runBlockingTest {
-                    val job = kafkaSource.start(mockedOffsetConsumer, updateIntervalInMs)
+                    val job = offsetKafkaConsumer.start(updateIntervalInMs)
                     job.cancelAndJoin()
                 }
 
-                it("should not interact with OffsetConsumer") {
-                    verifyZeroInteractions(mockedOffsetConsumer)
+                it("should not interact with OffsetKafkaConsumer") {
+                    verifyZeroInteractions(mockedMetrics)
                 }
             }
         }
