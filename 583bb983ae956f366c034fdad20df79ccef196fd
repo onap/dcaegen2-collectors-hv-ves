@@ -46,6 +46,30 @@
       "revId": "583bb983ae956f366c034fdad20df79ccef196fd",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d3e6da5_4fc0418f",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumerTest.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 3789
+      },
+      "writtenOn": "2019-07-05T08:54:27Z",
+      "side": 1,
+      "message": "As Filip says, whole API is experimental. But I haven\u0027t seen any other way of testing coroutines.",
+      "parentUuid": "15616097_627da392",
+      "range": {
+        "startLine": 42,
+        "startChar": 1,
+        "endLine": 42,
+        "endChar": 26
+      },
+      "revId": "583bb983ae956f366c034fdad20df79ccef196fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
