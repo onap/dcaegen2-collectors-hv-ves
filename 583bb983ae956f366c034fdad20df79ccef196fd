@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48a868f2_1b0f55a5",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumerTest.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2683
+      },
+      "writtenOn": "2019-07-05T08:37:40Z",
+      "side": 1,
+      "message": "what is experimental here? can we use non-experimental api instead?",
+      "range": {
+        "startLine": 42,
+        "startChar": 1,
+        "endLine": 42,
+        "endChar": 26
+      },
+      "revId": "583bb983ae956f366c034fdad20df79ccef196fd",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
