@@ -104,7 +104,7 @@ services:
     image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer
     ports:
       - "6064:6064/tcp"
-    command: ["--listen-port", "6062"]
+    command: ["--listen-port", "6064", "--kafka-topics", "HV_VES_PERF3GPP", "--kafka-bootstrap-servers",  "message-router-kafka-0:9093"]
     depends_on:
       - message-router-kafka-0
 
