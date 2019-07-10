@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4a7583b0_9c96e5bd",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3789
+      },
+      "writtenOn": "2019-07-10T12:30:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "402c3e14_690cf456",
+      "revId": "2fc8024821b365bae707f00d7bb5d20ce0206129",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baf5c3b4_36a11557",
         "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumer.kt",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-07-10T12:11:39Z",
       "side": 1,
       "message": "Can this be private?",
+      "revId": "2fc8024821b365bae707f00d7bb5d20ce0206129",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e5b76c03_6224bc36",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3789
+      },
+      "writtenOn": "2019-07-10T12:30:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "baf5c3b4_36a11557",
       "revId": "2fc8024821b365bae707f00d7bb5d20ce0206129",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
