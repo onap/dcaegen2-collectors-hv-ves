@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "402c3e14_690cf456",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-10T12:11:39Z",
+      "side": 1,
+      "message": "If you made default pool timeout a constant, you should also extract updateInterval, or just put both values directly here.",
+      "revId": "2fc8024821b365bae707f00d7bb5d20ce0206129",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baf5c3b4_36a11557",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/ProcessingKafkaConsumer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-10T12:11:39Z",
+      "side": 1,
+      "message": "Can this be private?",
+      "revId": "2fc8024821b365bae707f00d7bb5d20ce0206129",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
