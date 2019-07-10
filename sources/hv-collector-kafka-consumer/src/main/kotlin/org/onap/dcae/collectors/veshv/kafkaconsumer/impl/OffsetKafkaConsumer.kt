@@ -30,17 +30,20 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
 import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
+import java.time.Duration
 
 internal class OffsetKafkaConsumer(private val kafkaConsumer: KafkaConsumer<ByteArray, ByteArray>,
                                    private val topics: Set<String>,
                                    private val metrics: Metrics,
                                    private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
-    suspend fun start(updateInterval: Long = 500L): Job =
+    suspend fun start(updateInterval: Long = 500L, pollTimeout: Duration = defaultPollTimeoutMs):Job =
             GlobalScope.launch(dispatcher) {
                 kafkaConsumer.subscribe(topics)
-                    val topicPartitions = kafkaConsumer.assignment()
                     while (isActive) {
+                        kafkaConsumer.poll(pollTimeout)
+                        val topicPartitions = kafkaConsumer.assignment()
+
                         kafkaConsumer.endOffsets(topicPartitions)
                                 .forEach { (topicPartition, offset) ->
                                     update(topicPartition, offset)
@@ -58,6 +61,7 @@ internal class OffsetKafkaConsumer(private val kafkaConsumer: KafkaConsumer<Byte
     }
 
     companion object {
+        val defaultPollTimeoutMs: Duration = Duration.ofMillis(10L)
         val logger = Logger(OffsetKafkaConsumer::class)
     }
 }

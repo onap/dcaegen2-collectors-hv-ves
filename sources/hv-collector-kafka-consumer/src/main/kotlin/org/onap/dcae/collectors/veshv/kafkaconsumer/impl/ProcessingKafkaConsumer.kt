@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
-import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.ves.VesEventOuterClass
 import java.time.Duration
 
@@ -39,11 +38,11 @@ internal class ProcessingKafkaConsumer (private val kafkaConsumer: KafkaConsumer
                                         private val metrics: Metrics,
                                         private val dispatcher: CoroutineDispatcher = Dispatchers.IO){
 
-    suspend fun start(updateInterval: Long = 500L, timeout: Duration): Job =
+    suspend fun start(updateInterval: Long = 500L, pollTimeout: Duration = defaultPollTimeoutMs):Job =
             GlobalScope.launch(dispatcher){
                 kafkaConsumer.subscribe(topics)
                 while (isActive){
-                    kafkaConsumer.poll(timeout).forEach(::update)
+                    kafkaConsumer.poll(pollTimeout).forEach(::update)
                     kafkaConsumer.commitSync()
                     delay(updateInterval)
                 }
@@ -52,5 +51,9 @@ internal class ProcessingKafkaConsumer (private val kafkaConsumer: KafkaConsumer
     private fun update(record: ConsumerRecord<ByteArray, ByteArray>) {
         val vesEvent = VesEventOuterClass.VesEvent.parseFrom(record.value())
         metrics.notifyMessageTravelTime(vesEvent.commonEventHeader.lastEpochMicrosec)
+    }
+
+    companion object{
+        val defaultPollTimeoutMs: Duration = Duration.ofMillis(10L)
     }
 }
