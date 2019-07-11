@@ -16,6 +16,24 @@
       "revId": "f9e9ad3f7ff5dfc3991c568b8657cec1e5cf7985",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7a5ecda_d6c22460",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3789
+      },
+      "writtenOn": "2019-07-11T05:18:00Z",
+      "side": 1,
+      "message": "Yes, you\u0027re right",
+      "parentUuid": "9ff3d583_96678abf",
+      "revId": "f9e9ad3f7ff5dfc3991c568b8657cec1e5cf7985",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
