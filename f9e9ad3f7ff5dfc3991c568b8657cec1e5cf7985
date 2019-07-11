@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ff3d583_96678abf",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-11T05:15:49Z",
+      "side": 1,
+      "message": "Since this constants are similar for both consumers maybe its worth to separate here interface with start function and  companion object containing constants.\nWhat do you think?",
+      "revId": "f9e9ad3f7ff5dfc3991c568b8657cec1e5cf7985",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
