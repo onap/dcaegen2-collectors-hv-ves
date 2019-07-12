@@ -46,7 +46,7 @@ spec:
             - containerPort: 8080
           env:
             - name: LISTEN_PORT
-              value: 8080
+              value: "8080"
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:
@@ -89,7 +89,7 @@ spec:
             - containerPort: 8080
           env:
             - name: LISTEN_PORT
-              value: 8080
+              value: "8080"
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:

@@ -19,14 +19,14 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: hv-collector-producer
+  generateName: hv-collector-producer-
   namespace: onap
   labels:
     app: hv-collector-producer
 spec:
   containers:
     - name: hv-collector-producer
-      image: the-a-team-registry-local.esisoj70.emea.nsn-net.net/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-rust-client:latest
+      image: the-a-team-registry-local.esisoj70.emea.nsn-net.net/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-go-client:latest
       env:
         - name: HV_VES_ADDRESS
           valueFrom:
@@ -53,9 +53,9 @@ spec:
             configMapKeyRef:
               name: performance-test-config
               key: producer.message.interval
-      args: ["--ssl-disable",
-             "--address", "$HV_VES_ADDRESS",
-             "--clients", "$CLIENTS_COUNT",
-             "--msgsize", "$MSG_SIZE",
-             "--msgcount", "$MSG_COUNT",
-             "--intervalms", "$INTERVAL_MS"]
+      args: ["--address", "$(HV_VES_ADDRESS)",
+             "--clients", "$(CLIENTS_COUNT)",
+             "--msgsize", "$(MSG_SIZE)",
+             "--msgcount", "$(MSG_COUNT)",
+             "--intervalms", "$(INTERVAL_MS)"]
+  restartPolicy: Never
