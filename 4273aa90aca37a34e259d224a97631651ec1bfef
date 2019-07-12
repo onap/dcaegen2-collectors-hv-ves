@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8fc94825_6e4d0a0a",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumer.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-12T06:46:09Z",
+      "side": 1,
+      "message": "Unfortunately with this line we are fetching every record from Kafka, which I believe is not what we want in this consumer. \n\nIf there is no other way, then maybe we could do this once outside of while-loop?\nWould this be sufficient for `assignement()` to return non-empty set?",
+      "range": {
+        "startLine": 46,
+        "startChar": 24,
+        "endLine": 46,
+        "endChar": 55
+      },
+      "revId": "4273aa90aca37a34e259d224a97631651ec1bfef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
