@@ -22,6 +22,30 @@
       "revId": "4273aa90aca37a34e259d224a97631651ec1bfef",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1054f70_25e42b75",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumer.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 3789
+      },
+      "writtenOn": "2019-07-12T06:55:05Z",
+      "side": 1,
+      "message": "I tried invoking `poll` outside while-loop, but `assignment` keep returning empty set",
+      "parentUuid": "8fc94825_6e4d0a0a",
+      "range": {
+        "startLine": 46,
+        "startChar": 24,
+        "endLine": 46,
+        "endChar": 55
+      },
+      "revId": "4273aa90aca37a34e259d224a97631651ec1bfef",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
