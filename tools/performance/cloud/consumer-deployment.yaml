@@ -41,12 +41,12 @@ spec:
     spec:
       containers:
         - name: kafka-consumer-counting
-          image: hv-collector-kafka-consumer:1.3.0-SNAPSHOT
+          image: nexus3.dyn.nesc.nokia.net:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer:1.3.0-SNAPSHOT
           ports:
             - containerPort: 8080
           env:
             - name: LISTEN_PORT
-              value: 8080
+              value: "8080"
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:
@@ -84,12 +84,12 @@ spec:
     spec:
       containers:
         - name: kafka-processing-consumer
-          image: hv-collector-kafka-consumer:1.3.0-SNAPSHOT
+          image: nexus3.dyn.nesc.nokia.net:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer:1.3.0-SNAPSHOT
           ports:
             - containerPort: 8080
           env:
             - name: LISTEN_PORT
-              value: 8080
+              value: "8080"
             - name: KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:

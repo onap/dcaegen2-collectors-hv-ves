@@ -5,7 +5,7 @@ CERT_FILE=${CERT_FILE:-/ssl/client.p12}
 CERT_PASS_FILE=${CERT_PASS_FILE:-/ssl/client.pass}
 HV_VES_NETWORK=${HV_VES_NETWORK:-local_default}
 VOLUME_MAPPING=${VOLUME_MAPPING:-$SCRIPT_DIRECTORY/../../ssl/:/ssl}
-PRODUCER_IMAGE_NAME=${PRODUCER_IMAGE_NAME:-the-a-team-registry-local.esisoj70.emea.nsn-net.net/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-rust-client:latest}
+PRODUCER_IMAGE_NAME=${PRODUCER_IMAGE_NAME:-the-a-team-registry-local.esisoj70.emea.nsn-net.net/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-go-client:latest}
 
 PRODUCER_APP_NAME=hv-ves-producer
 HV_VES_ADDRESS=ves-hv-collector:6061
