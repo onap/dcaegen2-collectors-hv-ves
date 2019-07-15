@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "361b0c2f_3e0ea8e6",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-15T17:40:49Z",
+      "side": 1,
+      "message": "why comment?",
+      "range": {
+        "startLine": 2,
+        "startChar": 1,
+        "endLine": 2,
+        "endChar": 4
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e859ffaa_43e5ecb7",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -22,6 +45,30 @@
       "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cccc66b2_d9ecb4cf",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-15T17:40:49Z",
+      "side": 1,
+      "message": "Also, if we are at language nuances, then you should stick to single form of sentences.\nEither: \"Cleaning something\", \"AttemptING something\" etc.\nOr: \"Clean, attempt\" etc.\n\nIMO first option is nicer.",
+      "parentUuid": "e859ffaa_43e5ecb7",
+      "range": {
+        "startLine": 21,
+        "startChar": 19,
+        "endLine": 21,
+        "endChar": 24
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     },
     {
       "key": {
@@ -279,6 +326,29 @@
       "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65a82125_73be155b",
+        "filename": "tools/performance/cloud/test.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-15T17:40:49Z",
+      "side": 1,
+      "message": "This looks like some hardcoded IP - can\u0027t we use K8s DNS here since producers are in onap namespace?",
+      "range": {
+        "startLine": 5,
+        "startChar": 22,
+        "endLine": 5,
+        "endChar": 35
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
