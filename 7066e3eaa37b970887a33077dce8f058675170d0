@@ -1,0 +1,181 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b33cdee_cd927782",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "Fix description",
+      "range": {
+        "startLine": 49,
+        "startChar": 23,
+        "endLine": 49,
+        "endChar": 55
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b8f0e7ea_80e460ab",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "producer containers",
+      "range": {
+        "startLine": 52,
+        "startChar": 41,
+        "endLine": 52,
+        "endChar": 61
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "82f0a30e_582a0f08",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "Align the colon with that above",
+      "range": {
+        "startLine": 53,
+        "startChar": 23,
+        "endLine": 53,
+        "endChar": 24
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6a19fa7_dfb8872b",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "Fix that description",
+      "range": {
+        "startLine": 55,
+        "startChar": 23,
+        "endLine": 55,
+        "endChar": 78
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe6e676d_098a6df8",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "What do you need it for?",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5b49b83_5ff3ebef",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "If you use that print only here theres no need to extract it to separate method",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3ac8f96_686f76e9",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "What if a producer fails to start? I think the status will be different than \"Completed\" in some cases, waht will cause infinite loop.",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e4ac793_6a781223",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "If you decided to specify containers as a program argument remove producer.pod.count property from properties file",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "66201076_15c86339",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-15T14:33:41Z",
+      "side": 1,
+      "message": "I cant find usage of this variable other than configuration print. Could you explain the idea of that \"--mode\" argument?In consumer-deployment we have deployments for both types of consumers.",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
