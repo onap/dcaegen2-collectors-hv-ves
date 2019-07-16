@@ -8,7 +8,17 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  - job_name: 'kafka-consumer'
+  - job_name: 'kafka-processing-consumer'
     metrics_path: '/monitoring/prometheus'
     static_configs:
-      - targets: ['kafka-consumer:6062']
+      - targets: ['kafka-processing-consumer:6063']
+
+  - job_name: 'kafka-offset-consumer'
+    metrics_path: '/monitoring/prometheus'
+    static_configs:
+      - targets: ['kafka-offset-consumer:6062']
+
+  - job_name: 'ves-hv-collector'
+    metrics_path: '/monitoring/prometheus'
+    static_configs:
+      - targets: ['ves-hv-collector:6060']
