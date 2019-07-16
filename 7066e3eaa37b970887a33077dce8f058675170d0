@@ -329,6 +329,29 @@
     },
     {
       "key": {
+        "uuid": "12ef52dc_6a9569a0",
+        "filename": "tools/performance/cloud/producer-pod.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-16T06:47:48Z",
+      "side": 1,
+      "message": "If we are switching to Go-version, then you should also change it in local tests.",
+      "range": {
+        "startLine": 29,
+        "startChar": 118,
+        "endLine": 29,
+        "endChar": 122
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "65a82125_73be155b",
         "filename": "tools/performance/cloud/test.properties",
         "patchSetId": 2
