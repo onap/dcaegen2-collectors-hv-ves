@@ -601,6 +601,24 @@
     },
     {
       "key": {
+        "uuid": "3d5f0806_33bc67a7",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-16T12:20:02Z",
+      "side": 1,
+      "message": "I suggest that when one pod finish with status e.g. \"Error\" EXITED_PRODUCERS will never reach CONTAINERS_COUNT value",
+      "parentUuid": "419cbd50_53963aeb",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e4ac793_6a781223",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -665,6 +683,24 @@
       "side": 1,
       "message": "Good point it remains here without usage. \nAlthough runnig both consumers won\u0027t impact performance metrics?",
       "parentUuid": "66201076_15c86339",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8647a3ff_1da17877",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-16T12:20:02Z",
+      "side": 1,
+      "message": "Just saying that this argument is not used and we have two types of deployments in yaml file that are created anyway. Also, since the tests are gonna last few days, we probably not going to run two tests - one with processing and one with counting.",
+      "parentUuid": "efc22c4c_90b48d6f",
       "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
