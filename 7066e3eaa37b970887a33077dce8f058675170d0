@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0b5ae7b3_552346ff",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c994afda_4dde92d2",
+      "range": {
+        "startLine": 2,
+        "startChar": 1,
+        "endLine": 2,
+        "endChar": 4
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e859ffaa_43e5ecb7",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "bcc6b0e5_1a6fc22a",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cccc66b2_d9ecb4cf",
+      "range": {
+        "startLine": 21,
+        "startChar": 19,
+        "endLine": 21,
+        "endChar": 24
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c6e08a0c_b9bbe5a1",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -107,6 +155,30 @@
       "writtenOn": "2019-07-15T15:03:57Z",
       "side": 1,
       "message": "Extract that to a variable",
+      "range": {
+        "startLine": 24,
+        "startChar": 51,
+        "endLine": 24,
+        "endChar": 55
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "974aead4_86a83835",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6e08a0c_b9bbe5a1",
       "range": {
         "startLine": 24,
         "startChar": 51,
@@ -142,6 +214,30 @@
     },
     {
       "key": {
+        "uuid": "a1f0531f_96584601",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "345a22ea_bcee40ae",
+      "range": {
+        "startLine": 39,
+        "startChar": 14,
+        "endLine": 39,
+        "endChar": 43
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b33cdee_cd927782",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -153,6 +249,30 @@
       "writtenOn": "2019-07-15T14:33:41Z",
       "side": 1,
       "message": "Fix description",
+      "range": {
+        "startLine": 49,
+        "startChar": 23,
+        "endLine": 49,
+        "endChar": 55
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5601e88c_8c8b536c",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b33cdee_cd927782",
       "range": {
         "startLine": 49,
         "startChar": 23,
@@ -188,6 +308,30 @@
     },
     {
       "key": {
+        "uuid": "763eb14c_a68c752c",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b8f0e7ea_80e460ab",
+      "range": {
+        "startLine": 52,
+        "startChar": 41,
+        "endLine": 52,
+        "endChar": 61
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "82f0a30e_582a0f08",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -199,6 +343,30 @@
       "writtenOn": "2019-07-15T14:33:41Z",
       "side": 1,
       "message": "Align the colon with that above",
+      "range": {
+        "startLine": 53,
+        "startChar": 23,
+        "endLine": 53,
+        "endChar": 24
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "974e9624_96a4c81b",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82f0a30e_582a0f08",
       "range": {
         "startLine": 53,
         "startChar": 23,
@@ -234,6 +402,30 @@
     },
     {
       "key": {
+        "uuid": "e5c1b2ec_1448aa45",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6a19fa7_dfb8872b",
+      "range": {
+        "startLine": 55,
+        "startChar": 23,
+        "endLine": 55,
+        "endChar": 78
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f4a9640_8e246a5b",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -245,6 +437,24 @@
       "writtenOn": "2019-07-15T15:03:57Z",
       "side": 1,
       "message": "Use the same verb form as in the other echos (\"Creating\")",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7fa85267_62f622d0",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f4a9640_8e246a5b",
       "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -268,6 +478,24 @@
     },
     {
       "key": {
+        "uuid": "f479702e_2854a2ba",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b241fd9_8ce720c9",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fe6e676d_098a6df8",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -279,6 +507,24 @@
       "writtenOn": "2019-07-15T14:33:41Z",
       "side": 1,
       "message": "What do you need it for?",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "646d1bbe_93f511ab",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "fe6e676d_098a6df8",
       "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -302,6 +548,24 @@
     },
     {
       "key": {
+        "uuid": "15d4bad8_732c042b",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5b49b83_5ff3ebef",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3ac8f96_686f76e9",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -313,6 +577,24 @@
       "writtenOn": "2019-07-15T14:33:41Z",
       "side": 1,
       "message": "What if a producer fails to start? I think the status will be different than \"Completed\" in some cases, waht will cause infinite loop.",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "419cbd50_53963aeb",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "What are you suggesting? Counting iterations of loop?\nI think in this case current status would be enough. What do you think?",
+      "parentUuid": "b3ac8f96_686f76e9",
       "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -336,6 +618,24 @@
     },
     {
       "key": {
+        "uuid": "c2ee6244_63030272",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Property producer.pod.count removed from test.properties.",
+      "parentUuid": "1e4ac793_6a781223",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "66201076_15c86339",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
@@ -353,6 +653,24 @@
     },
     {
       "key": {
+        "uuid": "efc22c4c_90b48d6f",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Good point it remains here without usage. \nAlthough runnig both consumers won\u0027t impact performance metrics?",
+      "parentUuid": "66201076_15c86339",
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12ef52dc_6a9569a0",
         "filename": "tools/performance/cloud/producer-pod.yaml",
         "patchSetId": 2
@@ -364,6 +682,30 @@
       "writtenOn": "2019-07-16T06:47:48Z",
       "side": 1,
       "message": "If we are switching to Go-version, then you should also change it in local tests.",
+      "range": {
+        "startLine": 29,
+        "startChar": 118,
+        "endLine": 29,
+        "endChar": 122
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3037dbb9_a9ff52f5",
+        "filename": "tools/performance/cloud/producer-pod.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12ef52dc_6a9569a0",
       "range": {
         "startLine": 29,
         "startChar": 118,
@@ -411,6 +753,30 @@
       "side": 1,
       "message": "The version above should be uncommented and this line removed. \n\nDNS, as in local tests, doesn\u0027t work.",
       "parentUuid": "65a82125_73be155b",
+      "range": {
+        "startLine": 5,
+        "startChar": 22,
+        "endLine": 5,
+        "endChar": 35
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ac7d08b_7d49c7f6",
+        "filename": "tools/performance/cloud/test.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T12:05:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75b264ed_5691639c",
       "range": {
         "startLine": 5,
         "startChar": 22,
