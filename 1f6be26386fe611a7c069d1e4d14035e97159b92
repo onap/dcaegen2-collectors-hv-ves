@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8fd020c5_092ec31a",
+        "filename": "tools/performance/local/docker-compose.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-16T06:28:08Z",
+      "side": 1,
+      "message": "Is something running on 6063? If no, then maybe we could decrease K-P-C port number",
+      "range": {
+        "startLine": 106,
+        "startChar": 9,
+        "endLine": 114,
+        "endChar": 20
+      },
+      "revId": "1f6be26386fe611a7c069d1e4d14035e97159b92",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48c3d2c9_4a3a46b6",
+        "filename": "tools/performance/local/grafana/dashboards/performance_tests.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 3701
+      },
+      "writtenOn": "2019-07-16T06:28:08Z",
+      "side": 1,
+      "message": "I believe it doesn\u0027t matter as it\u0027s only some annotation, but in others JSONs it\u0027s \"Prometheus\" here",
+      "range": {
+        "startLine": 6,
+        "startChar": 22,
+        "endLine": 6,
+        "endChar": 36
+      },
+      "revId": "1f6be26386fe611a7c069d1e4d14035e97159b92",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
