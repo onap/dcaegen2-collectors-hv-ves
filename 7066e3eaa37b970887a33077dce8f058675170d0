@@ -396,6 +396,30 @@
       "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75b264ed_5691639c",
+        "filename": "tools/performance/cloud/test.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-16T08:05:15Z",
+      "side": 1,
+      "message": "The version above should be uncommented and this line removed. \n\nDNS, as in local tests, doesn\u0027t work.",
+      "parentUuid": "65a82125_73be155b",
+      "range": {
+        "startLine": 5,
+        "startChar": 22,
+        "endLine": 5,
+        "endChar": 35
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
