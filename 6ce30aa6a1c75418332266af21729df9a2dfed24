@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ed129f6_10a5318e",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-16T12:20:02Z",
+      "side": 1,
+      "message": "A duplicate. You can add --properties-file argument here.",
+      "revId": "6ce30aa6a1c75418332266af21729df9a2dfed24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6630c498_21c8f2be",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3081
+      },
+      "writtenOn": "2019-07-16T12:20:02Z",
+      "side": 1,
+      "message": "\"unhealthy\" and \"starting\" aren\u0027t kubectl pod statuses",
+      "revId": "6ce30aa6a1c75418332266af21729df9a2dfed24",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
