@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c994afda_4dde92d2",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-07-16T08:04:30Z",
+      "side": 1,
+      "message": "It interrupts whole script in case of error. I will remove it.",
+      "parentUuid": "361b0c2f_3e0ea8e6",
+      "range": {
+        "startLine": 2,
+        "startChar": 1,
+        "endLine": 2,
+        "endChar": 4
+      },
+      "revId": "7066e3eaa37b970887a33077dce8f058675170d0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e859ffaa_43e5ecb7",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 2
