@@ -8,7 +8,7 @@ LOG_FILE=target/check-coverage.log
 
 function coverage_from_report() {
   local xpath_expr="string(/report/counter[@type='INSTRUCTION']/@$1)"
-  xpath -q -e "$xpath_expr" "$JACOCO_REPORT" 2>> ${LOG_FILE}
+  xmllint --xpath "${xpath_expr}" "$JACOCO_REPORT" 2>> ${LOG_FILE}
 }
 
 function check_preconditions() {
