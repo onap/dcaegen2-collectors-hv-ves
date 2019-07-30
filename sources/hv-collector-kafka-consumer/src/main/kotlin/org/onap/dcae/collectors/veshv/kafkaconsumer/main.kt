@@ -57,7 +57,7 @@ private fun startApp(config: KafkaConsumerConfiguration): ExitSuccess {
         }
 
     PrometheusApiServer(config.apiAddress, MicrometerMetrics.INSTANCE)
-            .start().block()!!.await().block() // TODO refactor netty server logic
+            .start().block()!!.await().block()  // TODO refactor netty server logic
 
     return ExitSuccess
 }
