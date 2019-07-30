@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
+# ============LICENSE_START=======================================================
+# dcaegen2-collectors-veshv
+# ================================================================================
+# Copyright (C) 2019 NOKIA
+# ================================================================================
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============LICENSE_END=========================================================
 
 SCRIPT_DIRECTORY="$(pwd "$0")"
 CONTAINERS_COUNT=1
@@ -6,6 +23,8 @@ PROPERTIES_FILE=${SCRIPT_DIRECTORY}/test.properties
 CONFIG_MAP_NAME=performance-test-config
 PRODUCER_APPS_LABEL=hv-collector-producer
 CONSUMER_APPS_LABEL=hv-collector-kafka-consumer
+PROMETHEUS_CONF_LABEL=prometheus-server-conf
+PROMETHEUS_APPS_LABEL=hv-collector-prometheus
 ONAP_NAMESPACE=onap
 MAXIMUM_BACK_OFF_CHECK_ITERATIONS=30
 CHECK_NUMBER=0
@@ -14,8 +33,14 @@ NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.container
 function clean() {
     echo "Cleaning up environment"
 
-    echo "Attempting to delete ConfigMap"
+    echo "Attempting to delete test parameters ConfigMap"
     kubectl delete configmap ${CONFIG_MAP_NAME} -n ${ONAP_NAMESPACE}
+
+    echo "Attempting to delete prometheus ConfigMap"
+    kubectl delete configmap -l name=${PROMETHEUS_CONF_LABEL} -n ${ONAP_NAMESPACE}
+
+    echo "Attempting to delete prometheus deployment and service"
+    kubectl delete service,deployments -l app=${PROMETHEUS_APPS_LABEL} -n ${ONAP_NAMESPACE}
 
     echo "Attempting to delete consumer deployments"
     kubectl delete deployments -l app=${CONSUMER_APPS_LABEL} -n ${ONAP_NAMESPACE}
@@ -59,11 +84,17 @@ function usage() {
 
 function setup_environment() {
     echo "Setting up environment"
-    echo "Creating ConfigMap from: $PROPERTIES_FILE"
+    echo "Creating test properties ConfigMap from: $PROPERTIES_FILE"
     kubectl create configmap ${CONFIG_MAP_NAME} --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
 
     echo "Creating consumer deployment"
-    kubectl apply -f consumer-deployment.yaml -n ${ONAP_NAMESPACE}
+    kubectl apply -f consumer-deployment.yaml
+
+    echo "Creating ConfigMap for prometheus deployment"
+    kubectl apply -f prometheus-config-map.yaml
+
+    echo "Creating prometheus deployment"
+    kubectl apply -f prometheus-deployment.yaml
 
     echo "Waiting for consumers to be running."
     while [[ $(kubectl get pods -l app=${CONSUMER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "unhealthy\|starting") -ne 0 ]] ; do
