@@ -106,9 +106,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -318,7 +315,6 @@
                             <groupId>io.fabric8</groupId>
                             <artifactId>docker-maven-plugin</artifactId>
                             <version>0.30.0</version>
-<!--
                             <executions>
                                 <execution>
                                     <id>docker-build-image</id>
@@ -335,7 +331,6 @@
                                     </goals>
                                 </execution>
                             </executions>
--->
                             <configuration>
                                 <skipPush>${skipDockerPush}</skipPush>
                                 <verbose>true</verbose>
