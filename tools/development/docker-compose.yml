@@ -140,7 +140,7 @@ services:
     depends_on:
       - ves-hv-collector
     volumes:
-      - ./ssl/:/etc/ves-hv/
+      - ../ssl/:/etc/ves-hv/
 
   dcae-app-simulator:
     image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator
