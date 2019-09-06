@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "694aa16b_0d9b2654",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-09-06T06:11:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c605708_90c2c287",
+      "revId": "a06debfc084ca26fa41b3819a8c59ece1f7e257b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33c05186_7c359131",
         "filename": "tools/performance/cloud/prometheus-config-map.yaml",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2019-09-05T12:11:44Z",
       "side": 1,
       "message": "this needs a copyright + license block",
+      "revId": "a06debfc084ca26fa41b3819a8c59ece1f7e257b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "432079bf_64bb95fb",
+        "filename": "tools/performance/cloud/prometheus-config-map.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-09-06T06:11:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33c05186_7c359131",
       "revId": "a06debfc084ca26fa41b3819a8c59ece1f7e257b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
