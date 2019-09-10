@@ -1,0 +1,4 @@
+distribution_type: 'maven'
+version: '1.3.0'
+project: 'dcaegen2-collectors-hv-ves'
+log_dir: 'dcaegen2-collectors-hv-ves-maven-stage-master/67/'
