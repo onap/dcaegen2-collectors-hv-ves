@@ -77,7 +77,7 @@ function usage() {
     echo "./cloud-based-performance-test.sh setup"
     echo "./cloud-based-performance-test.sh start"
     echo "./cloud-based-performance-test.sh start --containers 10"
-    echo "./cloud-based-performance-test.sh start --containers 10"
+    echo "./cloud-based-performance-test.sh start --properties-file ~/other_test.properties"
     echo "./cloud-based-performance-test.sh clean"
     exit 1
 }

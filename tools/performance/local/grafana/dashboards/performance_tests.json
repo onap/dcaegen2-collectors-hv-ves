@@ -191,7 +191,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "hv_kafka_consumer_consumer_offset_topic",
+          "expr": "hv_kafka_consumer_offset_partition_hv_ves_perf3gpp_0",
           "format": "time_series",
           "intervalFactor": 1,
           "refId": "A"
@@ -200,7 +200,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "Current offset",
+      "title": "Current offset on partition 0",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
