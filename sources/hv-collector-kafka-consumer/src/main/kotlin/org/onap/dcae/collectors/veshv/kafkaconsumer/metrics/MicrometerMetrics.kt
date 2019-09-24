@@ -35,8 +35,10 @@ internal class MicrometerMetrics constructor(
         private val registry: PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 ) : Metrics {
 
-    private val currentOffsetByTopicPartition = { topic: String ->
-        registry.gauge(name(CONSUMER, OFFSET, TOPIC), listOf(Tag.of(TOPIC, topic)), AtomicLong(0))
+    private val currentOffsetByTopicPartition = { topicPartition: String ->
+        registry.gauge(name(OFFSET, PARTITION, topicPartition.toLowerCase()),
+                listOf(Tag.of(PARTITION, topicPartition)),
+                AtomicLong(0))
     }.memoize<String, AtomicLong>()
 
     private val travelTime = Timer.builder(name(TRAVEL,TIME))
@@ -58,9 +60,8 @@ internal class MicrometerMetrics constructor(
     companion object {
 
         val INSTANCE by lazy { MicrometerMetrics() }
-        private const val CONSUMER = "consumer"
         private const val OFFSET = "offset"
-        private const val TOPIC = "topic"
+        private const val PARTITION = "partition"
         private const val TRAVEL = "travel"
         private const val TIME = "time"
         private const val PREFIX = "hv-kafka-consumer"

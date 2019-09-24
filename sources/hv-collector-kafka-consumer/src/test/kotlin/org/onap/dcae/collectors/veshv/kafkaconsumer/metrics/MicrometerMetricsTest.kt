@@ -69,17 +69,34 @@ object MicrometerMetricsTest : Spek({
     }
 
     describe("Gauges") {
-        val gaugeName = "$PREFIX.consumer.offset.topic"
+        val gaugeName1 = "$PREFIX.offset.partition.sample_topic-0"
+        val gaugeName2 = "$PREFIX.offset.partition.sample_topic-1"
+        val offset1 = 966L
+        val offset2 = 967L
+        val topicPartition1 = TopicPartition("sample_topic", 0)
+        val topicPartition2 = TopicPartition("sample_topic", 1)
 
         on("notifyOffsetChanged") {
-            val offset = 966L
-            val topicPartition = TopicPartition("sample_topic", 1)
+            it("should update $gaugeName1") {
+                cut.notifyOffsetChanged(offset1, topicPartition1)
 
-            it("should update $gaugeName") {
-                cut.notifyOffsetChanged(offset, topicPartition)
+                registry.verifyGauge(gaugeName1) {
+                    assertThat(it.value()).isCloseTo(offset1.toDouble(), doublePrecision)
+                }
+            }
+        }
 
-                registry.verifyGauge(gaugeName) {
-                    assertThat(it.value()).isCloseTo(offset.toDouble(), doublePrecision)
+        on("two partition update") {
+            it("should update $gaugeName1") {
+                cut.notifyOffsetChanged(offset1, topicPartition1)
+                cut.notifyOffsetChanged(offset2, topicPartition2)
+
+                registry.verifyGauge(gaugeName1) {
+                    assertThat(it.value()).isCloseTo(offset1.toDouble(), doublePrecision)
+                }
+
+                registry.verifyGauge(gaugeName2) {
+                    assertThat(it.value()).isCloseTo(offset2.toDouble(), doublePrecision)
                 }
             }
         }
