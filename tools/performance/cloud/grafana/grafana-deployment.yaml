@@ -1,0 +1,96 @@
+# ============LICENSE_START=======================================================
+# dcaegen2-collectors-veshv
+# ================================================================================
+# Copyright (C) 2019 NOKIA
+# ================================================================================
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============LICENSE_END=========================================================
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana-hv-ves-deployment
+  namespace: onap
+  labels:
+    app: hv-collector-grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hv-collector-grafana
+  template:
+    metadata:
+      labels:
+        app: hv-collector-grafana
+    spec:
+      containers:
+      - name: hv-collector-grafana
+        image: grafana/grafana:6.3.3
+        env:
+        - name: GF_AUTH_DISABLE_LOGIN_FORM
+          value: "true"
+        - name: GF_AUTH_DISABLE_SIGNOUT_MENU
+          value: "true"
+        - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "true"
+        - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+          value: "Admin"
+        - name: FOLDER
+          value: "/tmp/dashboards"
+        volumeMounts:
+        - name: grafana-datasources
+          mountPath: /etc/grafana/provisioning/datasources
+        - name: grafana-dashboards
+          mountPath: /etc/grafana/provisioning/dashboards
+        - name: grafana-connections
+          mountPath: /grafana/connections
+        - name: grafana-performance-tests
+          mountPath: /grafana/performance-tests
+        - name: grafana-processing
+          mountPath: /grafana/processing
+      volumes:
+      - name: grafana-datasources
+        configMap:
+          name: grafana-datasources
+      - name: grafana-dashboards
+        configMap:
+          name: grafana-dashboards
+      - name: grafana-connections
+        configMap:
+          name: grafana-connections
+      - name: grafana-performance-tests
+        configMap:
+          name: grafana-performance-tests
+      - name: grafana-processing
+        configMap:
+          name: grafana-processing
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+  namespace: onap
+  labels:
+    app: hv-collector-grafana
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/port:   '3000'
+spec:
+  selector:
+    app: hv-collector-grafana
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 30002
+
