@@ -25,6 +25,10 @@ PRODUCER_APPS_LABEL=hv-collector-producer
 CONSUMER_APPS_LABEL=hv-collector-kafka-consumer
 PROMETHEUS_CONF_LABEL=prometheus-server-conf
 PROMETHEUS_APPS_LABEL=hv-collector-prometheus
+GRAFANA_APPS_LABEL=hv-collector-grafana
+GRAFANA_DATASOURCE=grafana-datasources
+GRAFANA_DASHBOARD=grafana-dashboards
+GRAFANA_DASHBOARD_PROVIDERS=grafana-dashboards-providers
 ONAP_NAMESPACE=onap
 MAXIMUM_BACK_OFF_CHECK_ITERATIONS=30
 CHECK_NUMBER=0
@@ -41,6 +45,18 @@ function clean() {
 
     echo "Attempting to delete prometheus deployment and service"
     kubectl delete service,deployments -l app=${PROMETHEUS_APPS_LABEL} -n ${ONAP_NAMESPACE}
+
+    echo "Attempting to delete grafana deployment and service"
+    kubectl delete service,deployments -l app=${GRAFANA_APPS_LABEL} -n ${ONAP_NAMESPACE}
+
+    echo "Attempting to delete grafana ConfigMap(DASHBOARD)"
+    kubectl delete configmap -l name=${GRAFANA_DASHBOARD} -n ${ONAP_NAMESPACE}
+
+    echo "Attempting to delete grafana ConfigMap(GRAFANA_DASHBOARD_PROVIDERS)"
+    kubectl delete configmap -l name=${GRAFANA_DASHBOARD_PROVIDERS} -n ${ONAP_NAMESPACE}
+
+    echo "Attempting to delete grafana ConfigMap(GRAFANA_DATASOURCE)"
+    kubectl delete configmap -l name=${GRAFANA_DATASOURCE} -n ${ONAP_NAMESPACE}
 
     echo "Attempting to delete consumer deployments"
     kubectl delete deployments -l app=${CONSUMER_APPS_LABEL} -n ${ONAP_NAMESPACE}
@@ -95,6 +111,24 @@ function setup_environment() {
 
     echo "Creating prometheus deployment"
     kubectl apply -f prometheus-deployment.yaml
+
+    echo "Creating ConfigMap for grafana connections dashboard"
+    kubectl apply -f grafana/dashboards/connections.yaml
+
+    echo "Creating ConfigMap for grafana processing dashboard"
+    kubectl apply -f grafana/dashboards/processing.yaml
+
+    echo "Creating ConfigMap for grafana grafana-performance-tests dashboard"
+    kubectl apply -f grafana/dashboards/performance-tests.yaml
+
+    echo "Creating ConfigMap for grafana datasource"
+    kubectl apply -f grafana/datasources/datasource.yaml
+
+    echo "Creating ConfigMap for grafana dashboards-providers"
+    kubectl apply -f grafana/dashboards-providers/dashboards.yaml
+
+    echo "Creating grafana deployment"
+    kubectl apply -f grafana-deployment.yaml
 
     echo "Waiting for consumers to be running."
     while [[ $(kubectl get pods -l app=${CONSUMER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "unhealthy\|starting") -ne 0 ]] ; do
