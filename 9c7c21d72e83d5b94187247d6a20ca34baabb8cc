@@ -1,0 +1,187 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6868534d_5c399549",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "leave only label: GRAFANA_DASHBOARD\u003dgrafana-dashboards\nChange accordingly in ConfigMaps yamls and also repleace 3 commands in clean function with single one. Log something like: \"Attempting to delete grafana dashboards ConfigMaps\"",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 39
+      },
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "41ea3205_bbb7e00b",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "Remove this empty lines.",
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1153dc6c_b689ec42",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "I would change it to:\n\"Creating ConfigMap for grafana connections dashboard\"",
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75c9b1d4_722354de",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "same here",
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "91a46283_1436f0c5",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "replace it with \"-\"\nSame like above add ConfigMap",
+      "range": {
+        "startLine": 132,
+        "startChar": 46,
+        "endLine": 132,
+        "endChar": 47
+      },
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35d3bf7b_3c248305",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "Same like above add ConfigMap",
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ee85e7e_02464b0f",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "Move Grafana deployment to cloud folder. Change path here.",
+      "range": {
+        "startLine": 142,
+        "startChar": 21,
+        "endLine": 142,
+        "endChar": 52
+      },
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "823f7ead_dbd3878e",
+        "filename": "tools/performance/cloud/grafana/grafana-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "I would remove it",
+      "range": {
+        "startLine": 38,
+        "startChar": 30,
+        "endLine": 38,
+        "endChar": 36
+      },
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e35ec24_b3050a96",
+        "filename": "tools/performance/cloud/grafana/grafana-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-03T12:00:15Z",
+      "side": 1,
+      "message": "Check if 30001 is free.\nLets preserve here number order. (Prom... -30000, and next Grafana - 30001)",
+      "range": {
+        "startLine": 95,
+        "startChar": 14,
+        "endLine": 95,
+        "endChar": 19
+      },
+      "revId": "9c7c21d72e83d5b94187247d6a20ca34baabb8cc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
