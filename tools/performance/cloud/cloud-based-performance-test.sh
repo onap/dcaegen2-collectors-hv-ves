@@ -164,6 +164,8 @@ function start_performance_test() {
         sleep 1
     done
 
+    echo "Attempting to delete producer pods"
+    kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
     echo "Performance test finished"
     exit 0
 }

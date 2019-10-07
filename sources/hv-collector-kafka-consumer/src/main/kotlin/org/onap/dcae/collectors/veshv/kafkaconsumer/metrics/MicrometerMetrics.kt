@@ -36,7 +36,7 @@ internal class MicrometerMetrics constructor(
 ) : Metrics {
 
     private val currentOffsetByTopicPartition = { topicPartition: String ->
-        registry.gauge(name(OFFSET, PARTITION, topicPartition.toLowerCase()),
+        registry.gauge(name(OFFSET, PARTITION),
                 listOf(Tag.of(PARTITION, topicPartition)),
                 AtomicLong(0))
     }.memoize<String, AtomicLong>()
