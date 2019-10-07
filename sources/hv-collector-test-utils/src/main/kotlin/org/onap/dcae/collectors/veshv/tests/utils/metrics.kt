@@ -32,6 +32,9 @@ import org.assertj.core.api.Assertions
 fun <T> PrometheusMeterRegistry.verifyGauge(name: String, verifier: (Gauge) -> T) =
         verifyMeter(findMeter(name), RequiredSearch::gauge, verifier)
 
+fun <T> PrometheusMeterRegistry.verifyGauge(name: String, tagKey: String = "partition", tagValue: String, verifier: (Gauge) -> T) =
+        verifyMeter(findMeter(name, tagKey, tagValue), RequiredSearch::gauge, verifier)
+
 fun <T> PrometheusMeterRegistry.verifyTimer(name: String, verifier: (Timer) -> T) =
         verifyMeter(findMeter(name), RequiredSearch::timer, verifier)
 
@@ -43,12 +46,15 @@ fun <T> PrometheusMeterRegistry.verifyCounter(name: String, tags: Tags, verifier
 
 private fun PrometheusMeterRegistry.findMeter(meterName: String) = RequiredSearch.`in`(this).name(meterName)
 
+private fun PrometheusMeterRegistry.findMeter(meterName: String, tagKey: String, tagValue: String) =
+        RequiredSearch.`in`(this).tag(tagKey, tagValue).name(meterName)
+
 private fun <T> verifyCounter(search: RequiredSearch, verifier: (Counter) -> T) =
         verifyMeter(search, RequiredSearch::counter, verifier)
 
 private inline fun <M, T> verifyMeter(search: RequiredSearch,
-                               map: (RequiredSearch) -> M,
-                               verifier: (M) -> T) =
+                                      map: (RequiredSearch) -> M,
+                                      verifier: (M) -> T) =
         Try { map(search) }.fold(
                 { ex -> Assertions.assertThat(ex).doesNotThrowAnyException() },
                 verifier
