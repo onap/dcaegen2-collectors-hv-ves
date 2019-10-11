@@ -27,6 +27,10 @@ spec:
   containers:
     - name: hv-collector-producer
       image: the-a-team-registry-local.esisoj70.emea.nsn-net.net/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-go-client:latest
+      volumeMounts:
+        - name: ssl-certs
+          mountPath: /ssl
+          readOnly: true
       env:
         - name: HV_VES_ADDRESS
           valueFrom:
@@ -53,9 +57,25 @@ spec:
             configMapKeyRef:
               name: performance-test-config
               key: producer.client.count
+        - name: CERT_FILE
+          valueFrom:
+            configMapKeyRef:
+              name: performance-test-config
+              key: client.cert.path
+        - name: CERT_PASS_FILE
+          valueFrom:
+            configMapKeyRef:
+              name: performance-test-config
+              key: client.cert.pass.path
       args: ["--address", "$(HV_VES_ADDRESS)",
              "--clients", "$(CLIENTS_PER_CONTAINER)",
              "--msgsize", "$(MSG_SIZE)",
              "--msgcount", "$(MSG_COUNT)",
-             "--intervalms", "$(INTERVAL_MS)"]
+             "--intervalms", "$(INTERVAL_MS)",
+             "--certfile", "$(CERT_FILE)",
+             "--certpass", "$(CERT_PASS_FILE)"]
+  volumes:
+    - name: ssl-certs
+      secret:
+        secretName: cert
   restartPolicy: Never

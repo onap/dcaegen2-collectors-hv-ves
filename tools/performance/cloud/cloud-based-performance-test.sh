@@ -33,6 +33,8 @@ ONAP_NAMESPACE=onap
 MAXIMUM_BACK_OFF_CHECK_ITERATIONS=30
 CHECK_NUMBER=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
+HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
+HVVES_CERT_PATH=/etc/ves-hv/ssl/
 
 function clean() {
     echo "Cleaning up environment"
@@ -64,7 +66,21 @@ function clean() {
     echo "Attempting to delete producer pods"
     kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
 
+    echo "Attempting to delete client certs secret"
+    kubectl delete secret cert -n ${ONAP_NAMESPACE}
+
     echo "Environment clean up finished!"
+}
+
+function copy_certs_to_hvves() {
+	 cd ../../ssl
+	 echo "Creating cert directory: ${HVVES_CERT_PATH}"
+	 kubectl exec ${HVVES_POD_NAME} mkdir ${HVVES_CERT_PATH} -n ${ONAP_NAMESPACE}
+	 for file in {trust.p12,trust.pass,server.p12,server.pass}
+	 do
+       echo "Copying file: ${file}"
+       kubectl cp ${file} ${ONAP_NAMESPACE}/${HVVES_POD_NAME}:${HVVES_CERT_PATH}
+   done
 }
 
 function create_producers() {
@@ -78,10 +94,17 @@ function create_producers() {
     set +e
 }
 
+function generate_certs() {
+    echo "Generation of certs"
+    cd ../../ssl
+    ./gen-certs.sh
+}
+
 function usage() {
     echo ""
     echo "Run cloud based HV-VES performance test"
-    echo "Usage $0 setup|start|clean|help"
+    echo "Usage $0 gen_certs|setup|start|clean|help"
+    echo "  gen_certs: generate certs in ../../ssl directory"
     echo "  setup    : set up ConfigMap and consumers"
     echo "  start    : create producers - start the performance test"
     echo "    Optional parameters:"
@@ -90,6 +113,7 @@ function usage() {
     echo "  clean    : remove ConfigMap, HV-VES consumers and producers"
     echo "  help     : print usage"
     echo "Example invocations:"
+    echo "./cloud-based-performance-test.sh gen_certs"
     echo "./cloud-based-performance-test.sh setup"
     echo "./cloud-based-performance-test.sh start"
     echo "./cloud-based-performance-test.sh start --containers 10"
@@ -100,6 +124,13 @@ function usage() {
 
 function setup_environment() {
     echo "Setting up environment"
+    echo "Copying certs to hv-ves pod"
+    copy_certs_to_hvves
+
+    echo "Creating secrets with clients cert"
+    kubectl create secret generic cert --from-file=./client.p12 --from-file=./client.pass -n ${ONAP_NAMESPACE}
+    cd ${SCRIPT_DIRECTORY}
+
     echo "Creating test properties ConfigMap from: $PROPERTIES_FILE"
     kubectl create configmap ${CONFIG_MAP_NAME} --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
 
@@ -107,7 +138,7 @@ function setup_environment() {
     kubectl apply -f consumer-deployment.yaml
 
     echo "Creating ConfigMap for prometheus deployment"
-    kubectl apply -f prometheus-config-map.yaml
+    kubectl apply -f prometheus/prometheus-config-map.yaml
 
     echo "Creating prometheus deployment"
     kubectl apply -f prometheus-deployment.yaml
@@ -178,6 +209,9 @@ else
     for arg in ${@}
     do
         case ${arg} in
+            gen_certs)
+            generate_certs
+            ;;
             setup)
             setup_environment
             ;;

@@ -42,7 +42,7 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "iteration": 1570533687099,
+      "iteration": 1570772689346,
       "links": [],
       "panels": [
         {
@@ -484,7 +484,7 @@ data:
           },
           "yaxes": [
             {
-              "format": "s",
+              "format": "ns",
               "label": null,
               "logBase": 1,
               "max": null,
