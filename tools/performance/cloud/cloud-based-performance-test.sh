@@ -20,7 +20,6 @@
 SCRIPT_DIRECTORY="$(pwd "$0")"
 CONTAINERS_COUNT=1
 PROPERTIES_FILE=${SCRIPT_DIRECTORY}/test.properties
-CONFIG_MAP_NAME=performance-test-config
 PRODUCER_APPS_LABEL=hv-collector-producer
 CONSUMER_APPS_LABEL=hv-collector-kafka-consumer
 PROMETHEUS_CONF_LABEL=prometheus-server-conf
@@ -38,7 +37,7 @@ function clean() {
     echo "Cleaning up environment"
 
     echo "Attempting to delete test parameters ConfigMap"
-    kubectl delete configmap ${CONFIG_MAP_NAME} -n ${ONAP_NAMESPACE}
+    kubectl delete configmap performance-test-config -n ${ONAP_NAMESPACE}
 
     echo "Attempting to delete prometheus ConfigMap"
     kubectl delete configmap -l name=${PROMETHEUS_CONF_LABEL} -n ${ONAP_NAMESPACE}
@@ -68,6 +67,10 @@ function clean() {
 }
 
 function create_producers() {
+    echo "Recreating test properties ConfigMap from: $PROPERTIES_FILE"
+    kubectl delete configmap performance-test-config -n ${ONAP_NAMESPACE}
+    kubectl create configmap performance-test-config --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
+
     set -e
     for i in $(seq 1 ${CONTAINERS_COUNT});
     do
@@ -101,7 +104,7 @@ function usage() {
 function setup_environment() {
     echo "Setting up environment"
     echo "Creating test properties ConfigMap from: $PROPERTIES_FILE"
-    kubectl create configmap ${CONFIG_MAP_NAME} --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
+    kubectl create configmap performance-test-config --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
 
     echo "Creating consumer deployment"
     kubectl apply -f consumer-deployment.yaml
