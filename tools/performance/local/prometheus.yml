@@ -22,3 +22,7 @@ scrape_configs:
     metrics_path: '/monitoring/prometheus'
     static_configs:
       - targets: ['ves-hv-collector:6060']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
