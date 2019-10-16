@@ -73,8 +73,6 @@ function clean() {
 
 function copy_certs_to_hvves() {
 	 cd ../../ssl
-	 echo "Creating cert directory: ${HVVES_CERT_PATH}"
-	 kubectl exec ${HVVES_POD_NAME} mkdir ${HVVES_CERT_PATH} -n ${ONAP_NAMESPACE}
 	 for file in {trust.p12,trust.pass,server.p12,server.pass}
 	 do
        echo "Copying file: ${file}"

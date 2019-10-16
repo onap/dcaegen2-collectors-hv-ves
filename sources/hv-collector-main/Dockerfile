@@ -16,6 +16,8 @@ WORKDIR /opt/ves-hv-collector
 
 RUN useradd --user-group --uid ${HV_VES_USER_ID_NUMBER} ${HV_VES_USER}
 
+RUN mkdir -p -U /etc/ves-hv/ssl && chown -R ${HV_VES_USER} /etc/ves-hv/ssl
+
 USER ${HV_VES_USER}
 
 ENTRYPOINT ["./entry.sh"]
