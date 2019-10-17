@@ -42,7 +42,6 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "id": 2,
       "links": [],
       "panels": [
         {
@@ -86,6 +85,7 @@ data:
           "maxDataPoints": 100,
           "nullPointMode": "connected",
           "nullText": null,
+          "options": {},
           "postfix": "",
           "postfixFontSize": "50%",
           "prefix": "",
@@ -135,6 +135,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "#d44a3a"
           ],
+          "datasource": null,
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -166,6 +167,7 @@ data:
           "maxDataPoints": 100,
           "nullPointMode": "connected",
           "nullText": null,
+          "options": {},
           "postfix": "",
           "postfixFontSize": "50%",
           "prefix": "",
@@ -215,6 +217,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "#d44a3a"
           ],
+          "datasource": null,
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -246,6 +249,7 @@ data:
           "maxDataPoints": 100,
           "nullPointMode": "connected",
           "nullText": null,
+          "options": {},
           "postfix": "",
           "postfixFontSize": "50%",
           "prefix": "",
@@ -291,7 +295,9 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
+          "datasource": null,
           "fill": 0,
+          "fillGradient": 0,
           "gridPos": {
             "h": 12,
             "w": 15,
@@ -317,6 +323,9 @@ data:
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -370,7 +379,7 @@ data:
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -392,7 +401,9 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
+          "datasource": null,
           "fill": 0,
+          "fillGradient": 0,
           "gridPos": {
             "h": 9,
             "w": 9,
@@ -415,6 +426,9 @@ data:
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
           "percentage": false,
           "pointradius": 5,
           "points": false,
@@ -454,6 +468,7 @@ data:
           },
           "yaxes": [
             {
+              "decimals": 2,
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -476,62 +491,362 @@ data:
           }
         },
         {
-          "columns": [
-            {
-              "text": "Current",
-              "value": "current"
-            }
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
           ],
-          "fontSize": "100%",
+          "datasource": null,
+          "format": "decbytes",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
           "gridPos": {
-            "h": 9,
-            "w": 5,
+            "h": 2,
+            "w": 4,
             "x": 0,
             "y": 12
           },
-          "id": 11,
+          "id": 20,
+          "interval": null,
           "links": [],
-          "pageSize": null,
-          "scroll": true,
-          "showHeader": true,
-          "sort": {
-            "col": 0,
-            "desc": true
-          },
-          "styles": [
+          "mappingType": 1,
+          "mappingTypes": [
             {
-              "alias": "Time",
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "pattern": "Time",
-              "type": "date"
+              "name": "value to text",
+              "value": 1
             },
             {
-              "alias": "",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "decimals": 2,
-              "pattern": "/.*/",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
+              "name": "range to text",
+              "value": 2
             }
           ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "options": {},
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(hvves_messages_received_total) by (kubernetes_pod_name, value)",
+              "expr": "sum(hvves_messages_received_payload_bytes_total)",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "",
+          "title": "Total received payload bytes",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "N/A",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "fill": 1,
+          "fillGradient": 3,
+          "gridPos": {
+            "h": 9,
+            "w": 10,
+            "x": 4,
+            "y": 12
+          },
+          "id": 16,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(process_cpu_usage) by (kubernetes_pod_name)*100",
               "format": "time_series",
               "intervalFactor": 1,
               "legendFormat": "{{kubernetes_pod_name}}",
               "refId": "A"
             }
           ],
-          "title": "Messages processed per pod",
-          "transform": "timeseries_aggregations",
-          "type": "table"
+          "thresholds": [],
+          "timeFrom": "20 m",
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "System cpu usage",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": 2,
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Prometheus",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 10,
+            "x": 14,
+            "y": 12
+          },
+          "id": 22,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": false,
+            "hideZero": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(jvm_memory_used_bytes)/1024/1024/1024\n",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "intervalFactor": 1,
+              "legendFormat": "jvm_memory_used_bytes",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(jvm_memory_committed_bytes)/1024/1024/1024",
+              "instant": false,
+              "legendFormat": "jvm_memory_committed_bytes",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Memory usage per pod [GB]",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "gbytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "#299c46",
+            "rgba(237, 129, 40, 0.89)",
+            "#d44a3a"
+          ],
+          "datasource": "Prometheus",
+          "format": "decbytes",
+          "gauge": {
+            "maxValue": 100,
+            "minValue": 0,
+            "show": false,
+            "thresholdLabels": false,
+            "thresholdMarkers": true
+          },
+          "gridPos": {
+            "h": 2,
+            "w": 4,
+            "x": 0,
+            "y": 14
+          },
+          "id": 18,
+          "interval": null,
+          "links": [],
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "options": {},
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
+          "targets": [
+            {
+              "expr": "sum(hvves_messages_received_payload_bytes_total)/sum(hvves_messages_received_total)",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "intervalFactor": 1,
+              "refId": "A"
+            }
+          ],
+          "thresholds": "",
+          "title": "Average received payload bytes",
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "0",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
         },
         {
           "columns": [
@@ -540,15 +855,17 @@ data:
               "value": "current"
             }
           ],
+          "datasource": null,
           "fontSize": "100%",
           "gridPos": {
             "h": 5,
             "w": 4,
-            "x": 5,
-            "y": 12
+            "x": 0,
+            "y": 16
           },
           "id": 12,
           "links": [],
+          "options": {},
           "pageSize": null,
           "scroll": true,
           "showHeader": true,
@@ -592,116 +909,23 @@ data:
           "type": "table"
         },
         {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "Prometheus",
-          "fill": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 9,
-            "x": 9,
-            "y": 12
-          },
-          "id": 16,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": false,
-            "hideZero": false,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(system_cpu_usage) by (kubernetes_pod_name)",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "{{kubernetes_pod_name}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": "20 m",
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "System cpu usage",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "transparent": false,
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
           "columns": [
             {
               "text": "Current",
               "value": "current"
-            },
-            {
-              "text": "Avg",
-              "value": "avg"
             }
           ],
-          "datasource": "Prometheus",
+          "datasource": null,
           "fontSize": "100%",
           "gridPos": {
-            "h": 9,
-            "w": 6,
-            "x": 18,
-            "y": 12
+            "h": 4,
+            "w": 5,
+            "x": 0,
+            "y": 21
           },
-          "id": 22,
+          "id": 11,
           "links": [],
+          "options": {},
           "pageSize": null,
           "scroll": true,
           "showHeader": true,
@@ -733,191 +957,27 @@ data:
           ],
           "targets": [
             {
-              "expr": "(sum(container_memory_usage_bytes{pod_name=~\"dep-dcae-hv-ves-collector.*\"}) by (pod_name)) / 1024 / 1024 / 1024",
+              "expr": "sum(hvves_messages_received_total) by (kubernetes_pod_name, value)",
               "format": "time_series",
-              "hide": false,
-              "instant": true,
               "intervalFactor": 1,
-              "legendFormat": "{{ pod_name }}",
+              "legendFormat": "{{kubernetes_pod_name}}",
               "refId": "A"
             }
           ],
-          "title": "Memory usage per pod [GB]",
+          "title": "Messages processed per pod",
           "transform": "timeseries_aggregations",
-          "transparent": false,
           "type": "table"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "format": "decbytes",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 4,
-            "x": 5,
-            "y": 17
-          },
-          "id": 20,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "sum(hvves_messages_received_payload_bytes_total)",
-              "format": "time_series",
-              "intervalFactor": 1,
-              "refId": "A"
-            }
-          ],
-          "thresholds": "",
-          "title": "Total received payload bytes",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": false,
-          "colors": [
-            "#299c46",
-            "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
-          ],
-          "datasource": "Prometheus",
-          "format": "decbytes",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 4,
-            "x": 5,
-            "y": 19
-          },
-          "id": 18,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": false,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "sum(hvves_messages_received_payload_bytes_total)/sum(hvves_messages_received_total)",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "intervalFactor": 1,
-              "refId": "A"
-            }
-          ],
-          "thresholds": "",
-          "title": "Average received payload bytes",
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
         }
       ],
-      "refresh": "1s",
-      "schemaVersion": 16,
+      "refresh": "5s",
+      "schemaVersion": 20,
       "style": "dark",
       "tags": [],
       "templating": {
         "list": []
       },
       "time": {
-        "from": "now-1h",
+        "from": "now-30m",
         "to": "now"
       },
       "timepicker": {
