@@ -19,6 +19,7 @@
 
 SCRIPT_DIRECTORY="$(pwd "$0")"
 CONTAINERS_COUNT=1
+TEST_CONFIG_MAP=performance-test-config
 PROPERTIES_FILE=${SCRIPT_DIRECTORY}/test.properties
 PRODUCER_APPS_LABEL=hv-collector-producer
 CONSUMER_APPS_LABEL=hv-collector-kafka-consumer
@@ -39,7 +40,7 @@ function clean() {
     echo "Cleaning up environment"
 
     echo "Attempting to delete test parameters ConfigMap"
-    kubectl delete configmap performance-test-config -n ${ONAP_NAMESPACE}
+    kubectl delete configmap ${TEST_CONFIG_MAP} -n ${ONAP_NAMESPACE}
 
     echo "Attempting to delete prometheus ConfigMap"
     kubectl delete configmap -l name=${PROMETHEUS_CONF_LABEL} -n ${ONAP_NAMESPACE}
@@ -50,13 +51,13 @@ function clean() {
     echo "Attempting to delete grafana deployment and service"
     kubectl delete service,deployments -l app=${GRAFANA_APPS_LABEL} -n ${ONAP_NAMESPACE}
 
-    echo "Attempting to delete grafana ConfigMap(DASHBOARD)"
+    echo "Attempting to delete grafana ConfigMap (DASHBOARD)"
     kubectl delete configmap -l name=${GRAFANA_DASHBOARD} -n ${ONAP_NAMESPACE}
 
-    echo "Attempting to delete grafana ConfigMap(GRAFANA_DASHBOARD_PROVIDERS)"
+    echo "Attempting to delete grafana ConfigMap (GRAFANA_DASHBOARD_PROVIDERS)"
     kubectl delete configmap -l name=${GRAFANA_DASHBOARD_PROVIDERS} -n ${ONAP_NAMESPACE}
 
-    echo "Attempting to delete grafana ConfigMap(GRAFANA_DATASOURCE)"
+    echo "Attempting to delete grafana ConfigMap (GRAFANA_DATASOURCE)"
     kubectl delete configmap -l name=${GRAFANA_DATASOURCE} -n ${ONAP_NAMESPACE}
 
     echo "Attempting to delete consumer deployments"
@@ -72,7 +73,6 @@ function clean() {
 }
 
 function copy_certs_to_hvves() {
-	 cd ../../ssl
 	 for file in {trust.p12,trust.pass,server.p12,server.pass}
 	 do
        echo "Copying file: ${file}"
@@ -82,8 +82,8 @@ function copy_certs_to_hvves() {
 
 function create_producers() {
     echo "Recreating test properties ConfigMap from: $PROPERTIES_FILE"
-    kubectl delete configmap performance-test-config -n ${ONAP_NAMESPACE}
-    kubectl create configmap performance-test-config --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
+    kubectl delete configmap ${TEST_CONFIG_MAP} -n ${ONAP_NAMESPACE}
+    kubectl create configmap ${TEST_CONFIG_MAP} --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
 
     set -e
     for i in $(seq 1 ${CONTAINERS_COUNT});
@@ -126,6 +126,7 @@ function usage() {
 function setup_environment() {
     echo "Setting up environment"
     echo "Copying certs to hv-ves pod"
+    cd ../../ssl
     copy_certs_to_hvves
 
     echo "Creating secrets with clients cert"
@@ -133,7 +134,7 @@ function setup_environment() {
     cd ${SCRIPT_DIRECTORY}
 
     echo "Creating test properties ConfigMap from: $PROPERTIES_FILE"
-    kubectl create configmap performance-test-config --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
+    kubectl create configmap ${TEST_CONFIG_MAP} --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
 
     echo "Creating consumer deployment"
     kubectl apply -f consumer-deployment.yaml
