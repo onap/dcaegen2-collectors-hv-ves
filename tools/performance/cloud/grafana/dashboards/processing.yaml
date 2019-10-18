@@ -306,9 +306,9 @@ data:
           },
           "id": 9,
           "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
             "hideEmpty": true,
             "hideZero": true,
             "max": false,
@@ -317,7 +317,7 @@ data:
             "show": true,
             "sideWidth": 350,
             "total": false,
-            "values": true
+            "values": false
           },
           "lines": true,
           "linewidth": 1,
@@ -336,30 +336,40 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_processing_time_seconds_bucket[15m]) )by(le) )",
-              "format": "time_series",
-              "hide": false,
-              "instant": false,
-              "intervalFactor": 1,
-              "legendFormat": "90th percentile of processing time on pods",
-              "refId": "B"
-            },
-            {
-              "expr": "rate(hvves_messages_processing_time_seconds_sum[15m])/rate(hvves_messages_processing_time_seconds_count[15m])",
+              "expr": "rate(hvves_messages_processing_time_seconds_sum[1h])/rate(hvves_messages_processing_time_seconds_count[1h])",
               "format": "time_series",
               "hide": false,
               "instant": false,
               "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "{{ kubernetes_pod_name }}",
+              "legendFormat": "average",
               "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_processing_time_seconds_bucket[1h]) )by(le) )",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "intervalFactor": 1,
+              "legendFormat": "90th percentile",
+              "refId": "B"
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum( rate(hvves_messages_processing_time_seconds_bucket[1h]) )by(le) )",
+              "legendFormat": "95th percentile",
+              "refId": "C"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum( rate(hvves_messages_processing_time_seconds_bucket[1h]) )by(le) )",
+              "legendFormat": "99th percentile",
+              "refId": "D"
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
+          "timeFrom": "20m",
           "timeRegions": [],
           "timeShift": null,
-          "title": "Single message processing time average",
+          "title": "Message processing time in HV-VES",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -411,7 +421,9 @@ data:
             "y": 3
           },
           "id": 8,
+          "interval": "",
           "legend": {
+            "alignAsTable": false,
             "avg": false,
             "current": false,
             "hideEmpty": true,
@@ -444,15 +456,30 @@ data:
               "hide": false,
               "instant": false,
               "intervalFactor": 1,
-              "legendFormat": "{{ kubernetes_pod_name }}",
+              "legendFormat": "average",
               "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_latency_seconds_bucket[1h]) )by(le) )",
+              "legendFormat": "90th percentile",
+              "refId": "B"
+            },
+            {
+              "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_latency_seconds_bucket[1h]) )by(le) )",
+              "legendFormat": "95th percentile",
+              "refId": "C"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum( rate(hvves_messages_latency_seconds_bucket[1h]) )by(le) )",
+              "legendFormat": "99th precentile",
+              "refId": "D"
             }
           ],
           "thresholds": [],
-          "timeFrom": null,
+          "timeFrom": "20m",
           "timeRegions": [],
           "timeShift": null,
-          "title": "Latency [s]",
+          "title": "Message travel time from Producer to HV-VES output",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -469,11 +496,11 @@ data:
           "yaxes": [
             {
               "decimals": 2,
-              "format": "short",
+              "format": "s",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -619,15 +646,15 @@ data:
               "expr": "sum(process_cpu_usage) by (kubernetes_pod_name)*100",
               "format": "time_series",
               "intervalFactor": 1,
-              "legendFormat": "{{kubernetes_pod_name}}",
+              "legendFormat": "CPU usage",
               "refId": "A"
             }
           ],
           "thresholds": [],
-          "timeFrom": "20 m",
+          "timeFrom": "20m",
           "timeRegions": [],
           "timeShift": null,
-          "title": "System cpu usage",
+          "title": "HV-VES process cpu usage",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -714,13 +741,13 @@ data:
               "hide": false,
               "instant": false,
               "intervalFactor": 1,
-              "legendFormat": "jvm_memory_used_bytes",
+              "legendFormat": "Memory used",
               "refId": "A"
             },
             {
               "expr": "sum(jvm_memory_committed_bytes)/1024/1024/1024",
               "instant": false,
-              "legendFormat": "jvm_memory_committed_bytes",
+              "legendFormat": "Memory commited",
               "refId": "B"
             }
           ],
@@ -728,7 +755,7 @@ data:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Memory usage per pod [GB]",
+          "title": "Memory usage of HV-VES",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -748,7 +775,7 @@ data:
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -977,7 +1004,7 @@ data:
         "list": []
       },
       "time": {
-        "from": "now-30m",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {
