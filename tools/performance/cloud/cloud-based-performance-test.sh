@@ -68,6 +68,9 @@ function clean() {
     echo "Attempting to delete client certs secret"
     kubectl delete secret cert -n ${ONAP_NAMESPACE}
 
+    echo "Attempting to turn off SSL"
+    ./configure-consul.sh true
+
     echo "Environment clean up finished!"
 }
 
@@ -131,6 +134,9 @@ function setup_environment() {
     echo "Creating secrets with clients cert"
     kubectl create secret generic cert --from-file=./client.p12 --from-file=./client.pass -n ${ONAP_NAMESPACE}
     cd ${SCRIPT_DIRECTORY}
+
+    echo "Turning on SSL"
+    ./configure-consul.sh false
 
     echo "Creating test properties ConfigMap from: $PROPERTIES_FILE"
     kubectl create configmap performance-test-config --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
