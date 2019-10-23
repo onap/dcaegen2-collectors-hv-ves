@@ -55,9 +55,11 @@ class MicrometerMetrics internal constructor(
     private val disconnections = registry.counter(name(DISCONNECTIONS))
 
     private val processingTime = Timer.builder(name(MESSAGES, PROCESSING, TIME))
+            .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
             .register(registry)
     private val totalLatency = Timer.builder(name(MESSAGES, LATENCY))
+            .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
             .register(registry)
 
@@ -147,6 +149,7 @@ class MicrometerMetrics internal constructor(
         internal const val TIME = "time"
         internal const val LATENCY = "latency"
         internal const val PAYLOAD = "payload"
+        internal val MAX_BUCKET_DURATION = Duration.ofSeconds(300L)
         internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
