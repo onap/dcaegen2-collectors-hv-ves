@@ -42,6 +42,7 @@ internal class MicrometerMetrics constructor(
     }.memoize<String, AtomicLong>()
 
     private val travelTime = Timer.builder(name(TRAVEL,TIME))
+            .maximumExpectedValue(Duration.ofSeconds(MAX_BUCKET_VALUE))
             .publishPercentileHistogram(true)
             .register(registry)
 
@@ -65,6 +66,7 @@ internal class MicrometerMetrics constructor(
         private const val TRAVEL = "travel"
         private const val TIME = "time"
         private const val PREFIX = "hv-kafka-consumer"
+        internal const val MAX_BUCKET_VALUE = 300L
         private fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
