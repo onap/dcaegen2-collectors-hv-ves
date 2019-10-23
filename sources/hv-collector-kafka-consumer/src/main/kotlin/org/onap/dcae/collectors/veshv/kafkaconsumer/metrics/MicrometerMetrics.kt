@@ -42,6 +42,7 @@ internal class MicrometerMetrics constructor(
     }.memoize<String, AtomicLong>()
 
     private val travelTime = Timer.builder(name(TRAVEL,TIME))
+            .maximumExpectedValue(Duration.ofSeconds(300))
             .publishPercentileHistogram(true)
             .register(registry)
 

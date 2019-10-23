@@ -465,7 +465,7 @@ data:
               "refId": "B"
             },
             {
-              "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_latency_seconds_bucket[1h]) )by(le) )",
+              "expr": "histogram_quantile(0.95, sum( rate(hvves_messages_latency_seconds_bucket[1h]) )by(le) )",
               "legendFormat": "95th percentile",
               "refId": "C"
             },

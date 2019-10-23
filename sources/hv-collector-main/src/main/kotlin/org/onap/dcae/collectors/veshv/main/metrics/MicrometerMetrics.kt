@@ -55,9 +55,11 @@ class MicrometerMetrics internal constructor(
     private val disconnections = registry.counter(name(DISCONNECTIONS))
 
     private val processingTime = Timer.builder(name(MESSAGES, PROCESSING, TIME))
+            .maximumExpectedValue(Duration.ofSeconds(300))
             .publishPercentileHistogram(true)
             .register(registry)
     private val totalLatency = Timer.builder(name(MESSAGES, LATENCY))
+            .maximumExpectedValue(Duration.ofSeconds(300))
             .publishPercentileHistogram(true)
             .register(registry)
 
