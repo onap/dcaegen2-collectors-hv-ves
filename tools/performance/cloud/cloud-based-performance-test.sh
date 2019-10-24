@@ -19,6 +19,7 @@
 
 SCRIPT_DIRECTORY="$(pwd "$0")"
 CONTAINERS_COUNT=1
+LOAD_TEST="false"
 PROPERTIES_FILE=${SCRIPT_DIRECTORY}/test.properties
 PRODUCER_APPS_LABEL=hv-collector-producer
 CONSUMER_APPS_LABEL=hv-collector-kafka-consumer
@@ -31,6 +32,7 @@ GRAFANA_DASHBOARD_PROVIDERS=grafana-dashboards-providers
 ONAP_NAMESPACE=onap
 MAXIMUM_BACK_OFF_CHECK_ITERATIONS=30
 CHECK_NUMBER=0
+COMPLETED_PRODUCERS_SUM=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
 HVVES_CERT_PATH=/etc/ves-hv/ssl/
@@ -104,6 +106,32 @@ function generate_certs() {
     ./gen-certs.sh
 }
 
+function handle_backoffs() {
+        if [[ ${IMAGE_PULL_BACK_OFFS} -gt 0 ]]; then
+            CHECK_NUMBER=$((CHECK_NUMBER + 1))
+            if [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]]; then
+                echo "Error: Image pull problem"
+                exit 1
+            fi
+        fi
+}
+
+function handle_key_interrupt() {
+    trap SIGINT
+    echo "Script interrupted, attempt to delete producers"
+    kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
+    exit 0
+}
+
+function print_test_setup_info() {
+    echo "Starting cloud based performance tests"
+    echo "________________________________________"
+    echo "Test configuration:"
+    echo "Producer containers count: ${CONTAINERS_COUNT}"
+    echo "Properties file path: ${PROPERTIES_FILE}"
+    echo "________________________________________"
+}
+
 function usage() {
     echo ""
     echo "Run cloud based HV-VES performance test"
@@ -112,6 +140,7 @@ function usage() {
     echo "  setup    : set up ConfigMap and consumers"
     echo "  start    : create producers - start the performance test"
     echo "    Optional parameters:"
+    echo "      --load      : should test keep defined containers number till script interruption (false)"
     echo "      --containers      : number of producer containers to create (1)"
     echo "      --properties-file : path to file with benchmark properties (./test.properties)"
     echo "  clean    : remove ConfigMap, HV-VES consumers and producers"
@@ -121,6 +150,7 @@ function usage() {
     echo "./cloud-based-performance-test.sh setup"
     echo "./cloud-based-performance-test.sh start"
     echo "./cloud-based-performance-test.sh start --containers 10"
+    echo "./cloud-based-performance-test.sh start --load true --containers 10"
     echo "./cloud-based-performance-test.sh start --properties-file ~/other_test.properties"
     echo "./cloud-based-performance-test.sh clean"
     exit 1
@@ -175,13 +205,39 @@ function setup_environment() {
     echo "Setting up environment finished!"
 }
 
+function start_load_tests() {
+    print_test_setup_info
+
+    echo "CTRL + C to stop/interrupt this script"
+    create_producers
+
+    trap "handle_key_interrupt" INT
+
+    echo "Constant producer number keeper started working"
+    while :; do
+        COMPLETED_PRODUCERS=$(($(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Completed")-COMPLETED_PRODUCERS_SUM))
+        IMAGE_PULL_BACK_OFFS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} -o ${NAME_REASON_PATTERN} | grep -c "ImagePullBackOff \| ErrImagePull")
+
+        handle_backoffs
+
+        set -e
+        for i in $(seq 1 ${COMPLETED_PRODUCERS});
+        do
+            echo "Recreating ${i}/${COMPLETED_PRODUCERS} producer"
+            kubectl create -f producer-pod.yaml -n ${ONAP_NAMESPACE}
+            COMPLETED_PRODUCERS_SUM=$((COMPLETED_PRODUCERS_SUM + 1))
+        done
+        set +e
+        [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]] && break
+        sleep 2
+    done
+
+    trap SIGINT
+    exit 0
+}
+
 function start_performance_test() {
-    echo "Starting cloud based performance tests"
-    echo "________________________________________"
-    echo "Test configuration:"
-    echo "Producer containers count: ${CONTAINERS_COUNT}"
-    echo "Properties file path: ${PROPERTIES_FILE}"
-    echo "________________________________________"
+    print_test_setup_info
 
     create_producers
 
@@ -190,13 +246,7 @@ function start_performance_test() {
         COMPLETED_PRODUCERS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Completed")
         IMAGE_PULL_BACK_OFFS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} -o ${NAME_REASON_PATTERN} | grep -c "ImagePullBackOff \| ErrImagePull")
 
-        if [[ ${IMAGE_PULL_BACK_OFFS} -gt 0 ]]; then
-            CHECK_NUMBER=$((CHECK_NUMBER + 1))
-            if [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]]; then
-                echo "Error: Image pull problem"
-                exit 1
-            fi
-        fi
+        handle_backoffs
         
         [[ ${COMPLETED_PRODUCERS} -eq ${CONTAINERS_COUNT} || ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]] && break
         sleep 1
@@ -226,6 +276,9 @@ else
             shift 1
             while [[ $(($#)) -gt 0 ]]; do
                 case "${1}" in
+                    --load)
+                        LOAD_TEST=${2}
+                        ;;
                     --containers)
                         CONTAINERS_COUNT=${2}
                         ;;
@@ -239,7 +292,11 @@ else
                 esac
                 shift 2
             done
-            start_performance_test
+            if [ ${LOAD_TEST} == "true" ] ; then
+                start_load_tests
+            else
+                start_performance_test
+            fi
             ;;
             clean)
             clean
