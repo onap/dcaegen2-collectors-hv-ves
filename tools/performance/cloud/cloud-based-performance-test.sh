@@ -37,6 +37,12 @@ COMPLETED_PRODUCERS_SUM=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
 HVVES_CERT_PATH=/etc/ves-hv/ssl/
+KAFKA_RETENTION_TIME_MINUTES=60
+MINUTES_IN_MILISECONDS=60000
+CALC_RETENTION_TIME_IN_MS_CMD='expr $KAFKA_RETENTION_TIME_MINUTES \* $MINUTES_IN_MILISECONDS'
+KAFKA_ROUTER_0_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep router-kafka-0)
+KAFKA_SET_TOPIC_RETENTION_TIME_CMD='kafka-topics.sh --zookeeper message-router-zookeeper:2181 --alter --topic HV_VES_PERF3GPP --config retention.ms='
+HIDE_OUTPUT='grep abc | grep 123'
 
 function clean() {
     echo "Cleaning up environment"
@@ -130,6 +136,7 @@ function print_test_setup_info() {
     echo "Test configuration:"
     echo "Producer containers count: ${CONTAINERS_COUNT}"
     echo "Properties file path: ${PROPERTIES_FILE}"
+    echo "Retention time of kafka messages in minutes: ${KAFKA_RETENTION_TIME_MINUTES}"
     echo "________________________________________"
 }
 
@@ -141,9 +148,10 @@ function usage() {
     echo "  setup    : set up ConfigMap and consumers"
     echo "  start    : create producers - start the performance test"
     echo "    Optional parameters:"
-    echo "      --load            : should test keep defined containers number till script interruption (false)"
-    echo "      --containers      : number of producer containers to create (1)"
-    echo "      --properties-file : path to file with benchmark properties (./test.properties)"
+    echo "      --load              : should test keep defined containers number till script interruption (false)"
+    echo "      --containers        : number of producer containers to create (1)"
+    echo "      --properties-file   : path to file with benchmark properties (./test.properties)"
+    echo "      --retention-time-minutes : messages retention time on kafka in minutes - only for load tests (60)"
     echo "  clean    : remove ConfigMap, HV-VES consumers and producers"
     echo "  help     : print usage"
     echo "Example invocations:"
@@ -152,6 +160,7 @@ function usage() {
     echo "./cloud-based-performance-test.sh start"
     echo "./cloud-based-performance-test.sh start --containers 10"
     echo "./cloud-based-performance-test.sh start --load true --containers 10"
+    echo "./cloud-based-performance-test.sh start --load true --containers 10 --retention-time-minutes 3000000"
     echo "./cloud-based-performance-test.sh start --properties-file ~/other_test.properties"
     echo "./cloud-based-performance-test.sh clean"
     exit 1
@@ -209,6 +218,9 @@ function setup_environment() {
 
 function start_load_tests() {
     print_test_setup_info
+
+    echo "Setting message retention time"
+    kubectl exec -it ${KAFKA_ROUTER_0_POD_NAME} -n ${ONAP_NAMESPACE} -- ${KAFKA_SET_TOPIC_RETENTION_TIME_CMD}$(eval $CALC_RETENTION_TIME_IN_MS_CMD) | eval $HIDE_OUTPUT
 
     echo "CTRL + C to stop/interrupt this script"
     create_producers
@@ -286,6 +298,9 @@ else
                         ;;
                     --properties-file)
                         PROPERTIES_FILE=${2}
+                        ;;
+                    --retention-time-minutes)
+                        KAFKA_RETENTION_TIME_MINUTES=${2}
                         ;;
                     *)
                         echo "Unknown option: ${1}"
