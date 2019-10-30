@@ -24,6 +24,7 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 import java.time.Duration
 import java.time.Instant
 import kotlin.test.fail
@@ -38,6 +39,7 @@ class FakeMetrics : Metrics {
     var messageBytesReceived: Int = 0; private set
     var messagesDroppedCount: Int = 0; private set
     var lastProcessingTimeMicros: Double = -1.0; private set
+    var lastProcessingTimeWithoutRoutingMicros: Double = -1.0; private set
     var messagesSentCount: Int = 0; private set
     var clientRejectionCause = mutableMapOf<ClientRejectionCause, Int>(); private set
 
@@ -50,6 +52,10 @@ class FakeMetrics : Metrics {
 
     override fun notifyMessageReceived(msg: WireFrameMessage) {
         messageBytesReceived += msg.payloadSize
+    }
+
+    override fun notifyMessageReadyForRouting(msg: VesMessage) {
+        lastProcessingTimeWithoutRoutingMicros = Duration.between(msg.wtpFrame.receivedAt, Instant.now()).toNanos() / 1000.0
     }
 
     override fun notifyMessageSent(msg: RoutedMessage) {

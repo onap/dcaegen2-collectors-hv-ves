@@ -34,6 +34,7 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.utils.TimeUtils.epochMicroToInstant
 import java.time.Duration
 import java.time.Instant
@@ -46,7 +47,6 @@ import java.time.Instant
 class MicrometerMetrics internal constructor(
         private val registry: PrometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 ) : Metrics {
-
     private val receivedBytes = registry.counter(name(DATA, RECEIVED, BYTES))
     private val receivedMessages = registry.counter(name(MESSAGES, RECEIVED))
     private val receivedMessagesPayloadBytes = registry.counter(name(MESSAGES, RECEIVED, PAYLOAD, BYTES))
@@ -58,6 +58,9 @@ class MicrometerMetrics internal constructor(
             .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
             .register(registry)
+    private val processingTimeWithoutRouting = Timer.builder(name(MESSAGES, PROCESSING, TIME, WITHOUT, ROUTING))
+            .publishPercentileHistogram(true)
+            .register(registry)
     private val totalLatency = Timer.builder(name(MESSAGES, LATENCY))
             .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
@@ -67,12 +70,10 @@ class MicrometerMetrics internal constructor(
     private val sentMessagesByTopic = { topic: String ->
         registry.counter(name(MESSAGES, SENT, TOPIC), TOPIC, topic)
     }.memoize<String, Counter>()
-
     private val droppedMessages = registry.counter(name(MESSAGES, DROPPED))
     private val messagesDroppedByCause = { cause: String ->
         registry.counter(name(MESSAGES, DROPPED, CAUSE), CAUSE, cause)
     }.memoize<String, Counter>()
-
     private val clientsRejected = registry.counter(name(CLIENTS, REJECTED))
     private val clientsRejectedByCause = { cause: String ->
         registry.counter(name(CLIENTS, REJECTED, CAUSE), CAUSE, cause)
@@ -95,6 +96,10 @@ class MicrometerMetrics internal constructor(
 
     override fun notifyBytesReceived(size: Int) {
         receivedBytes.increment(size.toDouble())
+    }
+
+    override fun notifyMessageReadyForRouting(msg: VesMessage) {
+        processingTimeWithoutRouting.record(Duration.between(msg.wtpFrame.receivedAt, Instant.now()))
     }
 
     override fun notifyMessageReceived(msg: WireFrameMessage) {
@@ -150,6 +155,8 @@ class MicrometerMetrics internal constructor(
         internal const val LATENCY = "latency"
         internal const val PAYLOAD = "payload"
         internal val MAX_BUCKET_DURATION = Duration.ofSeconds(300L)
+        internal const val WITHOUT = "without"
+        internal const val ROUTING = "routing"
         internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
