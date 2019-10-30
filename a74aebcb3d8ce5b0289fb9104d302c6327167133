@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8972a2cb_51d8358d",
+        "filename": "INFO.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 481
+      },
+      "writtenOn": "2019-10-30T18:33:55Z",
+      "side": 1,
+      "message": "Forgot 1 more.. \n\n11:26:44 ERROR: dcaegen2-collectors-hv-ves is invalid\n11:26:44 INFO.yaml file may only list one repository\n11:26:44 Repository must match dcaegen2/collectors/hv-ves",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 34
+      },
+      "revId": "a74aebcb3d8ce5b0289fb9104d302c6327167133",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
