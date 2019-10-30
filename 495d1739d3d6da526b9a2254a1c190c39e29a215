@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0e1a14c_267e54f1",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 2807
+      },
+      "writtenOn": "2019-10-30T16:32:50Z",
+      "side": 1,
+      "message": "To avoid entering a big number like 3600000 as a script parameter, consider introducing seconds or even minutes instead of milliseconds",
+      "range": {
+        "startLine": 137,
+        "startChar": 10,
+        "endLine": 137,
+        "endChar": 76
+      },
+      "revId": "495d1739d3d6da526b9a2254a1c190c39e29a215",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
