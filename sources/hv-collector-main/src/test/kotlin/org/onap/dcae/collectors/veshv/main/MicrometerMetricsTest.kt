@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.main
 
 import arrow.core.Option
+import com.google.protobuf.ByteString
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Meter
 import io.micrometer.core.instrument.Tags
@@ -39,7 +40,9 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.PAYLOAD_SIZE_EX
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
 import org.onap.dcae.collectors.veshv.tests.utils.verifyCounter
 import org.onap.dcae.collectors.veshv.tests.utils.verifyGauge
@@ -191,6 +194,25 @@ object MicrometerMetricsTest : Spek({
             it("should update timer") {
 
                 cut.notifyMessageSent(routedMessageReceivedAt(topicName1, Instant.now().minusMillis(processingTimeMs)))
+
+                registry.verifyTimer(counterName) { timer ->
+                    assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
+                }
+                verifyCountersAndTimersAreUnchangedBut(
+                        counterName,
+                        "$PREFIX.messages.sent.topic",
+                        "$PREFIX.messages.sent",
+                        "$PREFIX.messages.latency")
+            }
+        }
+
+        on("$PREFIX.messages.processing.time.without.routing") {
+            val counterName = "$PREFIX.messages.processing.time.without.routing"
+            val processingTimeMs = 100L
+
+            it("should update timer") {
+
+                cut.notifyMessageReadyForRouting(vesMessageReceivedAt(Instant.now().minusMillis(processingTimeMs)))
 
                 registry.verifyTimer(counterName) { timer ->
                     assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
@@ -362,13 +384,19 @@ object MicrometerMetricsTest : Spek({
     }
 })
 
-fun routedMessage(topic: String, partition: Int = 0) =
+private fun vesMessageReceivedAt(receivedAt: Temporal, domain: VesEventDomain = VesEventDomain.PERF3GPP): VesMessage {
+    val commonHeader = commonHeader(domain)
+    return VesMessage(commonHeader,
+            wireProtocolFrame(commonHeader, ByteString.copyFromUtf8("highvolume measurements"), receivedAt))
+}
+
+private fun routedMessage(topic: String, partition: Int = 0) =
         vesEvent().run { toRoutedMessage(topic, partition) }
 
-fun routedMessageReceivedAt(topic: String, receivedAt: Temporal, partition: Int = 0) =
+private fun routedMessageReceivedAt(topic: String, receivedAt: Temporal, partition: Int = 0) =
         vesEvent().run { toRoutedMessage(topic, partition, receivedAt) }
 
-fun routedMessageSentAt(topic: String, sentAt: Instant, partition: Int = 0) =
+private fun routedMessageSentAt(topic: String, sentAt: Instant, partition: Int = 0) =
         vesEvent().run {
             val builder = toBuilder()
             builder.commonEventHeaderBuilder.lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000

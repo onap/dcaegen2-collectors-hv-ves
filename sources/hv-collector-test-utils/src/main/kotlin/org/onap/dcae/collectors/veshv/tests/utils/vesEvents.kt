@@ -30,6 +30,8 @@ import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.ves.VesEventOuterClass
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.Priority
+import java.time.Instant
+import java.time.temporal.Temporal
 import java.util.UUID.randomUUID
 
 fun vesEvent(domain: VesEventDomain = PERF3GPP,
@@ -53,7 +55,7 @@ fun commonHeader(domain: VesEventDomain = PERF3GPP,
                  vesEventListenerVersion: String = "7.0.2",
                  priority: Priority = Priority.NORMAL,
                  lastEpochMicrosec: Long = 100000005
-                 ): CommonEventHeader =
+): CommonEventHeader =
         CommonEventHeader.newBuilder()
                 .setVersion("sample-version")
                 .setDomain(domain.domainName)
@@ -86,14 +88,17 @@ fun wireProtocolFrameWithPayloadSize(size: Int): WireFrameMessage = WireFrameMes
         payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue
 )
 
-fun wireProtocolFrame(commonHeader: CommonEventHeader, eventFields: ByteString = ByteString.EMPTY): WireFrameMessage =
+fun wireProtocolFrame(commonHeader: CommonEventHeader,
+                      eventFields: ByteString = ByteString.EMPTY,
+                      receivedAt: Temporal = Instant.now()): WireFrameMessage =
         vesEventBytes(commonHeader, eventFields).let { payload ->
             WireFrameMessage(
                     payload = payload,
                     versionMajor = WireFrameMessage.SUPPORTED_VERSION_MAJOR,
                     versionMinor = WireFrameMessage.SUPPORTED_VERSION_MINOR,
                     payloadSize = payload.size(),
-                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue
+                    payloadType = PayloadContentType.GOOGLE_PROTOCOL_BUFFER.hexValue,
+                    receivedAt = receivedAt
             )
         }
 
