@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8dcf877d_d00f9822",
+        "filename": "tools/performance/cloud/reboot-test-environment.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-10-31T06:41:50Z",
+      "side": 1,
+      "message": "This could be extracted to variable. It will allow us to easily change the image in first lines of script.\nRemove from echo \"to latest\" to be more general.",
+      "range": {
+        "startLine": 46,
+        "startChar": 144,
+        "endLine": 46,
+        "endChar": 240
+      },
+      "revId": "82ddafd610daa5ce7d0964c119efcdf02c1a5896",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
