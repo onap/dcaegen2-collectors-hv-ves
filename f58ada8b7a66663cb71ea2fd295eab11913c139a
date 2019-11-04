@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce96fe75_9f278ea8",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-11-04T08:05:41Z",
+      "side": 1,
+      "message": "I would rename it to:\nMILISECONDS_IN_MINUTE",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 7
+      },
+      "revId": "f58ada8b7a66663cb71ea2fd295eab11913c139a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79994f37_e9d12f7c",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-11-04T08:05:41Z",
+      "side": 1,
+      "message": "Example could be changed to more real value.",
+      "range": {
+        "startLine": 163,
+        "startChar": 103,
+        "endLine": 163,
+        "endChar": 110
+      },
+      "revId": "f58ada8b7a66663cb71ea2fd295eab11913c139a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
