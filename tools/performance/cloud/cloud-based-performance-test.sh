@@ -19,6 +19,7 @@
 
 SCRIPT_DIRECTORY="$(pwd "$0")"
 CONTAINERS_COUNT=1
+COMPLETED_PRODUCERS_SUM=0
 LOAD_TEST="false"
 TEST_CONFIG_MAP=performance-test-config
 PROPERTIES_FILE=${SCRIPT_DIRECTORY}/test.properties
@@ -33,7 +34,7 @@ GRAFANA_DASHBOARD_PROVIDERS=grafana-dashboards-providers
 ONAP_NAMESPACE=onap
 MAXIMUM_BACK_OFF_CHECK_ITERATIONS=30
 CHECK_NUMBER=0
-COMPLETED_PRODUCERS_SUM=0
+PRODUCERS_TO_RECREATE=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
 HVVES_CERT_PATH=/etc/ves-hv/ssl/
@@ -114,6 +115,7 @@ function generate_certs() {
 }
 
 function handle_backoffs() {
+        IMAGE_PULL_BACK_OFFS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} -o ${NAME_REASON_PATTERN} | grep -c "ImagePullBackOff \| ErrImagePull")
         if [[ ${IMAGE_PULL_BACK_OFFS} -gt 0 ]]; then
             CHECK_NUMBER=$((CHECK_NUMBER + 1))
             if [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]]; then
@@ -126,7 +128,9 @@ function handle_backoffs() {
 function handle_key_interrupt() {
     trap SIGINT
     echo "Script interrupted, attempt to delete producers"
-    kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
+    echo "Wait with patience"
+    COMPLETED_PRODUCERS_SUM=$(($(kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep producer | wc -l) + COMPLETED_PRODUCERS_SUM))
+    echo "Total number of completed producers: ${COMPLETED_PRODUCERS_SUM}"
     exit 0
 }
 
@@ -229,21 +233,22 @@ function start_load_tests() {
 
     echo "Constant producer number keeper started working"
     while :; do
-        COMPLETED_PRODUCERS=$(($(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Completed")-COMPLETED_PRODUCERS_SUM))
-        IMAGE_PULL_BACK_OFFS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} -o ${NAME_REASON_PATTERN} | grep -c "ImagePullBackOff \| ErrImagePull")
-
+        PRODUCERS_TO_RECREATE=$((CONTAINERS_COUNT-$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Running")))
         handle_backoffs
 
         set -e
-        for i in $(seq 1 ${COMPLETED_PRODUCERS});
+        for i in $(seq 1 ${PRODUCERS_TO_RECREATE});
         do
-            echo "Recreating ${i}/${COMPLETED_PRODUCERS} producer"
+            echo "Recreating ${i}/${PRODUCERS_TO_RECREATE} producer"
             kubectl create -f producer-pod.yaml -n ${ONAP_NAMESPACE}
-            COMPLETED_PRODUCERS_SUM=$((COMPLETED_PRODUCERS_SUM + 1))
         done
         set +e
+        COMPLETED_PRODUCERS_SUM=$((COMPLETED_PRODUCERS_SUM + PRODUCERS_TO_RECREATE))
+        echo "Attempting to clear completed producers"
+        kubectl delete pod --field-selector=status.phase==Succeeded -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
+
         [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]] && break
-        sleep 2
+        sleep 1
     done
 
     trap SIGINT
@@ -258,8 +263,6 @@ function start_performance_test() {
     echo "Waiting for producers completion"
     while :; do
         COMPLETED_PRODUCERS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Completed")
-        IMAGE_PULL_BACK_OFFS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} -o ${NAME_REASON_PATTERN} | grep -c "ImagePullBackOff \| ErrImagePull")
-
         handle_backoffs
         
         [[ ${COMPLETED_PRODUCERS} -eq ${CONTAINERS_COUNT} || ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]] && break
