@@ -300,7 +300,7 @@ data:
           "fillGradient": 0,
           "gridPos": {
             "h": 12,
-            "w": 15,
+            "w": 7,
             "x": 9,
             "y": 0
           },
@@ -370,6 +370,122 @@ data:
           "timeRegions": [],
           "timeShift": null,
           "title": "Message processing time in HV-VES",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 12,
+            "w": 8,
+            "x": 16,
+            "y": 0
+          },
+          "id": 23,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "sideWidth": 350,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "rate(hvves_messages_processing_time_without_routing_seconds_sum[1h])/rate(hvves_messages_processing_time_without_routing_seconds_count[1h])",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "average",
+              "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_processing_time_without_routing_seconds_bucket[1h]) )by(le) )",
+              "format": "time_series",
+              "hide": false,
+              "instant": false,
+              "intervalFactor": 1,
+              "legendFormat": "90th percentile",
+              "refId": "B"
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum( rate(hvves_messages_processing_time_without_routing_seconds_bucket[1h]) )by(le) )",
+              "legendFormat": "95th percentile",
+              "refId": "C"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum( rate(hvves_messages_processing_time_without_routing_seconds_bucket[1h]) )by(le) )",
+              "legendFormat": "99th percentile",
+              "refId": "D"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": "20m",
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Message processing time in HV-VES without routing",
           "tooltip": {
             "shared": true,
             "sort": 0,
