@@ -20,6 +20,7 @@
 package org.onap.dcae.collectors.veshv.boundary
 
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.logging.ClientContext
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
@@ -42,6 +43,7 @@ interface SinkFactory : Closeable {
 interface Metrics {
     fun notifyBytesReceived(size: Int)
     fun notifyMessageReceived(msg: WireFrameMessage)
+    fun notifyMessageReadyForRouting(msg: VesMessage)
     fun notifyMessageSent(msg: RoutedMessage)
     fun notifyMessageDropped(cause: MessageDropCause)
     fun notifyClientDisconnected()

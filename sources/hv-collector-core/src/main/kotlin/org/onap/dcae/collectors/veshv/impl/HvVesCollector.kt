@@ -92,6 +92,7 @@ internal class HvVesCollector(
             }
 
     private fun route(flux: Flux<VesMessage>) = flux
+            .doOnNext(metrics::notifyMessageReadyForRouting)
             .flatMap(router::route)
             .doOnNext(this::updateSinkMetrics)
 
