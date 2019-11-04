@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46c35393_d06905b6",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2019-11-04T09:59:52Z",
+      "side": 1,
+      "message": "Consider if verification of these metrics isn\u0027t excessive.",
+      "range": {
+        "startLine": 222,
+        "startChar": 0,
+        "endLine": 224,
+        "endChar": 50
+      },
+      "revId": "cc4b14c46ea8796383be180bcafaea4575b96979",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
