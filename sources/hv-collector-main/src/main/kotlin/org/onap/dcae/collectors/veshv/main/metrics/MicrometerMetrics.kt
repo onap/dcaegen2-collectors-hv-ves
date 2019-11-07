@@ -59,6 +59,7 @@ class MicrometerMetrics internal constructor(
             .publishPercentileHistogram(true)
             .register(registry)
     private val processingTimeWithoutRouting = Timer.builder(name(MESSAGES, PROCESSING, TIME, WITHOUT, ROUTING))
+            .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
             .register(registry)
     private val totalLatency = Timer.builder(name(MESSAGES, LATENCY))
@@ -135,7 +136,7 @@ class MicrometerMetrics internal constructor(
     }
 
     companion object {
-        val INSTANCE = MicrometerMetrics()
+        val INSTANCE by lazy { MicrometerMetrics() }
         internal const val PREFIX = "hvves"
         internal const val MESSAGES = "messages"
         internal const val RECEIVED = "received"
@@ -154,9 +155,9 @@ class MicrometerMetrics internal constructor(
         internal const val TIME = "time"
         internal const val LATENCY = "latency"
         internal const val PAYLOAD = "payload"
-        internal val MAX_BUCKET_DURATION = Duration.ofSeconds(300L)
         internal const val WITHOUT = "without"
         internal const val ROUTING = "routing"
+        internal val MAX_BUCKET_DURATION = Duration.ofSeconds(300L)
         internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }
 }
