@@ -24,42 +24,64 @@ HV_VES_IMAGE="nexus3.dyn.nesc.nokia.net:10001/onap/org.onap.dcaegen2.collectors.
 KAFKA_ROUTER_0_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep router-kafka-0)
 KAFKA_TOPIC_RESET_CMD='kafka-topics.sh --delete  --zookeeper message-router-zookeeper:2181  --topic HV_VES_PERF3GPP'
 HIDE_OUTPUT='grep abc | grep 123'
+YELLOW='\033[1;33m'
+GREEN='\033[1;32m'
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+VERBOSE="false"
+
+function formatOutput(){
+  if [ ${VERBOSE} == "true" ]; then
+    read line
+    echo -e "${YELLOW}$line${NO_COLOR}"
+    while read line; do
+      echo "    $line"
+    done
+    echo ""
+  fi
+}
 
 function usage() {
     echo ""
     echo "Reebot test environment for performance tests"
-    echo "Usage $0 reboot|help"
-    echo "  reboot: reboots the test environment"
-    echo "  help  : print usage"
+    echo "Usage $0"
+    echo "                : reboot the test environment"
+    echo "  -v  --verbose : reboot the test environment verbosely"
+    echo "  help          : print usage"
     echo "Example invocation:"
-    echo "./reboot-test-environment.sh reboot"
+    echo "./reboot-test-environment.sh --verbose"
     echo ""
 }
 
 function rebootEnvironment(){
-    ./cloud-based-performance-test.sh clean
+    echo -e "${CYAN}Rebooting test environment${NO_COLOR}"
+    echo ""
 
-    redeployPod
+    ./cloud-based-performance-test.sh clean | formatOutput
 
-    waitForPodRedeployment
+    redeployPod | formatOutput
 
-    echo "Updating HV-VES image"
-    kubectl patch pod ${HVVES_POD_NAME} -n ${ONAP_NAMESPACE} --type='json' -p='[{"op": "replace", "path": "/spec/containers/0/image", "value":"'${HV_VES_IMAGE}'"}]'
+    deleteKafkaTopic | formatOutput
 
-    echo "Deleting Kafka topic"
-    kubectl exec -it ${KAFKA_ROUTER_0_POD_NAME} -n ${ONAP_NAMESPACE} -- ${KAFKA_TOPIC_RESET_CMD} | eval $HIDE_OUTPUT
+    ./cloud-based-performance-test.sh setup | formatOutput
 
-    waitForHvVesRunning
+    echo -e "${GREEN}Environment ready!${NO_COLOR}"
 
-    ./cloud-based-performance-test.sh setup
 }
 
 
 function redeployPod(){
+    echo "Redeploying pod"
     kubectl scale --replicas=0 deploy ${HVVES_CONTAINER_NAME} -n ${ONAP_NAMESPACE}
     waitForPodTermination
     kubectl scale --replicas=1 deploy ${HVVES_CONTAINER_NAME} -n ${ONAP_NAMESPACE}
     sleep 10s
+
+    waitForPodRedeployment
+
+    updateHvVesImage
+
+    waitForHvVesRunning
 }
 
 function waitForPodTermination(){
@@ -69,6 +91,18 @@ function waitForPodTermination(){
       HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
       sleep 1s
     done
+
+    echo "Pod terminated"
+}
+
+function updateHvVesImage() {
+    echo "Updating HV-VES image"
+    kubectl patch pod ${HVVES_POD_NAME} -n ${ONAP_NAMESPACE} --type='json' -p='[{"op": "replace", "path": "/spec/containers/0/image", "value":"'${HV_VES_IMAGE}'"}]'
+}
+
+function deleteKafkaTopic() {
+    echo "Deleting Kafka topic"
+    kubectl exec -it ${KAFKA_ROUTER_0_POD_NAME} -n ${ONAP_NAMESPACE} -- ${KAFKA_TOPIC_RESET_CMD} | eval $HIDE_OUTPUT
 }
 
 function waitForPodRedeployment(){
@@ -96,12 +130,17 @@ function loadHvVesPodName(){
 
 
 if [[ $# -eq 0 ]]; then
-    usage
+    rebootEnvironment
 else
     for arg in ${@}
     do
         case ${arg} in
-            reboot)
+            --verbose)
+            VERBOSE=true
+            rebootEnvironment
+            ;;
+            -v)
+            VERBOSE=true
             rebootEnvironment
             ;;
             help)
