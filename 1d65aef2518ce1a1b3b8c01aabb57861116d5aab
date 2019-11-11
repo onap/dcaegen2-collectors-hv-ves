@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "942775b0_f68c1c6c",
+        "filename": "tools/performance/cloud/reboot-test-environment.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2019-11-11T19:51:53Z",
+      "side": 1,
+      "message": "You should never hardcode escape sequences like this; as not all terminals use these particular escape sequences. Instead, use the tput command to extract the proper escape sequence for the terminal being used:\n\nYELLOW\u003d$(tput setab 3)\nGREEN\u003d$(tput setab 2)\nCYAN\u003d$(tput setab 6)\nNO_COLOR\u003d$(tput sgr0)",
+      "revId": "1d65aef2518ce1a1b3b8c01aabb57861116d5aab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43a27331_2f22e5bf",
+        "filename": "tools/performance/cloud/reboot-test-environment.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2019-11-11T19:51:53Z",
+      "side": 1,
+      "message": "Note that tput outputs the real escape sequences, rather than backslash character references. So the \"echo -e\" should become \"echo\" instead.",
+      "revId": "1d65aef2518ce1a1b3b8c01aabb57861116d5aab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "414ce9e7_41c45104",
+        "filename": "tools/performance/cloud/reboot-test-environment.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2019-11-11T19:51:53Z",
+      "side": 1,
+      "message": "reebot \u003d\u003e reboot",
+      "revId": "1d65aef2518ce1a1b3b8c01aabb57861116d5aab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "52a24a74_831c75e9",
+        "filename": "tools/performance/cloud/reboot-test-environment.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2019-11-11T19:51:53Z",
+      "side": 1,
+      "message": "echo -e \u003d\u003e echo",
+      "revId": "1d65aef2518ce1a1b3b8c01aabb57861116d5aab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c42142ab_9fae7876",
+        "filename": "tools/performance/cloud/reboot-test-environment.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2019-11-11T19:51:53Z",
+      "side": 1,
+      "message": "echo -e \u003d\u003e echo",
+      "revId": "1d65aef2518ce1a1b3b8c01aabb57861116d5aab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38f4d5d9_94289864",
+        "filename": "tools/performance/cloud/reboot-test-environment.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2019-11-11T19:51:53Z",
+      "side": 1,
+      "message": "this can be shortened to\n\nfor arg\n\nif not, then ${@} must be quoted to reproduce the original command line arguments, as in\n\nfor arg in \"${@}\"\nor\nfor arg in \"$@\"",
+      "revId": "1d65aef2518ce1a1b3b8c01aabb57861116d5aab",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
