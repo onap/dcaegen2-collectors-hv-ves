@@ -706,7 +706,7 @@
       ],
       "targets": [
         {
-          "expr": "(sum(container_memory_usage_bytes{image=\"onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:latest\"}) by (image)) / 1024 / 1024 / 1024",
+          "expr": "(sum(container_memory_usage_bytes{pod_name=~\"dep-dcae-hv-ves-collector.*\"}) by (pod_name)) / 1024 / 1024 / 1024",
           "format": "time_series",
           "hide": false,
           "instant": true,
