@@ -34,7 +34,7 @@ import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import org.onap.dcae.collectors.veshv.utils.logging.MappedDiagnosticContext
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClientFactory
-import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.EnvProperties
+import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.CbsClientConfiguration
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.retry.Jitter
@@ -52,7 +52,7 @@ class ConfigurationModule internal constructor(private val configStateListener: 
 
     constructor(configStateListener: ConfigurationStateListener) : this(
             configStateListener,
-            CbsClientFactory.createCbsClient(EnvProperties.fromEnvironment())
+            CbsClientFactory.createCbsClient(CbsClientConfiguration.fromEnvironment())
     )
 
     fun healthCheckPort(args: Array<String>): Int = cmd.getHealthcheckPort(args)
