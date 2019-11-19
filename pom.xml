@@ -57,7 +57,7 @@
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.2</jacoco.version>
         <detekt.version>1.0.0-RC14</detekt.version>
-        <sdk.version>1.1.4</sdk.version>
+        <sdk.version>1.3.2</sdk.version>
 
         <!-- Protocol buffers -->
         <protobuf.version>3.6.1</protobuf.version>
@@ -477,9 +477,14 @@
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
                 <!-- remember to update netty native bindings versions -->
-                <version>Californium-SR8</version>
+                <version>Dysprosium-SR1</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>2.3.1</version>
             </dependency>
             <!--
             <dependency>
