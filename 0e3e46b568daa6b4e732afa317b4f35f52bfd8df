@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4151d3e_6adb306c",
+        "filename": "pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 480,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2019-11-21T11:36:51Z",
+      "side": 1,
+      "message": "Dont we need to exclude kafka-clients from this place. In case of two different versions of the same lib java will pick first found on classpath.\nhttps://stackoverflow.com/questions/35381533/maven-multiple-version-of-same-dependency\nCorrect me if I am wrong.",
+      "revId": "0e3e46b568daa6b4e732afa317b4f35f52bfd8df",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
