@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4f7da0ac_a23d0b97",
+        "filename": "releases/1.3.1-container.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2019-12-11T14:30:08Z",
+      "side": 1,
+      "message": "These containers are not used in active ONAP deployment. As As these are used more for testing - dint think they should be released.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 37
+      },
+      "revId": "152f7016e0216b76b1acbef320aa3e7ecaef152a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
