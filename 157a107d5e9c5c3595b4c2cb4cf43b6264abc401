@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7060ab3_a12a8ba2",
+        "filename": "releases/1.3.1-container.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2019-12-11T09:59:30Z",
+      "side": 1,
+      "message": "I think that this should be removed.\nhttps://nexus3.onap.org/#browse/search\u003dkeyword%3Dhv-ves%20kafka:c60bc6b9612f47d32fb65ec00ce30dfb",
+      "range": {
+        "startLine": 13,
+        "startChar": 60,
+        "endLine": 13,
+        "endChar": 65
+      },
+      "revId": "157a107d5e9c5c3595b4c2cb4cf43b6264abc401",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
