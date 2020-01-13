@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9bdecc28_e3bb70fb",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2020-01-13T17:11:25Z",
+      "side": 1,
+      "message": "missed this.. 1.3.1 is already released - pls bump the patch version in master.",
+      "range": {
+        "startLine": 42,
+        "startChar": 13,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "e05efd6688e11ca3c51c5518549130c23fef77d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
