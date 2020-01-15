@@ -22,6 +22,30 @@
       "revId": "e05efd6688e11ca3c51c5518549130c23fef77d7",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "069abfb7_9c69a7bf",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-01-15T10:32:40Z",
+      "side": 1,
+      "message": "I have prepare MR for that. Thanks",
+      "parentUuid": "9bdecc28_e3bb70fb",
+      "range": {
+        "startLine": 42,
+        "startChar": 13,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "e05efd6688e11ca3c51c5518549130c23fef77d7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
