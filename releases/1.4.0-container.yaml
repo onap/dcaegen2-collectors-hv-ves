@@ -1,0 +1,10 @@
+distribution_type: 'container'
+container_release_tag: '1.4.0'
+project: 'dcaegen2-collectors-hv-ves'
+log_dir: 'dcaegen2-collectors-hv-ves-maven-docker-stage-master/199/'
+ref: a5ca7fc9b36444dddd6425acf00496d81ed40568
+containers:
+  - name: 'org.onap.dcaegen2.collectors.hv-ves.hv-collector-main'
+    version: '1.4.0-20200116T073745Z'
+  - name: 'org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer'
+    version: '1.4.0-20200116T073745Z'
