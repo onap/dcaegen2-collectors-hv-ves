@@ -39,7 +39,7 @@
 
     <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
     <artifactId>ves-hv-collector</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.1-SNAPSHOT</version>
     <name>dcaegen2-collectors-veshv</name>
     <description>VES HighVolume Collector</description>
     <packaging>pom</packaging>
