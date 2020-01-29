@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Piotr Wielebski <piotr.wielebski@nokia.com>
+Submitted-by: Piotr Wielebski <piotr.wielebski@nokia.com>
+Submitted-at: Wed, 29 Jan 2020 12:41:23 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/dcaegen2/collectors/hv-ves/+/100894
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
