@@ -73,6 +73,10 @@
         <skipAnalysis>true</skipAnalysis>
         <jacoco.minimum.coverage>60</jacoco.minimum.coverage>
         <skipEnforcer>true</skipEnforcer>
+        <!--Specify path to load jacoco xml report, as Sonar can't load Kotlin coverage from binary report. -->
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/build/hv-collector-coverage/target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
 
         <!-- Docker -->
         <skipDocker>false</skipDocker>
