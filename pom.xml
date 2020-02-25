@@ -55,7 +55,7 @@
         <arrow.version>0.9.0</arrow.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
-        <jacoco.version>0.8.2</jacoco.version>
+        <jacoco.version>0.8.3</jacoco.version>
         <detekt.version>1.0.0-RC14</detekt.version>
         <sdk.version>1.3.4</sdk.version>
 
@@ -75,7 +75,7 @@
         <skipEnforcer>true</skipEnforcer>
         <!--Specify path to load jacoco xml report, as Sonar can't load Kotlin coverage from binary report. -->
         <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.basedir}/build/hv-collector-coverage/target/site/jacoco-aggregate/jacoco.xml
+            ${project.basedir}/../../build/hv-collector-coverage/target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
 
         <!-- Docker -->
