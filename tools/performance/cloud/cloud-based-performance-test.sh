@@ -37,12 +37,12 @@ CHECK_NUMBER=0
 PRODUCERS_TO_RECREATE=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
-HVVES_CERT_PATH=/etc/ves-hv/ssl/
+HVVES_CERT_PATH=/etc/ves-hv/ssl/custom
 KAFKA_RETENTION_TIME_MINUTES=60
 MILISECONDS_IN_MINUTE=60000
 CALC_RETENTION_TIME_IN_MS_CMD='expr $KAFKA_RETENTION_TIME_MINUTES \* $MILISECONDS_IN_MINUTE'
 KAFKA_ROUTER_0_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep router-kafka-0)
-KAFKA_SET_TOPIC_RETENTION_TIME_CMD='kafka-topics.sh --zookeeper message-router-zookeeper:2181 --alter --topic HV_VES_PERF3GPP --config retention.ms='
+KAFKA_SET_TOPIC_RETENTION_TIME_CMD='kafka-topics --zookeeper message-router-zookeeper:2181 --alter --topic HV_VES_PERF3GPP --config retention.ms='
 HIDE_OUTPUT='grep abc | grep 123'
 
 function clean() {
@@ -86,6 +86,7 @@ function clean() {
 
 function copy_certs_to_hvves() {
 	 cd ../../ssl
+	 kubectl exec -n ${ONAP_NAMESPACE} ${HVVES_POD_NAME} 'mkdir' ${HVVES_CERT_PATH}
 	 for file in {trust.p12,trust.pass,server.p12,server.pass}
 	 do
        echo "Copying file: ${file}"
@@ -155,7 +156,7 @@ function usage() {
     echo "      --load              : should test keep defined containers number till script interruption (false)"
     echo "      --containers        : number of producer containers to create (1)"
     echo "      --properties-file   : path to file with benchmark properties (./test.properties)"
-    echo "      --retention-time-minutes : messages retention time on kafka in minutes - only for load tests (60)"
+    echo "      --retention-time-minutes : messages retention time on kafka in minutes (60)"
     echo "  clean    : remove ConfigMap, HV-VES consumers and producers"
     echo "  help     : print usage"
     echo "Example invocations:"
@@ -257,6 +258,9 @@ function start_load_tests() {
 
 function start_performance_test() {
     print_test_setup_info
+
+    echo "Setting message retention time"
+    kubectl exec -it ${KAFKA_ROUTER_0_POD_NAME} -n ${ONAP_NAMESPACE} -- ${KAFKA_SET_TOPIC_RETENTION_TIME_CMD}$(eval $CALC_RETENTION_TIME_IN_MS_CMD) | eval $HIDE_OUTPUT
 
     create_producers
 
