@@ -37,7 +37,7 @@ CHECK_NUMBER=0
 PRODUCERS_TO_RECREATE=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
-HVVES_CERT_PATH=/etc/ves-hv/ssl/
+HVVES_CERT_PATH=/etc/ves-hv/ssl/custom
 KAFKA_RETENTION_TIME_MINUTES=60
 MILISECONDS_IN_MINUTE=60000
 CALC_RETENTION_TIME_IN_MS_CMD='expr $KAFKA_RETENTION_TIME_MINUTES \* $MILISECONDS_IN_MINUTE'
@@ -86,6 +86,7 @@ function clean() {
 
 function copy_certs_to_hvves() {
 	 cd ../../ssl
+	 kubectl exec -n ${ONAP_NAMESPACE} ${HVVES_POD_NAME} 'mkdir -p' ${HVVES_CERT_PATH}
 	 for file in {trust.p12,trust.pass,server.p12,server.pass}
 	 do
        echo "Copying file: ${file}"

@@ -46,10 +46,10 @@ STATUS=$(curl -s --header "Content-Type: application/json" \
             }
         }
     },
-"security.keys.trustStoreFile": "/etc/ves-hv/ssl/trust.p12",
-"security.keys.keyStoreFile": "/etc/ves-hv/ssl/server.p12",
-"security.keys.trustStorePasswordFile":"/etc/ves-hv/ssl/trust.pass",
-"security.keys.keyStorePasswordFile": "/etc/ves-hv/ssl/server.pass"}' \
+"security.keys.trustStoreFile": "/etc/ves-hv/ssl/custom/trust.p12",
+"security.keys.keyStoreFile": "/etc/ves-hv/ssl/custom/server.p12",
+"security.keys.trustStorePasswordFile":"/etc/ves-hv/ssl/custom/trust.pass",
+"security.keys.keyStorePasswordFile": "/etc/ves-hv/ssl/custom/server.pass"}' \
 ${IP}:30270/v1/kv/dcae-hv-ves-collector?dc=dc1&token=)
 
 if [ "$STATUS" = "true" ] ; then
