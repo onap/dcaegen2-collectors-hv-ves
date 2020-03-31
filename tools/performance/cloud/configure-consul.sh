@@ -18,15 +18,17 @@
 # ============LICENSE_END=========================================================
 
 SSL=$1
+CERT_PATH=/etc/ves-hv/ssl
+ONAP_NAMESPACE=onap
 if [ "$SSL" != "true" ] && [ "$SSL" != "false" ] ; then
   SSL=true
+elif [ "$SSL" = "false" ] ; then
+  CERT_PATH=/etc/ves-hv/ssl/server
 fi
-IP=$(kubectl config view -o jsonpath='{.clusters[].cluster.server}')
-HTTPS="https://"
-IP=${IP[@]//${HTTPS}}
-IP=${IP[@]//:*}
 
-STATUS=$(curl -s --header "Content-Type: application/json" \
+HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
+
+STATUS=$(kubectl exec -n onap ${HVVES_POD_NAME} --container=dcae-hv-ves-collector -- curl -s --header "Content-Type: application/json" \
   --request PUT \
   --data '{"security.sslDisable": '${SSL}',
 "logLevel": "INFO",
@@ -46,11 +48,11 @@ STATUS=$(curl -s --header "Content-Type: application/json" \
             }
         }
     },
-"security.keys.trustStoreFile": "/etc/ves-hv/ssl/trust.p12",
-"security.keys.keyStoreFile": "/etc/ves-hv/ssl/server.p12",
-"security.keys.trustStorePasswordFile":"/etc/ves-hv/ssl/trust.pass",
-"security.keys.keyStorePasswordFile": "/etc/ves-hv/ssl/server.pass"}' \
-${IP}:30270/v1/kv/dcae-hv-ves-collector?dc=dc1&token=)
+"security.keys.trustStoreFile": "'${CERT_PATH}'/trust.p12",
+"security.keys.keyStoreFile": "'${CERT_PATH}'/server.p12",
+"security.keys.trustStorePasswordFile":"'${CERT_PATH}'/trust.pass",
+"security.keys.keyStorePasswordFile": "'${CERT_PATH}'/server.pass"}' \
+consul-server.onap:8500/v1/kv/dcae-hv-ves-collector?dc=dc1&token=)
 
 if [ "$STATUS" = "true" ] ; then
   if [ "$SSL" = "true" ] ; then

@@ -37,12 +37,12 @@ CHECK_NUMBER=0
 PRODUCERS_TO_RECREATE=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
-HVVES_CERT_PATH=/etc/ves-hv/ssl/
+HVVES_CERT_PATH=/etc/ves-hv/ssl/server
 KAFKA_RETENTION_TIME_MINUTES=60
 MILISECONDS_IN_MINUTE=60000
 CALC_RETENTION_TIME_IN_MS_CMD='expr $KAFKA_RETENTION_TIME_MINUTES \* $MILISECONDS_IN_MINUTE'
 KAFKA_ROUTER_0_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep router-kafka-0)
-KAFKA_SET_TOPIC_RETENTION_TIME_CMD='kafka-topics.sh --zookeeper message-router-zookeeper:2181 --alter --topic HV_VES_PERF3GPP --config retention.ms='
+KAFKA_SET_TOPIC_RETENTION_TIME_CMD='kafka-topics --zookeeper message-router-zookeeper:2181 --alter --topic HV_VES_PERF3GPP --config retention.ms='
 HIDE_OUTPUT='grep abc | grep 123'
 
 function clean() {
@@ -85,12 +85,18 @@ function clean() {
 }
 
 function copy_certs_to_hvves() {
-	 cd ../../ssl
-	 for file in {trust.p12,trust.pass,server.p12,server.pass}
-	 do
-       echo "Copying file: ${file}"
-       kubectl cp ${file} ${ONAP_NAMESPACE}/${HVVES_POD_NAME}:${HVVES_CERT_PATH}
-   done
+    cd ../../ssl
+    echo "Attempting to create certs directory in HV-VES"
+    kubectl exec -n ${ONAP_NAMESPACE} ${HVVES_POD_NAME} 'mkdir' ${HVVES_CERT_PATH}
+    for file in {trust.p12,trust.pass,server.p12,server.pass}
+    do
+        echo "Copying file: ${file}"
+        kubectl cp ${file} ${ONAP_NAMESPACE}/${HVVES_POD_NAME}:${HVVES_CERT_PATH}
+    done
+}
+function set_kafka_retention_time() {
+    echo "Setting message retention time"
+    kubectl exec -it ${KAFKA_ROUTER_0_POD_NAME} -n ${ONAP_NAMESPACE} -- ${KAFKA_SET_TOPIC_RETENTION_TIME_CMD}$(eval $CALC_RETENTION_TIME_IN_MS_CMD) | eval $HIDE_OUTPUT
 }
 
 function create_producers() {
@@ -115,14 +121,14 @@ function generate_certs() {
 }
 
 function handle_backoffs() {
-        IMAGE_PULL_BACK_OFFS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} -o ${NAME_REASON_PATTERN} | grep -c "ImagePullBackOff \| ErrImagePull")
-        if [[ ${IMAGE_PULL_BACK_OFFS} -gt 0 ]]; then
-            CHECK_NUMBER=$((CHECK_NUMBER + 1))
-            if [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]]; then
-                echo "Error: Image pull problem"
-                exit 1
-            fi
+    IMAGE_PULL_BACK_OFFS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} -o ${NAME_REASON_PATTERN} | grep -c "ImagePullBackOff \| ErrImagePull")
+    if [[ ${IMAGE_PULL_BACK_OFFS} -gt 0 ]]; then
+        CHECK_NUMBER=$((CHECK_NUMBER + 1))
+        if [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]]; then
+            echo "Error: Image pull problem"
+            exit 1
         fi
+    fi
 }
 
 function handle_key_interrupt() {
@@ -155,7 +161,7 @@ function usage() {
     echo "      --load              : should test keep defined containers number till script interruption (false)"
     echo "      --containers        : number of producer containers to create (1)"
     echo "      --properties-file   : path to file with benchmark properties (./test.properties)"
-    echo "      --retention-time-minutes : messages retention time on kafka in minutes - only for load tests (60)"
+    echo "      --retention-time-minutes : messages retention time on kafka in minutes (60)"
     echo "  clean    : remove ConfigMap, HV-VES consumers and producers"
     echo "  help     : print usage"
     echo "Example invocations:"
@@ -223,8 +229,7 @@ function setup_environment() {
 function start_load_tests() {
     print_test_setup_info
 
-    echo "Setting message retention time"
-    kubectl exec -it ${KAFKA_ROUTER_0_POD_NAME} -n ${ONAP_NAMESPACE} -- ${KAFKA_SET_TOPIC_RETENTION_TIME_CMD}$(eval $CALC_RETENTION_TIME_IN_MS_CMD) | eval $HIDE_OUTPUT
+    set_kafka_retention_time
 
     echo "CTRL + C to stop/interrupt this script"
     create_producers
@@ -258,13 +263,15 @@ function start_load_tests() {
 function start_performance_test() {
     print_test_setup_info
 
+    set_kafka_retention_time
+
     create_producers
 
     echo "Waiting for producers completion"
     while :; do
         COMPLETED_PRODUCERS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Completed")
         handle_backoffs
-        
+
         [[ ${COMPLETED_PRODUCERS} -eq ${CONTAINERS_COUNT} || ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]] && break
         sleep 1
     done
