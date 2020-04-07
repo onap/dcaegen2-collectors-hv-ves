@@ -58,6 +58,10 @@ spec:
           mountPath: /grafana/performance-tests
         - name: grafana-processing
           mountPath: /grafana/processing
+        - name: grafana-kafka-and-producers
+          mountPath: /grafana/kafka-and-producers
+        - name: grafana-k8s-metrics
+          mountPath: /grafana/k8s-metrics
       volumes:
       - name: grafana-datasources
         configMap:
@@ -74,6 +78,12 @@ spec:
       - name: grafana-processing
         configMap:
           name: grafana-processing
+      - name: grafana-kafka-and-producers
+        configMap:
+          name: grafana-kafka-and-producers
+      - name: grafana-k8s-metrics
+        configMap:
+          name: grafana-k8s-metrics
 ---
 apiVersion: v1
 kind: Service
