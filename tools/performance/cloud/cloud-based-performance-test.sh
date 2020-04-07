@@ -2,7 +2,7 @@
 # ============LICENSE_START=======================================================
 # dcaegen2-collectors-veshv
 # ================================================================================
-# Copyright (C) 2019 NOKIA
+# Copyright (C) 2019-2020 NOKIA
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -210,6 +210,12 @@ function setup_environment() {
 
     echo "Creating ConfigMap for grafana grafana-performance-tests dashboard"
     kubectl apply -f grafana/dashboards/performance-tests.yaml
+
+    echo "Creating ConfigMap for grafana grafana-kafka-and-producers dashboard"
+    kubectl apply -f grafana/dashboards/kafka-and-producers.yaml
+
+    echo "Creating ConfigMap for grafana grafana-k8s-metrics dashboard"
+    kubectl apply -f grafana/dashboards/k8s-metrics.yaml
 
     echo "Creating ConfigMap for grafana datasource"
     kubectl apply -f grafana/datasources/datasource.yaml
