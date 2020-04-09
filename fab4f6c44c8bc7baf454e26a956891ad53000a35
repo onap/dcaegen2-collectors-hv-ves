@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "235ea32c_9267f44d",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-04-09T05:14:59Z",
+      "side": 1,
+      "message": "We miss here deletion of newly configured ConfigMaps. Thats why on my lab I have old dashboards. Add deletion of it in proper place.",
+      "revId": "fab4f6c44c8bc7baf454e26a956891ad53000a35",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
