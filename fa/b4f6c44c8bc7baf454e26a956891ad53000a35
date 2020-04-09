@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Kornel Janiak <kornel.janiak@nokia.com>
+Submitted-by: Kornel Janiak <kornel.janiak@nokia.com>
+Submitted-at: Thu, 09 Apr 2020 06:01:30 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/dcaegen2/collectors/hv-ves/+/105246
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
