@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "841fdfbd_f3c842b5",
+        "filename": "tools/performance/.gitignore",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-04-14T11:00:55Z",
+      "side": 1,
+      "message": "I think you have to remove \u0027./\u0027 to make it work",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 2
+      },
+      "revId": "bc91175b9ac534305cbfede12b0c5c6ea759c3e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec039a93_29759ecd",
+        "filename": "tools/performance/cloud/prometheus-getsnapshots.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-04-14T11:00:55Z",
+      "side": 1,
+      "message": "Consider adding logs like \"Sending request to create prometheus snapshot\" and \"Downloading snapshots from prometheus\"",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 88
+      },
+      "revId": "bc91175b9ac534305cbfede12b0c5c6ea759c3e8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
