@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2018-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,11 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.onap.dcae.collectors.veshv.boundary.Metrics
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
-import org.onap.dcae.collectors.veshv.domain.RoutedMessage
-import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.utils.TimeUtils.epochMicroToInstant
 import java.time.Duration
 import java.time.Instant
@@ -54,6 +54,10 @@ class MicrometerMetrics internal constructor(
     private val totalConnections = registry.counter(name(CONNECTIONS))
     private val disconnections = registry.counter(name(DISCONNECTIONS))
 
+    private val travelTimeToCollector = Timer.builder(name(MESSAGES, TO, COLLECTOR, TRAVEL, TIME))
+            .maximumExpectedValue(MAX_BUCKET_DURATION)
+            .publishPercentileHistogram(true)
+            .register(registry)
     private val processingTime = Timer.builder(name(MESSAGES, PROCESSING, TIME))
             .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
@@ -108,6 +112,12 @@ class MicrometerMetrics internal constructor(
         receivedMessagesPayloadBytes.increment(msg.payloadSize.toDouble())
     }
 
+    override fun notifyMessageReceived(msg: VesMessage) {
+        travelTimeToCollector.record(
+                Duration.between(epochMicroToInstant(msg.header.lastEpochMicrosec), msg.wtpFrame.receivedAt)
+        )
+    }
+
     override fun notifyMessageSent(msg: RoutedMessage) {
         val now = Instant.now()
         sentMessages.increment()
@@ -157,6 +167,9 @@ class MicrometerMetrics internal constructor(
         internal const val PAYLOAD = "payload"
         internal const val WITHOUT = "without"
         internal const val ROUTING = "routing"
+        internal const val TRAVEL = "travel"
+        internal const val TO = "to"
+        internal const val COLLECTOR = "collector"
         internal val MAX_BUCKET_DURATION = Duration.ofSeconds(300L)
         internal fun name(vararg name: String) = "$PREFIX.${name.joinToString(".")}"
     }

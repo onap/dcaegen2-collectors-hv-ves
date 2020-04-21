@@ -43,6 +43,7 @@ interface SinkFactory : Closeable {
 interface Metrics {
     fun notifyBytesReceived(size: Int)
     fun notifyMessageReceived(msg: WireFrameMessage)
+    fun notifyMessageReceived(msg: VesMessage)
     fun notifyMessageReadyForRouting(msg: VesMessage)
     fun notifyMessageSent(msg: RoutedMessage)
     fun notifyMessageDropped(cause: MessageDropCause)

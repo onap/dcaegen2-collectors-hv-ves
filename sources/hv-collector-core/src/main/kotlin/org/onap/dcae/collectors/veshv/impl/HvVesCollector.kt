@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2018-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ internal class HvVesCollector(
                         .filterFailedWithLog(logger, clientContext::fullMdc,
                                 { "Ves event header decoded successfully" },
                                 { "Failed to decode ves event header, reason: ${it.message}" })
-            }
+            }.doOnNext(metrics::notifyMessageReceived)
 
     private fun filterInvalidProtobufMessages(flux: Flux<VesMessage>): Flux<VesMessage> = flux
             .filterFailedWithLog {

@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2018-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.onap.dcae.collectors.veshv.model.ClientRejectionCause
 import org.onap.dcae.collectors.veshv.model.MessageDropCause
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
+import org.onap.dcae.collectors.veshv.utils.TimeUtils
 import java.time.Duration
 import java.time.Instant
 import kotlin.test.fail
@@ -40,6 +41,7 @@ class FakeMetrics : Metrics {
     var messagesDroppedCount: Int = 0; private set
     var lastProcessingTimeMicros: Double = -1.0; private set
     var lastProcessingTimeWithoutRoutingMicros: Double = -1.0; private set
+    var lastToCollectorTravelTime: Double = -1.0; private set
     var messagesSentCount: Int = 0; private set
     var clientRejectionCause = mutableMapOf<ClientRejectionCause, Int>(); private set
 
@@ -52,6 +54,11 @@ class FakeMetrics : Metrics {
 
     override fun notifyMessageReceived(msg: WireFrameMessage) {
         messageBytesReceived += msg.payloadSize
+    }
+
+    override fun notifyMessageReceived(msg: VesMessage) {
+        lastToCollectorTravelTime = Duration.between(TimeUtils.epochMicroToInstant(msg.header.lastEpochMicrosec),
+                Instant.now()).toNanos() / 1000.0
     }
 
     override fun notifyMessageReadyForRouting(msg: VesMessage) {
