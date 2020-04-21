@@ -21,38 +21,14 @@ kind: ConfigMap
 metadata:
   labels:
     name: grafana-dashboards-providers
-  name: grafana-dashboards
+  name: grafana-dashboards-providers
   namespace: onap
 data:
   dashboards.yaml: |-
-    - name: 'connections'
-      org_id: 1
+    - name: 'hv-ves-dashboards'
       folder: ''
       type: file
+      disableDeletion: false
+      updateIntervalSeconds: 10
       options:
-        path: /grafana/connections
-    - name: 'performance_tests'
-      org_id: 1
-      folder: ''
-      type: file
-      options:
-        path: /grafana/performance-tests
-    - name: 'processing'
-      org_id: 1
-      folder: ''
-      type: file
-      options:
-       path: /grafana/processing
-    - name: 'kafka-and-producers'
-      org_id: 1
-      folder: ''
-      type: file
-      options:
-        path: /grafana/kafka-and-producers
-    - name: 'k8s-metrics'
-      org_id: 1
-      folder: ''
-      type: file
-      options:
-        path: /grafana/k8s-metrics
-
+        path: /etc/grafana/dashboards/hv-ves

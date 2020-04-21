@@ -1,36 +1,9 @@
-# ============LICENSE_START=======================================================
-# dcaegen2-collectors-veshv
-# ================================================================================
-# Copyright (C) 2020 NOKIA
-# ================================================================================
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ============LICENSE_END=========================================================
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-k8s-metrics
-  namespace: onap
-  labels:
-    name: grafana-dashboards
-data:
-  k8s-metrics.json: |-
     {
       "annotations": {
         "list": [
           {
             "builtIn": 1,
-            "datasource": "-- Grafana --",
+            "datasource": "Prometheus",
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -42,133 +15,24 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "id": 5,
+      "iteration": 1571408429976,
       "links": [],
       "panels": [
-        {
-          "datasource": null,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 0,
-            "y": 0
-          },
-          "id": 8,
-          "options": {
-            "fieldOptions": {
-              "calcs": [
-                "mean"
-              ],
-              "defaults": {
-                "mappings": [],
-                "max": 100,
-                "min": 0,
-                "thresholds": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 80
-                    }
-                  ]
-                },
-                "unit": "percent"
-              },
-              "overrides": [],
-              "values": false
-            },
-            "orientation": "auto",
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "6.7.2",
-          "targets": [
-            {
-              "expr": "sum(container_memory_working_set_bytes{id=\"/\", instance=~\".*worker.*\"}) by(instance) / (sum(machine_memory_bytes{instance=~\".*worker.*\"}) by (instance))*100",
-              "interval": "",
-              "legendFormat": "{{instance}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Nodes RAM Usage",
-          "type": "gauge"
-        },
-        {
-          "datasource": null,
-          "gridPos": {
-            "h": 7,
-            "w": 8,
-            "x": 8,
-            "y": 0
-          },
-          "id": 6,
-          "options": {
-            "fieldOptions": {
-              "calcs": [
-                "mean"
-              ],
-              "defaults": {
-                "mappings": [],
-                "max": 100,
-                "min": 0,
-                "thresholds": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "red",
-                      "value": 80
-                    }
-                  ]
-                },
-                "unit": "percent"
-              },
-              "overrides": [],
-              "values": false
-            },
-            "orientation": "auto",
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "6.7.2",
-          "targets": [
-            {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\", instance=~\".*worker.*\"}[1m])) by(instance) / (sum(machine_cpu_cores{instance=~\".*worker.*\"}) by (instance))*100",
-              "interval": "",
-              "legendFormat": "{{instance}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Nodes CPU Usage",
-          "type": "gauge"
-        },
         {
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
           "dashes": false,
           "datasource": null,
-          "fill": 0,
+          "fill": 1,
           "fillGradient": 0,
           "gridPos": {
-            "h": 12,
-            "w": 8,
-            "x": 16,
+            "h": 11,
+            "w": 12,
+            "x": 0,
             "y": 0
           },
-          "hiddenSeries": false,
-          "id": 10,
+          "id": 12,
           "legend": {
             "avg": false,
             "current": false,
@@ -194,25 +58,16 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_network_receive_bytes_total{pod!=\"\", namespace=\"onap\", instance=~\".*worker.*\"}[1m])) by (instance)",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{instance}}",
-              "refId": "C"
-            },
-            {
-              "expr": "sum(irate(container_network_receive_bytes_total{pod!=\"\", namespace=\"onap\", instance=~\".*worker.*\"}[1m]))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Total Receive",
-              "refId": "D"
+              "expr": "irate(hvves_data_received_bytes_total[30s])",
+              "legendFormat": "Incoming data rate",
+              "refId": "A"
             }
           ],
           "thresholds": [],
           "timeFrom": "20m",
           "timeRegions": [],
           "timeShift": null,
-          "title": "Network Usage - Receive",
+          "title": "HV-VES incoming data rate",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -232,183 +87,7 @@ data:
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 16,
-            "w": 8,
-            "x": 0,
-            "y": 7
-          },
-          "hiddenSeries": false,
-          "id": 4,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(container_memory_working_set_bytes{id=\"/\"}) by (instance) / (sum(machine_memory_bytes) by (instance))*100",
-              "interval": "",
-              "legendFormat": "{{instance}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": "20m",
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Nodes Total RAM Usage",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "percent",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": null,
-          "fill": 0,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 16,
-            "w": 8,
-            "x": 8,
-            "y": 7
-          },
-          "hiddenSeries": false,
-          "id": 2,
-          "legend": {
-            "avg": false,
-            "current": false,
-            "max": false,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": false
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\"}[1m])) by(instance) / (sum(machine_cpu_cores) by (instance))*100",
-              "interval": "",
-              "legendFormat": "{{instance}}",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": "20m",
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "Nodes Total CPU usage",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "percent",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -435,12 +114,126 @@ data:
           "fillGradient": 0,
           "gridPos": {
             "h": 11,
-            "w": 8,
-            "x": 16,
-            "y": 12
+            "w": 12,
+            "x": 12,
+            "y": 0
           },
-          "hiddenSeries": false,
-          "id": 11,
+          "id": 6,
+          "legend": {
+            "alignAsTable": false,
+            "avg": false,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "rate(hv_kafka_consumer_travel_time_seconds_sum{instance=\"kafka-processing-consumer.onap:6063\"}[1h])/rate(hv_kafka_consumer_travel_time_seconds_count{instance=\"kafka-processing-consumer.onap:6063\"}[1h])",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "average",
+              "refId": "A"
+            },
+            {
+              "expr": "histogram_quantile(0.90, sum( rate(hv_kafka_consumer_travel_time_seconds_bucket[1h]) )by(le) )",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "90th percentile",
+              "refId": "B"
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum( rate(hv_kafka_consumer_travel_time_seconds_bucket[1h]) )by(le) )",
+              "format": "time_series",
+              "intervalFactor": 1,
+              "legendFormat": "95th percentile",
+              "refId": "C"
+            },
+            {
+              "expr": "histogram_quantile(0.99, sum( rate(hv_kafka_consumer_travel_time_seconds_bucket[1h]) )by(le) )",
+              "format": "time_series",
+              "hide": false,
+              "intervalFactor": 1,
+              "legendFormat": "95th percentile",
+              "refId": "D"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": "20m",
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "End to end message travel time",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "s",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 11
+          },
+          "id": 14,
           "legend": {
             "avg": false,
             "current": false,
@@ -466,25 +259,16 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_network_transmit_bytes_total{pod!=\"\", namespace=\"onap\", instance=~\".*worker.*\"}[1m])) by (instance)",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "{{instance}}",
+              "expr": "hvves_messages_received_total - hvves_messages_sent_total",
+              "legendFormat": "Processing message queue",
               "refId": "A"
-            },
-            {
-              "expr": "sum(irate(container_network_transmit_bytes_total{pod!=\"\", namespace=\"onap\", instance=~\".*worker.*\"}[1m]))",
-              "hide": false,
-              "interval": "",
-              "legendFormat": "Total Transmit",
-              "refId": "B"
             }
           ],
           "thresholds": [],
           "timeFrom": "20m",
           "timeRegions": [],
           "timeShift": null,
-          "title": "Network Usage - Transmit",
+          "title": "HV-VES processing message queue",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -500,11 +284,100 @@ data:
           },
           "yaxes": [
             {
-              "format": "Bps",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
               "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "cacheTimeout": null,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 11
+          },
+          "id": 10,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(hv_kafka_consumer_offset_partition)",
+              "intervalFactor": 1,
+              "legendFormat": "Kafka consumer offset",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": "20m",
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Total number of messages on topic",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
               "show": true
             },
             {
@@ -523,14 +396,58 @@ data:
         }
       ],
       "refresh": "5s",
-      "schemaVersion": 22,
+      "schemaVersion": 20,
       "style": "dark",
       "tags": [],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "allValue": null,
+            "current": {
+              "selected": false,
+              "text": "1h",
+              "value": "1h"
+            },
+            "hide": 0,
+            "includeAll": false,
+            "label": null,
+            "multi": false,
+            "name": "time_range",
+            "options": [
+              {
+                "selected": false,
+                "text": "5m",
+                "value": "5m"
+              },
+              {
+                "selected": false,
+                "text": "10m",
+                "value": "10m"
+              },
+              {
+                "selected": false,
+                "text": "15m",
+                "value": "15m"
+              },
+              {
+                "selected": false,
+                "text": "30m",
+                "value": "30m"
+              },
+              {
+                "selected": true,
+                "text": "1h",
+                "value": "1h"
+              }
+            ],
+            "query": "5m, 10m, 15m, 30m, 1h",
+            "skipUrlSync": false,
+            "type": "custom"
+          }
+        ]
       },
       "time": {
-        "from": "now-6h",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {
@@ -545,13 +462,21 @@ data:
           "1h",
           "2h",
           "1d"
+        ],
+        "time_options": [
+          "5m",
+          "15m",
+          "1h",
+          "6h",
+          "12h",
+          "24h",
+          "2d",
+          "7d",
+          "30d"
         ]
       },
       "timezone": "",
-      "title": "K8s metrics",
-      "uid": "RxjnWpjZk",
-      "variables": {
-        "list": []
-      },
+      "title": "Performance tests",
+      "uid": "ErPSMaIZk",
       "version": 1
     }

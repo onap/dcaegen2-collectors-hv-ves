@@ -29,7 +29,7 @@ PROMETHEUS_CONF_LABEL=prometheus-server-conf
 PROMETHEUS_APPS_LABEL=hv-collector-prometheus
 GRAFANA_APPS_LABEL=hv-collector-grafana
 GRAFANA_DATASOURCE=grafana-datasources
-GRAFANA_DASHBOARD=grafana-dashboards
+GRAFANA_DASHBOARDS=grafana-dashboards
 GRAFANA_DASHBOARD_PROVIDERS=grafana-dashboards-providers
 ONAP_NAMESPACE=onap
 MAXIMUM_BACK_OFF_CHECK_ITERATIONS=30
@@ -60,8 +60,8 @@ function clean() {
     echo "Attempting to delete grafana deployment and service"
     kubectl delete service,deployments -l app=${GRAFANA_APPS_LABEL} -n ${ONAP_NAMESPACE}
 
-    echo "Attempting to delete grafana ConfigMap (DASHBOARD)"
-    kubectl delete configmap -l name=${GRAFANA_DASHBOARD} -n ${ONAP_NAMESPACE}
+    echo "Attempting to delete grafana ConfigMap (DASHBOARDS)"
+    kubectl delete configmap ${GRAFANA_DASHBOARDS} -n ${ONAP_NAMESPACE}
 
     echo "Attempting to delete grafana ConfigMap (GRAFANA_DASHBOARD_PROVIDERS)"
     kubectl delete configmap -l name=${GRAFANA_DASHBOARD_PROVIDERS} -n ${ONAP_NAMESPACE}
@@ -203,19 +203,7 @@ function setup_environment() {
     kubectl apply -f prometheus-deployment.yaml
 
     echo "Creating ConfigMap for grafana connections dashboard"
-    kubectl apply -f grafana/dashboards/connections.yaml
-
-    echo "Creating ConfigMap for grafana processing dashboard"
-    kubectl apply -f grafana/dashboards/processing.yaml
-
-    echo "Creating ConfigMap for grafana grafana-performance-tests dashboard"
-    kubectl apply -f grafana/dashboards/performance-tests.yaml
-
-    echo "Creating ConfigMap for grafana grafana-kafka-and-producers dashboard"
-    kubectl apply -f grafana/dashboards/kafka-and-producers.yaml
-
-    echo "Creating ConfigMap for grafana grafana-k8s-metrics dashboard"
-    kubectl apply -f grafana/dashboards/k8s-metrics.yaml
+    kubectl create configmap ${GRAFANA_DASHBOARDS} -n ${ONAP_NAMESPACE} --from-file grafana/dashboards/
 
     echo "Creating ConfigMap for grafana datasource"
     kubectl apply -f grafana/datasources/datasource.yaml
