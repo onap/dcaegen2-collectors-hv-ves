@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,15 +33,15 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.onap.dcae.collectors.veshv.domain.RoutedMessage
+import org.onap.dcae.collectors.veshv.domain.VesEventDomain
+import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics
 import org.onap.dcae.collectors.veshv.main.metrics.MicrometerMetrics.Companion.PREFIX
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.INVALID_WIRE_FRAME_MARKER
 import org.onap.dcae.collectors.veshv.model.ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.INVALID_MESSAGE
 import org.onap.dcae.collectors.veshv.model.MessageDropCause.ROUTE_NOT_FOUND
-import org.onap.dcae.collectors.veshv.domain.RoutedMessage
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain
-import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
 import org.onap.dcae.collectors.veshv.tests.utils.verifyCounter
@@ -206,6 +206,23 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
+        on("$PREFIX.messages.to.collector.travel.time") {
+            val counterName = "$PREFIX.messages.to.collector.travel.time"
+            val toCollectorTravelTimeMs = 100L
+
+            it("should update timer") {
+                val now = Instant.now()
+                val vesMessage = vesMessageReceivedAt(now, sentAt = now.minusMillis(toCollectorTravelTimeMs))
+                cut.notifyMessageReceived(vesMessage)
+
+                registry.verifyTimer(counterName) { timer ->
+                    assertThat(timer.mean(TimeUnit.MILLISECONDS)).isEqualTo(toCollectorTravelTimeMs.toDouble())
+                }
+
+                verifyCountersAndTimersAreUnchangedBut(counterName)
+            }
+        }
+
         on("$PREFIX.messages.processing.time.without.routing") {
             val counterName = "$PREFIX.messages.processing.time.without.routing"
             val processingTimeMs = 100L
@@ -217,11 +234,8 @@ object MicrometerMetricsTest : Spek({
                 registry.verifyTimer(counterName) { timer ->
                     assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
                 }
-                verifyCountersAndTimersAreUnchangedBut(
-                        counterName,
-                        "$PREFIX.messages.sent.topic",
-                        "$PREFIX.messages.sent",
-                        "$PREFIX.messages.latency")
+
+                verifyCountersAndTimersAreUnchangedBut(counterName)
             }
         }
 
@@ -383,6 +397,13 @@ object MicrometerMetricsTest : Spek({
         }
     }
 })
+
+private fun vesMessageReceivedAt(receivedAt: Instant, sentAt: Instant): VesMessage {
+    val lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000
+    val commonHeader = commonHeader(lastEpochMicrosec = lastEpochMicrosec)
+    return VesMessage(commonHeader,
+            wireProtocolFrame(commonHeader, ByteString.copyFromUtf8("highvolume measurements"), receivedAt))
+}
 
 private fun vesMessageReceivedAt(receivedAt: Temporal, domain: VesEventDomain = VesEventDomain.PERF3GPP): VesMessage {
     val commonHeader = commonHeader(domain)
