@@ -50,40 +50,20 @@ spec:
         volumeMounts:
         - name: grafana-datasources
           mountPath: /etc/grafana/provisioning/datasources
-        - name: grafana-dashboards
+        - name: grafana-dashboards-providers
           mountPath: /etc/grafana/provisioning/dashboards
-        - name: grafana-connections
-          mountPath: /grafana/connections
-        - name: grafana-performance-tests
-          mountPath: /grafana/performance-tests
-        - name: grafana-processing
-          mountPath: /grafana/processing
-        - name: grafana-kafka-and-producers
-          mountPath: /grafana/kafka-and-producers
-        - name: grafana-k8s-metrics
-          mountPath: /grafana/k8s-metrics
+        - name: grafana-dashboards
+          mountPath: /etc/grafana/dashboards/hv-ves
       volumes:
       - name: grafana-datasources
         configMap:
           name: grafana-datasources
+      - name: grafana-dashboards-providers
+        configMap:
+          name: grafana-dashboards-providers
       - name: grafana-dashboards
         configMap:
           name: grafana-dashboards
-      - name: grafana-connections
-        configMap:
-          name: grafana-connections
-      - name: grafana-performance-tests
-        configMap:
-          name: grafana-performance-tests
-      - name: grafana-processing
-        configMap:
-          name: grafana-processing
-      - name: grafana-kafka-and-producers
-        configMap:
-          name: grafana-kafka-and-producers
-      - name: grafana-k8s-metrics
-        configMap:
-          name: grafana-k8s-metrics
 ---
 apiVersion: v1
 kind: Service
