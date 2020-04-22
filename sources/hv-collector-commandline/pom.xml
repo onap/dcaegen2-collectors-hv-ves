@@ -7,7 +7,7 @@
   <parent>
     <artifactId>hv-collector-sources</artifactId>
     <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>hv-collector-commandline</artifactId>
