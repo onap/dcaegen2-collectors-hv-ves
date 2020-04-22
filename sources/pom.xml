@@ -33,7 +33,7 @@
     <parent>
         <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
         <artifactId>ves-hv-collector</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.2-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -125,7 +125,7 @@
                             <dependency>
                                 <groupId>${project.groupId}</groupId>
                                 <artifactId>hv-collector-analysis</artifactId>
-                                <version>1.4.1-SNAPSHOT</version>
+                                <version>1.4.2-SNAPSHOT</version>
                             </dependency>
                         </dependencies>
                     </plugin>
