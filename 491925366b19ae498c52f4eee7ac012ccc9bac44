@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85cb7ab2_6c90673e",
+        "filename": "tools/performance/cloud/snapshot-loader/load-snapshot.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-04-22T09:55:31Z",
+      "side": 1,
+      "message": "Consider to introduce readable variable, something like processing_dashboard_url",
+      "range": {
+        "startLine": 46,
+        "startChar": 27,
+        "endLine": 46,
+        "endChar": 60
+      },
+      "revId": "491925366b19ae498c52f4eee7ac012ccc9bac44",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
