@@ -50,15 +50,19 @@ class MicrometerMetrics internal constructor(
     private val receivedBytes = registry.counter(name(DATA, RECEIVED, BYTES))
     private val receivedMessages = registry.counter(name(MESSAGES, RECEIVED))
     private val receivedMessagesPayloadBytes = registry.counter(name(MESSAGES, RECEIVED, PAYLOAD, BYTES))
-
     private val totalConnections = registry.counter(name(CONNECTIONS))
-    private val disconnections = registry.counter(name(DISCONNECTIONS))
 
+    private val disconnections = registry.counter(name(DISCONNECTIONS))
     private val processingTime = Timer.builder(name(MESSAGES, PROCESSING, TIME))
             .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
             .register(registry)
+
     private val processingTimeWithoutRouting = Timer.builder(name(MESSAGES, PROCESSING, TIME, WITHOUT, ROUTING))
+            .maximumExpectedValue(MAX_BUCKET_DURATION)
+            .publishPercentileHistogram(true)
+            .register(registry)
+    private val totalLatencyWithoutRouting = Timer.builder(name(MESSAGES, LATENCY, WITHOUT, ROUTING))
             .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
             .register(registry)
@@ -100,7 +104,9 @@ class MicrometerMetrics internal constructor(
     }
 
     override fun notifyMessageReadyForRouting(msg: VesMessage) {
-        processingTimeWithoutRouting.record(Duration.between(msg.wtpFrame.receivedAt, Instant.now()))
+        val now = Instant.now()
+        processingTimeWithoutRouting.record(Duration.between(msg.wtpFrame.receivedAt, now))
+        totalLatencyWithoutRouting.record(Duration.between(epochMicroToInstant(msg.header.lastEpochMicrosec), now))
     }
 
     override fun notifyMessageReceived(msg: WireFrameMessage) {
