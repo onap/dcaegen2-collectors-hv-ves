@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b5e4468_a552bde1",
+        "filename": "sources/hv-collector-main/src/test/kotlin/org/onap/dcae/collectors/veshv/main/MicrometerMetricsTest.kt",
+        "patchSetId": 4
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-04-23T11:00:32Z",
+      "side": 1,
+      "message": "One request:\nPlease move it to correct place -\u003e describe(\"notifyMessageReceived\")\nThanks",
+      "range": {
+        "startLine": 250,
+        "startChar": 8,
+        "endLine": 265,
+        "endChar": 9
+      },
+      "revId": "5ef10c7181c65f7bd959b52f88b75f388fdb6c6f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
