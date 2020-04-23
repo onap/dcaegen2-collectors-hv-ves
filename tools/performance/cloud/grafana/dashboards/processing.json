@@ -660,7 +660,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
+      "timeFrom": "20m",
       "timeRegions": [],
       "timeShift": null,
       "title": "Memory usage of HV-VES",

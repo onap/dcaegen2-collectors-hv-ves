@@ -66,6 +66,10 @@ class MicrometerMetrics internal constructor(
             .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
             .register(registry)
+    private val totalLatencyWithoutRouting = Timer.builder(name(MESSAGES, LATENCY, WITHOUT, ROUTING))
+            .maximumExpectedValue(MAX_BUCKET_DURATION)
+            .publishPercentileHistogram(true)
+            .register(registry)
     private val totalLatency = Timer.builder(name(MESSAGES, LATENCY))
             .maximumExpectedValue(MAX_BUCKET_DURATION)
             .publishPercentileHistogram(true)
@@ -104,7 +108,9 @@ class MicrometerMetrics internal constructor(
     }
 
     override fun notifyMessageReadyForRouting(msg: VesMessage) {
-        processingTimeWithoutRouting.record(Duration.between(msg.wtpFrame.receivedAt, Instant.now()))
+        val now = Instant.now()
+        processingTimeWithoutRouting.record(Duration.between(msg.wtpFrame.receivedAt, now))
+        totalLatencyWithoutRouting.record(Duration.between(epochMicroToInstant(msg.header.lastEpochMicrosec), now))
     }
 
     override fun notifyMessageReceived(msg: WireFrameMessage) {
