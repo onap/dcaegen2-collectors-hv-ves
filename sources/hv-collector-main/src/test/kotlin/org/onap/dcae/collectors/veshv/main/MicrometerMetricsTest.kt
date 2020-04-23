@@ -148,6 +148,47 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
+    describe("notifyMessageReadyForRouting"){
+        on("$PREFIX.messages.processing.time.without.routing") {
+            val counterName = "$PREFIX.messages.processing.time.without.routing"
+            val processingTimeMs = 100L
+
+            it("should update timer") {
+
+                cut.notifyMessageReadyForRouting(vesMessageReceivedAt(Instant.now().minusMillis(processingTimeMs)))
+
+                registry.verifyTimer(counterName) { timer ->
+                    assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
+                }
+                verifyCountersAndTimersAreUnchangedBut(
+                        counterName,
+                        "$PREFIX.messages.latency.without.routing"
+                )
+            }
+        }
+
+        on("$PREFIX.messages.latency.without.routing") {
+            val counterName = "$PREFIX.messages.latency.without.routing"
+            val latencyWithoutRoutingMs = 200L
+
+            it("should update timer") {
+
+                val sentAt = Instant.now().minusMillis(latencyWithoutRoutingMs)
+
+                cut.notifyMessageReadyForRouting(vesMessageSentAt(sentAt))
+
+                registry.verifyTimer(counterName) { timer ->
+                    assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(latencyWithoutRoutingMs.toDouble())
+                }
+                verifyCountersAndTimersAreUnchangedBut(
+                        counterName,
+                        "$PREFIX.messages.processing.time.without.routing"
+                )
+            }
+        }
+    }
+
+
     describe("notifyMessageSent") {
         val topicName1 = "PERF3GPP"
         val topicName2 = "CALLTRACE"
@@ -217,22 +258,6 @@ object MicrometerMetricsTest : Spek({
 
                 registry.verifyTimer(counterName) { timer ->
                     assertThat(timer.mean(TimeUnit.MILLISECONDS)).isEqualTo(toCollectorTravelTimeMs.toDouble())
-                }
-
-                verifyCountersAndTimersAreUnchangedBut(counterName)
-            }
-        }
-
-        on("$PREFIX.messages.processing.time.without.routing") {
-            val counterName = "$PREFIX.messages.processing.time.without.routing"
-            val processingTimeMs = 100L
-
-            it("should update timer") {
-
-                cut.notifyMessageReadyForRouting(vesMessageReceivedAt(Instant.now().minusMillis(processingTimeMs)))
-
-                registry.verifyTimer(counterName) { timer ->
-                    assertThat(timer.mean(TimeUnit.MILLISECONDS)).isGreaterThanOrEqualTo(processingTimeMs.toDouble())
                 }
 
                 verifyCountersAndTimersAreUnchangedBut(counterName)
@@ -397,6 +422,13 @@ object MicrometerMetricsTest : Spek({
         }
     }
 })
+
+private fun vesMessageSentAt(sentAt: Instant): VesMessage {
+    val lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000
+    val commonHeader = commonHeader(lastEpochMicrosec = lastEpochMicrosec)
+    return VesMessage(commonHeader,
+            wireProtocolFrame(commonHeader, ByteString.copyFromUtf8("highvolume measurements")))
+}
 
 private fun vesMessageReceivedAt(receivedAt: Instant, sentAt: Instant): VesMessage {
     val lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000

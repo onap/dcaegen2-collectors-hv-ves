@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 6,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -33,8 +33,10 @@
         "y": 0
       },
       "hiddenSeries": false,
-      "id": 2,
+      "id": 8,
+      "interval": "",
       "legend": {
+        "alignAsTable": false,
         "avg": false,
         "current": false,
         "hideEmpty": true,
@@ -47,12 +49,13 @@
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
         "dataLinks": []
       },
       "percentage": false,
-      "pointradius": 2,
+      "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [],
@@ -61,10 +64,32 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(hvves_messages_latency_seconds_sum[1h])/rate(hvves_messages_latency_seconds_count[1h]) - rate(hvves_messages_processing_time_seconds_sum[1h])/rate(hvves_messages_processing_time_seconds_count[1h])",
+          "expr": "rate(hvves_messages_to_collector_travel_time_seconds_sum[1h])/rate(hvves_messages_to_collector_travel_time_seconds_count[1h])",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
           "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "average",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_to_collector_travel_time_seconds_bucket[1h]) )by(le) )",
+          "interval": "",
+          "legendFormat": "90th percentile",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum( rate(hvves_messages_to_collector_travel_time_seconds_bucket[1h]) )by(le) )",
+          "interval": "",
+          "legendFormat": "95th percentile",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum( rate(hvves_messages_to_collector_travel_time_seconds_bucket[1h]) )by(le) )",
+          "interval": "",
+          "legendFormat": "99th precentile",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -87,6 +112,7 @@
       },
       "yaxes": [
         {
+          "decimals": 2,
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -123,8 +149,10 @@
         "y": 0
       },
       "hiddenSeries": false,
-      "id": 7,
+      "id": 9,
+      "interval": "",
       "legend": {
+        "alignAsTable": false,
         "avg": false,
         "current": false,
         "hideEmpty": true,
@@ -137,12 +165,13 @@
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
         "dataLinks": []
       },
       "percentage": false,
-      "pointradius": 2,
+      "pointradius": 5,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [],
@@ -151,10 +180,32 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(hvves_messages_latency_seconds_sum[1h])/rate(hvves_messages_latency_seconds_count[1h]) - rate(hvves_messages_processing_time_seconds_sum[1h])/rate(hvves_messages_processing_time_seconds_count[1h]) + rate(hvves_messages_processing_time_without_routing_seconds_sum[1h])/rate(hvves_messages_processing_time_without_routing_seconds_count[1h])",
+          "expr": "rate(hvves_messages_latency_without_routing_seconds_sum[1h])/rate(hvves_messages_latency_without_routing_seconds_count[1h])",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
           "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "average",
           "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum( rate(hvves_messages_latency_without_routing_seconds_bucket[1h]) )by(le) )",
+          "interval": "",
+          "legendFormat": "90th percentile",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum( rate(hvves_messages_latency_without_routing_seconds_bucket[1h]) )by(le) )",
+          "interval": "",
+          "legendFormat": "95th percentile",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum( rate(hvves_messages_latency_without_routing_seconds_bucket[1h]) )by(le) )",
+          "interval": "",
+          "legendFormat": "99th precentile",
+          "refId": "D"
         }
       ],
       "thresholds": [],
@@ -177,6 +228,7 @@
       },
       "yaxes": [
         {
+          "decimals": 2,
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -353,19 +405,22 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(hvves_messages_latency_seconds_sum[1h])/rate(hvves_messages_latency_seconds_count[1h]) - rate(hvves_messages_processing_time_seconds_sum[1h])/rate(hvves_messages_processing_time_seconds_count[1h])",
+          "expr": "rate(hvves_messages_to_collector_travel_time_seconds_sum[1h])/rate(hvves_messages_to_collector_travel_time_seconds_count[1h])",
+          "hide": false,
           "interval": "",
           "legendFormat": "Producer to HV-VES input",
           "refId": "A"
         },
         {
-          "expr": "rate(hvves_messages_latency_seconds_sum[1h])/rate(hvves_messages_latency_seconds_count[1h]) - rate(hvves_messages_processing_time_seconds_sum[1h])/rate(hvves_messages_processing_time_seconds_count[1h]) + rate(hvves_messages_processing_time_without_routing_seconds_sum[1h])/rate(hvves_messages_processing_time_without_routing_seconds_count[1h])",
+          "expr": "rate(hvves_messages_latency_without_routing_seconds_sum[1h])/rate(hvves_messages_latency_without_routing_seconds_count[1h])",
+          "hide": false,
           "interval": "",
           "legendFormat": "Producer to HV-VES output (without sending to Kafka)",
           "refId": "B"
         },
         {
           "expr": "rate(hvves_messages_latency_seconds_sum[1h])/rate(hvves_messages_latency_seconds_count[1h])",
+          "hide": false,
           "interval": "",
           "legendFormat": "Producer to HV-VES output (with sending to Kafka)",
           "refId": "C"
@@ -444,5 +499,5 @@
   "variables": {
     "list": []
   },
-  "version": 0
+  "version": 1
 }
