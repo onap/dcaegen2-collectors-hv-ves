@@ -41,9 +41,10 @@ internal class OffsetKafkaConsumer(private val kafkaConsumer: KafkaConsumer<Byte
 
     override suspend fun start(updateInterval: Long, pollTimeout: Duration): Job =
             GlobalScope.launch(dispatcher) {
-                val topicPartitions = topics.flatMap {
-                    listOf(TopicPartition(it, 0), TopicPartition(it, 1), TopicPartition(it, 2))
-                }
+
+                val topicPartitions = topics.flatMap(kafkaConsumer::partitionsFor)
+                        .map { TopicPartition(it.topic(), it.partition()) }
+
                 kafkaConsumer.assign(topicPartitions)
 
                 while (isActive) {
