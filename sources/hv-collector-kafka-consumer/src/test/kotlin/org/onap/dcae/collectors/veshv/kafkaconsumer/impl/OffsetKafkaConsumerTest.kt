@@ -52,7 +52,8 @@ object OffsetKafkaConsumerTest : Spek({
         given("single topicName and partition") {
             val topicName = "topicName"
             val topics = setOf(topicName)
-            val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, topics, mockedMetrics, testDispatcher)
+            val partitions = 3
+            val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, topics, partitions, mockedMetrics, testDispatcher)
 
             on("started OffsetKafkaConsumer") {
                 val topicPartition = createTopicPartition(topicName)
@@ -74,7 +75,8 @@ object OffsetKafkaConsumerTest : Spek({
 
         given("two topics with one partition each") {
             val topics = setOf(topicName1, topicName2)
-            val kafkaSource = OffsetKafkaConsumer(mockedKafkaConsumer, topics, mockedMetrics, testDispatcher)
+            val partitions = 3
+            val kafkaSource = OffsetKafkaConsumer(mockedKafkaConsumer, topics, partitions, mockedMetrics, testDispatcher)
 
             on("started OffsetKafkaConsumer for two iteration of while loop") {
                 val offsetArgumentCaptor = argumentCaptor<Long>()
@@ -144,7 +146,8 @@ object OffsetKafkaConsumerTest : Spek({
 
         given("empty topicName list") {
             val emptyTopics = emptySet<String>()
-            val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, emptyTopics, mockedMetrics, testDispatcher)
+            val partitions = 3
+            val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, emptyTopics, partitions,mockedMetrics, testDispatcher)
 
             on("call of function start") {
                 val emptyTopicPartitions = emptySet<TopicPartition>()

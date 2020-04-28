@@ -33,6 +33,7 @@ private const val kafkaBootstrapServers = "localhost:1234,10.1.14.10:8090"
 private const val T1 = "boring_topic"
 private const val T2 = "exciting_topic"
 private const val kafkaTopicsString = "$T1,$T2"
+private const val kafkaPartitions = "3"
 private val PARSED_TOPICS_SET = setOf(T1, T2)
 
 internal object ArgKafkaConsumerConfigurationTest : Spek({
@@ -52,6 +53,7 @@ internal object ArgKafkaConsumerConfigurationTest : Spek({
                         "--listen-port", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "--kafka-topics", kafkaTopicsString,
+                        "--kafka-partitions", kafkaPartitions,
                         "--disable-processing"
                 )
             }
@@ -79,7 +81,8 @@ internal object ArgKafkaConsumerConfigurationTest : Spek({
                 result = cut.parseExpectingSuccess(
                         "--listen-port", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
-                        "--kafka-topics", kafkaTopicsString)
+                        "--kafka-topics", kafkaTopicsString,
+                        "--kafka-partitions", kafkaPartitions)
             }
 
             it("should set proper port") {
@@ -100,7 +103,8 @@ internal object ArgKafkaConsumerConfigurationTest : Spek({
                 result = cut.parseExpectingSuccess(
                         "-p", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
-                        "-f", kafkaTopicsString)
+                        "-f", kafkaTopicsString,
+                        "-pn", kafkaPartitions)
             }
 
             it("should NOT disable processing") {

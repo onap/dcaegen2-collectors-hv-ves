@@ -48,7 +48,7 @@ private fun startApp(config: KafkaConsumerConfiguration): ExitSuccess {
 
         runBlocking {
             if (config.disableProcessing) {
-                OffsetKafkaConsumer(kafkaConsumer, config.kafkaTopics, MicrometerMetrics.INSTANCE)
+                OffsetKafkaConsumer(kafkaConsumer, config.kafkaTopics, config.partitionsNumber, MicrometerMetrics.INSTANCE)
                         .start()
             } else {
                 ProcessingKafkaConsumer(kafkaConsumer, config.kafkaTopics, MicrometerMetrics.INSTANCE)

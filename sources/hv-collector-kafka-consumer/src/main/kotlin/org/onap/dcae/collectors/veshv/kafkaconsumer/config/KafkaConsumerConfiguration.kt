@@ -24,6 +24,7 @@ import java.net.InetSocketAddress
 internal data class KafkaConsumerConfiguration(
         val apiAddress: InetSocketAddress,
         val kafkaTopics: Set<String>,
+        val partitionsNumber: Int,
         val kafkaBootstrapServers: String,
         val disableProcessing: Boolean
 )

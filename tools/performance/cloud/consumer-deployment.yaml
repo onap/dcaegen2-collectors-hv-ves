@@ -58,6 +58,11 @@ spec:
                 configMapKeyRef:
                   name: performance-test-config
                   key: consumer.kafka.topics
+            - name: KAFKA_PARTITIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: performance-test-config
+                  key: consumer.kafka.partitions
             - name: DISABLE_PROCESSING
 
 ---
@@ -102,6 +107,11 @@ spec:
                 configMapKeyRef:
                   name: performance-test-config
                   key: consumer.kafka.topics
+            - name: KAFKA_PARTITIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: performance-test-config
+                  key: consumer.kafka.partitions
 
 ---
 

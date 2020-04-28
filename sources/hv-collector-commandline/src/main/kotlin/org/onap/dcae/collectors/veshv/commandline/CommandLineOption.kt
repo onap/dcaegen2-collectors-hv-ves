@@ -65,6 +65,13 @@ enum class CommandLineOption(val option: Option, val required: Boolean = false) 
                 desc = "Comma-separated Kafka topics"
                 hasArgument = true
             }),
+    KAFKA_PARTITIONS(required = true,
+            option = option {
+                shortOpt = "pn"
+                longOpt = "kafka-partitions"
+                desc = "Number of partitions"
+                hasArgument = true
+            }),
     HEALTH_CHECK_API_PORT(option {
         shortOpt = "H"
         longOpt = "health-check-api-port"

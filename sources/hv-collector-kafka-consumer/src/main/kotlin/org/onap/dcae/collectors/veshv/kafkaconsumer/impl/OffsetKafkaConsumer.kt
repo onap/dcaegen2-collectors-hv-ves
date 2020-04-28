@@ -35,15 +35,20 @@ import java.time.Duration
 
 internal class OffsetKafkaConsumer(private val kafkaConsumer: KafkaConsumer<ByteArray, ByteArray>,
                                    private val topics: Set<String>,
+                                   private val partitions: Int,
                                    private val metrics: Metrics,
                                    private val dispatcher: CoroutineDispatcher = Dispatchers.IO)
     : MetricsKafkaConsumer {
 
     override suspend fun start(updateInterval: Long, pollTimeout: Duration): Job =
             GlobalScope.launch(dispatcher) {
+
                 val topicPartitions = topics.flatMap {
-                    listOf(TopicPartition(it, 0), TopicPartition(it, 1), TopicPartition(it, 2))
+                    topic -> (0..partitions-1).toList().map {
+                        TopicPartition(topic, it)
+                    }
                 }
+
                 kafkaConsumer.assign(topicPartitions)
 
                 while (isActive) {

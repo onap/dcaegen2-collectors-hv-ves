@@ -35,6 +35,7 @@ internal class ArgKafkaConsumerConfiguration : ArgBasedConfiguration<KafkaConsum
     override val cmdLineOptionsList: List<CommandLineOption> = listOf(
             LISTEN_PORT,
             KAFKA_TOPICS,
+            KAFKA_PARTITIONS,
             KAFKA_SERVERS,
             DISABLE_PROCESSING
     )
@@ -45,12 +46,14 @@ internal class ArgKafkaConsumerConfiguration : ArgBasedConfiguration<KafkaConsum
                 val kafkaTopics = cmdLine.stringValue(KAFKA_TOPICS)
                         .map { it.split(',').toSet() }
                         .bind()
+                val partitionsNumber = cmdLine.intValue(KAFKA_PARTITIONS).bind()
                 val kafkaBootstrapServers = cmdLine.stringValue(KAFKA_SERVERS).bind()
                 val disableProcessing = cmdLine.hasOption(DISABLE_PROCESSING)
 
                 KafkaConsumerConfiguration(
                         InetSocketAddress(listenPort),
                         kafkaTopics,
+                        partitionsNumber,
                         kafkaBootstrapServers,
                         disableProcessing
                 )
