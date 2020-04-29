@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d6b093e_26129144",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumer.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-04-29T07:37:06Z",
+      "side": 1,
+      "message": "You could consider trying to use kafkaConsumer.partitionsFor(topic) which could possibly eliminate the need of using new env variable.",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 17
+      },
+      "revId": "cb8ae208168a27a604c70d852e159768a91cd04f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
