@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9f17bf87_3e2e39ec",
+        "filename": "sources/hv-collector-kafka-consumer/src/main/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumer.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-04-30T11:33:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5ba864ec_66bc3bf0",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 17
+      },
+      "revId": "fd67df8e3cf23861194361f94e71d9d858f18031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "68052622_d6dfb74c",
         "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumerTest.kt",
         "patchSetId": 2
@@ -39,6 +63,24 @@
       "revId": "fd67df8e3cf23861194361f94e71d9d858f18031",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f69eb05c_f7c04472",
+        "filename": "sources/hv-collector-kafka-consumer/src/test/kotlin/org/onap/dcae/collectors/veshv/kafkaconsumer/impl/OffsetKafkaConsumerTest.kt",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 3699
+      },
+      "writtenOn": "2020-04-30T11:33:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68052622_d6dfb74c",
+      "revId": "fd67df8e3cf23861194361f94e71d9d858f18031",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
