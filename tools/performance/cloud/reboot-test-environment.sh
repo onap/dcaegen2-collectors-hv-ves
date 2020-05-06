@@ -20,7 +20,7 @@
 ONAP_NAMESPACE=onap
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
 HVVES_CONTAINER_NAME=dep-dcae-hv-ves-collector
-HV_VES_IMAGE="nexus.onap.dyn.nesc.nokia.net:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:latest"
+HV_VES_IMAGE="nexus3.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:latest"
 KAFKA_ROUTER_0_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep router-kafka-0)
 KAFKA_TOPIC_RESET_CMD='kafka-topics --delete --zookeeper message-router-zookeeper:2181 --topic HV_VES_PERF3GPP'
 HIDE_OUTPUT='grep abc | grep 123'

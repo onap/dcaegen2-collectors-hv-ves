@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
         - name: kafka-consumer-counting
-          image: nexus.onap.dyn.nesc.nokia.net:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer:latest
+          image: nexus3.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer:latest
           ports:
             - containerPort: 8080
           env:
@@ -86,7 +86,7 @@ spec:
     spec:
       containers:
         - name: kafka-processing-consumer
-          image: nexus.onap.dyn.nesc.nokia.net:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer:latest
+          image: nexus3.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-kafka-consumer:latest
           ports:
             - containerPort: 8080
           env:
