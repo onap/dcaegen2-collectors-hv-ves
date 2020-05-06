@@ -26,7 +26,8 @@ metadata:
 spec:
   containers:
     - name: hv-collector-producer
-      image: the-a-team-registry-local.esisoj70.emea.nsn-net.net/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-go-client:latest
+      imagePullPolicy: IfNotPresent
+      image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-go-client:latest
       volumeMounts:
         - name: ssl-certs
           mountPath: /ssl
