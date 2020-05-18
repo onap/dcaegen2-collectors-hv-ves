@@ -259,7 +259,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "hvves_messages_received_total - hvves_messages_sent_total",
+              "expr": "hvves_messages_received_total - hvves_messages_sent_total - hvves_messages_dropped_total",
               "legendFormat": "Processing message queue",
               "refId": "A"
             }
