@@ -76,6 +76,9 @@ metadata:
   namespace: onap
   labels:
     app: hv-collector-producer
+  annotations:
+    prometheus.io/scrape: 'hv-ves-producer'
+    prometheus.io/path: '/monitoring/prometheus'
 spec:
   selector:
     name: hv-collector-producer
