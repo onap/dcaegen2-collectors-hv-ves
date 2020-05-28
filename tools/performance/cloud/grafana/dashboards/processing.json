@@ -15,12 +15,29 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 3,
   "links": [],
   "panels": [
     {
       "cacheTimeout": null,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 4,
         "w": 9,
@@ -28,52 +45,44 @@
         "y": 0
       },
       "id": 25,
+      "interval": "250ms",
       "links": [],
       "options": {
         "colorMode": "value",
-        "fieldOptions": {
-          "calcs": [
-            "max"
-          ],
-          "defaults": {
-            "mappings": [],
-            "nullValueMode": "connected",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "none"
-          },
-          "overrides": [],
-          "values": false
-        },
         "graphMode": "none",
         "justifyMode": "center",
-        "orientation": "auto"
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "values": false
+        }
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "7.0.0",
       "targets": [
+        {
+          "expr": "sum(producer_sent_messages_total_number)",
+          "interval": "",
+          "legendFormat": "Sent by producers",
+          "refId": "A"
+        },
         {
           "expr": "sum(hvves_messages_received_total)",
           "interval": "",
           "legendFormat": "Received by HV-VES",
-          "refId": "A"
-        },
-        {
-          "expr": "sum(hvves_messages_dropped_total)",
-          "interval": "",
-          "legendFormat": "Dropped in HV-VES",
           "refId": "B"
         },
         {
           "expr": "sum(hvves_messages_sent_total)",
           "interval": "",
           "legendFormat": "Sent by HV-VES",
+          "refId": "D"
+        },
+        {
+          "expr": "sum(hvves_messages_dropped_total)",
+          "interval": "",
+          "legendFormat": "Dropped in HV-VES",
           "refId": "C"
         }
       ],
@@ -88,6 +97,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -98,6 +113,7 @@
       },
       "hiddenSeries": false,
       "id": 9,
+      "interval": "250ms",
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -178,6 +194,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:283",
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -186,6 +203,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:284",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -205,6 +223,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -215,6 +239,7 @@
       },
       "hiddenSeries": false,
       "id": 23,
+      "interval": "250ms",
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -295,6 +320,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:354",
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -303,6 +329,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:355",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -322,6 +349,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -332,7 +365,7 @@
       },
       "hiddenSeries": false,
       "id": 8,
-      "interval": "",
+      "interval": "250ms",
       "legend": {
         "alignAsTable": false,
         "avg": false,
@@ -362,23 +395,33 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(hvves_messages_received_total[1m])",
+          "expr": "sum(rate(producer_sent_messages_total_number[1s]))",
           "format": "time_series",
           "hide": false,
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Receive rate",
+          "legendFormat": "Send rate - Producers",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(hvves_messages_received_total[1s])",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Receive rate - HV-VES",
           "refId": "A"
         },
         {
-          "expr": "rate(hvves_messages_sent_total[1m])",
+          "expr": "rate(hvves_messages_sent_total[1s])",
           "format": "time_series",
           "hide": false,
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Send rate",
+          "legendFormat": "Send rate - HV-VES",
           "refId": "B"
         }
       ],
@@ -386,7 +429,7 @@
       "timeFrom": "20m",
       "timeRegions": [],
       "timeShift": null,
-      "title": "Messages rate [msg/s]",
+      "title": "Messages rate",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -402,8 +445,9 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:212",
           "decimals": null,
-          "format": "none",
+          "format": "msg/s",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -411,6 +455,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:213",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -434,6 +479,12 @@
         "#d44a3a"
       ],
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "decbytes",
       "gauge": {
         "maxValue": 100,
@@ -449,7 +500,7 @@
         "y": 13
       },
       "id": 20,
-      "interval": null,
+      "interval": "",
       "links": [],
       "mappingType": 1,
       "mappingTypes": [
@@ -510,6 +561,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 3,
       "gridPos": {
@@ -520,6 +577,7 @@
       },
       "hiddenSeries": false,
       "id": 16,
+      "interval": "250ms",
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -577,6 +635,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:426",
           "decimals": 2,
           "format": "percent",
           "label": null,
@@ -586,6 +645,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:427",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -605,6 +665,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -615,6 +681,7 @@
       },
       "hiddenSeries": false,
       "id": 22,
+      "interval": "250ms",
       "legend": {
         "alignAsTable": true,
         "avg": true,
@@ -679,6 +746,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:511",
           "format": "gbytes",
           "label": null,
           "logBase": 1,
@@ -687,6 +755,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:512",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -710,6 +779,12 @@
         "#d44a3a"
       ],
       "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "format": "decbytes",
       "gauge": {
         "maxValue": 100,
@@ -790,6 +865,12 @@
         }
       ],
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 3,
@@ -841,7 +922,7 @@
       ],
       "title": "Messages sent per topic",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     },
     {
       "columns": [
@@ -851,6 +932,12 @@
         }
       ],
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fontSize": "100%",
       "gridPos": {
         "h": 3,
@@ -902,11 +989,11 @@
       ],
       "title": "Messages processed per pod",
       "transform": "timeseries_aggregations",
-      "type": "table"
+      "type": "table-old"
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 22,
+  "schemaVersion": 25,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -918,8 +1005,6 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "1s",
-      "5s",
       "10s",
       "30s",
       "1m",
@@ -945,8 +1030,5 @@
   "timezone": "",
   "title": "HV-VES processing",
   "uid": "V94Kjlwmz",
-  "variables": {
-    "list": []
-  },
   "version": 1
 }
