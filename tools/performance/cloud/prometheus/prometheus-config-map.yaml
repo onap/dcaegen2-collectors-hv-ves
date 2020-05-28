@@ -46,9 +46,38 @@ data:
           - targets: ['kafka-counting-consumer.onap:6062']
 
       - job_name: 'ves-hv-collector'
+        scrape_interval: 250ms
         metrics_path: '/monitoring/prometheus'
         static_configs:
           - targets: ['dcae-hv-ves-collector.onap:6060']
+
+      - job_name: 'ves-hv-producer'
+        scrape_interval: 250ms
+        kubernetes_sd_configs:
+        - role: endpoints
+
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+          action: keep
+          regex: hv-ves-producer
+        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - action: labelmap
+          regex: __meta_kubernetes_service_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          action: replace
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_service_name]
+          action: replace
+          target_label: kubernetes_name
+        - source_labels: [__meta_kubernetes_endpoint_node_name]
+          action: replace
+          target_label: node_name
+        - source_labels: [__meta_kubernetes_endpoint_address_target_name]
+          action: replace
+          target_label: pod_name
 
       - job_name: 'kubernetes-cadvisor'
 
