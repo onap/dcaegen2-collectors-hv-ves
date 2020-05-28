@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "61c25443_4572c38e",
+        "filename": "tools/performance/cloud/producer-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-05-28T12:56:04Z",
+      "side": 1,
+      "message": "2020",
+      "range": {
+        "startLine": 4,
+        "startChar": 16,
+        "endLine": 4,
+        "endChar": 20
+      },
+      "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bb62eec_61ec21d3",
+        "filename": "tools/performance/cloud/producer-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-05-28T12:56:04Z",
+      "side": 1,
+      "message": "why two labels?",
+      "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcacd76d_b04f223c",
+        "filename": "tools/performance/cloud/producer-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-05-28T12:56:04Z",
+      "side": 1,
+      "message": "For latest imeage I would propose Always since not very \"fresh\" latest could be already present on machine.",
+      "range": {
+        "startLine": 39,
+        "startChar": 27,
+        "endLine": 39,
+        "endChar": 39
+      },
+      "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
