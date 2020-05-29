@@ -18,12 +18,13 @@
 # ============LICENSE_END=========================================================
 
 SCRIPT_DIRECTORY="$(pwd "$0")"
-CONTAINERS_COUNT=1
-COMPLETED_PRODUCERS_SUM=0
-LOAD_TEST="false"
+PRODUCERS_COUNT=10
 TEST_CONFIG_MAP=performance-test-config
 PROPERTIES_FILE=${SCRIPT_DIRECTORY}/test.properties
 PRODUCER_APPS_LABEL=hv-collector-producer
+PRODUCER_APPS_DEPLOYMENT=hv-collector-producer-deployment
+PRODUCER_SERVICE=hv-collector-producer
+PRODUCER_PROXY_APPS_LABEL=hv-collector-producer-proxy
 CONSUMER_APPS_LABEL=hv-collector-kafka-consumer
 PROMETHEUS_CONF_LABEL=prometheus-server-conf
 PROMETHEUS_APPS_LABEL=hv-collector-prometheus
@@ -32,9 +33,6 @@ GRAFANA_DATASOURCE=grafana-datasources
 GRAFANA_DASHBOARDS=grafana-dashboards
 GRAFANA_DASHBOARD_PROVIDERS=grafana-dashboards-providers
 ONAP_NAMESPACE=onap
-MAXIMUM_BACK_OFF_CHECK_ITERATIONS=30
-CHECK_NUMBER=0
-PRODUCERS_TO_RECREATE=0
 NAME_REASON_PATTERN="custom-columns=NAME:.metadata.name,REASON:.status.containerStatuses[].state.waiting.reason"
 HVVES_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep hv-ves-collector)
 HVVES_CERT_PATH=/etc/ves-hv/ssl/server
@@ -44,6 +42,10 @@ CALC_RETENTION_TIME_IN_MS_CMD='expr $KAFKA_RETENTION_TIME_MINUTES \* $MILISECOND
 KAFKA_ROUTER_0_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep router-kafka-0)
 KAFKA_SET_TOPIC_RETENTION_TIME_CMD='kafka-topics --zookeeper message-router-zookeeper:2181 --alter --topic HV_VES_PERF3GPP --config retention.ms='
 HIDE_OUTPUT='grep abc | grep 123'
+CONTENT_TYPE_HEADER='Content-Type: application/json'
+REQUEST_ENDPOINT="/"
+REQUEST_JSON_DATA="{}"
+PRODUCER_INTERNAL_PORT=8080
 
 function clean() {
     echo "Cleaning up environment"
@@ -72,9 +74,6 @@ function clean() {
     echo "Attempting to delete consumer deployments"
     kubectl delete deployments -l app=${CONSUMER_APPS_LABEL} -n ${ONAP_NAMESPACE}
 
-    echo "Attempting to delete producer pods"
-    kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
-
     echo "Attempting to delete client certs secret"
     kubectl delete secret cert -n ${ONAP_NAMESPACE}
 
@@ -82,6 +81,14 @@ function clean() {
     ./configure-consul.sh true
 
     echo "Environment clean up finished!"
+}
+
+function cleanAll() {
+    clean
+    echo "Attepting to delete producer pods"
+    kubectl delete service,deployments -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
+    echo "Attepting to delete producer-proxy pod"
+    kubectl delete deployments -l app=${PRODUCER_PROXY_APPS_LABEL} -n ${ONAP_NAMESPACE}
 }
 
 function copy_certs_to_hvves() {
@@ -98,21 +105,6 @@ function copy_certs_to_hvves() {
 function set_kafka_retention_time() {
     echo "Setting message retention time"
     kubectl exec -it ${KAFKA_ROUTER_0_POD_NAME} -n ${ONAP_NAMESPACE} -- ${KAFKA_SET_TOPIC_RETENTION_TIME_CMD}$(eval $CALC_RETENTION_TIME_IN_MS_CMD) | eval $HIDE_OUTPUT
-}
-
-function create_producers() {
-    echo "Recreating test properties ConfigMap from: $PROPERTIES_FILE"
-    kubectl delete configmap ${TEST_CONFIG_MAP} -n ${ONAP_NAMESPACE}
-    kubectl create configmap ${TEST_CONFIG_MAP} --from-env-file=${PROPERTIES_FILE} -n ${ONAP_NAMESPACE}
-
-    set -e
-    for i in $(seq 1 ${CONTAINERS_COUNT});
-    do
-        echo "Creating ${i}/${CONTAINERS_COUNT} producer"
-        kubectl create -f producer-pod.yaml -n ${ONAP_NAMESPACE}
-    done
-    echo "Producers created"
-    set +e
 }
 
 function generate_certs() {
@@ -145,7 +137,9 @@ function print_test_setup_info() {
     echo "Starting cloud based performance tests"
     echo "________________________________________"
     echo "Test configuration:"
-    echo "Producer containers count: ${CONTAINERS_COUNT}"
+    echo "Producer pods count: ${PRODUCERS_COUNT}"
+    echo "Sending scheme:"
+    echo ${REQUEST_JSON_DATA}
     echo "Properties file path: ${PROPERTIES_FILE}"
     echo "Retention time of kafka messages in minutes: ${KAFKA_RETENTION_TIME_MINUTES}"
     echo "________________________________________"
@@ -154,26 +148,36 @@ function print_test_setup_info() {
 function usage() {
     echo ""
     echo "Run cloud based HV-VES performance test"
-    echo "Usage $0 gen_certs|setup|start|clean|help"
-    echo "  gen_certs: generate certs in ../../ssl directory"
-    echo "  setup    : set up ConfigMap and consumers"
-    echo "  start    : create producers - start the performance test"
-    echo "    Optional parameters:"
-    echo "      --load              : should test keep defined containers number till script interruption (false)"
-    echo "      --containers        : number of producer containers to create (1)"
-    echo "      --properties-file   : path to file with benchmark properties (./test.properties)"
-    echo "      --retention-time-minutes : messages retention time on kafka in minutes (60)"
-    echo "  clean    : remove ConfigMap, HV-VES consumers and producers"
-    echo "  help     : print usage"
+    echo "Usage $0 gen_certs|setup|send_basic_config|start_interval|start_instant|stop|reset_producers|clean|help"
+    echo "  gen_certs :    generate certs in ../../ssl directory"
+    echo "  setup     :    set up ConfigMaps and consumers"
+    echo "  setup_all     :    set up ConfigMaps consumers and producers"
+    echo "  send_basic_config : send basic configuration, located in producers-config/basic-config.json to each producer"
+    echo "  start_interval    : start interval mode, config file is located in producers-config/interval-config.json"
+    echo "     Optional parameters:"
+    echo "        --producers               : number of producers in deployment (10)"
+    echo "        --retention-time-minutes  : messages retention time on kafka in minutes (60)"
+    echo "  start_instant     : start instant mode, config file is located in producers-config/instant-config.json"
+    echo "     Optional parameters:"
+    echo "        --producers               : number of producers in deployment (10)"
+    echo "        --retention-time-minutes  : messages retention time on kafka in minutes (60)"
+    echo "  scale_producers   : scale producer deploymet to number provide in argument"
+    echo "  stop      : stop all producers"
+    echo "  reset_producers   : reset all metrics on each producer"
+    echo "  clean     : remove ConfigMap, HV-VES consumers"
+    echo "  clean_all     : remove ConfigMap, HV-VES consumers and producers"
+    echo "  help      : print usage"
     echo "Example invocations:"
     echo "./cloud-based-performance-test.sh gen_certs"
     echo "./cloud-based-performance-test.sh setup"
-    echo "./cloud-based-performance-test.sh start"
-    echo "./cloud-based-performance-test.sh start --containers 10"
-    echo "./cloud-based-performance-test.sh start --load true --containers 10"
-    echo "./cloud-based-performance-test.sh start --load true --containers 10 --retention-time-minutes 50"
-    echo "./cloud-based-performance-test.sh start --properties-file ~/other_test.properties"
+    echo "./cloud-based-performance-test.sh setup_all"
+    echo "./cloud-based-performance-test.sh send_basic_config"
+    echo "./cloud-based-performance-test.sh start_interval"
+    echo "./cloud-based-performance-test.sh start_interval --producers 8"
+    echo "./cloud-based-performance-test.sh start_instant"
+    echo "./cloud-based-performance-test.sh scale_producers 8"
     echo "./cloud-based-performance-test.sh clean"
+    echo "./cloud-based-performance-test.sh clean_all"
     exit 1
 }
 
@@ -221,61 +225,105 @@ function setup_environment() {
     echo "Setting up environment finished!"
 }
 
-function start_load_tests() {
-    print_test_setup_info
+function setupAll() {
+    setup_environment
+    echo "Creating producer deployment"
+    kubectl apply -f producer-deployment.yaml
 
-    set_kafka_retention_time
-
-    echo "CTRL + C to stop/interrupt this script"
-    create_producers
-
-    trap "handle_key_interrupt" INT
-
-    echo "Constant producer number keeper started working"
-    while :; do
-        PRODUCERS_TO_RECREATE=$((CONTAINERS_COUNT-$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Running")))
-        handle_backoffs
-
-        set -e
-        for i in $(seq 1 ${PRODUCERS_TO_RECREATE});
-        do
-            echo "Recreating ${i}/${PRODUCERS_TO_RECREATE} producer"
-            kubectl create -f producer-pod.yaml -n ${ONAP_NAMESPACE}
-        done
-        set +e
-        COMPLETED_PRODUCERS_SUM=$((COMPLETED_PRODUCERS_SUM + PRODUCERS_TO_RECREATE))
-        echo "Attempting to clear completed producers"
-        kubectl delete pod --field-selector=status.phase==Succeeded -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
-
-        [[ ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]] && break
-        sleep 1
-    done
-
-    trap SIGINT
-    exit 0
+    echo "Creating producer-proxy pod"
+    kubectl apply -f producer-proxy.yaml
 }
 
-function start_performance_test() {
-    print_test_setup_info
-
-    set_kafka_retention_time
-
-    create_producers
-
-    echo "Waiting for producers completion"
-    while :; do
-        COMPLETED_PRODUCERS=$(kubectl get pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "Completed")
-        handle_backoffs
-
-        [[ ${COMPLETED_PRODUCERS} -eq ${CONTAINERS_COUNT} || ${CHECK_NUMBER} -gt ${MAXIMUM_BACK_OFF_CHECK_ITERATIONS} ]] && break
-        sleep 1
+function scaleProducerDeployment() {
+  echo "Scaling prodcuer deployment to ${PRODUCERS_COUNT}"
+  kubectl scale --replicas=${PRODUCERS_COUNT} deployment ${PRODUCER_APPS_DEPLOYMENT} -n ${ONAP_NAMESPACE}
+  RUNNING_PRODUCERS=""
+  while [ "${RUNNING_PRODUCERS}" != "${PRODUCERS_COUNT}" ]; do
+      RUNNING_PRODUCERS=$(kubectl -n ${ONAP_NAMESPACE} get pods -l app=${PRODUCER_APPS_LABEL} | grep -c "Running")
+      sleep 1s
     done
-
-    echo "Attempting to delete producer pods"
-    kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
-    echo "Performance test finished"
-    exit 0
+  echo "Producers are ready"
 }
+
+function setProducersArrayInternalIP() {
+  PRODUCER_IP_ARRAY=$(kubectl -n ${ONAP_NAMESPACE} get endpoints ${PRODUCER_SERVICE} -o jsonpath="{.subsets[*].addresses[*].ip}")
+}
+
+function sendPostRequestToEachProducer() {
+  setProducersArrayInternalIP
+  PROXY_POD=$(kubectl -n ${ONAP_NAMESPACE} get pods -l app=${PRODUCER_PROXY_APPS_LABEL} -o name)
+  echo "Sending POST request to each producer"
+  for item in ${PRODUCER_IP_ARRAY[*]}
+    do
+    URL="${item}:${PRODUCER_INTERNAL_PORT}${REQUEST_ENDPOINT}"
+    echo ${URL}
+    kubectl -n onap exec -it ${PROXY_POD} -- curl -H "${CONTENT_TYPE_HEADER}" --request POST -d "${REQUEST_JSON_DATA}" ${URL}
+    done
+  echo "Request was send to each producer"
+}
+
+function sendGetRequestToEachProducer() {
+  setProducersArrayInternalIP
+  PROXY_POD=$(kubectl -n ${ONAP_NAMESPACE} get pods -l app=${PRODUCER_PROXY_APPS_LABEL} -o name)
+  echo "Sending GET request to each producer"
+  for item in ${PRODUCER_IP_ARRAY[*]}
+    do
+    URL="${item}:${PRODUCER_INTERNAL_PORT}${REQUEST_ENDPOINT}"
+    echo ${URL}
+    kubectl -n onap exec -it ${PROXY_POD} -- curl --request GET  ${URL}
+    done
+  echo "Request was send to each producer"
+}
+
+function send_basic_configuration() {
+  REQUEST_ENDPOINT="/configuration"
+  REQUEST_JSON_DATA=$(cat producers-config/basic-config.json)
+  echo "Sending basic configuration: "
+  echo ${REQUEST_JSON_DATA}
+  sendPostRequestToEachProducer
+  echo "Configuration was send to each producer pod"
+  exit 0
+}
+
+function start_interval_mode() {
+  set_kafka_retention_time
+  REQUEST_ENDPOINT="/start"
+  REQUEST_JSON_DATA=$(cat producers-config/interval-config.json)
+  print_test_setup_info
+  echo "Sending start interval command to producer pods"
+  sendPostRequestToEachProducer
+  echo "Command was send to each producer pod"
+  exit 0
+}
+
+function start_instant_mode() {
+  set_kafka_retention_time
+  REQUEST_ENDPOINT="/instant"
+  REQUEST_JSON_DATA=$(cat producers-config/basic-config.json)
+  print_test_setup_info
+
+  echo "Sending start instant command to producer pods"
+  sendPostRequestToEachProducer
+  echo "Command was send to each producer pod"
+  exit 0
+}
+function stop_producer_pods() {
+  REQUEST_ENDPOINT="/cancel"
+
+  echo "Sending stop command"
+  sendGetRequestToEachProducer
+  echo "Stop command was send to each producer pod"
+  exit 0
+}
+function reset_producer_pods() {
+  REQUEST_ENDPOINT="/cancel"
+
+  echo "Sending reset command"
+  sendGetRequestToEachProducer
+  echo "Reset command was send to each producer pod"
+  exit 0
+}
+
 
 cd ${SCRIPT_DIRECTORY}
 
@@ -291,18 +339,28 @@ else
             setup)
             setup_environment
             ;;
+            setup_all)
+            setupAll
+            ;;
             start)
+            echo "Option start is deprecated. Last support commit: 3e7de0deb033e485d519c74feaffecc02e7e9dc7"
+            ;;
+            clean)
+            clean
+            ;;
+            clean_all)
+            cleanAll
+            ;;
+            send_basic_config)
+            send_basic_configuration
+            ;;
+            start_interval)
             shift 1
             while [[ $(($#)) -gt 0 ]]; do
                 case "${1}" in
-                    --load)
-                        LOAD_TEST=${2}
-                        ;;
-                    --containers)
-                        CONTAINERS_COUNT=${2}
-                        ;;
-                    --properties-file)
-                        PROPERTIES_FILE=${2}
+                    --producers)
+                        PRODUCERS_COUNT=${2}
+                        scaleProducerDeployment
                         ;;
                     --retention-time-minutes)
                         KAFKA_RETENTION_TIME_MINUTES=${2}
@@ -314,14 +372,39 @@ else
                 esac
                 shift 2
             done
-            if [ ${LOAD_TEST} == "true" ] ; then
-                start_load_tests
-            else
-                start_performance_test
-            fi
+            start_interval_mode
             ;;
-            clean)
-            clean
+            start_instant)
+            shift 1
+            while [[ $(($#)) -gt 0 ]]; do
+                case "${1}" in
+                    --producers)
+                        PRODUCERS_COUNT=${2}
+                        scaleProducerDeployment
+                        ;;
+                    --retention-time-minutes)
+                        KAFKA_RETENTION_TIME_MINUTES=${2}
+                        ;;
+                    *)
+                        echo "Unknown option: ${1}"
+                        usage
+                        ;;
+                esac
+                shift 2
+            done
+            start_instant_mode
+            ;;
+            stop)
+            stop_producer_pods
+            ;;
+            reset_producers)
+            reset_producer_pods
+            ;;
+            scale_producers)
+            shift 1
+            PRODUCERS_COUNT=${1}
+            scaleProducerDeployment
+            exit 0
             ;;
             help)
             usage
