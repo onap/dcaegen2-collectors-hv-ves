@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b8a809ca_1955dd3c",
+        "filename": "tools/performance/cloud/producer-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-05-29T06:08:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61c25443_4572c38e",
+      "range": {
+        "startLine": 4,
+        "startChar": 16,
+        "endLine": 4,
+        "endChar": 20
+      },
+      "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7bb62eec_61ec21d3",
         "filename": "tools/performance/cloud/producer-deployment.yaml",
         "patchSetId": 2
@@ -39,6 +63,24 @@
       "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2821c8b5_d6f87532",
+        "filename": "tools/performance/cloud/producer-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-05-29T06:08:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7bb62eec_61ec21d3",
+      "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -62,6 +104,30 @@
       "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "382e846a_13b9a96d",
+        "filename": "tools/performance/cloud/producer-deployment.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-05-29T06:08:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bcacd76d_b04f223c",
+      "range": {
+        "startLine": 39,
+        "startChar": 27,
+        "endLine": 39,
+        "endChar": 39
+      },
+      "revId": "283fe75fe57af2076114d0b2f3f6db53fd4da921",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
