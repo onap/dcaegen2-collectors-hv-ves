@@ -1,0 +1,12 @@
+{
+  "intervalConfigs": [
+    {
+      "duration": 1,
+      "interval": 100
+    },
+    {
+      "duration": 2,
+       "interval": 100
+    }
+  ]
+}
