@@ -63,6 +63,10 @@ function rebootEnvironment(){
 
     ./cloud-based-performance-test.sh setup | formatOutput
 
+    ./cloud-based-performance-test.sh stop | formatOutput
+
+    ./cloud-based-performance-test.sh reset_producers | formatOutput
+
     echo "${GREEN}Environment ready!${NO_COLOR}"
 
 }
