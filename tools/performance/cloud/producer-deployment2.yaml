@@ -1,0 +1,87 @@
+# ============LICENSE_START=======================================================
+# dcaegen2-collectors-veshv
+# ================================================================================
+# Copyright (C) 2019 NOKIA
+# ================================================================================
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============LICENSE_END=========================================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hv-collector-producer-deployment
+  namespace: onap
+  labels:
+    app: hv-collector-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hv-collector-producer
+  template:
+    metadata:
+      labels:
+        app: hv-collector-producer
+        name: hv-collector-producer
+    spec:
+      containers:
+        - name: hv-collector-producer
+          imagePullPolicy: IfNotPresent
+          image: onap-dev-local.esisoj70.emea.nsn-net.net/towrobel/my-producer:1.0.1
+          volumeMounts:
+            - name: ssl-certs
+              mountPath: /ssl
+              readOnly: true
+          env:
+            - name: HV_VES_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: performance-test-config
+                  key: producer.hvVesAddress
+            - name: CERT_FILE
+              valueFrom:
+                configMapKeyRef:
+                  name: performance-test-config
+                  key: client.cert.path
+            - name: CERT_PASS_FILE
+              valueFrom:
+                configMapKeyRef:
+                  name: performance-test-config
+                  key: client.cert.pass.path
+          args: ["--address", "$(HV_VES_ADDRESS)",
+                 "--certfile", "$(CERT_FILE)",
+                 "--certpass", "$(CERT_PASS_FILE)"]
+      volumes:
+        - name: ssl-certs
+          secret:
+            secretName: cert
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hv-collector-producer
+  namespace: onap
+  labels:
+    app: hv-collector-producer
+spec:
+  selector:
+    name: hv-collector-producer
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30002

@@ -19,11 +19,14 @@
 
 SCRIPT_DIRECTORY="$(pwd "$0")"
 CONTAINERS_COUNT=1
+PRODUCER_COUNT=1
 COMPLETED_PRODUCERS_SUM=0
 LOAD_TEST="false"
 TEST_CONFIG_MAP=performance-test-config
 PROPERTIES_FILE=${SCRIPT_DIRECTORY}/test.properties
 PRODUCER_APPS_LABEL=hv-collector-producer
+PRODUCER_APPS_DEPLOYMENT=hv-collector-producer-deployment
+PRODUCER_PROXY_APPS_LABEL=hv-collector-producer-proxy
 CONSUMER_APPS_LABEL=hv-collector-kafka-consumer
 PROMETHEUS_CONF_LABEL=prometheus-server-conf
 PROMETHEUS_APPS_LABEL=hv-collector-prometheus
@@ -44,6 +47,7 @@ CALC_RETENTION_TIME_IN_MS_CMD='expr $KAFKA_RETENTION_TIME_MINUTES \* $MILISECOND
 KAFKA_ROUTER_0_POD_NAME=$(kubectl -n ${ONAP_NAMESPACE} get pods --no-headers=true -o custom-columns=:metadata.name | grep router-kafka-0)
 KAFKA_SET_TOPIC_RETENTION_TIME_CMD='kafka-topics --zookeeper message-router-zookeeper:2181 --alter --topic HV_VES_PERF3GPP --config retention.ms='
 HIDE_OUTPUT='grep abc | grep 123'
+CONTENT_TYPE_HEADER='Content-Type: application/json'
 
 function clean() {
     echo "Cleaning up environment"
@@ -72,8 +76,10 @@ function clean() {
     echo "Attempting to delete consumer deployments"
     kubectl delete deployments -l app=${CONSUMER_APPS_LABEL} -n ${ONAP_NAMESPACE}
 
-    echo "Attempting to delete producer pods"
-    kubectl delete pods -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
+    echo "Attepting to delete producer pods"
+    kubectl delete service,deployments -l app=${PRODUCER_APPS_LABEL} -n ${ONAP_NAMESPACE}
+    echo "Attepting to delete producer-proxy pod"
+    kubectl delete deployments -l app=${PRODUCER_PROXY_APPS_LABEL} -n ${ONAP_NAMESPACE}
 
     echo "Attempting to delete client certs secret"
     kubectl delete secret cert -n ${ONAP_NAMESPACE}
@@ -214,6 +220,12 @@ function setup_environment() {
     echo "Creating grafana deployment"
     kubectl apply -f grafana-deployment.yaml
 
+    echo "Creating producer deployment"
+    kubectl apply -f producer-deployment2.yaml
+
+    echo "Creating producer-proxy pod"
+    kubectl apply -f producer-proxy.yaml
+
     echo "Waiting for consumers to be running."
     while [[ $(kubectl get pods -l app=${CONSUMER_APPS_LABEL} -n ${ONAP_NAMESPACE} | grep -c "unhealthy\|starting") -ne 0 ]] ; do
         sleep 1
@@ -254,6 +266,10 @@ function start_load_tests() {
     trap SIGINT
     exit 0
 }
+function scale_producer_deployment() {
+  echo "Scaling prodcuer deployment to ..."
+  kubectl scale --replicas=${PRODUCER_COUNT} deployment ${PRODUCER_APPS_DEPLOYMENT} -n ${ONAP_NAMESPACE}
+}
 
 function start_performance_test() {
     print_test_setup_info
@@ -261,6 +277,7 @@ function start_performance_test() {
     set_kafka_retention_time
 
     create_producers
+    echo "cheacking producer status"
 
     echo "Waiting for producers completion"
     while :; do
@@ -276,6 +293,82 @@ function start_performance_test() {
     echo "Performance test finished"
     exit 0
 }
+function setProducersArrayInternalIP() {
+  PRODUCER_IP_ARRAY=$(kubectl get -n onap endpoints hv-collector-producer -o jsonpath="{.subsets[*].addresses[*].ip}")
+}
+
+function send_basic_configuration() {
+
+  setProducersArrayInternalIP
+
+  PROXY_POD=$(kubectl -n onap get pods -l app=hv-collector-producer-proxy -o name)
+  BASIC_CONFIG=$(cat producers-config/basic-config.json)
+  echo "Sending basic configuration"
+   for item in ${PRODUCER_IP_ARRAY[*]}
+    do
+    URL="${item}:8080/configuration"
+    kubectl -n onap exec -it ${PROXY_POD} -- curl -H "${CONTENT_TYPE_HEADER}" --request POST -d "${BASIC_CONFIG}" ${URL}
+    done
+  echo "Configuration was send to each producer pod"
+}
+
+function start_interval_mode() {
+  set_kafka_retention_time
+  setProducersArrayInternalIP
+
+  PROXY_POD=$(kubectl -n onap get pods -l app=hv-collector-producer-proxy -o name)
+  INTERVAL_CONFIG=$(cat producers-config/interval-config.json)
+  echo "Sending start interval request to producer pods"
+   for item in ${PRODUCER_IP_ARRAY[*]}
+    do
+    URL="${item}:8080/start"
+    kubectl -n onap exec -it ${PROXY_POD} -- curl -H "${CONTENT_TYPE_HEADER}" --request POST -d "${INTERVAL_CONFIG}" ${URL}
+    done
+  echo "Request was send to each producer pod"
+}
+
+function start_instant_mode() {
+  set_kafka_retention_time
+  setProducersArrayInternalIP
+
+  PROXY_POD=$(kubectl -n onap get pods -l app=hv-collector-producer-proxy -o name)
+  BASIC_CONFIG=$(cat producers-config/basic-config.json)
+  echo "Sending start instant request to producer pods"
+   for item in ${PRODUCER_IP_ARRAY[*]}
+    do
+    URL="${item}:8080/instant"
+    kubectl -n onap exec -it ${PROXY_POD} -- curl -H "${CONTENT_TYPE_HEADER}" --request POST -d "${BASIC_CONFIG}" ${URL}
+    done
+  echo "Request was send to each producer pod"
+}
+function stop_producer_pods() {
+
+  setProducersArrayInternalIP
+
+  PROXY_POD=$(kubectl -n onap get pods -l app=hv-collector-producer-proxy -o name)
+  echo "Sending stop request"
+   for item in ${PRODUCER_IP_ARRAY[*]}
+    do
+    URL="${item}:8080/cancel"
+    kubectl -n onap exec -it ${PROXY_POD} -- curl  --request GET  ${URL}
+    done
+  echo "Stop request was send to each producer pod"
+}
+function reset_producer_pods() {
+
+  setProducersArrayInternalIP
+
+  PROXY_POD=$(kubectl -n onap get pods -l app=hv-collector-producer-proxy -o name)
+  echo "Sending reset request"
+   for item in ${PRODUCER_IP_ARRAY[*]}
+    do
+    URL="${item}:8080/reset"
+    kubectl -n onap exec -it ${PROXY_POD} -- curl --request GET ${URL}
+    done
+  echo "Reset was send to each producer pod"
+}
+
+
 
 cd ${SCRIPT_DIRECTORY}
 
@@ -323,6 +416,22 @@ else
             clean)
             clean
             ;;
+            send_basic_config)
+            send_basic_configuration
+            ;;
+            start_interval)
+            start_interval_mode
+            ;;
+            start_instant)
+            start_instant_mode
+            ;;
+            stop)
+            stop_producer_pods
+            ;;
+            reset_producers)
+            reset_producer_pods
+            ;;
+
             help)
             usage
             ;;
