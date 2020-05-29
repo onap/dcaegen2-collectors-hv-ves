@@ -80,7 +80,7 @@ metadata:
     prometheus.io/path: '/monitoring/prometheus'
 spec:
   selector:
-    name: hv-collector-producer
+    app: hv-collector-producer
   type: NodePort
   ports:
     - protocol: TCP
