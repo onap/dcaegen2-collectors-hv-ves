@@ -45,6 +45,53 @@
       "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fc92faf_b0e041ca",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-06-02T08:13:03Z",
+      "side": 1,
+      "message": "I see that that the number is taken from file.",
+      "parentUuid": "bfe3777e_655e56c4",
+      "range": {
+        "startLine": 377,
+        "startChar": 11,
+        "endLine": 394,
+        "endChar": 16
+      },
+      "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbd8d37b_1538e4f3",
+        "filename": "tools/performance/cloud/producer-proxy.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-06-02T08:13:03Z",
+      "side": 1,
+      "message": "Doesn\u0027t this image need some copyright notice? MIT license.",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 4
+      },
+      "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
