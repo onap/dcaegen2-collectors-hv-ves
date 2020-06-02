@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "31c0b47a_7b6f7479",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-06-02T13:03:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "404bf621_5b9f54d2",
+      "range": {
+        "startLine": 290,
+        "startChar": 21,
+        "endLine": 290,
+        "endChar": 26
+      },
+      "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bfe3777e_655e56c4",
         "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
         "patchSetId": 4
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "4930f5d9_e9eb7f5f",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-06-02T13:03:25Z",
+      "side": 1,
+      "message": "I decided using one conventions - json configuration files.",
+      "parentUuid": "6fc92faf_b0e041ca",
+      "range": {
+        "startLine": 377,
+        "startChar": 11,
+        "endLine": 394,
+        "endChar": 16
+      },
+      "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bbd8d37b_1538e4f3",
         "filename": "tools/performance/cloud/producer-proxy.yaml",
         "patchSetId": 4
@@ -83,6 +131,30 @@
       "writtenOn": "2020-06-02T08:13:03Z",
       "side": 1,
       "message": "Doesn\u0027t this image need some copyright notice? MIT license.",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 4
+      },
+      "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c859993_db2bc9c0",
+        "filename": "tools/performance/cloud/producer-proxy.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2020-06-02T13:03:25Z",
+      "side": 1,
+      "message": "Image was change to alpine.",
+      "parentUuid": "bbd8d37b_1538e4f3",
       "range": {
         "startLine": 40,
         "startChar": 0,
