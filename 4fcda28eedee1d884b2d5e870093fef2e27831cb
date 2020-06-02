@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "404bf621_5b9f54d2",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-06-02T07:54:33Z",
+      "side": 1,
+      "message": "/start was renamed to /interval",
+      "range": {
+        "startLine": 290,
+        "startChar": 21,
+        "endLine": 290,
+        "endChar": 26
+      },
+      "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bfe3777e_655e56c4",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-06-02T07:54:33Z",
+      "side": 1,
+      "message": "Consider adding flag for number of connecions",
+      "range": {
+        "startLine": 377,
+        "startChar": 11,
+        "endLine": 394,
+        "endChar": 16
+      },
+      "revId": "4fcda28eedee1d884b2d5e870093fef2e27831cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
