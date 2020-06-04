@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "086907dc_d0461d1b",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-06-04T11:12:05Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 251,
+        "startChar": 47,
+        "endLine": 251,
+        "endChar": 54
+      },
+      "revId": "2c51f8902d06e92169ef4f6913c2f8a31ac933e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c36f5ba4_857d32de",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-06-04T11:12:05Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 266,
+        "startChar": 46,
+        "endLine": 266,
+        "endChar": 53
+      },
+      "revId": "2c51f8902d06e92169ef4f6913c2f8a31ac933e6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
