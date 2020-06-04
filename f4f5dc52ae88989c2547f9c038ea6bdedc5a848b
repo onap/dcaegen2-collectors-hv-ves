@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8607acba_612cf700",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2020-06-04T08:05:49Z",
+      "side": 1,
+      "message": "You need to use function name - send_configuration",
+      "range": {
+        "startLine": 364,
+        "startChar": 24,
+        "endLine": 364,
+        "endChar": 35
+      },
+      "revId": "f4f5dc52ae88989c2547f9c038ea6bdedc5a848b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
