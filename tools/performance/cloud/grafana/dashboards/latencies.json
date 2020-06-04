@@ -15,7 +15,6 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 5,
   "links": [],
   "panels": [
     {
@@ -24,6 +23,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -112,7 +117,8 @@
       },
       "yaxes": [
         {
-          "decimals": 2,
+          "$$hashKey": "object:228",
+          "decimals": null,
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -121,6 +127,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:229",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -140,6 +147,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -228,7 +241,8 @@
       },
       "yaxes": [
         {
-          "decimals": 2,
+          "$$hashKey": "object:135",
+          "decimals": null,
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -237,6 +251,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:136",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -256,6 +271,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -340,7 +361,8 @@
       },
       "yaxes": [
         {
-          "decimals": 2,
+          "$$hashKey": "object:310",
+          "decimals": null,
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -349,6 +371,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:311",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -368,6 +391,12 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
       "fill": 0,
       "fillGradient": 0,
       "gridPos": {
@@ -446,6 +475,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:48",
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -454,6 +484,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:49",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -469,7 +500,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 22,
+  "schemaVersion": 25,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -496,8 +527,5 @@
   "timezone": "",
   "title": "Latencies",
   "uid": "k22_V1qZk",
-  "variables": {
-    "list": []
-  },
   "version": 1
 }
