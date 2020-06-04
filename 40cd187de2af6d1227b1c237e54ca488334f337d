@@ -1,0 +1,107 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d73ce01d_fb6dc063",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-06-04T07:29:35Z",
+      "side": 1,
+      "message": "Since its not used any more delete it.",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 136,
+        "endChar": 1
+      },
+      "revId": "40cd187de2af6d1227b1c237e54ca488334f337d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2790ca6_9bfc266a",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-06-04T07:29:35Z",
+      "side": 1,
+      "message": "rename it to: \"send_config\". In description remove basic, add info that it is producer config.",
+      "revId": "40cd187de2af6d1227b1c237e54ca488334f337d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79c4298e_4516f4c4",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-06-04T07:29:35Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 167,
+        "startChar": 47,
+        "endLine": 167,
+        "endChar": 56
+      },
+      "revId": "40cd187de2af6d1227b1c237e54ca488334f337d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e128abb_ef1944e0",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-06-04T07:29:35Z",
+      "side": 1,
+      "message": "In curl use one type of flags consequently. I propose short ones.",
+      "revId": "40cd187de2af6d1227b1c237e54ca488334f337d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f73e5c6e_6924716b",
+        "filename": "tools/performance/cloud/cloud-based-performance-test.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 2837
+      },
+      "writtenOn": "2020-06-04T07:29:35Z",
+      "side": 1,
+      "message": "same like above",
+      "range": {
+        "startLine": 281,
+        "startChar": 0,
+        "endLine": 281,
+        "endChar": 64
+      },
+      "revId": "40cd187de2af6d1227b1c237e54ca488334f337d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
