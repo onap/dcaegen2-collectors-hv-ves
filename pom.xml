@@ -478,6 +478,11 @@
                 <version>1.8.0-beta1</version>
             </dependency>
             <dependency>
+                <groupId>io.projectreactor.netty</groupId>
+                <artifactId>reactor-netty</artifactId>
+                <version>0.9.5.RELEASE</version>
+            </dependency>
+            <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
                 <!-- remember to update netty native bindings versions -->
