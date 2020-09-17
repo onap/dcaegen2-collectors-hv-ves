@@ -109,33 +109,20 @@
       "timeout": "2s",
       "script": "/opt/ves-hv-collector/healthcheck.sh"
     },
-    "volumes": [
-      {
-        "container": {
-          "bind": "/etc/ves-hv/ssl"
-        },
-        "host": {
-          "path": "/opt/app/dcae-certificate"
-        }
-      },
-      {
-        "container": {
-          "bind": "/var/log/ONAP/dcae-hv-ves-collector"
-        },
-        "host": {
-          "path": "/var/log/ONAP/dcae-hv-ves-collector"
-        }
-      }
-    ],
     "ports": [
       "6060:6060",
       "6061:6061"
-    ]
+    ],
+    "tls_info": {
+      "cert_directory": "/etc/ves-hv/ssl/",
+      "use_tls": true,
+      "use_external_tls": false
+    }
   },
   "artifacts": [
     {
       "type": "docker image",
-      "uri": "nexus.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.2.0-SNAPSHOT"
+      "uri": "nexus.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.5.0"
     }
   ]
 }
