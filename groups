@@ -2,4 +2,3 @@
 #
 daebbf523be390041a1a9c0e340a6d833aae5043                                                   	GitHub Replication
 ef48b4bb1d9192c63bbd3dda50e7fe3b58569ea5                                                   	saml/onap-gerrit-dcaegen2-collectors-hv-ves-committers
-ldap:cn=onap-gerrit-dcaegen2-collectors-hv-ves-committers,ou=Groups,dc=freestandards,dc=org	ldap/onap-gerrit-dcaegen2-collectors-hv-ves-committers
