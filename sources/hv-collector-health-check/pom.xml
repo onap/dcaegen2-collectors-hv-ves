@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
         <artifactId>hv-collector-sources</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>hv-collector-health-check</artifactId>
