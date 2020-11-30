@@ -97,8 +97,9 @@ services:
       JAVA_OPTS: "-Dio.netty.leakDetection.level=paranoid -Dlogback.configurationFile=/etc/ONAP/dcae-hv-ves-collector/logback.xml"
       VESHV_CONFIGURATION_FILE: "/etc/ves-hv/configuration/base.json"
       CONSUL_HOST: "consul-server"
-      CONFIG_BINDING_SERVICE: "CBS"
+      CONFIG_BINDING_SERVICE: "config-binding-service"
       HOSTNAME: "dcae-hv-ves-collector"
+      CONFIG_BINDING_SERVICE_SERVICE_PORT: "10000"
     healthcheck:
       test: ./healthcheck.sh || exit 1
       interval: 10s
