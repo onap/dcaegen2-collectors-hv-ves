@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2019-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ internal class PrometheusApiServer(private val listenAddress: InetSocketAddress,
 
     fun start(): Mono<NettyServerHandle> =
             HttpServer.create()
-                    .tcpConfiguration { it.addressSupplier { listenAddress } }
+                    .tcpConfiguration { it.bindAddress { listenAddress } }
                     .route { it.get("/monitoring/prometheus", ::metricsHandler) }
                     .bind()
                     .map { NettyServerHandle(it) }
