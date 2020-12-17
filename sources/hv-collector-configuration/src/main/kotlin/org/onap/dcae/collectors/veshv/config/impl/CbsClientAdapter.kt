@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2019-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.model.CbsRequest
 import org.onap.dcaegen2.services.sdk.rest.services.model.logging.RequestDiagnosticContext
 import reactor.core.publisher.Mono
 import reactor.retry.Retry
+import reactor.util.retry.Retry.withThrowable
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicReference
 
@@ -53,7 +54,7 @@ internal class CbsClientAdapter(private val cbsClientMono: Mono<CbsClient>,
                     "CBS client successfully created, first request will be sent in ${firstRequestDelay.seconds} s"
                 }
             }
-            .retryWhen(retry)
+            .retryWhen(withThrowable(retry))
             .delayElement(firstRequestDelay)
             .flatMapMany(::toPeriodicalConfigurations)
             .distinctUntilChanged()

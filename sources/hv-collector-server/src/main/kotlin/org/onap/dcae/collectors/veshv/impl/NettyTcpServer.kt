@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2018-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ internal class NettyTcpServer(private val serverConfiguration: ServerConfigurati
     override fun start(): Mono<ServerHandle> =
             Mono.defer {
                 TcpServer.create()
-                        .addressSupplier { InetSocketAddress(serverConfiguration.listenPort) }
+                        .bindAddress { InetSocketAddress(serverConfiguration.listenPort) }
                         .configureSsl()
                         .handle(this::handleConnection)
                         .bind()
