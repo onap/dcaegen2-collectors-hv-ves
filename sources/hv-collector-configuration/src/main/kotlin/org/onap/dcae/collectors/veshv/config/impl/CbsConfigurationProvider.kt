@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2018-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.Strea
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.streams.StreamPredicates.streamOfType
 import reactor.core.publisher.Flux
 import reactor.retry.Retry
+import reactor.util.retry.Retry.withThrowable
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
@@ -60,7 +61,7 @@ internal class CbsConfigurationProvider(private val cbsClientAdapter: CbsClientA
                     .map(::parseConfiguration)
                     .doOnNext { logger.info(mdc) { "Successfully parsed configuration json to:\n$it" } }
                     .onErrorLog(logger, mdc) { "Error while creating configuration" }
-                    .retryWhen(retry)
+                    .retryWhen(withThrowable(retry))
 
     private fun parseConfiguration(json: JsonObject) =
             configParser
