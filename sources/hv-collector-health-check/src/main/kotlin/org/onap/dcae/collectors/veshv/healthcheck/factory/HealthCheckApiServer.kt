@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2018-2020 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class HealthCheckApiServer(private val healthState: HealthState,
         healthState().subscribe(healthDescription::set)
         HttpServer.create()
                 .tcpConfiguration {
-                    it.addressSupplier { listenAddress }
+                    it.bindAddress { listenAddress }
                             .doOnUnbound { logClose() }
                 }
                 .route { routes ->

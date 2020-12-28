@@ -39,7 +39,7 @@
 
     <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
     <artifactId>ves-hv-collector</artifactId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
     <name>dcaegen2-collectors-veshv</name>
     <description>VES HighVolume Collector</description>
     <packaging>pom</packaging>
@@ -57,10 +57,10 @@
         <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
         <jacoco.version>0.8.3</jacoco.version>
         <detekt.version>1.0.0-RC14</detekt.version>
-        <sdk.version>1.4.4</sdk.version>
+        <sdk.version>1.5.0</sdk.version>
 
         <!-- Protocol buffers -->
-        <protobuf.version>3.6.1</protobuf.version>
+        <protobuf.version>3.14.0</protobuf.version>
 
         <!-- Testing and code analysis -->
         <junit-platform.version>1.2.0-RC1</junit-platform.version>
@@ -480,7 +480,7 @@
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
                 <!-- remember to update netty native bindings versions -->
-                <version>Dysprosium-SR11</version>
+                <version>2020.0.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -590,12 +590,6 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-test</artifactId>
                 <version>${kotlin.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.projectreactor</groupId>
-                <artifactId>reactor-test</artifactId>
-                <version>3.1.7.RELEASE</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
