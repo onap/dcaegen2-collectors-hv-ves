@@ -342,14 +342,13 @@
                                 <images>
                                     <image>
                                         <alias>${project.artifactId}</alias>
-                                        <name>${docker-image.namespace}/${docker-image.name}
+                                        <name>${docker-image.namespace}/${docker-image.name}:${project.version}
                                         </name>
                                         <registry>${docker-image.registry}</registry>
                                         <build>
                                             <dockerFileDir>${project.basedir}</dockerFileDir>
                                             <tags>
                                                 <tag>${project.version}-${maven.build.timestamp}Z</tag>
-                                                <tag>${project.version}</tag>
                                                 <tag>${docker-image.latest}</tag>
                                             </tags>
                                         </build>
