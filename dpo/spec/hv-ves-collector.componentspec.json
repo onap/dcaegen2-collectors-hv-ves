@@ -25,7 +25,7 @@
       "name": "logLevel",
       "value": "DEBUG",
       "description": "The logging level used for collector classes",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
       "policy_editable": false,
       "designer_editable": false
     },
@@ -39,9 +39,10 @@
     },
     {
       "name": "server.idleTimeoutSec",
-      "value": 60,
+      "value": 300,
       "description": "Maximum inactive time in seconds for client connections after which client can be disconnected",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
+      "type": "integer",
       "policy_editable": false,
       "designer_editable": false
     },
@@ -57,15 +58,17 @@
       "name": "cbs.requestIntervalSec",
       "value": 5,
       "description": "Interval in seconds of re-checking the CBS configuration",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
+      "type": "integer",
       "policy_editable": false,
       "designer_editable": false
     },
     {
       "name": "security.sslDisable",
-      "value": true,
+      "value": false,
       "description": "Should be set to true in order to disable client authentication and tunnel encryption",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
+      "type": "boolean",
       "policy_editable": false,
       "designer_editable": false
     },
@@ -73,7 +76,7 @@
       "name": "security.keys.keyStoreFile",
       "value": "/etc/ves-hv/ssl/cert.jks",
       "description": "Points to private key store file",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
       "policy_editable": false,
       "designer_editable": false
     },
@@ -81,7 +84,7 @@
       "name": "security.keys.keyStorePasswordFile",
       "value": "/etc/ves-hv/ssl/jks.pass",
       "description": "File which contains password for the key store",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
       "policy_editable": false,
       "designer_editable": false
     },
@@ -89,7 +92,7 @@
       "name": "security.keys.trustStoreFile",
       "value": "/etc/ves-hv/ssl/trust.jks",
       "description": "Points to trust store file which contains trusted client certificates and/or CAs",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
       "policy_editable": false,
       "designer_editable": false
     },
@@ -97,7 +100,7 @@
       "name": "security.keys.trustStorePasswordFile",
       "value": "/etc/ves-hv/ssl/trust.pass",
       "description": "File which contains password for the trust store",
-      "sourced_at_deployment": false,
+      "sourced_at_deployment": true,
       "policy_editable": false,
       "designer_editable": false
     }
@@ -109,24 +112,11 @@
       "timeout": "2s",
       "script": "/opt/ves-hv-collector/healthcheck.sh"
     },
-    "volumes": [
-      {
-        "container": {
-          "bind": "/etc/ves-hv/ssl"
-        },
-        "host": {
-          "path": "/opt/app/dcae-certificate"
-        }
-      },
-      {
-        "container": {
-          "bind": "/var/log/ONAP/dcae-hv-ves-collector"
-        },
-        "host": {
-          "path": "/var/log/ONAP/dcae-hv-ves-collector"
-        }
-      }
-    ],
+    "tls_info": {
+      "cert_directory": "/etc/ves-hv/ssl/",
+      "use_tls": true,
+      "use_external_tls": false
+    },
     "ports": [
       "6060:6060",
       "6061:6061"
@@ -135,7 +125,7 @@
   "artifacts": [
     {
       "type": "docker image",
-      "uri": "nexus.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.2.0-SNAPSHOT"
+      "uri": "nexus.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.6.0"
     }
   ]
 }
