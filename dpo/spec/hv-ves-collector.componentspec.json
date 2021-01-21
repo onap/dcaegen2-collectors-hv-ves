@@ -67,7 +67,7 @@
       "description": "Should be set to true in order to disable client authentication and tunnel encryption",
       "sourced_at_deployment": false,
       "policy_editable": false,
-      "designer_editable": false
+      "designer_editable": falsegit s
     },
     {
       "name": "security.keys.keyStoreFile",
@@ -109,24 +109,11 @@
       "timeout": "2s",
       "script": "/opt/ves-hv-collector/healthcheck.sh"
     },
-    "volumes": [
-      {
-        "container": {
-          "bind": "/etc/ves-hv/ssl"
-        },
-        "host": {
-          "path": "/opt/app/dcae-certificate"
-        }
-      },
-      {
-        "container": {
-          "bind": "/var/log/ONAP/dcae-hv-ves-collector"
-        },
-        "host": {
-          "path": "/var/log/ONAP/dcae-hv-ves-collector"
-        }
-      }
-    ],
+    "tls_info": {
+      "cert_directory": "/etc/ves-hv/ssl/",
+      "use_tls": true,
+      "use_external_tls": false
+    },
     "ports": [
       "6060:6060",
       "6061:6061"
