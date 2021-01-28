@@ -42,7 +42,7 @@
       "value": 300,
       "description": "Maximum inactive time in seconds for client connections after which client can be disconnected",
       "sourced_at_deployment": true,
-      "type": "integer",
+      "type": "number",
       "policy_editable": false,
       "designer_editable": false
     },
@@ -59,7 +59,7 @@
       "value": 5,
       "description": "Interval in seconds of re-checking the CBS configuration",
       "sourced_at_deployment": true,
-      "type": "integer",
+      "type": "number",
       "policy_editable": false,
       "designer_editable": false
     },
