@@ -112,6 +112,9 @@
       "timeout": "2s",
       "script": "/opt/ves-hv-collector/healthcheck.sh"
     },
+    "log_info": {
+      "log_directory": "/var/log/ONAP/dcae-hv-ves-collector/"
+    },
     "tls_info": {
       "cert_directory": "/etc/ves-hv/ssl/",
       "use_tls": true,
