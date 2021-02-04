@@ -23,7 +23,7 @@
   "parameters": [
     {
       "name": "logLevel",
-      "value": "DEBUG",
+      "value": "INFO",
       "description": "The logging level used for collector classes",
       "sourced_at_deployment": true,
       "policy_editable": false,
