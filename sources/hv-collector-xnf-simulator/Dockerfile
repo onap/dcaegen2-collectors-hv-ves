@@ -1,13 +1,11 @@
-FROM docker.io/openjdk:11-jre-slim
+FROM nexus3.onap.org:10001/onap/integration-java11:8.0.0
 
-LABEL copyright="Copyright (C) 2018 NOKIA"
-LABEL license.name="The Apache Software License, Version 2.0"
-LABEL license.url="http://www.apache.org/licenses/LICENSE-2.0"
-LABEL maintainer="Nokia Wroclaw ONAP Team"
+LABEL copyright="Copyright (C) 2018 NOKIA" \
+      license.name="The Apache Software License, Version 2.0" \
+      license.url="http://www.apache.org/licenses/LICENSE-2.0" \
+      maintainer="Nokia Wroclaw ONAP Team"
 
-RUN apt-get update \
-        && apt-get install -y --no-install-recommends curl \
-        && apt-get clean
+RUN apk install --no-cache curl
 
 WORKDIR /opt/ves-hv-client-simulator
 
