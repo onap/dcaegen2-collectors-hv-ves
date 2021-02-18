@@ -1,4 +1,4 @@
-FROM docker.io/openjdk:11-jre-slim
+FROM nexus3.onap.org:10001/onap/integration-java11
 
 LABEL copyright="Copyright (C) 2019 NOKIA"
 LABEL license.name="The Apache Software License, Version 2.0"
