@@ -22,6 +22,30 @@
       "revId": "4f987d9ed88f11f2f34805cb435b738cb53b2c01",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "365f2e7b_97f0fe4a",
+        "filename": "tools/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3433
+      },
+      "writtenOn": "2021-03-24T12:54:24Z",
+      "side": 1,
+      "message": "yes, it is needed. Without it, it reports an error that /etc/ves-hv/ssl folder does not exist",
+      "parentUuid": "575d384d_deaad8f9",
+      "range": {
+        "startLine": 8,
+        "startChar": 2,
+        "endLine": 8,
+        "endChar": 3
+      },
+      "revId": "4f987d9ed88f11f2f34805cb435b738cb53b2c01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
