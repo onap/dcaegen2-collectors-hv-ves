@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "575d384d_deaad8f9",
+        "filename": "tools/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-03-24T12:52:22Z",
+      "side": 1,
+      "message": "Is that step needed? Looking at the docker compose ssl folder (mentioned earlier) is mounted.\n ves-hv-collector:\n    ...\n    volumes:\n      - ./configuration/:/etc/ves-hv/configuration/\n      - ../ssl/:/etc/ves-hv/ssl/\n      - ./logs:/var/log/ONAP/dcae-hv-ves-collector",
+      "range": {
+        "startLine": 8,
+        "startChar": 2,
+        "endLine": 8,
+        "endChar": 3
+      },
+      "revId": "4f987d9ed88f11f2f34805cb435b738cb53b2c01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
