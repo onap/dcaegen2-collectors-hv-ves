@@ -37,6 +37,7 @@ import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.io.File
 import java.time.Duration
+import kotlin.test.fail
 
 
 internal object ConfigurationTransformerTest : Spek({

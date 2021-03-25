@@ -39,7 +39,7 @@
 
     <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
     <artifactId>ves-hv-collector</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <name>dcaegen2-collectors-veshv</name>
     <description>VES HighVolume Collector</description>
     <packaging>pom</packaging>
@@ -50,43 +50,44 @@
     </modules>
 
     <properties>
-        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <asm.version>6.1.1</asm.version>
-        <commons-lang3.version>3.7</commons-lang3.version>
-        <maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
-        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
-        <os-maven-plugin.version>1.6.0</os-maven-plugin.version>
-        <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
-        <docker-maven-plugin.version>0.30.0</docker-maven-plugin.version>
-        <guava.version>27.0.1-jre</guava.version>
-        <logback-classic.version>1.3.0-alpha4</logback-classic.version>
-        <slf4j-api.version>1.8.0-beta1</slf4j-api.version>
-        <reactor-bom.version>2020.0.2</reactor-bom.version>
-        <kafka-clients.version>2.3.1</kafka-clients.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+        <asm.version>9.1</asm.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+        <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+        <docker-maven-plugin.version>0.34.1</docker-maven-plugin.version>
+        <guava.version>30.1.1-jre</guava.version>
+        <logback-classic.version>1.3.0-alpha5</logback-classic.version>
+        <slf4j-api.version>2.0.0-alpha1</slf4j-api.version>
+        <reactor-bom.version>2020.0.5</reactor-bom.version>
+        <kafka-clients.version>2.7.0</kafka-clients.version>
         <commons-cli.version>1.4</commons-cli.version>
-        <javax.json-api.version>1.1.2</javax.json-api.version>
-        <javax.json.version>1.1.2</javax.json.version>
-        <micrometer-registry-prometheus.version>1.1.5</micrometer-registry-prometheus.version>
-        <assertj-core.version>3.9.1</assertj-core.version>
-        <mockito-kotlin.version>2.1.0</mockito-kotlin.version>
-        <coroutines.version>1.3.0-M2</coroutines.version>
-        <kotlin.version>1.3.31</kotlin.version>
+        <javax.json-api.version>1.1.4</javax.json-api.version>
+        <javax.json.version>1.1.4</javax.json.version>
+        <micrometer-registry-prometheus.version>1.6.5</micrometer-registry-prometheus.version>
+        <assertj-core.version>3.19.0</assertj-core.version>
+        <mockito-kotlin.version>2.2.0</mockito-kotlin.version>
+        <coroutines.version>1.4.2</coroutines.version>
+        <kotlin.version>1.4.10</kotlin.version>
         <arrow.version>0.9.0</arrow.version>
-        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-        <build-helper-maven-plugin.version>1.7</build-helper-maven-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <jacoco.version>0.8.3</jacoco.version>
-        <detekt.version>1.0.0-RC14</detekt.version>
-        <sdk.version>1.5.0</sdk.version>
+        <detekt.version>1.15.0</detekt.version>
+        <sdk.version>1.8.0</sdk.version>
 
         <!-- Protocol buffers -->
-        <protobuf.version>3.14.0</protobuf.version>
+        <protobuf.version>4.0.0-rc-2</protobuf.version>
 
         <!-- Testing and code analysis -->
-        <junit-platform.version>1.2.0-RC1</junit-platform.version>
-        <junit-jupiter.version>5.2.0-RC1</junit-jupiter.version>
+        <junit-platform.version>1.2.0</junit-platform.version>
+        <junit-jupiter.version>5.8.0-M1</junit-jupiter.version>
         <spek.version>1.1.5</spek.version>
-        <gson.version>2.8.5</gson.version>
-        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <gson.version>2.8.6</gson.version>
+
         <failIfMissingUnitTests>false</failIfMissingUnitTests>
         <failIfMissingComponentTests>false</failIfMissingComponentTests>
         <skipAnalysis>true</skipAnalysis>
@@ -396,9 +397,35 @@
                 <updatePolicy>never</updatePolicy>
             </snapshots>
         </pluginRepository>
+        <pluginRepository>
+            <id>kotlinx-repository</id>
+            <name>kotlinx-repository</name>
+            <url>https://dl.bintray.com/kotlin/kotlinx/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
     </pluginRepositories>
 
     <repositories>
+        <repository>
+            <id>kotlinx-repository</id>
+            <name>kotlinx-repository</name>
+            <url>https://dl.bintray.com/kotlin/kotlinx/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
         <repository>
             <id>40_openecomp-release</id>
             <name>40_openecomp-release</name>
