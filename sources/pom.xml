@@ -100,17 +100,18 @@
                                 </goals>
                                 <configuration>
                                     <target name="detekt" unless="${skipAnalysis}">
-                                        <java taskname="detekt" dir="${basedir}" fork="true" failonerror="true"
-                                                classname="io.gitlab.arturbosch.detekt.cli.Main"
-                                                classpathref="maven.plugin.classpath">
+                                        <java taskname="detekt" dir="${basedir}"
+                                              fork="true"
+                                              failonerror="true"
+                                              classname="io.gitlab.arturbosch.detekt.cli.Main"
+                                              classpathref="maven.plugin.classpath">
                                             <arg value="--input"/>
                                             <arg value="${basedir}/src/main/kotlin"/>
                                             <arg value="--config-resource"/>
                                             <arg value="onap-detekt-config.yml"/>
-                                            <arg value="--filters"/>
-                                            <arg value=".*/target/.*,.*/resources/.*"/>
                                             <arg value="--report"/>
                                             <arg value="html:${basedir}/target/detekt-report.html"/>
+                                            <arg value="--auto-correct"/>
                                         </java>
                                     </target>
                                 </configuration>

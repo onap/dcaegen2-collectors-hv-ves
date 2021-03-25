@@ -33,6 +33,7 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParamete
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.VALID
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType.INVALID_GPB_DATA
+import kotlin.test.fail
 
 
 /**
