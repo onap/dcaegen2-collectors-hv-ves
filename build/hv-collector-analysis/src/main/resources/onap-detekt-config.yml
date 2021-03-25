@@ -1,32 +1,12 @@
-autoCorrect: true
-failFast: false
 
-test-pattern: # Configure exclusions for test sources
-  active: true
-  patterns: # Test file regexes
-    - '.*/test/.*'
-    - '.*Test.kt'
-    - '.*Spec.kt'
-  exclude-rule-sets:
-    - 'comments'
-  exclude-rules:
-    - 'NamingRules'
-    - 'WildcardImport'
-    - 'MagicNumber'
-    - 'MaxLineLength'
-    - 'LateinitUsage'
-    - 'StringLiteralDuplication'
-    - 'SpreadOperator'
-    - 'TooManyFunctions'
-    - 'ForEachOnRange'
 
 build:
   maxIssues: 3
   weights:
-    # complexity: 2
-    # LongParameterList: 1
-    # style: 1
-    # comments: 1
+  # complexity: 2
+  # LongParameterList: 1
+  # style: 1
+  # comments: 1
 
 processors:
   active: true
@@ -94,7 +74,8 @@ complexity:
     threshold: 20
   LongParameterList:
     active: true
-    threshold: 6
+    functionThreshold: 6
+    constructorThreshold: 7
     ignoreDefaultParameters: false
   MethodOverloading:
     active: false
@@ -137,7 +118,7 @@ empty-blocks:
     active: true
   EmptyFunctionBlock:
     active: true
-    ignoreOverriddenFunctions: false
+    ignoreOverridden: false
   EmptyIfBlock:
     active: true
   EmptyInitBlock:
@@ -180,43 +161,43 @@ exceptions:
   TooGenericExceptionCaught:
     active: true
     exceptionNames:
-     - ArrayIndexOutOfBoundsException
-     - Error
-     - Exception
-     - IllegalMonitorStateException
-     - NullPointerException
-     - IndexOutOfBoundsException
-     - RuntimeException
-     - Throwable
+      - ArrayIndexOutOfBoundsException
+      - Error
+      - Exception
+      - IllegalMonitorStateException
+      - NullPointerException
+      - IndexOutOfBoundsException
+      - RuntimeException
+      - Throwable
   TooGenericExceptionThrown:
     active: true
     exceptionNames:
-     - Error
-     - Exception
-     - Throwable
-     - RuntimeException
+      - Error
+      - Exception
+      - Throwable
+      - RuntimeException
 
 formatting:
   active: true
   android: false
-  autoCorrect: true
+
   ChainWrapping:
     active: false
-    autoCorrect: true
+
   CommentSpacing:
     active: true
-    autoCorrect: true
+
   Filename:
     active: true
   FinalNewline:
     active: true
-    autoCorrect: true
+
   ImportOrdering:
     active: true
-    autoCorrect: true
+
   Indentation:
     active: true
-    autoCorrect: true
+
     indentSize: 4
     continuationIndentSize: 4
   MaximumLineLength:
@@ -224,67 +205,65 @@ formatting:
     maxLineLength: 120
   ModifierOrdering:
     active: true
-    autoCorrect: true
+
   NoBlankLineBeforeRbrace:
     active: true
-    autoCorrect: true
+
   NoConsecutiveBlankLines:
     active: true
-    autoCorrect: true
+
   NoEmptyClassBody:
     active: true
-    autoCorrect: true
-  NoItParamInMultilineLambda:
-    active: true
+
   NoLineBreakAfterElse:
     active: true
-    autoCorrect: true
+
   NoLineBreakBeforeAssignment:
     active: true
-    autoCorrect: true
+
   NoMultipleSpaces:
     active: true
-    autoCorrect: true
+
   NoSemicolons:
     active: true
-    autoCorrect: true
+
   NoTrailingSpaces:
     active: true
-    autoCorrect: true
+
   NoUnitReturn:
     active: true
-    autoCorrect: true
+
   NoUnusedImports:
     active: true
-    autoCorrect: true
+
   NoWildcardImports:
     active: true
-    autoCorrect: true
+
   ParameterListWrapping:
     active: false
-    autoCorrect: true
+
     indentSize: 4
   SpacingAroundColon:
     active: true
-    autoCorrect: true
+
   SpacingAroundComma:
     active: true
-    autoCorrect: true
+
   SpacingAroundCurly:
     active: true
-    autoCorrect: true
+
   SpacingAroundKeyword:
     active: true
-    autoCorrect: true
+
   SpacingAroundOperators:
     active: true
-    autoCorrect: true
+
   SpacingAroundRangeOperator:
     active: true
-    autoCorrect: true
+
   StringTemplate:
     active: true
-    autoCorrect: true
+
 
 naming:
   active: true
@@ -311,7 +290,7 @@ naming:
     active: false
   MemberNameEqualsClassName:
     active: false
-    ignoreOverriddenFunction: true
+    ignoreOverridden: true
   ObjectPropertyNaming:
     active: true
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
