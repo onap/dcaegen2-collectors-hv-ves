@@ -1,0 +1,9 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Bartosz Gardziejewski <bartosz.gardziejewski@nokia.com>
+Code-Review+1: Micha? Ba?ka <michal.banka@nokia.com>
+Code-Review+2: Remigiusz Janeczek <remigiusz.janeczek@nokia.com>
+Submitted-by: Remigiusz Janeczek <remigiusz.janeczek@nokia.com>
+Submitted-at: Thu, 25 Mar 2021 08:49:10 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/dcaegen2/collectors/hv-ves/+/119716
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
