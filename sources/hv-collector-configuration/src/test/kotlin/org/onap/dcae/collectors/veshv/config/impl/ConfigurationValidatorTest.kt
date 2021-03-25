@@ -30,6 +30,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
+import kotlin.test.fail
 
 internal object ConfigurationValidatorTest : Spek({
     describe("ConfigurationValidator") {
