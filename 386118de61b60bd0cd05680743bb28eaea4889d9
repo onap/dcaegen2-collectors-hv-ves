@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f985d11_09a51ed0",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-03-26T11:16:50Z",
+      "side": 1,
+      "message": "Bump project version to 1.7.0-SNAPSHOT please.",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 4
+      },
+      "revId": "386118de61b60bd0cd05680743bb28eaea4889d9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
