@@ -22,6 +22,30 @@
       "revId": "d4a5d94bd1a41c33bde000f26e9470d93170e61a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6512da6b_62d0d520",
+        "filename": "sources/hv-collector-configuration/src/test/kotlin/org/onap/dcae/collectors/veshv/config/impl/test_constants.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-03-30T11:38:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aee59df8_47502a46",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "d4a5d94bd1a41c33bde000f26e9470d93170e61a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
