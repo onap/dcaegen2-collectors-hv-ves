@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2019-2021 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,5 +59,5 @@ internal val mdc = { mapOf("mdc_key" to "mdc_value") }
 
 internal fun retry(iterationCount: Long = 1) = Retry
         .onlyIf<Any> { it.iteration() <= iterationCount }
-        .fixedBackoff(Duration.ofNanos(1))
+        .fixedBackoff(Duration.ofMillis(10))
 
