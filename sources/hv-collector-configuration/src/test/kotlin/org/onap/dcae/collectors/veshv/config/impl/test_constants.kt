@@ -59,5 +59,5 @@ internal val mdc = { mapOf("mdc_key" to "mdc_value") }
 
 internal fun retry(iterationCount: Long = 1) = Retry
         .onlyIf<Any> { it.iteration() <= iterationCount }
-        .fixedBackoff(Duration.ofNanos(1))
+        .fixedBackoff(Duration.ofNanos(10))
 
