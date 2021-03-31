@@ -1,0 +1,59 @@
+{
+  "streams_publishes": {
+    "perf3gpp": {
+      "type": "kafka",
+      "aaf_credentials": {
+        "username": "admin",
+        "password": "admin_secret"
+      },
+      "kafka_info": {
+        "bootstrap_servers": "message-router-kafka-0:9093",
+        "topic_name": "HV_VES_PERF3GPP"
+      }
+    },
+    "ves-3gpp-fault-supervision": {
+      "type": "kafka",
+      "aaf_credentials": {
+        "username": "admin",
+        "password": "admin_secret"
+      },
+      "kafka_info": {
+        "bootstrap_servers": "message-router-kafka-0:9093",
+        "topic_name": "SEC_3GPP_FAULTSUPERVISION_OUTPUT"
+      }
+    },
+    "ves-3gpp-provisioning": {
+      "type": "kafka",
+      "aaf_credentials": {
+        "username": "admin",
+        "password": "admin_secret"
+      },
+      "kafka_info": {
+        "bootstrap_servers": "message-router-kafka-0:9093",
+        "topic_name": "SEC_3GPP_PROVISIONING_OUTPUT"
+      }
+    },
+    "ves-3gpp-heartbeat": {
+      "type": "kafka",
+      "aaf_credentials": {
+        "username": "admin",
+        "password": "admin_secret"
+      },
+      "kafka_info": {
+        "bootstrap_servers": "message-router-kafka-0:9093",
+        "topic_name": "SEC_3GPP_HEARTBEAT_OUTPUT"
+      }
+    },
+    "ves-3gpp-performance-assurance": {
+      "type": "kafka",
+      "aaf_credentials": {
+        "username": "admin",
+        "password": "admin_secret"
+      },
+      "kafka_info": {
+        "bootstrap_servers": "message-router-kafka-0:9093",
+        "topic_name": "SEC_3GPP_PERFORMANCEASSURANCE_OUTPUT"
+      }
+    }
+  }
+}

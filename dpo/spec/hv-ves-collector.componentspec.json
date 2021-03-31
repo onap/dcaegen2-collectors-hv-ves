@@ -128,7 +128,7 @@
   "artifacts": [
     {
       "type": "docker image",
-      "uri": "nexus.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.6.0"
+      "uri": "nexus.onap.org:10001/onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.8.0"
     }
   ]
 }

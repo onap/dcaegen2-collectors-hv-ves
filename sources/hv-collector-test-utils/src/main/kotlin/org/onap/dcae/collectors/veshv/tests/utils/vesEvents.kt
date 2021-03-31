@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * dcaegen2-collectors-veshv
  * ================================================================================
- * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2018-2021 NOKIA
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.google.protobuf.MessageLite
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.PayloadContentType
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
-import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
+import org.onap.dcae.collectors.veshv.domain.VesEventStndDefinedNamespace
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.ves.VesEventOuterClass
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
@@ -34,7 +34,7 @@ import java.time.Instant
 import java.time.temporal.Temporal
 import java.util.UUID.randomUUID
 
-fun vesEvent(domain: VesEventDomain = PERF3GPP,
+fun vesEvent(domain: VesEventDomain = VesEventDomain.PERF3GPP,
              id: String = randomUUID().toString(),
              eventFields: ByteString = ByteString.EMPTY,
              vesEventListenerVersion: String = "7.0.2"
@@ -50,32 +50,37 @@ fun vesEvent(commonEventHeader: CommonEventHeader,
                 .setEventFields(eventFields)
                 .build()
 
-fun commonHeader(domain: VesEventDomain = PERF3GPP,
+fun commonHeader(domain: VesEventDomain = VesEventDomain.PERF3GPP,
                  id: String = randomUUID().toString(),
                  vesEventListenerVersion: String = "7.0.2",
                  priority: Priority = Priority.NORMAL,
-                 lastEpochMicrosec: Long = 100000005
-): CommonEventHeader =
-        CommonEventHeader.newBuilder()
-                .setVersion("sample-version")
-                .setDomain(domain.domainName)
-                .setSequence(1)
-                .setPriority(priority)
-                .setEventId(id)
-                .setEventName("sample-event-name")
-                .setEventType("sample-event-type")
-                .setStartEpochMicrosec(100000000)
-                .setLastEpochMicrosec(lastEpochMicrosec)
-                .setNfNamingCode("sample-nf-naming-code")
-                .setNfcNamingCode("sample-nfc-naming-code")
-                .setNfVendorName("vendor-name")
-                .setReportingEntityId(ByteString.copyFromUtf8("sample-reporting-entity-id"))
-                .setReportingEntityName("sample-reporting-entity-name")
-                .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
-                .setSourceName("sample-source-name")
-                .setTimeZoneOffset("+1")
-                .setVesEventListenerVersion(vesEventListenerVersion)
-                .build()
+                 lastEpochMicrosec: Long = 100000005,
+                 stndDefinedNamespace: VesEventStndDefinedNamespace? = null): CommonEventHeader {
+    val builder = CommonEventHeader.newBuilder().setVersion("sample-version")
+            .setDomain(domain.domainName)
+            .setSequence(1)
+            .setPriority(priority)
+            .setEventId(id)
+            .setEventName("sample-event-name")
+            .setEventType("sample-event-type")
+            .setStartEpochMicrosec(100000000)
+            .setLastEpochMicrosec(lastEpochMicrosec)
+            .setNfNamingCode("sample-nf-naming-code")
+            .setNfcNamingCode("sample-nfc-naming-code")
+            .setNfVendorName("vendor-name")
+            .setReportingEntityId(ByteString.copyFromUtf8("sample-reporting-entity-id"))
+            .setReportingEntityName("sample-reporting-entity-name")
+            .setSourceId(ByteString.copyFromUtf8("sample-source-id"))
+            .setSourceName("sample-source-name")
+            .setTimeZoneOffset("+1")
+            .setVesEventListenerVersion(vesEventListenerVersion)
+
+    stndDefinedNamespace?.let {
+        builder.setStndDefinedNamespace(stndDefinedNamespace.stndDefinedNamespace)
+    }
+    return builder.build()
+}
+
 
 fun emptyWireProtocolFrame(): WireFrameMessage = wireProtocolFrameWithPayloadSize(0)
 
