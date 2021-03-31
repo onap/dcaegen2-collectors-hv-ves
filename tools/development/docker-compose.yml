@@ -56,22 +56,12 @@ services:
   consul-config:
     image: docker.io/consul:1.0.6
     restart: on-failure
-    command: ["kv", "put", "-http-addr=http://consul-server:8500", "dcae-hv-ves-collector", '{
-                                              "streams_publishes": {
-                                                "perf3gpp": {
-                                                  "type": "kafka",
-                                                  "aaf_credentials": {
-                                                    "username": "admin",
-                                                    "password": "admin_secret"
-                                                  },
-                                                  "kafka_info": {
-                                                    "bootstrap_servers": "message-router-kafka-0:9093",
-                                                    "topic_name": "HV_VES_PERF3GPP"
-                                                  }
-                                                }
-                                              }
-                                            }'
-    ]
+    command: "kv put -http-addr=http://consul-server:8500 dcae-hv-ves-collector '@/home/consul/routing.json'"
+    volumes:
+      - type: bind
+        source: ./routing.json
+        target: /home/consul/routing.json
+        read_only: true
     depends_on:
       - consul-server
 
@@ -89,7 +79,7 @@ services:
   #
 
   ves-hv-collector:
-    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.7.0-SNAPSHOT
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.8.0-SNAPSHOT
     ports:
       - "6060:6060"
       - "6061:6061/tcp"
@@ -120,7 +110,7 @@ services:
   #
 
   xnf-simulator:
-    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator:1.7.0-SNAPSHOT
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator:1.8.0-SNAPSHOT
     ports:
       - "6062:6062/tcp"
       - "6063:6063"
@@ -144,12 +134,12 @@ services:
       - ../ssl/:/etc/ves-hv/
 
   dcae-app-simulator:
-    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator:1.7.0-SNAPSHOT
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator:1.8.0-SNAPSHOT
     ports:
       - "6064:6064/tcp"
     command: ["--listen-port", "6064",
               "--kafka-bootstrap-servers", "message-router-kafka-0:9092",
-              "--kafka-topics", "HV_VES_PERF3GPP"]
+              "--kafka-topics", "HV_VES_PERF3GPP,SEC_3GPP_FAULTSUPERVISION_OUTPUT,SEC_3GPP_PROVISIONING_OUTPUT,SEC_3GPP_HEARTBEAT_OUTPUT,SEC_3GPP_PERFORMANCEASSURANCE_OUTPUT"]
     depends_on:
       - message-router-kafka-0
 

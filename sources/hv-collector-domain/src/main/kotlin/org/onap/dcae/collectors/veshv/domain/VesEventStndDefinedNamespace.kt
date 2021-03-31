@@ -19,18 +19,9 @@
  */
 package org.onap.dcae.collectors.veshv.domain
 
-enum class VesEventDomain(val domainName: String) {
-    FAULT("fault"),
-    HEARTBEAT("heartbeat"),
-    MEASUREMENT("measurement"),
-    MOBILE_FLOW("mobileFlow"),
-    OTHER("other"),
-    PNF_REGISTRATION("pnfRegistration"),
-    SIP_SIGNALING("sipSignaling"),
-    STATE_CHANGE("stateChange"),
-    STND_DEFINED("stndDefined"),
-    SYSLOG("syslog"),
-    THRESHOLD_CROSSING_ALERT("thresholdCrossingAlert"),
-    VOICE_QUALITY("voiceQuality"),
-    PERF3GPP("perf3gpp");
+enum class VesEventStndDefinedNamespace(val stndDefinedNamespace: String) {
+    VES_3GPP_FAULT_SUPERVISION("ves-3gpp-fault-supervision"),
+    VES_3GPP_PROVISIONING("ves-3gpp-provisioning"),
+    VES_3GPP_HEARTBEAT("ves-3gpp-heartbeat"),
+    VES_3GPP_PERFORMANCE_ASSURANCE("ves-3gpp-performance-assurance")
 }
