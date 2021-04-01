@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1668a2ef_35020e86",
+        "filename": "sources/hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/VesEventDomain.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-04-01T06:15:20Z",
+      "side": 1,
+      "message": "2018-2021",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "eaf288f361ad906bdead975123eedb472c5fa3a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "311ab3cb_77d1b892",
+        "filename": "sources/hv-collector-domain/src/main/kotlin/org/onap/dcae/collectors/veshv/domain/VesEventStndDefinedNamespace.kt",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-04-01T06:15:20Z",
+      "side": 1,
+      "message": "2021",
+      "range": {
+        "startLine": 5,
+        "startChar": 17,
+        "endLine": 5,
+        "endChar": 21
+      },
+      "revId": "eaf288f361ad906bdead975123eedb472c5fa3a7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
