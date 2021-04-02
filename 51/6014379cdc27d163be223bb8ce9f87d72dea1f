@@ -1,0 +1,11 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Edyta Krukowska <edyta.krukowska@nokia.com>
+Code-Review+1: Damian Nowak <damian.nowak@nokia.com>
+Code-Review+1: Bartosz Gardziejewski <bartosz.gardziejewski@nokia.com>
+Code-Review+1: Bogumil Zebek <bogumil.zebek@nokia.com>
+Code-Review+2: Joanna Jeremicz <joanna.jeremicz@nokia.com>
+Submitted-by: Joanna Jeremicz <joanna.jeremicz@nokia.com>
+Submitted-at: Fri, 02 Apr 2021 09:50:41 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/dcaegen2/collectors/hv-ves/+/120063
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/master
