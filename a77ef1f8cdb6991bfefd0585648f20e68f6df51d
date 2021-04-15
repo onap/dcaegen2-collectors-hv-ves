@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "94b5e116_582afdbd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 7352
+      },
+      "writtenOn": "2021-04-15T10:47:00Z",
+      "side": 1,
+      "message": "I\u0027ll do it in next PS",
+      "parentUuid": "7000ad1c_f5fe713a",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 18
+      },
+      "revId": "a77ef1f8cdb6991bfefd0585648f20e68f6df51d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f7af70a7_4a9c252c",
         "filename": "sources/hv-collector-main/src/main/docker/entry.sh",
         "patchSetId": 8
@@ -36,6 +60,30 @@
       "writtenOn": "2021-04-15T08:44:27Z",
       "side": 1,
       "message": "That flag shouldn\u0027t be here, there\u0027s no jar file specified, and it tampers with arguments received by the application, making it unable to start.",
+      "range": {
+        "startLine": 14,
+        "startChar": 70,
+        "endLine": 14,
+        "endChar": 75
+      },
+      "revId": "a77ef1f8cdb6991bfefd0585648f20e68f6df51d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1f1014e_86fb6312",
+        "filename": "sources/hv-collector-main/src/main/docker/entry.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 7352
+      },
+      "writtenOn": "2021-04-15T10:47:00Z",
+      "side": 1,
+      "message": "yeah, I fixed it locally - idk why I even added it there (mb some missclick) but there are other issues I\u0027ve found and tried figuring out yesterday - e.g. why the app cant write to log file while the user the app is run with is able to write \u0026 read the log files no problem :( (I\u0027ve been trying with group perms, then as group perms are sometimes ignored in favor of user perms... but the -main app cant create the log file in /var/log/ONAP/dcae*",
+      "parentUuid": "f7af70a7_4a9c252c",
       "range": {
         "startLine": 14,
         "startChar": 70,
