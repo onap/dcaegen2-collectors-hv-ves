@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7000ad1c_f5fe713a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-04-15T08:44:27Z",
+      "side": 1,
+      "message": "Add DCAEGEN2-2420 also.",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 18
+      },
+      "revId": "a77ef1f8cdb6991bfefd0585648f20e68f6df51d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7af70a7_4a9c252c",
+        "filename": "sources/hv-collector-main/src/main/docker/entry.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-04-15T08:44:27Z",
+      "side": 1,
+      "message": "That flag shouldn\u0027t be here, there\u0027s no jar file specified, and it tampers with arguments received by the application, making it unable to start.",
+      "range": {
+        "startLine": 14,
+        "startChar": 70,
+        "endLine": 14,
+        "endChar": 75
+      },
+      "revId": "a77ef1f8cdb6991bfefd0585648f20e68f6df51d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
