@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "6e4de3dc_1d3cfe09",
+        "filename": "tools/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-04-19T17:48:14Z",
+      "side": 1,
+      "message": "extend to same length as above",
+      "range": {
+        "startLine": 2,
+        "startChar": 23,
+        "endLine": 2,
+        "endChar": 25
+      },
+      "revId": "4f987d9ed88f11f2f34805cb435b738cb53b2c01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "575d384d_deaad8f9",
         "filename": "tools/README.md",
         "patchSetId": 1
@@ -37,6 +60,30 @@
       "side": 1,
       "message": "yes, it is needed. Without it, it reports an error that /etc/ves-hv/ssl folder does not exist",
       "parentUuid": "575d384d_deaad8f9",
+      "range": {
+        "startLine": 8,
+        "startChar": 2,
+        "endLine": 8,
+        "endChar": 3
+      },
+      "revId": "4f987d9ed88f11f2f34805cb435b738cb53b2c01",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcf21066_a3c29f68",
+        "filename": "tools/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-04-19T17:48:14Z",
+      "side": 1,
+      "message": "agree with Remi\u0027s comments, this step seems redundant. Also copy cannot be done until container is up.",
+      "parentUuid": "365f2e7b_97f0fe4a",
       "range": {
         "startLine": 8,
         "startChar": 2,
