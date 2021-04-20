@@ -1,0 +1,8 @@
+Code-Review+1: Micha? Ba?ka <michal.banka@nokia.com>
+Code-Review+2: Vijay Venkatesh Kumar <vv770d@att.com>
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Submitted-by: Vijay Venkatesh Kumar <vv770d@att.com>
+Submitted-at: Tue, 20 Apr 2021 20:18:44 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/dcaegen2/collectors/hv-ves/+/120669
+Project: dcaegen2/collectors/hv-ves
+Branch: refs/heads/honolulu
