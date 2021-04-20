@@ -85,7 +85,7 @@
         <docker-image.registry>${onap.nexus.dockerregistry.daily}</docker-image.registry>
         <docker-image.namespace>onap</docker-image.namespace>
         <docker-image.name>${project.groupId}.${project.artifactId}</docker-image.name>
-        <docker-image.latest>1.2-SNAPSHOT</docker-image.latest>
+        <docker-image.latest>latest-honolulu</docker-image.latest>
         <docker.http_proxy/>
     </properties>
 
