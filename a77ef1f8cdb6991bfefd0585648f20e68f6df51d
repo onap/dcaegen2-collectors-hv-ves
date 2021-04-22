@@ -117,6 +117,30 @@
       "revId": "a77ef1f8cdb6991bfefd0585648f20e68f6df51d",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "086b5813_2bb39b82",
+        "filename": "sources/hv-collector-main/src/main/docker/entry.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 7352
+      },
+      "writtenOn": "2021-04-22T15:57:24Z",
+      "side": 1,
+      "message": "so the perm issue was, as you mentioned docker-compose issue as it overwrote the perms from dockerfile (I had little to none experience with docker-compose)",
+      "parentUuid": "9ab3d2cc_aaa34ea8",
+      "range": {
+        "startLine": 14,
+        "startChar": 70,
+        "endLine": 14,
+        "endChar": 75
+      },
+      "revId": "a77ef1f8cdb6991bfefd0585648f20e68f6df51d",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
