@@ -79,7 +79,7 @@ services:
   #
 
   ves-hv-collector:
-    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.8.0-SNAPSHOT
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-main:1.9.0-SNAPSHOT
     ports:
       - "6060:6060"
       - "6061:6061/tcp"
@@ -110,7 +110,7 @@ services:
   #
 
   xnf-simulator:
-    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator:1.8.0-SNAPSHOT
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-xnf-simulator:1.9.0-SNAPSHOT
     ports:
       - "6062:6062/tcp"
       - "6063:6063"
@@ -134,7 +134,7 @@ services:
       - ../ssl/:/etc/ves-hv/
 
   dcae-app-simulator:
-    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator:1.8.0-SNAPSHOT
+    image: onap/org.onap.dcaegen2.collectors.hv-ves.hv-collector-dcae-app-simulator:1.9.0-SNAPSHOT
     ports:
       - "6064:6064/tcp"
     command: ["--listen-port", "6064",
