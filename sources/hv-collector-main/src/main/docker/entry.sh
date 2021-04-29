@@ -10,8 +10,9 @@ handle_sigterm() {
   fi
   exit 143 # 128 + 15 -- SIGTERM
 }
+
 trap "handle_sigterm" TERM
-java ${JAVA_OPTS} -cp '*:' org.onap.dcae.collectors.veshv.main.MainKt "$@" &
+java ${JAVA_OPTS} -cp '*:' org.onap.dcae.collectors.veshv.main.MainKt $@ &
 pid=$!
 echo "Service started with pid=${pid}"
 wait ${pid}
