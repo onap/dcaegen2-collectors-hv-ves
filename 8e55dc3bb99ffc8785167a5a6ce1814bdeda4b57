@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42072a0d_46d943b6",
+        "filename": "Changelog.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 6044
+      },
+      "writtenOn": "2021-05-20T08:50:59Z",
+      "side": 1,
+      "message": "Both entries should be in new 1.9.0 section (1.8.0 is already released and project version is set to 1.9.0-SNAPSHOT currently)",
+      "revId": "8e55dc3bb99ffc8785167a5a6ce1814bdeda4b57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
