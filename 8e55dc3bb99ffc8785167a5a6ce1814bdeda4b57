@@ -16,6 +16,24 @@
       "revId": "8e55dc3bb99ffc8785167a5a6ce1814bdeda4b57",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27e790bd_d4e4de45",
+        "filename": "Changelog.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2021-05-20T14:58:57Z",
+      "side": 1,
+      "message": "agree with Remi\u0027s comment",
+      "parentUuid": "42072a0d_46d943b6",
+      "revId": "8e55dc3bb99ffc8785167a5a6ce1814bdeda4b57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
