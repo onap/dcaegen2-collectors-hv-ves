@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66d949c7_56bc7b36",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 5597
+      },
+      "writtenOn": "2021-07-06T12:46:51Z",
+      "side": 1,
+      "message": "We`d have to bump this to 1.9.1-SNAPSHOT, as we will have a new artifact here.\nThis might as well resolve the artifact unavailability seen before in the messages here.",
+      "range": {
+        "startLine": 42,
+        "startChar": 13,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "58d0fa1303c467333e82a510c3be10375a09a3d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
