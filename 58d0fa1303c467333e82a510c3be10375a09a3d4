@@ -22,6 +22,30 @@
       "revId": "58d0fa1303c467333e82a510c3be10375a09a3d4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32156bf8_3e96bc85",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 6592
+      },
+      "writtenOn": "2021-07-06T14:30:57Z",
+      "side": 1,
+      "message": "1.9.0 is not released yet, so I believe we can release it in the next MR.",
+      "parentUuid": "66d949c7_56bc7b36",
+      "range": {
+        "startLine": 42,
+        "startChar": 13,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "58d0fa1303c467333e82a510c3be10375a09a3d4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
