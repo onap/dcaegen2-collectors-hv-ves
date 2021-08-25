@@ -39,7 +39,7 @@
 
     <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
     <artifactId>ves-hv-collector</artifactId>
-    <version>1.9.0-SNAPSHOT</version>
+    <version>1.9.1-SNAPSHOT</version>
     <name>dcaegen2-collectors-veshv</name>
     <description>VES HighVolume Collector</description>
     <packaging>pom</packaging>
@@ -77,7 +77,7 @@
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <jacoco.version>0.8.3</jacoco.version>
         <detekt.version>1.15.0</detekt.version>
-        <sdk.version>1.8.2</sdk.version>
+        <sdk.version>1.8.7</sdk.version>
 
         <!-- Protocol buffers -->
         <protobuf.version>4.0.0-rc-2</protobuf.version>
