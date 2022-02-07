@@ -33,7 +33,7 @@
     <parent>
         <groupId>org.onap.dcaegen2.collectors.hv-ves</groupId>
         <artifactId>hv-collector-sources</artifactId>
-        <version>1.9.1-SNAPSHOT</version>
+        <version>1.9.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>hv-collector-main</artifactId>
