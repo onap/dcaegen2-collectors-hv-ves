@@ -23,8 +23,7 @@ import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.security.plain.internals.PlainSaslServer
-import org.jetbrains.annotations.Nullable
+import org.apache.kafka.common.security.scram.internals.ScramMechanism
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.utils.applyIf
 import org.onap.dcaegen2.services.sdk.model.streams.AafCredentials
@@ -38,7 +37,6 @@ internal object KafkaSenderOptionsFactory {
     private const val BUFFER_MEMORY_MULTIPLIER = 32
     private const val MINIMUM_BUFFER_MEMORY = 32 * 1024 * 1024
 
-    private const val LOGIN_MODULE_CLASS = "org.apache.kafka.common.security.plain.PlainLoginModule"
     private val SASL_PLAINTEXT = (SecurityProtocol.SASL_PLAINTEXT as Enum<SecurityProtocol>).name
 
     fun createSenderOptions(kafkaSink: KafkaSink): SenderOptions<CommonEventHeader, VesMessage> =
@@ -52,16 +50,9 @@ internal object KafkaSenderOptionsFactory {
                     .producerProperty(ProducerConfig.RETRIES_CONFIG, 1)
                     .producerProperty(ProducerConfig.ACKS_CONFIG, "1")
                     .stopOnError(false)
-                    .applyIf(kafkaSink.aafCredentials() != null) {
-                        producerProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SASL_PLAINTEXT)
-                                .producerProperty(SaslConfigs.SASL_MECHANISM, PlainSaslServer.PLAIN_MECHANISM)
-                                .producerProperty(SaslConfigs.SASL_JAAS_CONFIG, jaasConfig(kafkaSink.aafCredentials()!!))
-                    }
-
-    private fun jaasConfig(aafCredentials: AafCredentials) =
-            """$LOGIN_MODULE_CLASS required username="${aafCredentials.username().jaasEscape()}" password="${aafCredentials.password().jaasEscape()}";"""
-
-    private fun String?.jaasEscape() = this?.replace("\"", "\\\"")
+                    .producerProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SASL_PLAINTEXT)
+                    .producerProperty(SaslConfigs.SASL_MECHANISM, ScramMechanism.SCRAM_SHA_512.mechanismName())
+                    .producerProperty(SaslConfigs.SASL_JAAS_CONFIG, System.getenv("JAAS_CONFIG"))
 
     private fun maxRequestSize(kafkaSink: KafkaSink) =
             (MAXIMUM_REQUEST_SIZE_MULTIPLIER * kafkaSink.maxPayloadSizeBytes()).toInt()

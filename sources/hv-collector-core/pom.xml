@@ -43,6 +43,15 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <JAAS_CONFIG>org.apache.kafka.common.security.scram.ScramLoginModule required username="onap-dcae-hv-ves-kafka-user" password="oJumEmQAH6kN";</JAAS_CONFIG>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
             </plugin>
