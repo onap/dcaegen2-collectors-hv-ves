@@ -4,6 +4,7 @@
   ~ dcaegen2-collectors-veshv
   ~ ================================================================================
   ~ Copyright (C) 2018-2021 NOKIA
+  ~ Copyright (C) 2022 Nordix Foundation.
   ~ ================================================================================
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -103,6 +104,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hv-collector-test-utils</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-runner-junit5-jvm</artifactId>
+            <version>4.2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
