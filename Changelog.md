@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.0] - 11/02/2022
+    - [DCAEGEN2-3038](https://jira.onap.org/browse/DCAEGEN2-3083) - Add scram-sha support for kafka conect
+
 ## [1.9.1] - 25/08/2021
     - [DCAEGEN2-2718](https://jira.onap.org/browse/DCAEGEN2-2718) - Update DCAE SDK version from 1.8.2 to 1.8.7
 
