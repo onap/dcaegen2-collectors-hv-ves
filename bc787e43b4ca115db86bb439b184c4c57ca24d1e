@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "61b1f938_6d48483a",
+        "filename": "sources/hv-collector-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-11T01:19:44Z",
+      "side": 1,
+      "message": "Copyright must be capitalized.\n\"Modification\" is NOT needed",
+      "revId": "bc787e43b4ca115db86bb439b184c4c57ca24d1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "454b760d_16314348",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-11T01:19:44Z",
+      "side": 1,
+      "message": "Copyright must be capitalized.\n\"Modification\" is NOT needed",
+      "revId": "bc787e43b4ca115db86bb439b184c4c57ca24d1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "151994a4_2372a019",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactoryTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-11T01:19:44Z",
+      "side": 1,
+      "message": "Copyright must be capitalized.\n\"Modification\" is NOT needed",
+      "revId": "bc787e43b4ca115db86bb439b184c4c57ca24d1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
