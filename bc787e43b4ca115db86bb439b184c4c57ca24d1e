@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b8a9d506_e2062f4d",
+        "filename": "sources/hv-collector-core/pom.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-11T09:15:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61b1f938_6d48483a",
+      "revId": "bc787e43b4ca115db86bb439b184c4c57ca24d1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "454b760d_16314348",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "7bc2bffa_e98f5ec3",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-11T09:15:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "454b760d_16314348",
+      "revId": "bc787e43b4ca115db86bb439b184c4c57ca24d1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "151994a4_2372a019",
         "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactoryTest.kt",
         "patchSetId": 3
@@ -50,6 +86,24 @@
       "revId": "bc787e43b4ca115db86bb439b184c4c57ca24d1e",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7fe5c87_a842fd7d",
+        "filename": "sources/hv-collector-core/src/test/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactoryTest.kt",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-11T09:15:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "151994a4_2372a019",
+      "revId": "bc787e43b4ca115db86bb439b184c4c57ca24d1e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
