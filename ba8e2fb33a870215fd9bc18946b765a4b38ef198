@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a293e57_c5d07100",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-11T21:22:49Z",
+      "side": 1,
+      "message": "There is a type mismatch between what is in the Map returned by getenv() (a string) and the false value (a boolean). Replace this with\n\n\nprivate Boolean USE_SCRAM \u003d parseBoolean(System.getenv().getOrDefault(\"USE_SCRAM\", \"false\"));",
+      "revId": "ba8e2fb33a870215fd9bc18946b765a4b38ef198",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29441b3f_1c7531de",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-11T21:22:49Z",
+      "side": 1,
+      "message": "Now change this to\n\napplyIf(USE_SCRAM)\n\n(Without the previous change and this one, your code could fail in various ways, such as if the value in USE_SCRAM were \"True\" or \"TRUE\". Using parseBoolean() avoids all of these issues.)",
+      "revId": "ba8e2fb33a870215fd9bc18946b765a4b38ef198",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
