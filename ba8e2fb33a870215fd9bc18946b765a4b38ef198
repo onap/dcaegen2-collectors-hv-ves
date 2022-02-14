@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f8a24161_70f9a1b0",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-14T10:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4a293e57_c5d07100",
+      "revId": "ba8e2fb33a870215fd9bc18946b765a4b38ef198",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "29441b3f_1c7531de",
         "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
         "patchSetId": 8
@@ -33,6 +51,24 @@
       "revId": "ba8e2fb33a870215fd9bc18946b765a4b38ef198",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bda6a176_a4e1751f",
+        "filename": "sources/hv-collector-core/src/main/kotlin/org/onap/dcae/collectors/veshv/impl/adapters/kafka/KafkaSenderOptionsFactory.kt",
+        "patchSetId": 8
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-14T10:41:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "29441b3f_1c7531de",
+      "revId": "ba8e2fb33a870215fd9bc18946b765a4b38ef198",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
