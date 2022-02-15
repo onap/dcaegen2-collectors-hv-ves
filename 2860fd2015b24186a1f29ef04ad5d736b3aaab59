@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0bd8db6_ddba33fb",
+        "filename": "Changelog.md",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2022-02-15T00:14:19Z",
+      "side": 1,
+      "message": "make this 1.10.0 (to avoid conflict with maintenance delivery fixes if any)",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 9
+      },
+      "revId": "2860fd2015b24186a1f29ef04ad5d736b3aaab59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c164e9a_902e7e7a",
+        "filename": "build/hv-collector-analysis/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2022-02-15T00:14:19Z",
+      "side": 1,
+      "message": "missing license update",
+      "revId": "2860fd2015b24186a1f29ef04ad5d736b3aaab59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ecd5a821_59dc4c14",
+        "filename": "build/hv-collector-coverage/pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2022-02-15T00:14:19Z",
+      "side": 1,
+      "message": "same as last comment",
+      "revId": "2860fd2015b24186a1f29ef04ad5d736b3aaab59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6202812d_0e21b157",
+        "filename": "pom.xml",
+        "patchSetId": 9
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2022-02-15T00:14:19Z",
+      "side": 1,
+      "message": "1.10.0",
+      "range": {
+        "startLine": 53,
+        "startChar": 18,
+        "endLine": 53,
+        "endChar": 24
+      },
+      "revId": "2860fd2015b24186a1f29ef04ad5d736b3aaab59",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
