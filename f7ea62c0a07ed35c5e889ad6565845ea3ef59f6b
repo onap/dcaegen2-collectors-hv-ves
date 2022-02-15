@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac83adb0_30a60a8f",
+        "filename": "build/hv-collector-coverage/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "there\u0027s no NL at the end of the file",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eeefd153_cba6f5db",
+        "filename": "sources/hv-collector-commandline/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "the license/copyright block is missing",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4589bb5d_e50de05c",
+        "filename": "sources/hv-collector-configuration/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "there\u0027s no NL at the end of the file",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84a53097_f7b32871",
+        "filename": "sources/hv-collector-ct/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "there\u0027s no NL at the end of the file",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6412db64_3b8db265",
+        "filename": "sources/hv-collector-dcae-app-simulator/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "there\u0027s no NL at the end of the file",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1759c3c_654463a8",
+        "filename": "sources/hv-collector-health-check/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "the license/copyright block is missing",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "443f64e8_59637de2",
+        "filename": "sources/hv-collector-kafka-consumer/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "the license/copyright block is missing",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "927d2795_9c22c848",
+        "filename": "sources/hv-collector-kafka/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "the license/copyright block is missing",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4bbc245c_cc2de3b4",
+        "filename": "sources/hv-collector-test-utils/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "license and copyright block is missing",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2e7964d_13e2d130",
+        "filename": "sources/hv-collector-test-utils/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "there\u0027s no NL at the end of the file",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba5255cd_ae27f0f6",
+        "filename": "sources/hv-collector-utils/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "there\u0027s no NL at the end of the file",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da83025d_9c8e4c29",
+        "filename": "sources/hv-collector-ves-message-generator/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-15T18:27:09Z",
+      "side": 1,
+      "message": "there\u0027s no NL at the end of the file",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
