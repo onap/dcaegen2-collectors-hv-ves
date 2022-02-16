@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.0] - 17/02/2022
+    - [DCAEGEN2-3044](https://jira.onap.org/browse/DCAEGEN2-3044) - Vulnerability addressal for HV-VES
+
 ## [1.9.1] - 25/08/2021
-    - [DCAEGEN2-2718](https://jira.onap.org/browse/DCAEGEN2-2718) - Update DCAE SDK version from 1.8.2 to 1.8.7
+    - [DCAEGEN2-2718](https://jira.onap.org/browse/DCAEGEN2-2718) - Update DCAE SDK version from 1.8.2 to 1.8.7    
 
 ## [1.9.0] - 08/07/2021
     - [DCAEGEN2-2420](https://jira.onap.org/browse/DCAEGEN2-2420) [INT-1864](https://jira.onap.org/browse/INT-1864) - Change openjdk baseOS img to integration-java11
