@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9657bff_bd5259c4",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 6310
+      },
+      "writtenOn": "2022-02-17T08:41:32Z",
+      "side": 1,
+      "message": "Please use new sdk",
+      "range": {
+        "startLine": 80,
+        "startChar": 21,
+        "endLine": 80,
+        "endChar": 26
+      },
+      "revId": "fd960ed41d66fb871be2bf07e84d4210c7c5d106",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
