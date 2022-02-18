@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4a7c56d6_cf236172",
+        "filename": "build/hv-collector-coverage/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac83adb0_30a60a8f",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eeefd153_cba6f5db",
         "filename": "sources/hv-collector-commandline/pom.xml",
         "patchSetId": 10
@@ -33,6 +51,24 @@
       "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a53ff053_69f2be5f",
+        "filename": "sources/hv-collector-commandline/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eeefd153_cba6f5db",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9736ae5b_2baf8035",
+        "filename": "sources/hv-collector-configuration/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4589bb5d_e50de05c",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84a53097_f7b32871",
         "filename": "sources/hv-collector-ct/pom.xml",
         "patchSetId": 10
@@ -67,6 +121,24 @@
       "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "888379e0_f13c8251",
+        "filename": "sources/hv-collector-ct/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "84a53097_f7b32871",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "d71cb036_33911b65",
+        "filename": "sources/hv-collector-dcae-app-simulator/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6412db64_3b8db265",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b1759c3c_654463a8",
         "filename": "sources/hv-collector-health-check/pom.xml",
         "patchSetId": 10
@@ -101,6 +191,24 @@
       "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "804e4005_7e0743fb",
+        "filename": "sources/hv-collector-health-check/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b1759c3c_654463a8",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "e4cfee1c_9e7114e2",
+        "filename": "sources/hv-collector-kafka-consumer/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "443f64e8_59637de2",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "927d2795_9c22c848",
         "filename": "sources/hv-collector-kafka/pom.xml",
         "patchSetId": 10
@@ -135,6 +261,24 @@
       "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "693e8a04_9217a474",
+        "filename": "sources/hv-collector-kafka/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "927d2795_9c22c848",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "f61c481b_156f37c8",
+        "filename": "sources/hv-collector-test-utils/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4bbc245c_cc2de3b4",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d2e7964d_13e2d130",
         "filename": "sources/hv-collector-test-utils/pom.xml",
         "patchSetId": 10
@@ -169,6 +331,24 @@
       "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36daca03_0ed80567",
+        "filename": "sources/hv-collector-test-utils/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2e7964d_13e2d130",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     },
     {
       "key": {
@@ -189,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "49af5071_0ae240ad",
+        "filename": "sources/hv-collector-utils/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba5255cd_ae27f0f6",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da83025d_9c8e4c29",
         "filename": "sources/hv-collector-ves-message-generator/pom.xml",
         "patchSetId": 10
@@ -203,6 +401,24 @@
       "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0c63664_35f70aff",
+        "filename": "sources/hv-collector-ves-message-generator/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-18T11:46:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da83025d_9c8e4c29",
+      "revId": "f7ea62c0a07ed35c5e889ad6565845ea3ef59f6b",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
