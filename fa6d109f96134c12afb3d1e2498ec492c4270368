@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62587dbc_c701c30f",
+        "filename": "Changelog.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-18T19:45:00Z",
+      "side": 1,
+      "message": "this does not list DMAAP-1705\n\nDid you put the correct Issue-ID in the commit log?",
+      "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71502a7f_15a9d10c",
+        "filename": "sources/hv-collector-commandline/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-18T19:45:00Z",
+      "side": 1,
+      "message": "check your IDE settings. There should be a NL at the end of the file",
+      "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "070d5b08_5a6945bf",
+        "filename": "sources/hv-collector-health-check/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-18T19:45:00Z",
+      "side": 1,
+      "message": "check your IDE settings. There should be a NL at the end of the file",
+      "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
