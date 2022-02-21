@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "f909dc10_86e9eb42",
+        "filename": "Changelog.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 105
+      },
+      "writtenOn": "2022-02-21T21:18:35Z",
+      "side": 1,
+      "message": "The main thing is for the issue ID in the commit message to match what was used in the change log. For example, you could have just added DMAAP-1705 to the change log.\n\nBut cloning the DMAAP issue into a DCAE issue works too.",
+      "parentUuid": "a84ecc45_24f0ee82",
+      "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "71502a7f_15a9d10c",
         "filename": "sources/hv-collector-commandline/pom.xml",
         "patchSetId": 11
