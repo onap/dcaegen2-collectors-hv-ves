@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a84ecc45_24f0ee82",
+        "filename": "Changelog.md",
+        "patchSetId": 11
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-21T09:29:54Z",
+      "side": 1,
+      "message": "I created a clone in the assumption that I needed to have a DCAE ticket. Updating the commit ID.",
+      "parentUuid": "62587dbc_c701c30f",
+      "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "71502a7f_15a9d10c",
         "filename": "sources/hv-collector-commandline/pom.xml",
         "patchSetId": 11
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "f91aa6a9_2fbb4b2b",
+        "filename": "sources/hv-collector-commandline/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-21T09:29:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71502a7f_15a9d10c",
+      "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "070d5b08_5a6945bf",
         "filename": "sources/hv-collector-health-check/pom.xml",
         "patchSetId": 11
@@ -50,6 +86,24 @@
       "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28d085a3_b80b5d04",
+        "filename": "sources/hv-collector-health-check/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 4405
+      },
+      "writtenOn": "2022-02-21T09:29:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "070d5b08_5a6945bf",
+      "revId": "fa6d109f96134c12afb3d1e2498ec492c4270368",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
