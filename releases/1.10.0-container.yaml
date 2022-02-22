@@ -1,0 +1,8 @@
+distribution_type: 'container'
+container_release_tag: '1.10.0'
+project: 'dcaegen2-collectors-hv-ves'
+log_dir: 'dcaegen2-collectors-hv-ves-maven-docker-stage-master/972/'
+ref: 955431838bef5bc74cb62cb0c550613b8a6f13b6
+containers:
+  - name: 'org.onap.dcaegen2.collectors.hv-ves.hv-collector-main'
+    version: '1.10.0-20220222T073551Z'
