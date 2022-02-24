@@ -16,6 +16,24 @@
       "revId": "525b0dc6b5951204b863a07cd5f1a132c663aca6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a482a70_f6b28055",
+        "filename": "releases/1.10.0-container.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 3435
+      },
+      "writtenOn": "2022-02-24T07:50:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9f0d0775_92401fde",
+      "revId": "525b0dc6b5951204b863a07cd5f1a132c663aca6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
