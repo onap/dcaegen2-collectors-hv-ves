@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.0] - 11/02/2022
+    - [DCAEGEN2-3212](https://jira.onap.org/browse/DCAEGEN2-3212) - dcaegen2-analytics-hv-ves vulnerability updates   
+
 ## [1.10.0] - 11/02/2022
     - [DCAEGEN2-3038](https://jira.onap.org/browse/DCAEGEN2-3083) - Add scram-sha support for kafka conect
     - [DCAEGEN2-3044](https://jira.onap.org/browse/DCAEGEN2-3044) - Vulnerability addressal for HV-VES    
