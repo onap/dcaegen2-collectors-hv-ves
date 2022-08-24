@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59214a16_21bc9ad5",
+        "filename": "Changelog.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2022-08-24T13:34:59Z",
+      "side": 1,
+      "message": "remove EOL space/tab",
+      "range": {
+        "startLine": 8,
+        "startChar": 115,
+        "endLine": 8,
+        "endChar": 118
+      },
+      "revId": "63802b912df970c9b91551c4ef078b7138dad100",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d820e89_5d6f4127",
+        "filename": "Changelog.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 93
+      },
+      "writtenOn": "2022-08-24T13:34:59Z",
+      "side": 1,
+      "message": "remove EOL space/tab",
+      "range": {
+        "startLine": 12,
+        "startChar": 102,
+        "endLine": 12,
+        "endChar": 106
+      },
+      "revId": "63802b912df970c9b91551c4ef078b7138dad100",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
