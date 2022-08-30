@@ -79,10 +79,10 @@
         <build-helper-maven-plugin.version>3.2.0</build-helper-maven-plugin.version>
         <jacoco.version>0.8.3</jacoco.version>
         <detekt.version>1.15.0</detekt.version>
-        <sdk.version>1.8.8</sdk.version>
+        <sdk.version>1.8.10</sdk.version>
 
         <!-- Protocol buffers -->
-        <protobuf.version>4.0.0-rc-2</protobuf.version>
+        <protobuf.version>3.21.5</protobuf.version>
 
         <!-- Testing and code analysis -->
         <junit-platform.version>1.2.0</junit-platform.version>
