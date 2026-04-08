@@ -87,9 +87,8 @@
         <protobuf.version>3.21.5</protobuf.version>
 
         <!-- Testing and code analysis -->
-        <junit-platform.version>1.2.0</junit-platform.version>
-        <junit-jupiter.version>5.8.0-M1</junit-jupiter.version>
-        <spek.version>1.1.5</spek.version>
+        <junit-platform.version>1.8.0</junit-platform.version>
+        <junit-jupiter.version>5.8.0</junit-jupiter.version>
         <gson.version>2.9.0</gson.version>
 
         <failIfMissingUnitTests>false</failIfMissingUnitTests>
@@ -195,11 +194,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-                <!--
-                 Due to a memory leak in Surefire 2.20 and issues running on Java 9, the junit-platform-surefire-provider
-                 currently only works with Surefire 2.19.1.
-                 For updates see https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven
-                 -->
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -211,25 +205,6 @@
                             <include>**/*Test.*</include>
                         </includes>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.commons</groupId>
-                            <artifactId>commons-lang3</artifactId>
-                            <version>${commons-lang3.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.junit.platform</groupId>
-                            <artifactId>junit-platform-surefire-provider</artifactId>
-                            <version>${junit-platform.version}</version>
-                            <scope>runtime</scope>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.jetbrains.spek</groupId>
-                            <artifactId>spek-junit-platform-engine</artifactId>
-                            <version>${spek.version}</version>
-                            <scope>runtime</scope>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -242,25 +217,6 @@
                             <include>**/*Specification.*</include>
                         </includes>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.commons</groupId>
-                            <artifactId>commons-lang3</artifactId>
-                            <version>${commons-lang3.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.junit.platform</groupId>
-                            <artifactId>junit-platform-surefire-provider</artifactId>
-                            <version>${junit-platform.version}</version>
-                            <scope>runtime</scope>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.jetbrains.spek</groupId>
-                            <artifactId>spek-junit-platform-engine</artifactId>
-                            <version>${spek.version}</version>
-                            <scope>runtime</scope>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -599,15 +555,21 @@
             <!-- Test dependencies -->
 
             <dependency>
-                <groupId>org.jetbrains.spek</groupId>
-                <artifactId>spek-api</artifactId>
-                <version>${spek.version}</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.jetbrains.spek</groupId>
-                <artifactId>spek-junit-platform-engine</artifactId>
-                <version>${spek.version}</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

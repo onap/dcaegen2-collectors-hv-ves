@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,54 +24,50 @@ import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.test.TestConfig
 import io.gitlab.arturbosch.detekt.test.assertThat
 import io.gitlab.arturbosch.detekt.test.compileAndLint
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.xdescribe
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
  * @since November 2018
  */
-internal class SuboptimalLoggerUsageTest : Spek({
+internal class SuboptimalLoggerUsageTest {
 
-    fun checkPassingCase(code: String, cut: SuboptimalLoggerUsage = SuboptimalLoggerUsage(Config.empty)) {
-        describe(code) {
-            val findings = cut.compileAndLint(CodeSamples.code(code))
+    private fun checkPassingCase(code: String, cut: SuboptimalLoggerUsage = SuboptimalLoggerUsage(Config.empty)) {
+        val findings = cut.compileAndLint(CodeSamples.code(code))
+        assertThat(findings).isEmpty()
+    }
 
-            it("should pass") {
-                assertThat(findings).isEmpty()
-            }
+    private fun checkFailingCase(code: String, cut: SuboptimalLoggerUsage = SuboptimalLoggerUsage(Config.empty)) {
+        val findings = cut.compileAndLint(CodeSamples.code(code))
+        assertThat(findings).isNotEmpty()
+    }
+
+    @Nested
+    inner class `passing cases` {
+        @Test
+        fun `should have no findings`() {
+            checkPassingCase(CodeSamples.noConcatCall)
+            checkPassingCase(CodeSamples.exceptionCall)
+            checkPassingCase(CodeSamples.lambdaCall)
+            checkPassingCase(CodeSamples.lambdaFunctionCall)
+            checkPassingCase(CodeSamples.lambdaExceptionCall)
         }
     }
 
-    fun checkFailingCase(code: String, cut: SuboptimalLoggerUsage = SuboptimalLoggerUsage(Config.empty)) {
-        describe(code) {
-            val findings = cut.compileAndLint(CodeSamples.code(code))
-
-            it("should fail") {
-                assertThat(findings).isNotEmpty()
-            }
+    @Nested
+    inner class `failing cases` {
+        @Test
+        fun `should find issues`() {
+            checkFailingCase(CodeSamples.plainConcatCall)
+            checkFailingCase(CodeSamples.expansionCall)
+            checkFailingCase(CodeSamples.plainConcatExceptionCall)
+            checkFailingCase(CodeSamples.expansionExceptionCall)
         }
     }
 
-    describe("passing cases") {
-        checkPassingCase(CodeSamples.noConcatCall)
-        checkPassingCase(CodeSamples.exceptionCall)
-        checkPassingCase(CodeSamples.lambdaCall)
-        checkPassingCase(CodeSamples.lambdaFunctionCall)
-        checkPassingCase(CodeSamples.lambdaExceptionCall)
-    }
-
-
-    describe("failing cases") {
-        checkFailingCase(CodeSamples.plainConcatCall)
-        checkFailingCase(CodeSamples.expansionCall)
-        checkFailingCase(CodeSamples.plainConcatExceptionCall)
-        checkFailingCase(CodeSamples.expansionExceptionCall)
-    }
-
-    describe("custom configuration") {
+    @Nested
+    inner class `custom configuration` {
         val cut = SuboptimalLoggerUsage(TestConfig(mapOf("loggerNames" to "l,lo", "loggingMethodNames" to "print")))
         val strangeLogger = """
             val l = object {
@@ -79,21 +76,33 @@ internal class SuboptimalLoggerUsageTest : Spek({
             val lo = l
         """.trimIndent()
 
-        checkPassingCase(CodeSamples.plainConcatCall, cut)
+        @Test
+        fun `plain concat call should pass`() {
+            checkPassingCase(CodeSamples.plainConcatCall, cut)
+        }
 
-        checkPassingCase("""
-            $strangeLogger
-            l.print("n")""".trimIndent(), cut)
+        @Test
+        fun `strange logger call should pass`() {
+            checkPassingCase("""
+                $strangeLogger
+                l.print("n")""".trimIndent(), cut)
+        }
 
-        checkFailingCase("""
-            $strangeLogger
-            l.print("n=" + n)""".trimIndent(), cut)
+        @Test
+        fun `strange logger string concat should fail`() {
+            checkFailingCase("""
+                $strangeLogger
+                l.print("n=" + n)""".trimIndent(), cut)
+        }
 
-        checkFailingCase("""
-            $strangeLogger
-            lo.print("n=${'$'}n")""".trimIndent(), cut)
+        @Test
+        fun `strange logger template should fail`() {
+            checkFailingCase("""
+                $strangeLogger
+                lo.print("n=${'$'}n")""".trimIndent(), cut)
+        }
     }
-})
+}
 
 object CodeSamples {
     private val codeBefore = """

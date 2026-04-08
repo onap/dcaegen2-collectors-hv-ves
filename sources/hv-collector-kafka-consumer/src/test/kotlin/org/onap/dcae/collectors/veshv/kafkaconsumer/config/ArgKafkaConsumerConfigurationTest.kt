@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +21,12 @@
 package org.onap.dcae.collectors.veshv.kafkaconsumer.config
 
 import org.assertj.core.api.Assertions
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingFailure
 import org.onap.dcae.collectors.veshv.tests.utils.parseExpectingSuccess
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 private const val listenPort = "1234"
 private const val kafkaBootstrapServers = "localhost:1234,10.1.14.10:8090"
@@ -35,19 +35,27 @@ private const val T2 = "exciting_topic"
 private const val kafkaTopicsString = "$T1,$T2"
 private val PARSED_TOPICS_SET = setOf(T1, T2)
 
-internal object ArgKafkaConsumerConfigurationTest : Spek({
+internal class ArgKafkaConsumerConfigurationTest {
     lateinit var cut: ArgKafkaConsumerConfiguration
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         cut = ArgKafkaConsumerConfiguration()
     }
 
-    describe("parsing arguments") {
+    @Nested
+
+    inner class `parsing arguments` {
         lateinit var result: KafkaConsumerConfiguration
 
-        given("all parameters are present in the long form") {
+        @Nested
 
-            beforeEachTest {
+        inner class `all parameters are present in the long form` {
+
+            @BeforeEach
+
+            fun setup() {
                 result = cut.parseExpectingSuccess(
                         "--listen-port", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
@@ -56,61 +64,88 @@ internal object ArgKafkaConsumerConfigurationTest : Spek({
                 )
             }
 
-            it("should set proper port") {
+            @Test
+
+            fun `should set proper port`() {
                 Assertions.assertThat(result.apiAddress.port).isEqualTo(listenPort.toInt())
             }
 
-            it("should set proper kafka bootstrap servers") {
+            @Test
+
+            fun `should set proper kafka bootstrap servers`() {
                 Assertions.assertThat(result.kafkaBootstrapServers).isEqualTo(kafkaBootstrapServers)
             }
 
-            it("should set proper kafka topics") {
+            @Test
+
+            fun `should set proper kafka topics`() {
                 Assertions.assertThat(result.kafkaTopics).isEqualTo(PARSED_TOPICS_SET)
             }
 
-            it("should disable processing") {
+            @Test
+
+            fun `should disable processing`() {
                 Assertions.assertThat(result.disableProcessing).isTrue()
             }
         }
 
-        given("some parameters are present in the short form") {
+        @Nested
 
-            beforeEachTest {
+        inner class `some parameters are present in the short form` {
+
+            @BeforeEach
+
+            fun setup() {
                 result = cut.parseExpectingSuccess(
                         "--listen-port", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "--kafka-topics", kafkaTopicsString)
             }
 
-            it("should set proper port") {
+            @Test
+
+            fun `should set proper port`() {
                 Assertions.assertThat(result.apiAddress.port).isEqualTo(listenPort.toInt())
             }
 
-            it("should set proper kafka bootstrap servers") {
+            @Test
+
+            fun `should set proper kafka bootstrap servers`() {
                 Assertions.assertThat(result.kafkaBootstrapServers).isEqualTo(kafkaBootstrapServers)
             }
 
-            it("should set proper kafka topics") {
+            @Test
+
+            fun `should set proper kafka topics`() {
                 Assertions.assertThat(result.kafkaTopics).isEqualTo(PARSED_TOPICS_SET)
             }
         }
 
-        given("some missing disable-processing flag") {
-            beforeEachTest {
+        @Nested
+
+        inner class `some missing disable-processing flag` {
+            @BeforeEach
+            fun setup() {
                 result = cut.parseExpectingSuccess(
                         "-p", listenPort,
                         "--kafka-bootstrap-servers", kafkaBootstrapServers,
                         "-f", kafkaTopicsString)
             }
 
-            it("should NOT disable processing") {
+            @Test
+
+            fun `should NOT disable processing`() {
                 Assertions.assertThat(result.disableProcessing).isFalse()
             }
         }
 
-        describe("required parameter is absent") {
-            given("kafka topics are missing") {
-                it("should throw exception") {
+        @Nested
+
+        inner class `required parameter is absent` {
+            @Nested
+            inner class `kafka topics are missing` {
+                @Test
+                fun `should throw exception`() {
                     Assertions.assertThat(cut.parseExpectingFailure(
                             "-p", listenPort,
                             "-T1", kafkaBootstrapServers
@@ -118,8 +153,11 @@ internal object ArgKafkaConsumerConfigurationTest : Spek({
                 }
             }
 
-            given("kafka bootstrap servers is missing") {
-                it("should throw exception") {
+            @Nested
+
+            inner class `kafka bootstrap servers is missing` {
+                @Test
+                fun `should throw exception`() {
                     Assertions.assertThat(cut.parseExpectingFailure(
                             "-p", listenPort,
                             "-f", kafkaTopicsString
@@ -127,8 +165,11 @@ internal object ArgKafkaConsumerConfigurationTest : Spek({
                 }
             }
 
-            given("listen port is missing") {
-                it("should throw exception") {
+            @Nested
+
+            inner class `listen port is missing` {
+                @Test
+                fun `should throw exception`() {
                     Assertions.assertThat(cut.parseExpectingFailure(
                             "-p", listenPort,
                             "-T1", kafkaBootstrapServers
@@ -137,4 +178,4 @@ internal object ArgKafkaConsumerConfigurationTest : Spek({
             }
         }
     }
-})
+}

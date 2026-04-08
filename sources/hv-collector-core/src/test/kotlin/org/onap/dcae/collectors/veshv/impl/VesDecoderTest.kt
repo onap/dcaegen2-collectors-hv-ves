@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +22,6 @@ package org.onap.dcae.collectors.veshv.impl
 
 import arrow.core.Try
 import com.google.protobuf.ByteString
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.ByteData
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesMessage
@@ -34,18 +31,25 @@ import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
 import java.nio.charset.Charset
 import kotlin.test.assertTrue
 import kotlin.test.fail
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
+internal class VesDecoderTest {
 
-internal object VesDecoderTest : Spek({
+    @Nested
 
-    given("ves message decoder") {
+    inner class `ves message decoder` {
         val cut = VesDecoder()
 
-        on("ves hv message bytes") {
+        @Nested
+
+        inner class `ves hv message bytes` {
             val commonHeader = commonHeader(HEARTBEAT)
             val wtpFrame = wireProtocolFrame(commonHeader, ByteString.copyFromUtf8("highvolume measurements"))
 
-            it("should decode only header and pass it on along with raw message") {
+            @Test
+
+            fun `should decode only header and pass it on along with raw message`() {
                 val expectedMessage = VesMessage(
                         commonHeader,
                         wtpFrame
@@ -59,16 +63,20 @@ internal object VesDecoderTest : Spek({
             }
         }
 
-        on("invalid ves hv message bytes") {
+        @Nested
+
+        inner class `invalid ves hv message bytes` {
             val rawMessageBytes = ByteData("ala ma kota".toByteArray(Charset.defaultCharset()))
             val wtpFrame = emptyWireProtocolFrame().copy(payload = rawMessageBytes, payloadSize = rawMessageBytes.size())
 
-            it("should throw error") {
+            @Test
+
+            fun `should throw error`() {
                 assertFailedWithError(cut.decode(wtpFrame))
             }
         }
     }
-})
+}
 
 private fun <A> assertFailedWithError(t: Try<A>) =
         t.exists {

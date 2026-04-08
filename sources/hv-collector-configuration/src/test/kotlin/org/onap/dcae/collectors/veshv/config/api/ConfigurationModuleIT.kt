@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,42 +28,53 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.config.impl.mdc
 import org.onap.dcae.collectors.veshv.tests.utils.absoluteResourcePath
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.Duration
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-
-internal object ConfigurationModuleIT : Spek({
+internal class ConfigurationModuleIT {
+    init {
     StepVerifier.setDefaultTimeout(Duration.ofSeconds(5))
+    }
+    @Nested
 
-    describe("Configuration Module") {
+    inner class `Configuration Module` {
         val configStateListenerMock: ConfigurationStateListener = mock()
         val cbsClientMono = Mono.fromSupplier(CbsClientMockSupplier)
 
         val sut = ConfigurationModule(configStateListenerMock, cbsClientMono)
 
-        beforeEachTest {
+        @BeforeEach
+
+        fun setup() {
             reset(configStateListenerMock)
+
             CbsClientMockSupplier.reset()
         }
 
-        given("sample configuration in file") {
+        @Nested
+
+        inner class `sample configuration in file` {
             val configurationPath = javaClass.absoluteResourcePath("/insecureSampleConfig.json")
 
             val configurationUpdates = sut.hvVesConfigurationUpdates(arguments(configurationPath), mdc)
 
-            on("Config Binding Service permanently not available") {
+            @Nested
+
+            inner class `Config Binding Service permanently not available` {
+                init {
                 CbsClientMockSupplier.setCbsClientCreationSuccessful(false)
+                }
                 val testVirtualDuration = Duration.ofMinutes(10)
 
-                it("should retry as long as possible until failing") {
+                @Test
+
+                fun `should retry as long as possible until failing`() {
                     StepVerifier
                             .withVirtualTime { configurationUpdates.last() }
                             .expectSubscription()
@@ -72,20 +84,29 @@ internal object ConfigurationModuleIT : Spek({
                             .allOperatorErrorsAre(CbsClientMockSupplier.throwedException())
                 }
 
-                it("should notify configuration state listener about each retry") {
+                @Test
+
+                fun `should notify configuration state listener about each retry`() {
                     val requestsAmount = CbsClientMockSupplier.requestsAmount.get()
                     assertThat(requestsAmount).describedAs("CBS client requests amount").isGreaterThan(0)
                     verify(configStateListenerMock, times(requestsAmount)).retrying()
                 }
             }
 
-            on("Config Binding Service temporarily not available") {
+            @Nested
+
+            inner class `Config Binding Service temporarily not available` {
+                init {
                 CbsClientMockSupplier.setCbsClientCreationSuccessful(false)
+                }
                 val cbsUnavailabilityTime = Duration.ofMinutes(10)
+                init {
                 whenever(CbsClientMockSupplier.cbsClientMock.get(any()))
                         .thenReturn(Mono.just(configurationJsonWithIntervalChanged))
+                }
+                @Test
 
-                it("should return configuration after CBS is available again") {
+                fun `should return configuration after CBS is available again`() {
                     StepVerifier
                             .withVirtualTime { configurationUpdates.take(1) }
                             .expectSubscription()
@@ -97,13 +118,19 @@ internal object ConfigurationModuleIT : Spek({
                 }
             }
 
-            on("failure from CBS client during getting configuration") {
-                val exceptionFromCbsClient = MyCustomTestCbsClientException("I'm such a failure")
+            @Nested
+
+            inner class `failure from CBS client during getting configuration` {
+                private val exceptionFromCbsClient = MyCustomTestCbsClientException("I'm such a failure")
+                init {
                 whenever(CbsClientMockSupplier.cbsClientMock.get(any()))
                         .thenReturn(Mono.error(exceptionFromCbsClient))
+                }
                 val testVirtualDuration = Duration.ofMinutes(2)
 
-                it("should retry as long as possible until failing") {
+                @Test
+
+                fun `should retry as long as possible until failing`() {
                     StepVerifier
                             .withVirtualTime { configurationUpdates.last() }
                             .expectSubscription()
@@ -113,22 +140,28 @@ internal object ConfigurationModuleIT : Spek({
                             .allOperatorErrorsAre(exceptionFromCbsClient)
                 }
 
-                it("should notify configuration state listener about each retry") {
+                @Test
+
+                fun `should notify configuration state listener about each retry`() {
                     val requestsAmount = CbsClientMockSupplier.requestsAmount.get()
                     assertThat(requestsAmount).describedAs("CBS client requests amount").isGreaterThan(0)
                     verify(configStateListenerMock, times(requestsAmount)).retrying()
                 }
             }
 
-            on("configuration changes in Config Binding Service") {
+            @Nested
+
+            inner class `configuration changes in Config Binding Service` {
+                init {
                 whenever(CbsClientMockSupplier.cbsClientMock.get(any()))
                         .thenReturn(
                                 Mono.just(configurationJsonWithIntervalChanged),
                                 Mono.just(configurationJsonWithIntervalChangedAgain),
                                 Mono.just(configurationJsonWithIntervalRestored)
                         )
-                it("should wait $firstRequestDelayFromFile s as provided in configuration file and later" +
-                        " fetch configurations in intervals specified within them") {
+                }
+                @Test
+                fun `should wait configured delay and fetch at intervals from CBS`() {
                     StepVerifier
                             .withVirtualTime { configurationUpdates.take(3) }
                             .expectSubscription()
@@ -143,7 +176,7 @@ internal object ConfigurationModuleIT : Spek({
             }
         }
     }
-})
+}
 
 private data class MyCustomTestCbsClientException(val msg: String) : Exception(msg)
 
@@ -182,5 +215,3 @@ private val configurationWithIntervalChangedAgain =
 
 private val configurationWithIntervalRestored =
         hvVesConfiguration(firstRequestDelayFromFile, requestIntervalFromCBS)
-
-
