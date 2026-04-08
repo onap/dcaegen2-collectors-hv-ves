@@ -51,7 +51,7 @@
     </modules>
 
     <properties>
-        <revision>1.11.0-SNAPSHOT</revision>
+        <revision>1.11.1-SNAPSHOT</revision>
         <containerName>org.onap.dcaegen2.collectors.hv-ves.hv-collector-main</containerName>
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <asm.version>9.1</asm.version>

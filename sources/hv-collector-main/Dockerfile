@@ -1,4 +1,4 @@
-FROM nexus3.onap.org:10001/onap/integration-java11:8.0.0
+FROM eclipse-temurin:11-jre-alpine
 
 LABEL copyright="Copyright (C) 2018-2019 NOKIA" \
       license.name="The Apache Software License, Version 2.0" \
@@ -10,8 +10,8 @@ ARG HV_VES_GROUP=hvves
 ARG HV_VES_USER_ID_NUMBER=1410
 
 USER root
-RUN apk add --no-cache curl netcat-openbsd
-RUN addgroup $HV_VES_GROUP && adduser --system --disabled-password \
+RUN apk add --no-cache curl netcat-openbsd && \
+    addgroup $HV_VES_GROUP && adduser --system --disabled-password \
     --no-create-home --uid ${HV_VES_USER_ID_NUMBER} --ingroup $HV_VES_GROUP $HV_VES_USER && \
     mkdir -p /etc/ves-hv/ssl && \
     mkdir -p /var/log/ONAP/dcae-hv-ves-collector/ && \
@@ -30,4 +30,3 @@ USER ${HV_VES_USER}
 
 ENTRYPOINT ["./entry.sh"]
 CMD ["--configuration-file /etc/ves-hv/configuration/base.json"]
-

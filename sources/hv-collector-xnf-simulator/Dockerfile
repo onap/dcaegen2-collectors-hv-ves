@@ -1,4 +1,4 @@
-FROM nexus3.onap.org:10001/onap/integration-java11:8.0.0
+FROM eclipse-temurin:11-jre-alpine
 
 LABEL copyright="Copyright (C) 2018 NOKIA" \
       license.name="The Apache Software License, Version 2.0" \
@@ -10,8 +10,8 @@ RUN apk add --no-cache curl
 
 WORKDIR /opt/ves-hv-client-simulator
 
-ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.simulators.xnf.MainKt"]
-
 COPY target/libs/external/* ./
 COPY target/libs/internal/* ./
 COPY target/hv-collector-xnf-simulator-*.jar ./
+
+ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.simulators.xnf.MainKt"]
