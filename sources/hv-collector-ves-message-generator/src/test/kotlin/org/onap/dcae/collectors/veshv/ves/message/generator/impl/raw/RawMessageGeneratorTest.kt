@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +23,6 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.impl.raw
 import com.google.protobuf.InvalidProtocolBufferException
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType
 import org.onap.dcae.collectors.veshv.ves.message.generator.generators.RawMessageGenerator
@@ -32,18 +30,23 @@ import org.onap.ves.VesEventOuterClass
 import reactor.test.test
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since February 2019
  */
-object WireFrameGeneratorTest : Spek({
+class WireFrameGeneratorTest {
 
     val maxPayloadSizeBytes = 1024
     val cut = RawMessageGenerator()
 
-    on("message type requesting invalid GPB data ") {
-        it("should createVesEventGenerator flux of messages with invalid payload") {
+    @Nested
+
+    inner class `message type requesting invalid GPB data ` {
+        @Test
+        fun `should createVesEventGenerator flux of messages with invalid payload`() {
             cut
                     .createMessageFlux(WireFrameParameters(
                             WireFrameType.INVALID_GPB_DATA, 1
@@ -60,7 +63,7 @@ object WireFrameGeneratorTest : Spek({
                     .verifyComplete()
         }
     }
-})
+}
 
 private fun extractCommonEventHeader(bytes: ByteBuffer): VesEventOuterClass.CommonEventHeader =
         VesEventOuterClass.VesEvent.parseFrom(bytes).commonEventHeader

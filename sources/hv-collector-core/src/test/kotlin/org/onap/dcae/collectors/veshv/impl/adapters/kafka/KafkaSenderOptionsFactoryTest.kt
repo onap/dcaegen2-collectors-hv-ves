@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * Copyright (C) 2022 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +26,6 @@ import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.config.SaslConfigs
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcaegen2.services.sdk.model.streams.ImmutableAafCredentials
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.ImmutableKafkaSink
@@ -33,43 +33,47 @@ import org.onap.ves.VesEventOuterClass
 import reactor.kafka.sender.SenderOptions
 import io.kotest.extensions.system.withEnvironment
 import io.kotest.matchers.shouldBe
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.on
-import org.jetbrains.spek.api.dsl.TestContainer
-import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author [Piotr Jaszczyk](mailto:piotr.jaszczyk@nokia.com)
  * @since April 2019
  */
-internal class KafkaSenderOptionsFactoryTest : Spek({
-    describe("creation of Kafka Sender options") {
+internal class KafkaSenderOptionsFactoryTest {
+    @Nested
+    inner class `creation of Kafka Sender options` {
 
-        given("unauthenticated KafkaSink") {
+        @Nested
+
+        inner class `unauthenticated KafkaSink` {
             val sink = ImmutableKafkaSink.builder()
                     .bootstrapServers("dmaap1,dmaap2")
                     .topicName("PERF_DATA")
                     .build()
-            on("calling the CUT method") {
+            @Nested
+            inner class `calling the CUT method` {
                 val result = KafkaSenderOptionsFactory.createSenderOptions(sink)
-                val itShouldHavePropertySet = propertyChecker(result)
 
-                itShouldHavePropertySet(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, sink.bootstrapServers())
-                itShouldHavePropertySet(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 1_258_291)
-                itShouldHavePropertySet(ProducerConfig.BUFFER_MEMORY_CONFIG, 33_554_432)
-                itShouldHavePropertySet(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
-                itShouldHavePropertySet(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
-                itShouldHavePropertySet(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
-                itShouldHavePropertySet(ProducerConfig.RETRIES_CONFIG, 1)
-                itShouldHavePropertySet(ProducerConfig.ACKS_CONFIG, "1")
-                itShouldHavePropertySet(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, null)
-                itShouldHavePropertySet(SaslConfigs.SASL_MECHANISM, null)
-                itShouldHavePropertySet(SaslConfigs.SASL_JAAS_CONFIG, null)
+                @Test
+                fun `should have all sender options set correctly`() {
+                    assertThat(result.producerProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG)).isEqualTo(sink.bootstrapServers())
+                    assertThat(result.producerProperty(ProducerConfig.MAX_REQUEST_SIZE_CONFIG)).isEqualTo(1_258_291)
+                    assertThat(result.producerProperty(ProducerConfig.BUFFER_MEMORY_CONFIG)).isEqualTo(33_554_432)
+                    assertThat(result.producerProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG)).isEqualTo(ProtobufSerializer::class.java)
+                    assertThat(result.producerProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG)).isEqualTo(VesMessageSerializer::class.java)
+                    assertThat(result.producerProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION)).isEqualTo(1)
+                    assertThat(result.producerProperty(ProducerConfig.RETRIES_CONFIG)).isEqualTo(1)
+                    assertThat(result.producerProperty(ProducerConfig.ACKS_CONFIG)).isEqualTo("1")
+                    assertThat(result.producerProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG)).isNull()
+                    assertThat(result.producerProperty(SaslConfigs.SASL_MECHANISM)).isNull()
+                    assertThat(result.producerProperty(SaslConfigs.SASL_JAAS_CONFIG)).isNull()
+                }
             }
 
         }
-        given("authenticated AAF KafkaSink") {
+        @Nested
+        inner class `authenticated AAF KafkaSink` {
             val aafCredentials = ImmutableAafCredentials.builder()
                 .username("user \" with quote")
                 .password("password \" with quote")
@@ -81,64 +85,75 @@ internal class KafkaSenderOptionsFactoryTest : Spek({
                 .aafCredentials(aafCredentials)
                 .build()
 
-            on("calling the CUT method") {
-                val result = KafkaSenderOptionsFactory.createSenderOptions(sink)
-                val itShouldHavePropertySet = propertyChecker(result)
+            @Nested
 
-                itShouldHavePropertySet(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, sink.bootstrapServers())
-                itShouldHavePropertySet(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 1_258_291)
-                itShouldHavePropertySet(ProducerConfig.BUFFER_MEMORY_CONFIG, 33_554_432)
-                itShouldHavePropertySet(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
-                itShouldHavePropertySet(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
-                itShouldHavePropertySet(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
-                itShouldHavePropertySet(ProducerConfig.RETRIES_CONFIG, 1)
-                itShouldHavePropertySet(ProducerConfig.ACKS_CONFIG, "1")
-                itShouldHavePropertySet(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
-                itShouldHavePropertySet(SaslConfigs.SASL_MECHANISM, "PLAIN")
-                itShouldHavePropertySet(SaslConfigs.SASL_JAAS_CONFIG,
-                    "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-                            """username="user \" with quote" password="password \" with quote";""")
+            inner class `calling the CUT method` {
+                val result = KafkaSenderOptionsFactory.createSenderOptions(sink)
+
+                @Test
+                fun `should have all sender options set correctly`() {
+                    assertThat(result.producerProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG)).isEqualTo(sink.bootstrapServers())
+                    assertThat(result.producerProperty(ProducerConfig.MAX_REQUEST_SIZE_CONFIG)).isEqualTo(1_258_291)
+                    assertThat(result.producerProperty(ProducerConfig.BUFFER_MEMORY_CONFIG)).isEqualTo(33_554_432)
+                    assertThat(result.producerProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG)).isEqualTo(ProtobufSerializer::class.java)
+                    assertThat(result.producerProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG)).isEqualTo(VesMessageSerializer::class.java)
+                    assertThat(result.producerProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION)).isEqualTo(1)
+                    assertThat(result.producerProperty(ProducerConfig.RETRIES_CONFIG)).isEqualTo(1)
+                    assertThat(result.producerProperty(ProducerConfig.ACKS_CONFIG)).isEqualTo("1")
+                    assertThat(result.producerProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG)).isEqualTo("SASL_PLAINTEXT")
+                    assertThat(result.producerProperty(SaslConfigs.SASL_MECHANISM)).isEqualTo("PLAIN")
+                    assertThat(result.producerProperty(SaslConfigs.SASL_JAAS_CONFIG)).isEqualTo(
+                        "org.apache.kafka.common.security.plain.PlainLoginModule required " +
+                                """username="user \" with quote" password="password \" with quote";""")
+                }
             }
 
         }
-        given("authenticated SCRAM KafkaSink") {
-            withEnvironment("USE_SCRAM", "true", OverrideMode.SetOrOverride) {
-                System.getenv("USE_SCRAM") shouldBe "true"
-            }
-            withEnvironment("JAAS_CONFIG", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"onap-dcae-hv-ves-kafka-user\" password=\"oJumEmQAH6kN\";", OverrideMode.SetOrOverride) {
-                System.getenv("JAAS_CONFIG") shouldBe "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"onap-dcae-hv-ves-kafka-user\" password=\"oJumEmQAH6kN\";"
-            }
+        @Nested
+        inner class `authenticated SCRAM KafkaSink` {
             val sink = ImmutableKafkaSink.builder()
                     .bootstrapServers("dmaap-service")
                     .topicName("OTHER_TOPIC")
                     .build()
 
-            on("calling the CUT method") {
-                val result = KafkaSenderOptionsFactory.createSenderOptions(sink)
-                val itShouldHavePropertySet = propertyChecker(result)
+            @Nested
 
-                itShouldHavePropertySet(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, sink.bootstrapServers())
-                itShouldHavePropertySet(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 1_258_291)
-                itShouldHavePropertySet(ProducerConfig.BUFFER_MEMORY_CONFIG, 33_554_432)
-                itShouldHavePropertySet(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ProtobufSerializer::class.java)
-                itShouldHavePropertySet(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VesMessageSerializer::class.java)
-                itShouldHavePropertySet(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1)
-                itShouldHavePropertySet(ProducerConfig.RETRIES_CONFIG, 1)
-                itShouldHavePropertySet(ProducerConfig.ACKS_CONFIG, "1")
-                itShouldHavePropertySet(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT")
-                itShouldHavePropertySet(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-512")
-                itShouldHavePropertySet(SaslConfigs.SASL_JAAS_CONFIG,
-                        "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"onap-dcae-hv-ves-kafka-user\" password=\"oJumEmQAH6kN\";")
+            inner class `calling the CUT method` {
+
+                @Test
+                fun `should have all sender options set correctly`() {
+                    withEnvironment("USE_SCRAM", "true", OverrideMode.SetOrOverride) {
+                        withEnvironment("JAAS_CONFIG", "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"onap-dcae-hv-ves-kafka-user\" password=\"oJumEmQAH6kN\";", OverrideMode.SetOrOverride) {
+                            // USE_SCRAM is cached as a val at object init time, so we need to update it via reflection
+                            val field = KafkaSenderOptionsFactory::class.java.getDeclaredField("USE_SCRAM")
+                            field.isAccessible = true
+                            val modifiersField = java.lang.reflect.Field::class.java.getDeclaredField("modifiers")
+                            modifiersField.isAccessible = true
+                            modifiersField.setInt(field, field.modifiers and java.lang.reflect.Modifier.FINAL.inv())
+                            field.setBoolean(KafkaSenderOptionsFactory, true)
+                            try {
+                                val result = KafkaSenderOptionsFactory.createSenderOptions(sink)
+                            assertThat(result.producerProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG)).isEqualTo(sink.bootstrapServers())
+                            assertThat(result.producerProperty(ProducerConfig.MAX_REQUEST_SIZE_CONFIG)).isEqualTo(1_258_291)
+                            assertThat(result.producerProperty(ProducerConfig.BUFFER_MEMORY_CONFIG)).isEqualTo(33_554_432)
+                            assertThat(result.producerProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG)).isEqualTo(ProtobufSerializer::class.java)
+                            assertThat(result.producerProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG)).isEqualTo(VesMessageSerializer::class.java)
+                            assertThat(result.producerProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION)).isEqualTo(1)
+                            assertThat(result.producerProperty(ProducerConfig.RETRIES_CONFIG)).isEqualTo(1)
+                            assertThat(result.producerProperty(ProducerConfig.ACKS_CONFIG)).isEqualTo("1")
+                            assertThat(result.producerProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG)).isEqualTo("SASL_PLAINTEXT")
+                            assertThat(result.producerProperty(SaslConfigs.SASL_MECHANISM)).isEqualTo("SCRAM-SHA-512")
+                            assertThat(result.producerProperty(SaslConfigs.SASL_JAAS_CONFIG)).isEqualTo(
+                                    "org.apache.kafka.common.security.scram.ScramLoginModule required username=\"onap-dcae-hv-ves-kafka-user\" password=\"oJumEmQAH6kN\";")
+                            } finally {
+                                field.setBoolean(KafkaSenderOptionsFactory, false)
+                            }
+                        }
+                    }
+                }
             }
 
         }
 
     }
-})
-
-private fun TestContainer.propertyChecker(actual: SenderOptions<VesEventOuterClass.CommonEventHeader, VesMessage>) =
-        { property: String, expectedValue: Any? ->
-            it("should have '$property' property set to '$expectedValue'") {
-                assertThat(actual.producerProperty(property)).isEqualTo(expectedValue)
-            }
-        }
+}

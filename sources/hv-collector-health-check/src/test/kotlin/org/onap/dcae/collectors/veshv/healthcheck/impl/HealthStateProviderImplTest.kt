@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,27 +20,31 @@
  */
 package org.onap.dcae.collectors.veshv.healthcheck.impl
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.healthcheck.api.HealthDescription
 import reactor.test.StepVerifier
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since August 2018
  */
-object HealthStateProviderImplTest : Spek({
-    describe("Health state provider") {
+internal class HealthStateProviderImplTest {
+    @Nested
+    inner class `Health state provider` {
             val healthStateProviderImpl = HealthStateImpl()
-            on("health state update") {
-                healthStateProviderImpl.changeState(HealthDescription.HEALTHY)
-                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
-                healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
-                healthStateProviderImpl.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
+            @Nested
+            inner class `health state update` {
+                init {
+                    healthStateProviderImpl.changeState(HealthDescription.HEALTHY)
+                    healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+                    healthStateProviderImpl.changeState(HealthDescription.RETRYING_FOR_DYNAMIC_CONFIGURATION)
+                    healthStateProviderImpl.changeState(HealthDescription.DYNAMIC_CONFIGURATION_NOT_FOUND)
+                }
 
-                it("should push new health state to the subscriber") {
+                @Test
+
+                fun `should push new health state to the subscriber`() {
                     StepVerifier
                             .create(healthStateProviderImpl().take(4))
                             .expectNext(HealthDescription.HEALTHY)
@@ -50,4 +55,4 @@ object HealthStateProviderImplTest : Spek({
                 }
             }
     }
-})
+}

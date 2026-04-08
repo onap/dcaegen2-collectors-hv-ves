@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,32 +21,40 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-internal class ConsumerTest : Spek({
+internal class ConsumerTest {
 
     lateinit var cut: Consumer
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         cut = Consumer()
     }
 
-    describe("Consumer which holds the state of received Kafka records") {
-        it("should contain empty state in the beginning") {
+    @Nested
+
+    inner class `Consumer which holds the state of received Kafka records` {
+        @Test
+        fun `should contain empty state in the beginning`() {
             assertEmptyState(cut)
         }
 
-        describe("update") {
+        @Nested
+
+        inner class `update` {
             val value = byteArrayOf(2)
 
-            beforeEachTest {
+            @BeforeEach
+
+            fun setup() {
                 cut.update(receiverRecord(
                         topic = "topic",
                         key = byteArrayOf(1),
@@ -53,17 +62,21 @@ internal class ConsumerTest : Spek({
                 ))
             }
 
-            it("should contain one message if it was updated once") {
+            @Test
+
+            fun `should contain one message if it was updated once`() {
                 assertState(cut, value)
             }
 
-            it("should contain empty state message if it was reset after update") {
+            @Test
+
+            fun `should contain empty state message if it was reset after update`() {
                 cut.reset()
                 assertEmptyState(cut)
             }
         }
     }
-})
+}
 
 private fun assertEmptyState(cut: Consumer) {
     assertState(cut)

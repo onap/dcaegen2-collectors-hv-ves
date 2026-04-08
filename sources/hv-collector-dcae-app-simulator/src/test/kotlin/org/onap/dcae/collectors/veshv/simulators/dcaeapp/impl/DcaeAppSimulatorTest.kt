@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +28,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import org.assertj.core.api.Assertions.*
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.assertj.core.api.Assertions.assertThat
 import org.mockito.ArgumentMatchers.anySet
 import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import org.onap.ves.VesEventOuterClass.VesEvent
@@ -39,20 +37,24 @@ import reactor.test.StepVerifier
 import java.lang.IllegalArgumentException
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.test.assertFailsWith
-
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-internal class DcaeAppSimulatorTest : Spek({
+internal class DcaeAppSimulatorTest {
     lateinit var consumerFactory: DcaeAppConsumerFactory
     lateinit var messageStreamValidation: MessageStreamValidation
     lateinit var perf3gpp_consumer: Consumer
     lateinit var faults_consumer: Consumer
     lateinit var cut: DcaeAppSimulator
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         consumerFactory = mock()
         messageStreamValidation = mock()
         perf3gpp_consumer = mock()
@@ -66,41 +68,58 @@ internal class DcaeAppSimulatorTest : Spek({
 
     fun consumerState(vararg messages: ByteArray) = ConsumerState(ConcurrentLinkedQueue(messages.toList()))
 
-    describe("listenToTopics") {
-        it("should fail when topic list is empty") {
+    @Nested
+
+    inner class `listenToTopics` {
+        @Test
+        fun `should fail when topic list is empty`() {
             assertFailsWith(IllegalArgumentException::class) {
                 cut.listenToTopics(setOf())
             }
         }
 
-        it("should fail when topic list contains empty strings") {
+        @Test
+
+        fun `should fail when topic list contains empty strings`() {
             assertFailsWith(IllegalArgumentException::class) {
                 cut.listenToTopics(setOf(PERF3GPP_TOPIC, " ", FAULTS_TOPICS))
             }
         }
 
-        it("should subscribe to given topics") {
+        @Test
+
+        fun `should subscribe to given topics`() {
             cut.listenToTopics(TWO_TOPICS)
             verify(consumerFactory).createConsumersFor(TWO_TOPICS)
         }
 
-        it("should subscribe to given topics when called with comma separated list") {
+        @Test
+
+        fun `should subscribe to given topics when called with comma separated list`() {
             cut.listenToTopics("$PERF3GPP_TOPIC,$FAULTS_TOPICS")
             verify(consumerFactory).createConsumersFor(TWO_TOPICS)
         }
     }
 
-    describe("state") {
-        it("should return Left when topics hasn't been initialized") {
+    @Nested
+
+    inner class `state` {
+        @Test
+        fun `should return Left when topics hasn't been initialized`() {
             assertThat(cut.state(PERF3GPP_TOPIC).isLeft()).isTrue()
         }
 
-        describe("when topics are initialized") {
-            beforeEachTest {
+        @Nested
+
+        inner class `when topics are initialized` {
+            @BeforeEach
+            fun setup() {
                 cut.listenToTopics(TWO_TOPICS)
             }
 
-            it("should return state when it has been set") {
+            @Test
+
+            fun `should return state when it has been set`() {
                 val state = consumerState()
                 whenever(perf3gpp_consumer.currentState()).thenReturn(state)
                 whenever(faults_consumer.currentState()).thenReturn(state)
@@ -111,20 +130,28 @@ internal class DcaeAppSimulatorTest : Spek({
         }
     }
 
-    describe("resetState") {
-        it("should do nothing when topics hasn't been initialized") {
+    @Nested
+
+    inner class `resetState` {
+        @Test
+        fun `should do nothing when topics hasn't been initialized`() {
             cut.resetState(PERF3GPP_TOPIC)
             cut.resetState(FAULTS_TOPICS)
             verify(perf3gpp_consumer, never()).reset()
             verify(faults_consumer, never()).reset()
         }
 
-        describe("when topics are initialized") {
-            beforeEachTest {
+        @Nested
+
+        inner class `when topics are initialized` {
+            @BeforeEach
+            fun setup() {
                 cut.listenToTopics(TWO_TOPICS)
             }
 
-            it("should reset the state of given topic consumer") {
+            @Test
+
+            fun `should reset the state of given topic consumer`() {
                 cut.resetState(PERF3GPP_TOPIC)
 
                 verify(perf3gpp_consumer).reset()
@@ -133,12 +160,17 @@ internal class DcaeAppSimulatorTest : Spek({
         }
     }
 
-    describe("validate") {
-        beforeEachTest {
+    @Nested
+
+    inner class `validate` {
+        @BeforeEach
+        fun setup() {
             whenever(messageStreamValidation.validate(any(), any())).thenReturn(Mono.just(true))
         }
 
-        it("should use empty list when consumer is unavailable") {
+        @Test
+
+        fun `should use empty list when consumer is unavailable`() {
             StepVerifier
                     .create(cut.validate("['The JSON']".byteInputStream(), PERF3GPP_TOPIC))
                     .expectNext(true)
@@ -147,7 +179,9 @@ internal class DcaeAppSimulatorTest : Spek({
             verify(messageStreamValidation).validate(any(), eq(emptyList()))
         }
 
-        it("should delegate to MessageStreamValidation") {
+        @Test
+
+        fun `should delegate to MessageStreamValidation`() {
             cut.listenToTopics(PERF3GPP_TOPIC)
             whenever(perf3gpp_consumer.currentState()).thenReturn(consumerState(vesEvent().toByteArray()))
 
@@ -159,7 +193,7 @@ internal class DcaeAppSimulatorTest : Spek({
             verify(messageStreamValidation).validate(any(), any())
         }
     }
-})
+}
 
 
 private const val PERF3GPP_TOPIC = "perf3gpp"

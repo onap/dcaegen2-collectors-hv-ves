@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,27 +22,34 @@ package org.onap.dcae.collectors.veshv.utils.logging
 
 import arrow.core.Either
 import arrow.core.Failure
+import arrow.core.None
 import arrow.core.Option
+import arrow.core.Some
 import arrow.core.Try
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
 import reactor.core.publisher.Flux
 import reactor.test.test
 import kotlin.test.fail
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-class ReactiveLoggingTest : Spek({
+class ReactiveLoggingTest {
 
-    describe("filtering with log message") {
+    @Nested
+
+    inner class `filtering with log message` {
         val logger = Logger("React")
         val event = 5
 
-        describe("Try") {
-            given("successful Try") {
-                val cut = Try.just(event)
+        @Nested
 
-                it("should not filter stream event and log accepted message") {
+        inner class `Try` {
+            @Nested
+            inner class `successful Try` {
+                val cut = Try { event }
+
+                @Test
+
+                fun `should not filter stream event and log accepted message`() {
                     cut.filterFailedWithLog(logger, ::emptyMap, ACCEPTED_MESSAGE, FAILED_WITH_EXCEPTION_MESSAGE)
                             .test()
                             .expectNext(event)
@@ -49,10 +57,13 @@ class ReactiveLoggingTest : Spek({
                 }
             }
 
-            given("failed Try") {
+            @Nested
+
+            inner class `failed Try` {
                 val e = Exception()
                 val cut = Failure(e)
-                it("should filter stream event and log rejected message") {
+                @Test
+                fun `should filter stream event and log rejected message`() {
                     cut.filterFailedWithLog(logger, ::emptyMap, ACCEPTED_MESSAGE, FAILED_WITH_EXCEPTION_MESSAGE)
                             .test()
                             .verifyComplete()
@@ -60,11 +71,16 @@ class ReactiveLoggingTest : Spek({
             }
         }
 
-        describe("Option") {
-            given("Option with content") {
-                val cut = Option.just(event)
+        @Nested
 
-                it("should not filter stream event and log accepted message") {
+        inner class `Option` {
+            @Nested
+            inner class `Option with content` {
+                val cut = Some(event)
+
+                @Test
+
+                fun `should not filter stream event and log accepted message`() {
                     cut.filterEmptyWithLog(logger, ::emptyMap, ACCEPTED_MESSAGE, FAILED_MESSAGE)
                             .test()
                             .expectNext(event)
@@ -72,9 +88,12 @@ class ReactiveLoggingTest : Spek({
                 }
             }
 
-            given("empty Option") {
-                val cut = Option.empty<Int>()
-                it("should filter stream event and log rejected message") {
+            @Nested
+
+            inner class `empty Option` {
+                val cut: arrow.core.Option<Int> = None
+                @Test
+                fun `should filter stream event and log rejected message`() {
                     cut.filterEmptyWithLog(logger,::emptyMap, ACCEPTED_MESSAGE, FAILED_MESSAGE)
                             .test()
                             .verifyComplete()
@@ -83,11 +102,17 @@ class ReactiveLoggingTest : Spek({
         }
 
 
-        describe("Either") {
-            given("successful Either (right)") {
+        @Nested
+
+
+        inner class `Either` {
+            @Nested
+            inner class `successful Either (right)` {
                 val cut = Flux.just(event)
 
-                it("should not filter stream event and log accepted message") {
+                @Test
+
+                fun `should not filter stream event and log accepted message`() {
                     cut.filterFailedWithLog(logger,::emptyMap, right())
                             .test()
                             .expectNext(event)
@@ -95,10 +120,14 @@ class ReactiveLoggingTest : Spek({
                 }
             }
 
-            given("failed Either (left)") {
+            @Nested
+
+            inner class `failed Either (left)` {
                 val cut = Flux.just(event)
 
-                it("should filter stream event and log rejected message") {
+                @Test
+
+                fun `should filter stream event and log rejected message`() {
                     cut.filterFailedWithLog(logger,::emptyMap, left())
                             .test()
                             .verifyComplete()
@@ -106,7 +135,7 @@ class ReactiveLoggingTest : Spek({
             }
         }
     }
-})
+}
 
 
 val ACCEPTED_MESSAGE: (Int) -> String = { "SUCCESS" }

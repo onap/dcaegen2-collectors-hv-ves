@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2020 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,37 +26,44 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.Duration
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-internal object CbsClientAdapterTest : Spek({
+internal class CbsClientAdapterTest {
 
-    describe("Config Binding Service Client Adapter") {
+    @Nested
+
+    inner class `Config Binding Service Client Adapter` {
 
         val cbsClientMock: CbsClient = mock()
         val configStateListener: ConfigurationStateListener = mock()
 
-        given("successful client creation") {
+        @Nested
+
+        inner class `successful client creation` {
             val cbsClientMono = Mono.just(cbsClientMock)
             val cut = CbsClientAdapter(cbsClientMono, firstRequestDelay, configStateListener, mdc, retry())
 
-            on("configurations stream in CBS") {
+            @Nested
+
+            inner class `configurations stream in CBS` {
                 val firstConfigurationContent = "first"
                 val secondConfigurationContent = "second"
-                whenever(cbsClientMock.get(any())).thenReturn(
-                        configurationMono(firstConfigurationContent),
-                        configurationMono(secondConfigurationContent)
-                )
+                init {
+                    whenever(cbsClientMock.get(any())).thenReturn(
+                            configurationMono(firstConfigurationContent),
+                            configurationMono(secondConfigurationContent)
+                    )
+                }
 
-                it("should return flux of fetched configurations") {
+                @Test
+
+                fun `should return flux of fetched configurations`() {
                     StepVerifier
                             .withVirtualTime {
                                 cut.configurationUpdates().take(2)
@@ -69,13 +77,20 @@ internal object CbsClientAdapterTest : Spek({
             }
 
 
-            on("exception from CBS client on configuration fetch") {
+            @Nested
 
-                whenever(cbsClientMock.get(any())).thenReturn(
-                        Mono.error { sampleException }
-                )
 
-                it("should return error flux") {
+            inner class `exception from CBS client on configuration fetch` {
+
+                init {
+                    whenever(cbsClientMock.get(any())).thenReturn(
+                            Mono.error { sampleException }
+                    )
+                }
+
+                @Test
+
+                fun `should return error flux`() {
                     StepVerifier.create(cut.configurationUpdates())
                             .expectErrorMatches { it === sampleException }
                             .verify()
@@ -83,7 +98,9 @@ internal object CbsClientAdapterTest : Spek({
             }
         }
 
-        given("repeated failure during client creation") {
+        @Nested
+
+        inner class `repeated failure during client creation` {
             val failedCreationsAmount = 3
             var currentFailuresCount = 0
             val cbsClientMono = Mono.fromCallable {
@@ -98,10 +115,15 @@ internal object CbsClientAdapterTest : Spek({
             val cut = CbsClientAdapter(cbsClientMono, firstRequestDelay, configStateListener, mdc,
                     retry(failedCreationsAmount + 1L))
 
-            on("CBS client creation") {
-                whenever(cbsClientMock.get(any())).thenReturn(configurationMono())
+            @Nested
 
-                it("it should emit configuration after failures") {
+            inner class `CBS client creation` {
+                init {
+                whenever(cbsClientMock.get(any())).thenReturn(configurationMono())
+                }
+                @Test
+
+                fun `it should emit configuration after failures`() {
                     StepVerifier
                             .withVirtualTime { cut.configurationUpdates().take(1) }
                             .expectSubscription()
@@ -111,13 +133,22 @@ internal object CbsClientAdapterTest : Spek({
                             .verifyComplete()
                 }
 
-                it("should call state listener when retrying") {
+                @Test
+
+                fun `should call state listener when retrying`() {
+                    StepVerifier
+                            .withVirtualTime { cut.configurationUpdates().take(1) }
+                            .expectSubscription()
+                            .expectNoEvent(firstRequestDelay)
+                            .thenAwait(firstRequestDelay)
+                            .expectNext(configuration())
+                            .verifyComplete()
                     verify(configStateListener, times(failedCreationsAmount)).retrying()
                 }
             }
         }
     }
-})
+}
 
 private val firstRequestDelay = Duration.ofSeconds(10)
 private val sampleException = Exception("Best regards from CBS")

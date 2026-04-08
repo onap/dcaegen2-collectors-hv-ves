@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +22,6 @@ package org.onap.dcae.collectors.veshv.tests.component
 
 import arrow.core.None
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
@@ -41,16 +39,20 @@ import org.onap.dcae.collectors.veshv.tests.utils.messageWithInvalidWireFrameHea
 import org.onap.dcae.collectors.veshv.tests.utils.messageWithPayloadOfSize
 import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
 import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-object VesHvSpecification : Spek({
-    debugRx(false)
+class VesHvSpecification {
 
-    describe("VES High Volume Collector") {
-        it("should handle multiple HV RAN events") {
+    @Nested
+
+    inner class `VES High Volume Collector` {
+        @Test
+        fun `should handle multiple HV RAN events`() {
             val (sut, sink) = vesHvWithStoringSink()
             val messages = sut.handleConnection(sink,
                     vesWireFrameMessage(PERF3GPP),
@@ -62,7 +64,9 @@ object VesHvSpecification : Spek({
                     .hasSize(2)
         }
 
-        it("should create sink lazily") {
+        @Test
+
+        fun `should create sink lazily`() {
             val (sut, sink) = vesHvWithStoringSink()
 
             // just connecting should not create sink
@@ -73,7 +77,9 @@ object VesHvSpecification : Spek({
             assertThat(sink.closed).isFalse()
         }
 
-        it("should close sink when closing collector provider") {
+        @Test
+
+        fun `should close sink when closing collector provider`() {
             val (sut, sink) = vesHvWithStoringSink()
             // given Sink initialized
             // Note: as StoringSink is (hopefully) created lazily, "valid" ves message needs to be sent
@@ -87,8 +93,11 @@ object VesHvSpecification : Spek({
         }
     }
 
-    describe("Memory management") {
-        it("should release memory for each handled and dropped message") {
+    @Nested
+
+    inner class `Memory management` {
+        @Test
+        fun `should release memory for each handled and dropped message`() {
             val (sut, sink) = vesHvWithStoringSink()
             val validMessage = vesWireFrameMessage(PERF3GPP)
             val msgWithInvalidFrame = messageWithInvalidWireFrameHeader()
@@ -111,7 +120,9 @@ object VesHvSpecification : Spek({
                     .isEqualTo(expectedRefCnt)
         }
 
-        it("should release memory for each message with invalid payload") {
+        @Test
+
+        fun `should release memory for each message with invalid payload`() {
             val (sut, sink) = vesHvWithStoringSink()
             val validMessage = vesWireFrameMessage(PERF3GPP)
             val msgWithInvalidPayload = wireFrameMessageWithInvalidPayload()
@@ -130,7 +141,9 @@ object VesHvSpecification : Spek({
 
         }
 
-        it("should release memory for each message with garbage frame") {
+        @Test
+
+        fun `should release memory for each message with garbage frame`() {
             val (sut, sink) = vesHvWithStoringSink()
             val validMessage = vesWireFrameMessage(PERF3GPP)
             val msgWithGarbageFrame = garbageFrame()
@@ -150,8 +163,11 @@ object VesHvSpecification : Spek({
         }
     }
 
-    describe("message routing") {
-        it("should direct message to a topic by means of routing configuration") {
+    @Nested
+
+    inner class `message routing` {
+        @Test
+        fun `should direct message to a topic by means of routing configuration`() {
             val (sut, sink) = vesHvWithStoringSink()
 
             val messages = sut.handleConnection(sink, vesWireFrameMessage(PERF3GPP))
@@ -162,7 +178,9 @@ object VesHvSpecification : Spek({
             assertThat(msg.partition).describedAs("routed message partition").isEqualTo(None)
         }
 
-        it("should be able to direct 2 messages from different domains to one topic") {
+        @Test
+
+        fun `should be able to direct 2 messages from different domains to one topic`() {
             val (sut, sink) = vesHvWithStoringSink(twoDomainsToOneTopicRouting)
 
             val messages = sut.handleConnection(sink,
@@ -182,7 +200,9 @@ object VesHvSpecification : Spek({
                     .isEqualTo(ALTERNATE_PERF3GPP_TOPIC)
         }
 
-        it("should drop message if route was not found") {
+        @Test
+
+        fun `should drop message if route was not found`() {
             val (sut, sink) = vesHvWithStoringSink()
             val messages = sut.handleConnection(sink,
                     vesWireFrameMessage(OTHER, "first"),
@@ -197,8 +217,11 @@ object VesHvSpecification : Spek({
         }
     }
 
-    describe("request validation") {
-        it("should reject message with payload greater than 1 MiB and all subsequent messages") {
+    @Nested
+
+    inner class `request validation` {
+        @Test
+        fun `should reject message with payload greater than 1 MiB and all subsequent messages`() {
             val (sut, sink) = vesHvWithStoringSink()
 
             val handledMessages = sut.handleConnection(sink,
@@ -211,7 +234,7 @@ object VesHvSpecification : Spek({
         }
     }
 
-})
+}
 
 private fun vesHvWithStoringSink(routing: Routing = basicRouting): Pair<Sut, StoringSink> {
     val sink = StoringSink()

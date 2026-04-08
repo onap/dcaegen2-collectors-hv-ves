@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,44 +21,50 @@
 package org.onap.dcae.collectors.veshv.commandline
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.*
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.KAFKA_SERVERS
+import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.SSL_DISABLE
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since September 2018
  */
-class CommandLineOptionTest : Spek({
-    describe("command line options enum") {
-        describe("environment variables") {
-            given("sample option and prefix") {
+class CommandLineOptionTest {
+    @Nested
+    inner class `command line options enum` {
+        @Nested
+        inner class `environment variables` {
+            @Nested
+            inner class `sample option and prefix` {
                 val opt = KAFKA_SERVERS
                 val prefix = "CONFIG"
 
-                on("calling environmentVariableName") {
+                @Nested
+                inner class `calling environmentVariableName` {
                     val result = opt.environmentVariableName(prefix)
 
-                    it("should return prefixed upper snake cased long option name") {
+                    @Test
+                    fun `should return prefixed upper snake cased long option name`() {
                         assertThat(result).isEqualTo("CONFIG_KAFKA_BOOTSTRAP_SERVERS")
                     }
                 }
             }
 
-            given("sample option without prefix") {
+            @Nested
+            inner class `sample option without prefix` {
                 val opt = SSL_DISABLE
 
-                on("calling environmentVariableName") {
+                @Nested
+                inner class `calling environmentVariableName` {
                     val result = opt.environmentVariableName()
 
-                    it("should return upper snake cased long option name without prefix") {
+                    @Test
+                    fun `should return upper snake cased long option name without prefix`() {
                         assertThat(result).isEqualTo("SSL_DISABLE")
                     }
                 }
             }
         }
     }
-})
+}
