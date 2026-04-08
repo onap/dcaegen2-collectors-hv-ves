@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2020 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +30,6 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.RoutedMessage
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesMessage
@@ -54,17 +51,22 @@ import java.time.Instant
 import java.time.temporal.Temporal
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since June 2018
  */
-object MicrometerMetricsTest : Spek({
+class MicrometerMetricsTest {
     val doublePrecision = Percentage.withPercentage(0.5)
     lateinit var registry: PrometheusMeterRegistry
     lateinit var cut: MicrometerMetrics
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
         cut = MicrometerMetrics(registry)
     }
@@ -93,11 +95,17 @@ object MicrometerMetricsTest : Spek({
     }
 
 
-    describe("notifyBytesReceived") {
-        on("$PREFIX.data.received.bytes counter") {
+    @Nested
+
+
+    inner class `notifyBytesReceived` {
+        @Nested
+        inner class `$PREFIX data received bytes counter` {
             val counterName = "$PREFIX.data.received.bytes"
 
-            it("should increment counter") {
+            @Test
+
+            fun `should increment counter`() {
                 val bytes = 128
                 cut.notifyBytesReceived(bytes)
 
@@ -106,18 +114,25 @@ object MicrometerMetricsTest : Spek({
                 }
             }
 
-            it("should leave all other counters unchanged") {
+            @Test
+
+            fun `should leave all other counters unchanged`() {
                 cut.notifyBytesReceived(128)
                 verifyCountersAndTimersAreUnchangedBut(counterName)
             }
         }
     }
 
-    describe("notifyMessageReceived") {
-        on("$PREFIX.messages.received counter") {
+    @Nested
+
+    inner class `notifyMessageReceived` {
+        @Nested
+        inner class `$PREFIX messages received counter` {
             val counterName = "$PREFIX.messages.received"
 
-            it("should increment counter") {
+            @Test
+
+            fun `should increment counter`() {
                 cut.notifyMessageReceived(emptyWireProtocolFrame())
 
                 registry.verifyCounter(counterName) {
@@ -126,10 +141,14 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.messages.received.payload.bytes counter") {
+        @Nested
+
+        inner class `$PREFIX messages received payload bytes counter` {
             val counterName = "$PREFIX.messages.received.payload.bytes"
 
-            it("should increment counter") {
+            @Test
+
+            fun `should increment counter`() {
                 val bytes = 888
                 cut.notifyMessageReceived(emptyWireProtocolFrame().copy(payloadSize = bytes))
 
@@ -139,7 +158,9 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        it("should leave all other counters unchanged") {
+        @Test
+
+        fun `should leave all other counters unchanged`() {
             cut.notifyMessageReceived(emptyWireProtocolFrame().copy(payloadSize = 128))
             verifyCountersAndTimersAreUnchangedBut(
                     "$PREFIX.messages.received",
@@ -147,11 +168,15 @@ object MicrometerMetricsTest : Spek({
             )
         }
 
-        on("$PREFIX.messages.to.collector.travel.time") {
+        @Nested
+
+        inner class `$PREFIX messages to collector travel time` {
             val counterName = "$PREFIX.messages.to.collector.travel.time"
             val toCollectorTravelTimeMs = 100L
 
-            it("should update timer") {
+            @Test
+
+            fun `should update timer`() {
                 val now = Instant.now()
                 val vesMessage = vesMessageReceivedAt(now, sentAt = now.minusMillis(toCollectorTravelTimeMs))
                 cut.notifyMessageReceived(vesMessage)
@@ -165,12 +190,17 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("notifyMessageReadyForRouting"){
-        on("$PREFIX.messages.processing.time.without.routing") {
+    @Nested
+
+    inner class `notifyMessageReadyForRouting` {
+        @Nested
+        inner class `$PREFIX messages processing time without routing` {
             val counterName = "$PREFIX.messages.processing.time.without.routing"
             val processingTimeMs = 100L
 
-            it("should update timer") {
+            @Test
+
+            fun `should update timer`() {
 
                 cut.notifyMessageReadyForRouting(vesMessageReceivedAt(Instant.now().minusMillis(processingTimeMs)))
 
@@ -184,11 +214,15 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.messages.latency.without.routing") {
+        @Nested
+
+        inner class `$PREFIX messages latency without routing` {
             val counterName = "$PREFIX.messages.latency.without.routing"
             val latencyWithoutRoutingMs = 200L
 
-            it("should update timer") {
+            @Test
+
+            fun `should update timer`() {
 
                 val sentAt = Instant.now().minusMillis(latencyWithoutRoutingMs)
 
@@ -206,14 +240,21 @@ object MicrometerMetricsTest : Spek({
     }
 
 
-    describe("notifyMessageSent") {
+    @Nested
+
+
+    inner class `notifyMessageSent` {
         val topicName1 = "PERF3GPP"
         val topicName2 = "CALLTRACE"
 
-        on("$PREFIX.messages.sent counter") {
+        @Nested
+
+        inner class `$PREFIX messages sent counter` {
             val counterName = "$PREFIX.messages.sent"
 
-            it("should increment counter") {
+            @Test
+
+            fun `should increment counter`() {
                 cut.notifyMessageSent(routedMessage(topicName1))
 
                 registry.verifyCounter(counterName) {
@@ -227,10 +268,14 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.messages.sent.topic counter") {
+        @Nested
+
+        inner class `$PREFIX messages sent topic counter` {
             val counterName = "$PREFIX.messages.sent.topic"
 
-            it("should handle counters for different topics") {
+            @Test
+
+            fun `should handle counters for different topics`() {
                 cut.notifyMessageSent(routedMessage(topicName1))
                 cut.notifyMessageSent(routedMessage(topicName2))
                 cut.notifyMessageSent(routedMessage(topicName2))
@@ -245,11 +290,15 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.messages.processing.time") {
+        @Nested
+
+        inner class `$PREFIX messages processing time` {
             val counterName = "$PREFIX.messages.processing.time"
             val processingTimeMs = 100L
 
-            it("should update timer") {
+            @Test
+
+            fun `should update timer`() {
 
                 cut.notifyMessageSent(routedMessageReceivedAt(topicName1, Instant.now().minusMillis(processingTimeMs)))
 
@@ -264,11 +313,15 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.messages.latency") {
+        @Nested
+
+        inner class `$PREFIX messages latency` {
             val counterName = "$PREFIX.messages.latency"
             val latencyMs = 1666L
 
-            it("should update timer") {
+            @Test
+
+            fun `should update timer`() {
 
                 cut.notifyMessageSent(routedMessageSentAt(topicName1, Instant.now().minusMillis(latencyMs)))
 
@@ -287,11 +340,16 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("notifyMessageDropped") {
-        on("$PREFIX.messages.dropped counter") {
+    @Nested
+
+    inner class `notifyMessageDropped` {
+        @Nested
+        inner class `$PREFIX messages dropped counter` {
             val counterName = "$PREFIX.messages.dropped"
 
-            it("should increment counter") {
+            @Test
+
+            fun `should increment counter`() {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
 
@@ -302,10 +360,14 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.messages.dropped.cause counter") {
+        @Nested
+
+        inner class `$PREFIX messages dropped cause counter` {
             val counterName = "$PREFIX.messages.dropped.cause"
 
-            it("should handle counters for different drop reasons") {
+            @Test
+
+            fun `should handle counters for different drop reasons`() {
                 cut.notifyMessageDropped(ROUTE_NOT_FOUND)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
                 cut.notifyMessageDropped(INVALID_MESSAGE)
@@ -321,11 +383,16 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("notifyClientConnected") {
-        on("$PREFIX.connections counter") {
+    @Nested
+
+    inner class `notifyClientConnected` {
+        @Nested
+        inner class `$PREFIX connections counter` {
             val counterName = "$PREFIX.connections"
 
-            it("should increment counter") {
+            @Test
+
+            fun `should increment counter`() {
                 cut.notifyClientConnected()
                 cut.notifyClientConnected()
 
@@ -338,11 +405,16 @@ object MicrometerMetricsTest : Spek({
 
     }
 
-    describe("notifyClientDisconnected") {
-        on("$PREFIX.disconnections counter") {
+    @Nested
+
+    inner class `notifyClientDisconnected` {
+        @Nested
+        inner class `$PREFIX disconnections counter` {
             val counterName = "$PREFIX.disconnections"
 
-            it("should increment counter") {
+            @Test
+
+            fun `should increment counter`() {
                 cut.notifyClientDisconnected()
                 cut.notifyClientDisconnected()
 
@@ -355,11 +427,16 @@ object MicrometerMetricsTest : Spek({
 
     }
 
-    describe("notifyClientRejected") {
+    @Nested
 
-        on("$PREFIX.clients.rejected") {
+    inner class `notifyClientRejected` {
+
+        @Nested
+
+        inner class `$PREFIX clients rejected` {
             val counterName = "$PREFIX.clients.rejected"
-            it("should increment counter for each possible reason") {
+            @Test
+            fun `should increment counter for each possible reason`() {
                 cut.notifyClientRejected(INVALID_WIRE_FRAME_MARKER)
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
 
@@ -370,9 +447,12 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("$PREFIX.clients.rejected.cause counter") {
+        @Nested
+
+        inner class `$PREFIX clients rejected cause counter` {
             val counterName = "$PREFIX.clients.rejected.cause"
-            it("should handle counters for different rejection reasons") {
+            @Test
+            fun `should handle counters for different rejection reasons`() {
                 cut.notifyClientRejected(INVALID_WIRE_FRAME_MARKER)
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
                 cut.notifyClientRejected(PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE)
@@ -388,11 +468,16 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("$PREFIX.connections.active gauge") {
+    @Nested
+
+    inner class `$PREFIX connections active gauge` {
         val gaugeName = "$PREFIX.connections.active"
 
-        on("connection traffic") {
-            it("should calculate positive difference between connected and disconnected clients") {
+        @Nested
+
+        inner class `connection traffic` {
+            @Test
+            fun `should calculate positive difference between connected and disconnected clients`() {
                 cut.notifyClientConnected()
                 cut.notifyClientConnected()
                 cut.notifyClientConnected()
@@ -403,7 +488,9 @@ object MicrometerMetricsTest : Spek({
                 }
             }
 
-            it("should calculate no difference between connected and disconnected clients") {
+            @Test
+
+            fun `should calculate no difference between connected and disconnected clients`() {
                 cut.notifyClientDisconnected()
                 cut.notifyClientDisconnected()
 
@@ -412,7 +499,9 @@ object MicrometerMetricsTest : Spek({
                 }
             }
 
-            it("should calculate negative difference between connected and disconnected clients") {
+            @Test
+
+            fun `should calculate negative difference between connected and disconnected clients`() {
                 cut.notifyClientDisconnected()
 
                 registry.verifyGauge(gaugeName) {
@@ -421,7 +510,7 @@ object MicrometerMetricsTest : Spek({
             }
         }
     }
-})
+}
 
 private fun vesMessageSentAt(sentAt: Instant): VesMessage {
     val lastEpochMicrosec = sentAt.epochSecond * 1000000 + sentAt.nano / 1000

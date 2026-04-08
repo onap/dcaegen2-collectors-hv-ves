@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,35 +24,41 @@ import com.nhaarman.mockitokotlin2.doNothing
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import reactor.core.publisher.Flux
 import reactor.kafka.receiver.KafkaReceiver
 import reactor.kafka.receiver.ReceiverOffset
 import reactor.kafka.receiver.ReceiverRecord
 import reactor.test.StepVerifier
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
  * @since August 2018
  */
-internal class KafkaSourceTest : Spek({
+internal class KafkaSourceTest {
 
-    describe("KafkaSource"){
-        given("mocked Kafka Receiver"){
+    @Nested
+
+    inner class `KafkaSource tests` {
+        @Nested
+        inner class `mocked Kafka Receiver` {
             val mockedKafkaReceiver = mock<KafkaReceiver<ByteArray, ByteArray>>()
             val mockedReceiverRecord = mock<ReceiverRecord<ByteArray, ByteArray>>()
+            init {
             whenever(mockedKafkaReceiver.receive()).thenReturn(Flux.just(mockedReceiverRecord))
-            on("function that starts KafkaSource") {
+            }
+            @Nested
+            inner class `function that starts KafkaSource` {
                 val mockedReceiverOffset = mock<ReceiverOffset>()
-                whenever(mockedReceiverRecord.receiverOffset()).thenReturn(mockedReceiverOffset)
-                doNothing().`when`(mockedReceiverOffset).acknowledge()
+                init {
+                    whenever(mockedReceiverRecord.receiverOffset()).thenReturn(mockedReceiverOffset)
+                    doNothing().`when`(mockedReceiverOffset).acknowledge()
+                }
 
                 val testedFunction = { KafkaSource(mockedKafkaReceiver).start() }
-                it("should emmit receiver record") {
+                @Test
+                fun `should emmit receiver record`() {
                     StepVerifier.create(testedFunction())
                             .expectSubscription()
                             .expectNext(mockedReceiverRecord)
@@ -62,23 +69,31 @@ internal class KafkaSourceTest : Spek({
         }
     }
 
-    given("parameters for factory methods") {
+    @Nested
+
+    inner class `parameters for factory methods` {
         val servers = "kafka1:9080,kafka2:9080"
         val topics = setOf("topic1", "topic2")
 
-        on("createReceiverOptions call with topics set") {
+        @Nested
+
+        inner class `createReceiverOptions call with topics set` {
             val options = KafkaSource.createReceiverOptions(servers, topics)
-            it("should generate options with provided topics") {
+            @Test
+            fun `should generate options with provided topics`() {
                 assertThat(options!!.subscriptionTopics()).contains("topic1", "topic2")
             }
         }
 
-        on("create call"){
+        @Nested
+
+        inner class `create call` {
             val kafkaSource = KafkaSource.create(servers, topics)
-            it("should generate KafkaSource object") {
+            @Test
+            fun `should generate KafkaSource object`() {
                 assertThat(kafkaSource).isInstanceOf(KafkaSource::class.java)
             }
         }
     }
 
-})
+}

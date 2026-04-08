@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +21,6 @@
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.FAULT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
@@ -33,19 +29,26 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParamete
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType
 import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
 import reactor.test.test
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since June 2018
  */
-object VesEventGeneratorTest : Spek({
-    describe("message factory") {
+class VesEventGeneratorTest {
+    @Nested
+    inner class `message factory` {
         val maxPayloadSizeBytes = 1024
         val cut = VesEventGenerator(PayloadGenerator(), maxPayloadSizeBytes)
 
-        given("single message parameters") {
-            on("messages amount not specified in parameters") {
-                it("should createVesEventGenerator infinite flux") {
+        @Nested
+
+        inner class `single message parameters` {
+            @Nested
+            inner class `messages amount not specified in parameters` {
+                @Test
+                fun `should createVesEventGenerator infinite flux`() {
                     val limit = 1000L
                     cut
                             .createMessageFlux(VesEventParameters(
@@ -59,8 +62,11 @@ object VesEventGeneratorTest : Spek({
                 }
             }
 
-            on("messages amount = 0 specified in parameters") {
-                it("should createVesEventGenerator empty message flux") {
+            @Nested
+
+            inner class `messages amount = 0 specified in parameters` {
+                @Test
+                fun `should createVesEventGenerator empty message flux`() {
                     cut
                             .createMessageFlux(VesEventParameters(
                                     commonHeader(PERF3GPP),
@@ -72,8 +78,11 @@ object VesEventGeneratorTest : Spek({
                 }
             }
 
-            on("messages amount specified in parameters") {
-                it("should createVesEventGenerator message flux of specified size") {
+            @Nested
+
+            inner class `messages amount specified in parameters` {
+                @Test
+                fun `should createVesEventGenerator message flux of specified size`() {
                     cut
                             .createMessageFlux(VesEventParameters(
                                     commonHeader(PERF3GPP),
@@ -86,8 +95,11 @@ object VesEventGeneratorTest : Spek({
                 }
             }
 
-            on("message type requesting valid message") {
-                it("should createVesEventGenerator flux of valid messages with given domain") {
+            @Nested
+
+            inner class `message type requesting valid message` {
+                @Test
+                fun `should createVesEventGenerator flux of valid messages with given domain`() {
                     cut
                             .createMessageFlux(VesEventParameters(
                                     commonHeader(FAULT),
@@ -103,8 +115,11 @@ object VesEventGeneratorTest : Spek({
                 }
             }
 
-            on("message type requesting too big payload") {
-                it("should createVesEventGenerator flux of messages with given domain and payload exceeding threshold") {
+            @Nested
+
+            inner class `message type requesting too big payload` {
+                @Test
+                fun `should createVesEventGenerator flux of messages with given domain and payload exceeding threshold`() {
 
                     cut
                             .createMessageFlux(VesEventParameters(
@@ -123,8 +138,13 @@ object VesEventGeneratorTest : Spek({
 
 
 
-            on("message type requesting fixed payload") {
-                it("should createVesEventGenerator flux of valid messages with fixed payload") {
+            @Nested
+
+
+
+            inner class `message type requesting fixed payload` {
+                @Test
+                fun `should createVesEventGenerator flux of valid messages with fixed payload`() {
                     cut
                             .createMessageFlux(VesEventParameters(
                                     commonHeader(FAULT),
@@ -142,4 +162,4 @@ object VesEventGeneratorTest : Spek({
             }
         }
     }
-})
+}

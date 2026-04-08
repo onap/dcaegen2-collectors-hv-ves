@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,45 +25,55 @@ import arrow.core.Some
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeys
 import org.onap.dcaegen2.services.sdk.security.ssl.ImmutableSecurityKeysStore
 import org.onap.dcaegen2.services.sdk.security.ssl.Passwords
 import org.onap.dcaegen2.services.sdk.security.ssl.SslFactory
 import java.nio.file.Paths
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author <a href="mailto:piotr.jaszczyk@nokia.com">Piotr Jaszczyk</a>
  * @since February 2019
  */
-internal object SslContextFactoryTest : Spek({
+internal class SslContextFactoryTest {
     val sslFactory: SslFactory = mock()
     val cut = SslContextFactory(sslFactory)
 
-    given("empty security configuration") {
+    @Nested
+
+    inner class `empty security configuration` {
         val secConfig = SecurityConfiguration(None)
 
-        on("creating server context") {
+        @Nested
+
+        inner class `creating server context` {
             val result = cut.createServerContext(secConfig)
 
-            it("should return None") {
+            @Test
+
+            fun `should return None`() {
                 assertThat(result.isDefined()).isFalse()
             }
         }
 
-        on("creating client context") {
+        @Nested
+
+        inner class `creating client context` {
             val result = cut.createClientContext(secConfig)
 
-            it("should return None") {
+            @Test
+
+            fun `should return None`() {
                 assertThat(result.isDefined()).isFalse()
             }
         }
     }
 
-    given("security configuration with keys") {
+    @Nested
+
+    inner class `security configuration with keys` {
         val keys = ImmutableSecurityKeys.builder()
                 .trustStore(ImmutableSecurityKeysStore.of(Paths.get("ts.jks")))
                 .trustStorePassword(Passwords.fromString("xxx"))
@@ -71,29 +82,41 @@ internal object SslContextFactoryTest : Spek({
                 .build()
         val secConfig = SecurityConfiguration(Some(keys))
 
-        on("creating server context") {
+        @Nested
+
+        inner class `creating server context` {
             val result = cut.createServerContext(secConfig)
 
-            it("should return Some") {
+            @Test
+
+            fun `should return Some`() {
                 assertThat(result.isDefined()).isTrue()
             }
 
-            it("should have called SslFactory") {
+            @Test
+
+            fun `should have called SslFactory`() {
                 verify(sslFactory).createSecureServerContext(keys)
             }
         }
 
-        on("creating client context") {
+        @Nested
+
+        inner class `creating client context` {
             val result = cut.createClientContext(secConfig)
 
-            it("should return Some") {
+            @Test
+
+            fun `should return Some`() {
                 assertThat(result.isDefined()).isTrue()
             }
 
-            it("should have called SslFactory") {
+            @Test
+
+            fun `should have called SslFactory`() {
                 verify(sslFactory).createSecureClientContext(keys)
             }
         }
     }
 
-})
+}

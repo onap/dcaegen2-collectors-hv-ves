@@ -5,6 +5,7 @@
   ~ ================================================================================
   ~ Copyright (C) 2018-2021 NOKIA
   ~ Copyright (C) 2022 Nordix Foundation
+  ~ Copyright (C) 2026 Deutsche Telekom AG
   ~ ================================================================================
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -40,6 +41,10 @@
 
     <artifactId>hv-collector-ves-message-generator</artifactId>
     <description>VES HighVolume Collector :: VES message generator</description>
+
+    <properties>
+        <onap-gerrit-review>-changelog-missing</onap-gerrit-review>
+    </properties>
 
     <build>
         <plugins>
@@ -100,12 +105,12 @@
             <artifactId>kotlin-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.spek</groupId>
-            <artifactId>spek-api</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.spek</groupId>
-            <artifactId>spek-junit-platform-engine</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>

@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,24 +28,23 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import org.onap.dcaegen2.services.sdk.security.ssl.SecurityKeys
 import java.io.File
 import java.time.Duration
 import kotlin.test.fail
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-
-internal object ConfigurationTransformerTest : Spek({
-    describe("ConfigurationTransformer") {
+internal class ConfigurationTransformerTest {
+    @Nested
+    inner class `ConfigurationTransformer tests` {
         val cut = ConfigurationTransformer()
 
-        describe("transforming partial configuration to final") {
+        @Nested
+
+        inner class `transforming partial configuration to final` {
             val config = ValidatedPartialConfiguration(
                     listenPort = defaultListenPort,
                     idleTimeoutSec = defaultIdleTimeoutSec,
@@ -62,17 +62,23 @@ internal object ConfigurationTransformerTest : Spek({
                     logLevel = Some(LogLevel.TRACE)
             )
 
-            given("transformed configuration") {
+            @Nested
+
+            inner class `transformed configuration` {
                 val result = cut.toFinalConfiguration(config)
 
-                it("should create server configuration") {
+                @Test
+
+                fun `should create server configuration`() {
                     assertThat(result.server.listenPort).isEqualTo(defaultListenPort)
                     assertThat(result.server.idleTimeout)
                             .describedAs("idleTimeout transformed from number to duration")
                             .isEqualTo(Duration.ofSeconds(defaultIdleTimeoutSec))
                 }
 
-                it("should create CBS configuration") {
+                @Test
+
+                fun `should create CBS configuration`() {
                     assertThat(result.cbs.firstRequestDelay)
                             .describedAs("firstRequestDelay transformed from number to duration")
                             .isEqualTo(Duration.ofSeconds(defaultFirstReqDelaySec))
@@ -81,7 +87,9 @@ internal object ConfigurationTransformerTest : Spek({
                             .isEqualTo(Duration.ofSeconds(defaultRequestIntervalSec))
                 }
 
-                it("should create collector configuration") {
+                @Test
+
+                fun `should create collector configuration`() {
                     assertThat(result.collector.routing)
                             .describedAs("routing transformed from kafka sinks to routes")
                             .isEqualTo(sampleRouting)
@@ -91,13 +99,17 @@ internal object ConfigurationTransformerTest : Spek({
                             .isEqualTo(DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
                 }
 
-                it("should use specified log level") {
+                @Test
+
+                fun `should use specified log level`() {
                     assertThat(result.logLevel)
                             .describedAs("logLevel was not transformed when present")
                             .isEqualTo(LogLevel.TRACE)
                 }
 
-                it("should create security keys") {
+                @Test
+
+                fun `should create security keys`() {
                     result.security.keys.fold({ fail("Should be Some") }, {
                         assertThat(it.keyStore().path()).isEqualTo(File(KEYSTORE).toPath())
                         assertThat(it.trustStore().path()).isEqualTo(File(TRUSTSTORE).toPath())
@@ -108,19 +120,25 @@ internal object ConfigurationTransformerTest : Spek({
             }
         }
 
-        describe("transforming configuration with empty log level") {
+        @Nested
+
+        inner class `transforming configuration with empty log level` {
             val config = validatedConfiguration(
                     logLevel = None
             )
 
-            it("should use default log level") {
+            @Test
+
+            fun `should use default log level`() {
                 val result = cut.toFinalConfiguration(config)
 
                 assertThat(result.logLevel).isEqualTo(DEFAULT_LOG_LEVEL)
             }
         }
 
-        describe("transforming configuration with security disabled") {
+        @Nested
+
+        inner class `transforming configuration with security disabled` {
             val config = validatedConfiguration(
                     sslDisable = Some(true),
                     keyStoreFile = "",
@@ -129,19 +147,25 @@ internal object ConfigurationTransformerTest : Spek({
                     trustStorePasswordFile = ""
             )
 
-            it("should create valid configuration with empty security keys") {
+            @Test
+
+            fun `should create valid configuration with empty security keys`() {
                 val result = cut.toFinalConfiguration(config)
 
                 assertThat(result.security.keys).isEqualTo(None)
             }
         }
 
-        describe("transforming configuration with ssl disable missing") {
+        @Nested
+
+        inner class `transforming configuration with ssl disable missing` {
             val config = validatedConfiguration(
                     sslDisable = None
             )
 
-            it("should create configuration with ssl enabled") {
+            @Test
+
+            fun `should create configuration with ssl enabled`() {
                 val result = cut.toFinalConfiguration(config)
                 val securityKeys = result.security.keys
                         .getOrElse { fail("Should be immutableSecurityKeys") } as SecurityKeys
@@ -152,15 +176,20 @@ internal object ConfigurationTransformerTest : Spek({
             }
         }
 
-        describe("calculating maxPayloadSizeBytes") {
-            on("defined routes") {
+        @Nested
+
+        inner class `calculating maxPayloadSizeBytes` {
+            @Nested
+            inner class `defined routes` {
                 val highestMaxPayloadSize = 3
                 val sink1 = mock<KafkaSink>().also {
                     whenever(it.name()).thenReturn("1")
+
                     whenever(it.maxPayloadSizeBytes()).thenReturn(1)
                 }
                 val sink2 = mock<KafkaSink>().also {
                     whenever(it.name()).thenReturn("2")
+
                     whenever(it.maxPayloadSizeBytes()).thenReturn(highestMaxPayloadSize)
                 }
                 val config = validatedConfiguration(
@@ -169,20 +198,26 @@ internal object ConfigurationTransformerTest : Spek({
 
                 val result = cut.toFinalConfiguration(config)
 
-                it("should use the highest value among all routes") {
+                @Test
+
+                fun `should use the highest value among all routes`() {
                     assertThat(result.collector.maxPayloadSizeBytes)
                             .isEqualTo(highestMaxPayloadSize)
                 }
             }
 
-            on("empty routing") {
+            @Nested
+
+            inner class `empty routing` {
                 val config = validatedConfiguration(
                         streamPublishers = emptyList()
                 )
 
                 val result = cut.toFinalConfiguration(config)
 
-                it("should use default value") {
+                @Test
+
+                fun `should use default value`() {
                     assertThat(result.collector.maxPayloadSizeBytes)
                             .isEqualTo(DEFAULT_MAX_PAYLOAD_SIZE_BYTES)
                 }
@@ -190,7 +225,7 @@ internal object ConfigurationTransformerTest : Spek({
         }
 
     }
-})
+}
 
 private fun validatedConfiguration(listenPort: Int = defaultListenPort,
                                    idleTimeoutSec: Long = defaultIdleTimeoutSec,
@@ -216,4 +251,3 @@ private fun validatedConfiguration(listenPort: Int = defaultListenPort,
         trustStorePasswordFile = Some(trustStorePasswordFile),
         logLevel = logLevel
 ).unsafeAsValidated()
-
