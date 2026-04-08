@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,42 +23,40 @@ package org.onap.dcae.collectors.veshv.analysis
 
 import io.gitlab.arturbosch.detekt.test.assertThat
 import io.gitlab.arturbosch.detekt.test.lint
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-internal class PublicModifiersInImplTest: Spek({
-    fun checkPassingCase(code: String, cut: PublicModifiersInImpl = PublicModifiersInImpl()) {
-        describe(code) {
-            val findings = cut.lint(code)
+internal class PublicModifiersInImplTest {
 
-            it("should pass") {
-                assertThat(findings).isEmpty()
-            }
+    private fun checkPassingCase(code: String, cut: PublicModifiersInImpl = PublicModifiersInImpl()) {
+        val findings = cut.lint(code)
+        assertThat(findings).isEmpty()
+    }
+
+    private fun checkFailingCase(code: String, cut: PublicModifiersInImpl = PublicModifiersInImpl()) {
+        val findings = cut.lint(code)
+        assertThat(findings).isNotEmpty
+    }
+
+    @Nested
+    inner class `passing cases` {
+        @Test
+        fun `should have no findings`() {
+            checkPassingCase(ExemplaryCode.publicModifiersOutsideImplPackage)
+            checkPassingCase(ExemplaryCode.internalTopLevelModifiersInsideImplPackage)
+            checkPassingCase(ExemplaryCode.privateTopLevelModifiersInsideImplPackage)
+            checkPassingCase(ExemplaryCode.protectedTopLevelModifiersInsideImplPackage)
         }
     }
 
-    fun checkFailingCase(code: String, cut: PublicModifiersInImpl = PublicModifiersInImpl()) {
-        describe(code) {
-            val findings = cut.lint(code)
-
-            it("should fail") {
-                assertThat(findings).isNotEmpty
-            }
+    @Nested
+    inner class `failing cases` {
+        @Test
+        fun `should find issues`() {
+            checkFailingCase(ExemplaryCode.publicTopLevelModifiersInsideImplPackage)
         }
     }
-
-    describe("passing cases") {
-        checkPassingCase(ExemplaryCode.publicModifiersOutsideImplPackage)
-        checkPassingCase(ExemplaryCode.internalTopLevelModifiersInsideImplPackage)
-        checkPassingCase(ExemplaryCode.privateTopLevelModifiersInsideImplPackage)
-        checkPassingCase(ExemplaryCode.protectedTopLevelModifiersInsideImplPackage)
-    }
-
-    describe("failing cases") {
-        checkFailingCase(ExemplaryCode.publicTopLevelModifiersInsideImplPackage)
-    }
-})
+}
 
 private object ExemplaryCode {
     val publicModifiersOutsideImplPackage = """

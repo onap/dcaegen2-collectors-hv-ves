@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +24,19 @@ import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameDecoder
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.logging.ClientContext
 import reactor.test.test
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
  * @since May 2018
  */
-internal object WireChunkDecoderTest : Spek({
+internal class WireChunkDecoderTest {
     val alloc = UnpooledByteBufAllocator.DEFAULT
     val samplePayload = "konstantynopolitanczykowianeczka".toByteArray()
     val anotherPayload = "ala ma kota a kot ma ale".toByteArray()
@@ -64,87 +63,124 @@ internal object WireChunkDecoderTest : Spek({
         }
     }
 
-    describe("decoding wire protocol") {
-        given("empty input") {
+    @Nested
+
+    inner class `decoding wire protocol` {
+        @Nested
+        inner class `empty input` {
             val input = Unpooled.EMPTY_BUFFER
 
-            it("should yield empty result") {
+            @Test
+
+            fun `should yield empty result`() {
                 createInstance().decode(input).test().verifyComplete()
             }
         }
 
-        given("input with no readable bytes") {
+        @Nested
+
+        inner class `input with no readable bytes` {
             val input = Unpooled.wrappedBuffer(byteArrayOf(0x00)).readerIndex(1)
 
-            it("should yield empty result") {
+            @Test
+
+            fun `should yield empty result`() {
                 createInstance().decode(input).test().verifyComplete()
             }
 
-            it("should release memory") {
+            @Test
+
+            fun `should release memory`() {
                 verifyMemoryReleased(input)
             }
         }
 
-        given("invalid input (not starting with marker)") {
+        @Nested
+
+        inner class `invalid input (not starting with marker)` {
             val input = Unpooled.wrappedBuffer(samplePayload)
 
-            it("should yield error") {
+            @Test
+
+            fun `should yield error`() {
                 createInstance().decode(input).test()
                         .verifyError(WireFrameException::class.java)
             }
 
-            it("should leave memory unreleased") {
+            @Test
+
+            fun `should leave memory unreleased`() {
                 verifyMemoryNotReleased(input)
             }
         }
 
-        given("valid input") {
+        @Nested
+
+        inner class `valid input` {
             val input = WireFrameMessage(samplePayload)
 
-            it("should yield decoded input frame") {
+            @Test
+
+            fun `should yield decoded input frame`() {
                 createInstance().decode(input).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
             }
         }
 
-        given("valid input with part of next frame") {
+        @Nested
+
+        inner class `valid input with part of next frame` {
             val input = Unpooled.buffer()
                     .writeBytes(encoder.encode(WireFrameMessage(samplePayload)))
                     .writeBytes(encoder.encode(WireFrameMessage(samplePayload)).slice(0, 3))
 
-            it("should yield decoded input frame") {
+            @Test
+
+            fun `should yield decoded input frame`() {
                 createInstance().decode(input).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyComplete()
             }
 
-            it("should leave memory unreleased") {
+            @Test
+
+            fun `should leave memory unreleased`() {
                 verifyMemoryNotReleased(input)
             }
         }
 
-        given("valid input with garbage after it") {
+        @Nested
+
+        inner class `valid input with garbage after it` {
             val input = Unpooled.buffer()
                     .writeBytes(encoder.encode(WireFrameMessage(samplePayload)))
                     .writeBytes(Unpooled.wrappedBuffer(samplePayload))
 
-            it("should yield decoded input frame and error") {
+            @Test
+
+            fun `should yield decoded input frame and error`() {
                 createInstance().decode(input).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
                         .verifyError(WireFrameException::class.java)
             }
 
-            it("should leave memory unreleased") {
+            @Test
+
+            fun `should leave memory unreleased`() {
                 verifyMemoryNotReleased(input)
             }
         }
 
-        given("two inputs containing two separate messages") {
+        @Nested
+
+        inner class `two inputs containing two separate messages` {
             val input1 = encoder.encode(WireFrameMessage(samplePayload))
             val input2 = encoder.encode(WireFrameMessage(anotherPayload))
 
-            it("should yield decoded input frames") {
+            @Test
+
+            fun `should yield decoded input frames`() {
                 val cut = createInstance()
                 cut.decode(input1).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
@@ -154,16 +190,22 @@ internal object WireChunkDecoderTest : Spek({
                         .verifyComplete()
             }
 
-            it("should release memory") {
+            @Test
+
+            fun `should release memory`() {
                 verifyMemoryReleased(input1, input2)
             }
         }
 
-        given("1st input containing 1st frame and 2nd input containing garbage") {
+        @Nested
+
+        inner class `1st input containing 1st frame and 2nd input containing garbage` {
             val input1 = encoder.encode(WireFrameMessage(samplePayload))
             val input2 = Unpooled.wrappedBuffer(anotherPayload)
 
-            it("should yield decoded input frames") {
+            @Test
+
+            fun `should yield decoded input frames`() {
                 val cut = createInstance()
                 cut.decode(input1)
                         .test()
@@ -173,17 +215,24 @@ internal object WireChunkDecoderTest : Spek({
                         .verifyError(WireFrameException::class.java)
             }
 
-            it("should release memory for 1st input") {
+            @Test
+
+            fun `should release memory for 1st input`() {
                 verifyMemoryReleased(input1)
             }
 
-            it("should leave memory unreleased for 2nd input") {
+            @Test
+
+            fun `should leave memory unreleased for 2nd input`() {
                 verifyMemoryNotReleased(input2)
             }
         }
 
 
-        given("1st input containing 1st frame + part of 2nd frame and 2nd input containing rest of 2nd frame") {
+        @Nested
+
+
+        inner class `1st input containing 1st frame + part of 2nd frame and 2nd input containing rest of 2nd frame` {
             val frame1 = encoder.encode(WireFrameMessage(samplePayload))
             val frame2 = encoder.encode(WireFrameMessage(anotherPayload))
 
@@ -192,7 +241,9 @@ internal object WireChunkDecoderTest : Spek({
                     .writeBytes(frame2, 3)
             val input2 = Unpooled.buffer().writeBytes(frame2)
 
-            it("should yield decoded input frames") {
+            @Test
+
+            fun `should yield decoded input frames`() {
                 val cut = createInstance()
                 cut.decode(input1).test()
                         .expectNextMatches { it.payloadSize == samplePayload.size }
@@ -202,12 +253,16 @@ internal object WireChunkDecoderTest : Spek({
                         .verifyComplete()
             }
 
-            it("should release memory") {
+            @Test
+
+            fun `should release memory`() {
                 verifyMemoryReleased(input1, input2)
             }
         }
 
-        given("1st input containing part of 1st frame and 2nd input containing rest of 1st + 2nd frame") {
+        @Nested
+
+        inner class `1st input containing part of 1st frame and 2nd input containing rest of 1st + 2nd frame` {
             val frame1 = encoder.encode(WireFrameMessage(samplePayload))
             val frame2 = encoder.encode(WireFrameMessage(anotherPayload))
 
@@ -217,7 +272,9 @@ internal object WireChunkDecoderTest : Spek({
                     .writeBytes(frame1)
                     .writeBytes(frame2)
 
-            it("should yield decoded input frames") {
+            @Test
+
+            fun `should yield decoded input frames`() {
                 val cut = createInstance()
                 cut.decode(input1).test()
                         .verifyComplete()
@@ -227,9 +284,11 @@ internal object WireChunkDecoderTest : Spek({
                         .verifyComplete()
             }
 
-            it("should release memory") {
+            @Test
+
+            fun `should release memory`() {
                 verifyMemoryReleased(input1, input2)
             }
         }
     }
-})
+}
