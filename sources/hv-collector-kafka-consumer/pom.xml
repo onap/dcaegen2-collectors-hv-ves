@@ -44,6 +44,10 @@
 
   <description>VES HighVolume Collector :: Kafka consumer</description>
 
+  <properties>
+    <onap-gerrit-review>-changelog-missing</onap-gerrit-review>
+  </properties>
+
   <build>
     <plugins>
       <plugin>

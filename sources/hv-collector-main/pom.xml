@@ -41,6 +41,10 @@
     <artifactId>hv-collector-main</artifactId>
     <description>VES HighVolume Collector :: Main</description>
 
+    <properties>
+        <onap-gerrit-review>-changelog-missing</onap-gerrit-review>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

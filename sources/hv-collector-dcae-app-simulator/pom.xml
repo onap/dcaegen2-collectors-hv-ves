@@ -41,6 +41,10 @@
     <artifactId>hv-collector-dcae-app-simulator</artifactId>
     <description>VES HighVolume Collector :: Dcae app simulator</description>
 
+    <properties>
+        <onap-gerrit-review>-changelog-missing</onap-gerrit-review>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
