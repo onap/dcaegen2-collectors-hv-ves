@@ -5,6 +5,7 @@
   ~ ================================================================================
   ~ Copyright (C) 2018-2021 NOKIA
   ~ Copyright (C) 2022 Nordix Foundation
+  ~ Copyright (C) 2026 Deutsche Telekom AG
   ~ ================================================================================
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -40,6 +41,10 @@
 
     <artifactId>hv-collector-main</artifactId>
     <description>VES HighVolume Collector :: Main</description>
+
+    <properties>
+        <onap-gerrit-review>-changelog-missing</onap-gerrit-review>
+    </properties>
 
     <build>
         <plugins>

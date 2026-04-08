@@ -1,17 +1,25 @@
-FROM nexus3.onap.org:10001/onap/integration-java11:8.0.0
+FROM eclipse-temurin:11-jre-alpine
 
-LABEL copyright="Copyright (C) 2019 NOKIA" \
+LABEL copyright="Copyright (C) 2019 NOKIA, Copyright (C) 2026 Deutsche Telekom AG" \
       license.name="The Apache Software License, Version 2.0" \
       license.url="http://www.apache.org/licenses/LICENSE-2.0" \
       maintainer="Nokia Wroclaw ONAP Team"
 
+ARG APP_USER=appuser
+ARG APP_USER_GROUP=appuser
+ARG APP_USER_ID=1000
+
 USER root
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl && \
+    addgroup $APP_USER_GROUP && \
+    adduser --system --disabled-password --no-create-home --uid ${APP_USER_ID} --ingroup $APP_USER_GROUP $APP_USER
 
 WORKDIR /opt/hv-ves-kafka-consumer
 
-ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.kafkaconsumer.MainKt"]
+COPY --chown=${APP_USER}:${APP_USER_GROUP} target/libs/external/* ./
+COPY --chown=${APP_USER}:${APP_USER_GROUP} target/libs/internal/* ./
+COPY --chown=${APP_USER}:${APP_USER_GROUP} target/hv-collector-kafka-consumer-*.jar ./
 
-COPY target/libs/external/* ./
-COPY target/libs/internal/* ./
-COPY target/hv-collector-kafka-consumer-*.jar ./
+USER ${APP_USER}
+
+ENTRYPOINT ["java", "-cp", "*:", "org.onap.dcae.collectors.veshv.kafkaconsumer.MainKt"]
