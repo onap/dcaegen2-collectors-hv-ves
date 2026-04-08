@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,35 +27,36 @@ import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.security.plain.internals.PlainSaslServer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-internal class KafkaPropertiesFactoryTest : Spek({
+internal class KafkaPropertiesFactoryTest {
     val servers = "kafka1:9080,kafka2:9080"
 
-    describe("KafkaPropertiesFactory") {
+    @Nested
+
+    inner class `KafkaPropertiesFactory tests` {
         val options = KafkaPropertiesFactory.create(servers)
 
-        fun verifyProperty(key: String, expectedValue: Any) {
-            it("should have $key option set") {
-                assertThat(options.getValue(key))
-                        .isEqualTo(expectedValue)
-            }
+        private fun verifyProperty(key: String, expectedValue: Any) {
+            assertThat(options.getValue(key)).isEqualTo(expectedValue)
         }
 
-        verifyProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers)
-        verifyProperty(ConsumerConfig.CLIENT_ID_CONFIG, "hv-collector-consumer")
-        verifyProperty(ConsumerConfig.GROUP_ID_CONFIG, "hv-collector-consumers")
-        verifyProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
-        verifyProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
-        verifyProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
-        verifyProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "3000")
-        verifyProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SASL_PLAINTEXT)
-        verifyProperty(SaslConfigs.SASL_MECHANISM, PlainSaslServer.PLAIN_MECHANISM)
-        verifyProperty(SaslConfigs.SASL_JAAS_CONFIG, JAAS_CONFIG)
+        @Test
+        fun `should have all properties configured`() {
+            verifyProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers)
+            verifyProperty(ConsumerConfig.CLIENT_ID_CONFIG, "hv-collector-consumer")
+            verifyProperty(ConsumerConfig.GROUP_ID_CONFIG, "hv-collector-consumers")
+            verifyProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
+            verifyProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer::class.java)
+            verifyProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+            verifyProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "3000")
+            verifyProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SASL_PLAINTEXT)
+            verifyProperty(SaslConfigs.SASL_MECHANISM, PlainSaslServer.PLAIN_MECHANISM)
+            verifyProperty(SaslConfigs.SASL_JAAS_CONFIG, JAAS_CONFIG)
+        }
     }
-})
+}
 
 private const val LOGIN_MODULE_CLASS = "org.apache.kafka.common.security.plain.PlainLoginModule"
 private const val USERNAME = "admin"

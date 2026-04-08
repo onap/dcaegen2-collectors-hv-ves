@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,24 +21,27 @@
 package org.onap.dcae.collectors.veshv.utils
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author <a href="mailto:piotr.jaszczyk@nokia.com">Piotr Jaszczyk</a>
  * @since April 2019
  */
-internal class KotlinUtilsTest : Spek({
-    describe("applyIf") {
-        it("should apply the block if condition is true") {
+internal class KotlinUtilsTest {
+    @Nested
+    inner class `applyIf` {
+        @Test
+        fun `should apply the block if condition is true`() {
             val result = 69.applyIf(true) { this * 9 + 45 }
             assertThat(result).isEqualTo(666)
         }
 
-        it("should not apply the block if condition is false") {
+        @Test
+
+        fun `should not apply the block if condition is false`() {
             val result = 69.applyIf(false) { this * 9 + 45 }
             assertThat(result).isEqualTo(69)
         }
     }
-})
+}

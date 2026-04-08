@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,21 +23,23 @@ package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 import com.google.protobuf.MessageLite
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
-import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
+import org.onap.ves.VesEventOuterClass.CommonEventHeader
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
+internal class ProtobufSerializerTest {
 
-internal class ProtobufSerializerTest : Spek({
+    @Nested
 
-    describe("ProtobufSerializerTest") {
+    inner class `ProtobufSerializerTest` {
         val serializer = ProtobufSerializer()
 
-        on("serialize") {
-            it("should return byte array from WTP Frame paylaod") {
-                val header = getDefaultInstance()
+        @Nested
+
+        inner class `serialize` {
+            @Test
+            fun `should return byte array from WTP Frame paylaod`() {
+                val header = CommonEventHeader.getDefaultInstance()
                 val payload = header.toByteArray()
                 val msg: MessageLite = mock()
 
@@ -46,15 +49,21 @@ internal class ProtobufSerializerTest : Spek({
             }
         }
 
-        on("configuring") {
-            it("should do nothing") {
+        @Nested
+
+        inner class `configuring` {
+            @Test
+            fun `should do nothing`() {
                 // increase code coverage
                 serializer.configure(hashMapOf<String, String>(), false)
             }
         }
 
-        on("closing") {
-            it("should do nothing") {
+        @Nested
+
+        inner class `closing` {
+            @Test
+            fun `should do nothing`() {
                 // increase code coverage
                 serializer.close()
             }
@@ -62,4 +71,4 @@ internal class ProtobufSerializerTest : Spek({
     }
 
 
-})
+}

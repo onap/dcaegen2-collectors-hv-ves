@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +21,19 @@
 package org.onap.dcae.collectors.veshv.utils
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
 import java.time.Instant
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since December 2018
  */
-internal object TimeTest : Spek({
-    describe("epochMicrosecond to Instant converter") {
-        it("should convert") {
+internal class TimeTest {
+    @Nested
+    inner class `epochMicrosecond to Instant converter` {
+        @Test
+        fun `should convert`() {
             val epochSeconds = 1545048422L
             val nanoAdjustment = 666999000L
             val epochMicros = 1545048422666999L
@@ -41,4 +43,4 @@ internal object TimeTest : Spek({
             assertThat(result).isEqualTo(Instant.ofEpochSecond(epochSeconds, nanoAdjustment))
         }
     }
-})
+}

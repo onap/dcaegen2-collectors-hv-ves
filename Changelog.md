@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+    - [DCAEGEN2-3448](https://jira.onap.org/browse/DCAEGEN2-3448) - Migrate test framework from Spek to JUnit 5
+
 ## [1.11.1] - 08/04/2026
 
     - [DCAEGEN2-3445](https://jira.onap.org/browse/DCAEGEN2-3445) - Modernise hv-ves Docker images: use eclipse-temurin:11-jre-alpine base image, apply Dockerfile best practices

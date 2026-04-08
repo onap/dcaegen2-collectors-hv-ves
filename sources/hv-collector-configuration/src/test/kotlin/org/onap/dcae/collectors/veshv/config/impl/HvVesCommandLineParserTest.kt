@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,47 +22,58 @@ package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.identity
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.commandline.WrongArgumentError
 import org.onap.dcae.collectors.veshv.tests.utils.absoluteResourcePath
 import java.io.File
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-object HvVesCommandLineParserTest : Spek({
+internal class HvVesCommandLineParserTest {
     lateinit var cut: HvVesCommandLineParser
     val defaultHealthcheckPort = 6060
     val emptyConfig = ""
     val configFilePath = javaClass.absoluteResourcePath("sampleConfig.json")
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         cut = HvVesCommandLineParser()
     }
 
-    describe("parsing arguments") {
-        given("all parameters are present in the long form") {
+    @Nested
+
+    inner class `parsing arguments` {
+        @Nested
+        inner class `all parameters are present in the long form` {
             lateinit var result: File
 
-            beforeEachTest {
+            @BeforeEach
+
+            fun setup() {
                 result = cut.parseFileExpectingSuccess(
                         "--configuration-file", configFilePath
                 )
             }
 
-            it("should read proper configuration file") {
+            @Test
+
+            fun `should read proper configuration file`() {
                 assertThat(result.exists()).isTrue()
             }
         }
 
-        given("required parameter is absent") {
-            on("missing configuration file path") {
-                it("should throw exception") {
+        @Nested
+
+        inner class `required parameter is absent` {
+            @Nested
+            inner class `missing configuration file path` {
+                @Test
+                fun `should throw exception`() {
                     assertThat(
                             cut.parseFileExpectingFailure(
                                     "--non-existing-option", emptyConfig
@@ -71,11 +83,15 @@ object HvVesCommandLineParserTest : Spek({
             }
         }
 
-        given("healthcheck port defined via cmd") {
+        @Nested
+
+        inner class `healthcheck port defined via cmd` {
             val healthCheckPort = 888
             val configWithHealthcheckPort = "--health-check-api-port $healthCheckPort"
-            on("parsing command") {
-                it("should assign proper port") {
+            @Nested
+            inner class `parsing command` {
+                @Test
+                fun `should assign proper port`() {
                     assertThat(
                             cut.getHealthcheckPort(arrayOf(configWithHealthcheckPort))
                     ).isEqualTo(healthCheckPort)
@@ -83,9 +99,13 @@ object HvVesCommandLineParserTest : Spek({
             }
         }
 
-        given("no healthcheck port defined via cmd") {
-            on("parsing command") {
-                it("should return default port") {
+        @Nested
+
+        inner class `no healthcheck port defined via cmd` {
+            @Nested
+            inner class `parsing command` {
+                @Test
+                fun `should return default port`() {
                     assertThat(
                             cut.getHealthcheckPort(arrayOf(emptyConfig))
                     ).isEqualTo(defaultHealthcheckPort)
@@ -93,7 +113,7 @@ object HvVesCommandLineParserTest : Spek({
             }
         }
     }
-})
+}
 
 private fun HvVesCommandLineParser.parseFileExpectingSuccess(vararg cmdLine: String): File =
         getConfigurationFile(cmdLine).fold(

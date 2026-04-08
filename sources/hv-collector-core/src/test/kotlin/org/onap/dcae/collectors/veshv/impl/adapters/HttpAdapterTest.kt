@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +20,26 @@
  */
 package org.onap.dcae.collectors.veshv.impl.adapters
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.impl.adapters.HttpAdapter.Companion.INVOCATION_ID_HEADER
 import reactor.core.publisher.Mono
 import reactor.netty.http.client.HttpClient
 import reactor.netty.http.server.HttpServer
 import reactor.test.StepVerifier
 import reactor.test.test
-import java.util.*
+import java.util.UUID
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-internal object HttpAdapterTest : Spek({
-    describe("HttpAdapter") {
+internal class HttpAdapterTest {
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    inner class `HttpAdapter` {
 
         val httpServer = HttpServer.create()
                 .host("127.0.0.1")
@@ -52,50 +55,67 @@ internal object HttpAdapterTest : Spek({
         val baseUrl = "http://${httpServer.host()}:${httpServer.port()}"
         val httpAdapter = HttpAdapter(HttpClient.create().baseUrl(baseUrl))
 
-        afterGroup {
+        @AfterAll
+        fun teardown() {
             httpServer.disposeNow()
         }
 
-        given("url without query params") {
+        @Nested
+
+        inner class `url without query params` {
             val url = "/url"
             val invocationId = UUID.randomUUID()
 
-            it("should not append query string") {
+            @Test
+
+            fun `should not append query string`() {
                 httpAdapter.get(url, invocationId).test()
                         .expectNext(url)
                         .verifyComplete()
             }
 
-            it("should pass invocation id") {
+            @Test
+
+            fun `should pass invocation id`() {
                 httpAdapter.get("/inv-id", invocationId).test()
                         .expectNext(invocationId.toString())
                         .verifyComplete()
             }
         }
 
-        given("url with query params") {
+        @Nested
+
+        inner class `url with query params` {
             val queryParams = mapOf(Pair("p", "the-value"))
             val url = "/url"
             val invocationId = UUID.randomUUID()
 
-            it("should add them as query string to the url") {
+            @Test
+
+            fun `should add them as query string to the url`() {
                 httpAdapter.get(url, invocationId, queryParams).test()
                         .expectNext("/url?p=the-value")
                         .verifyComplete()
             }
 
-            it("should pass invocation id") {
+            @Test
+
+            fun `should pass invocation id`() {
                 httpAdapter.get("/inv-id", invocationId, queryParams).test()
                         .expectNext(invocationId.toString())
                         .verifyComplete()
             }
         }
 
-        given("invalid url") {
+        @Nested
+
+        inner class `invalid url` {
             val invalidUrl = "/wtf"
             val invocationId = UUID.randomUUID()
 
-            it("should interrupt the flux") {
+            @Test
+
+            fun `should interrupt the flux`() {
                 StepVerifier
                         .create(httpAdapter.get(invalidUrl, invocationId))
                         .verifyError()
@@ -103,4 +123,4 @@ internal object HttpAdapterTest : Spek({
         }
     }
 
-})
+}
