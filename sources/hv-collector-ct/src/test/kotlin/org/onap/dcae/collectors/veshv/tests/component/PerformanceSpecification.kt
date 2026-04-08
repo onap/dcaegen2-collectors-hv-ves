@@ -3,6 +3,7 @@
  * dcaegen2-collectors-veshv
  * ================================================================================
  * Copyright (C) 2018-2019 NOKIA
+ * Copyright (C) 2026 Deutsche Telekom AG
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +27,6 @@ import io.netty.buffer.CompositeByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.buffer.UnpooledByteBufAllocator
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.CollectorConfiguration
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
 import org.onap.dcae.collectors.veshv.domain.WireFrameEncoder
@@ -44,18 +42,22 @@ import reactor.core.publisher.Flux
 import reactor.math.sum
 import java.security.MessageDigest
 import java.time.Duration
-import java.util.*
+import java.util.Random
 import kotlin.system.measureTimeMillis
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-object PerformanceSpecification : Spek({
-    debugRx(false)
+class PerformanceSpecification {
 
-    describe("VES High Volume Collector performance") {
-        it("should handle multiple clients in reasonable time") {
+    @Nested
+
+    inner class `VES High Volume Collector performance` {
+        @Test
+        fun `should handle multiple clients in reasonable time`() {
             val sink = CountingSink()
             val sut = Sut(CollectorConfiguration(basicRouting, MAX_PAYLOAD_SIZE_BYTES), sink)
 
@@ -85,7 +87,9 @@ object PerformanceSpecification : Spek({
                     .isEqualTo(runs * numMessages)
         }
 
-        it("should disconnect on transmission errors") {
+        @Test
+
+        fun `should disconnect on transmission errors`() {
             val sink = CountingSink()
             val sut = Sut(CollectorConfiguration(basicRouting, MAX_PAYLOAD_SIZE_BYTES), sink)
 
@@ -111,7 +115,9 @@ object PerformanceSpecification : Spek({
         }
     }
 
-    describe("test infrastructure") {
+    @Nested
+
+    inner class `test infrastructure` {
         val digest = MessageDigest.getInstance("MD5")
 
         fun collectDigest(bb: ByteBuf) {
@@ -129,7 +135,9 @@ object PerformanceSpecification : Spek({
             return digest.digest()
         }
 
-        it("should yield same bytes as in the input") {
+        @Test
+
+        fun `should yield same bytes as in the input`() {
             val numberOfBuffers = 10
             val singleBufferSize = 1000
             val arrays = (1.rangeTo(numberOfBuffers)).map { randomByteArray(singleBufferSize) }
@@ -155,7 +163,7 @@ object PerformanceSpecification : Spek({
 
         }
     }
-})
+}
 
 
 private const val ONE_MILLION = 1_000_000.0
@@ -203,4 +211,3 @@ private fun randomlySplitTcpFrames(bb: CompositeByteBuf): Flux<ByteBuf> {
         sink.complete()
     }
 }
-
