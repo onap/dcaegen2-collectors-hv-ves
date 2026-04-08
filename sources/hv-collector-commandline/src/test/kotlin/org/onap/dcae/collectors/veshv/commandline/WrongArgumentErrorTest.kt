@@ -20,43 +20,48 @@
 package org.onap.dcae.collectors.veshv.commandline
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.HEALTH_CHECK_API_PORT
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption.LISTEN_PORT
 
 
-class WrongArgumentErrorTest : Spek({
+class WrongArgumentErrorTest {
 
-    describe("help message logic test") {
+    @Nested
+    inner class `help message logic test` {
 
-        given("at least one required option") {
+        @Nested
+        inner class `at least one required option` {
             val filledOptionList = listOf(
                     HEALTH_CHECK_API_PORT,
                     LISTEN_PORT)
-            on("help message preparation") {
+
+            @Nested
+            inner class `help message preparation` {
                 val requiredParameters = WrongArgumentError.generateRequiredParametersNote(filledOptionList)
 
-                it("should print out required fields") {
+                @Test
+                fun `should print out required fields`() {
                     assertThat(requiredParameters).isEqualTo("Required parameters: p")
                 }
             }
         }
 
-        given("no required option") {
+        @Nested
+        inner class `no required option` {
             val filledOptionList = listOf(HEALTH_CHECK_API_PORT)
 
-            on("help message preparation") {
+            @Nested
+            inner class `help message preparation` {
                 val requiredParameters = WrongArgumentError.generateRequiredParametersNote(filledOptionList)
 
-                it("should not print required fields") {
+                @Test
+                fun `should not print required fields`() {
                     assertThat(requiredParameters).isEqualTo("")
                 }
             }
         }
     }
 
-})
+}

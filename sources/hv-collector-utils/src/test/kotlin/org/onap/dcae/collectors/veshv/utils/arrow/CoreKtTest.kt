@@ -23,119 +23,159 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import java.util.concurrent.atomic.AtomicReference
-
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk></piotr.jaszczyk>@nokia.com>
  * @since August 2018
  */
-internal class CoreKtTest : Spek({
-    describe("AtomicReference.getOption") {
-        given("empty atomic reference") {
+internal class CoreKtTest {
+    @Nested
+    inner class `AtomicReference getOption` {
+        @Nested
+        inner class `empty atomic reference` {
             val atomicReference = AtomicReference<String>()
 
-            on("getOption") {
+            @Nested
+
+            inner class `getOption` {
                 val result = atomicReference.getOption()
 
-                it("should be None") {
+                @Test
+
+                fun `should be None`() {
                     assertThat(result).isEqualTo(None)
                 }
             }
         }
-        given("non-empty atomic reference") {
+        @Nested
+        inner class `non-empty atomic reference` {
             val initialValue = "reksio"
             val atomicReference = AtomicReference(initialValue)
 
-            on("getOption") {
+            @Nested
+
+            inner class `getOption` {
                 val result = atomicReference.getOption()
 
-                it("should be Some($initialValue)") {
+                @Test
+
+                fun `should be Some($initialValue)`() {
                     assertThat(result).isEqualTo(Some(initialValue))
                 }
             }
         }
     }
 
-    describe("Option.fromNullablesChain") {
-        given("one non-null element") {
+    @Nested
+
+    inner class `Option fromNullablesChain` {
+        @Nested
+        inner class `one non-null element` {
             val just = "some text"
-            on("calling factory") {
+            @Nested
+            inner class `calling factory` {
                 val result = Option.fromNullablesChain(just)
 
-                it("should return Some($just)") {
+                @Test
+
+                fun `should return Some($just)`() {
                     assertThat(result).isEqualTo(Some(just))
                 }
             }
         }
 
-        given("one null element") {
+        @Nested
+
+        inner class `one null element` {
             val just: String? = null
-            on("calling factory") {
+            @Nested
+            inner class `calling factory` {
                 val result = Option.fromNullablesChain(just)
 
-                it("should return None") {
+                @Test
+
+                fun `should return None`() {
                     assertThat(result).isEqualTo(None)
                 }
             }
         }
 
-        given("first non-null element") {
+        @Nested
+
+        inner class `first non-null element` {
             val first = "some text"
             val second: String? = null
             var secondAskedForValue = false
-            on("calling factory") {
+            @Nested
+            inner class `calling factory` {
                 val result = Option.fromNullablesChain(first, { secondAskedForValue = true; second })
 
-                it("should return Some($first)") {
+                @Test
+
+                fun `should return Some($first)`() {
                     assertThat(result).isEqualTo(Some(first))
                 }
 
-                it("should have not called second provider (should be lazy)") {
+                @Test
+
+                fun `should have not called second provider (should be lazy)`() {
                     assertThat(secondAskedForValue).isFalse()
                 }
             }
         }
 
-        given("two non-null elements") {
+        @Nested
+
+        inner class `two non-null elements` {
             val first = "some text"
             val second = "another text"
-            on("calling factory") {
+            @Nested
+            inner class `calling factory` {
                 val result = Option.fromNullablesChain(first, { second })
 
-                it("should return Some($first)") {
+                @Test
+
+                fun `should return Some($first)`() {
                     assertThat(result).isEqualTo(Some(first))
                 }
             }
         }
 
-        given("two null elements") {
+        @Nested
+
+        inner class `two null elements` {
             val first: String? = null
             val second: String? = null
-            on("calling factory") {
+            @Nested
+            inner class `calling factory` {
                 val result = Option.fromNullablesChain(first, { second })
 
-                it("should return None") {
+                @Test
+
+                fun `should return None`() {
                     assertThat(result).isEqualTo(None)
                 }
             }
         }
 
-        given("second non-null element") {
+        @Nested
+
+        inner class `second non-null element` {
             val first: String? = null
             val second = "another text"
-            on("calling factory") {
+            @Nested
+            inner class `calling factory` {
                 val result = Option.fromNullablesChain(first, { second })
 
-                it("should return Some($second)") {
+                @Test
+
+                fun `should return Some($second)`() {
                     assertThat(result).isEqualTo(Some(second))
                 }
             }
         }
     }
-})
+}

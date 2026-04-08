@@ -25,30 +25,36 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.apache.commons.cli.CommandLine
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.commandline.CommandLineOption
 import org.onap.dcae.collectors.veshv.commandline.hasOption
 import org.onap.dcae.collectors.veshv.commandline.stringValue
 import java.nio.file.Paths
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
+internal class SslUtilsTest {
 
-internal object SslUtilsTest : Spek({
+    @Nested
 
-    describe("creating securty configuration provider") {
+    inner class `creating securty configuration provider` {
 
-        on("command line without ssl disable") {
+        @Nested
+
+        inner class `command line without ssl disable` {
             val passwordFile = resourcePathAsString("/ssl/password")
             val commandLine: CommandLine = mock()
+            init {
             whenever(commandLine.hasOption(CommandLineOption.SSL_DISABLE)).doReturn(false)
+
             whenever(commandLine.stringValue(CommandLineOption.TRUST_STORE_PASSWORD_FILE, TRUST_STORE_PASSWORD_FILE))
                     .doReturn(passwordFile)
+
             whenever(commandLine.stringValue(CommandLineOption.KEY_STORE_PASSWORD_FILE, KEY_STORE_PASSWORD_FILE))
                     .doReturn(passwordFile)
+            }
+            @Test
 
-            it("should create configuration with some keys") {
+            fun `should create configuration with some keys`() {
                 val configuration = createSecurityConfigurationProvider(commandLine)
 
                 verify(commandLine).hasOption(CommandLineOption.SSL_DISABLE)
@@ -57,11 +63,16 @@ internal object SslUtilsTest : Spek({
             }
         }
 
-        on("command line with ssl disabled") {
-            val commandLine: CommandLine = mock()
-            whenever(commandLine.hasOption(CommandLineOption.SSL_DISABLE)).doReturn(true)
+        @Nested
 
-            it("should create configuration without keys") {
+        inner class `command line with ssl disabled` {
+            val commandLine: CommandLine = mock()
+            init {
+            whenever(commandLine.hasOption(CommandLineOption.SSL_DISABLE)).doReturn(true)
+            }
+            @Test
+
+            fun `should create configuration without keys`() {
                 val configuration = createSecurityConfigurationProvider(commandLine)
 
                 verify(commandLine).hasOption(CommandLineOption.SSL_DISABLE)
@@ -70,7 +81,7 @@ internal object SslUtilsTest : Spek({
             }
         }
     }
-})
+}
 
 private fun resourcePathAsString(resource: String) =
         Paths.get(SslUtilsTest::class.java.getResource(resource).toURI()).toString()

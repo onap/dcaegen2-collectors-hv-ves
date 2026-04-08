@@ -24,11 +24,6 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.config.api.model.Route
 import org.onap.dcae.collectors.veshv.config.api.model.Routing
 import org.onap.dcae.collectors.veshv.boundary.Sink
@@ -43,34 +38,47 @@ import org.onap.dcae.collectors.veshv.tests.utils.emptyWireProtocolFrame
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
-
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since May 2018
  */
-object RouterTest : Spek({
+internal class RouterTest {
 
-    describe("Router") {
+    @Nested
 
+    inner class `Router` {
+
+        init {
         whenever(perf3gppSinkMock.topicName()).thenReturn(perf3gppTopic)
-        whenever(ves3gppHeartbeatSinkMock.topicName()).thenReturn(ves3gppHeartbeatTopic)
-        whenever(syslogSinkMock.topicName()).thenReturn(syslogTopic)
 
+        whenever(ves3gppHeartbeatSinkMock.topicName()).thenReturn(ves3gppHeartbeatTopic)
+
+        whenever(syslogSinkMock.topicName()).thenReturn(syslogTopic)
+        }
         val messageSinkMap = mapOf(
                 Pair(perf3gppTopic, lazyOf(messageSinkMock)),
                 Pair(ves3gppHeartbeatTopic, lazyOf(messageSinkMock)),
                 Pair(syslogTopic, lazyOf(messageSinkMock))
         )
 
-        given("sample routing specification") {
+        @Nested
+
+        inner class `sample routing specification` {
             val cut = router(defaultRouting, messageSinkMap)
 
-            on("message with existing route (rtpm)") {
+            @Nested
+
+            inner class `message with existing route (rtpm)` {
+                init {
                 whenever(messageSinkMock.send(routedPerf3GppMessage))
                         .thenReturn(Flux.just(successfullyConsumedPerf3gppMessage))
+                }
+                @Test
 
-                it("should be properly routed") {
+                fun `should be properly routed`() {
                     val result = cut.route(perf3gppMessage)
 
                     assertThat(result).isNotNull
@@ -79,52 +87,71 @@ object RouterTest : Spek({
                             .verifyComplete()
 
                     verify(perf3gppSinkMock).topicName()
+
                     verify(messageSinkMock).send(routedPerf3GppMessage)
                 }
             }
 
-            on("message with existing route (syslog)") {
+            @Nested
+
+            inner class `message with existing route (syslog)` {
+                init {
                 whenever(messageSinkMock.send(routedSyslogMessage))
                         .thenReturn(Flux.just(successfullyConsumedSyslogMessage))
+                }
                 val result = cut.route(syslogMessage)
 
-                it("should be properly routed") {
+                @Test
+
+                fun `should be properly routed`() {
                     StepVerifier.create(result)
                             .expectNext(successfullyConsumedSyslogMessage)
                             .verifyComplete()
 
                     verify(syslogSinkMock).topicName()
+
                     verify(messageSinkMock).send(routedSyslogMessage)
                 }
             }
 
-            on("message with existing stndDefined route (ves3gppHeartbeat)") {
+            @Nested
+
+            inner class `message with existing stndDefined route (ves3gppHeartbeat)` {
+                init {
                 whenever(messageSinkMock.send(routedVes3gppHeartbeatMessage))
                         .thenReturn(Flux.just(successfullyConsumedVes3gppHeartbeatMessage))
+                }
                 val result = cut.route(ves3gppHeartbeatMessage)
 
-                it("should be properly routed") {
+                @Test
+
+                fun `should be properly routed`() {
                     StepVerifier.create(result)
                             .expectNext(successfullyConsumedVes3gppHeartbeatMessage)
                             .verifyComplete()
 
                     verify(ves3gppHeartbeatSinkMock).topicName()
+
                     verify(messageSinkMock).send(routedVes3gppHeartbeatMessage)
                 }
             }
 
-            on("message with unknown route") {
+            @Nested
+
+            inner class `message with unknown route` {
                 val message = VesMessage(commonHeader(VesEventDomain.HEARTBEAT), emptyWireProtocolFrame())
                 val result = cut.route(message)
 
-                it("should not have route available") {
+                @Test
+
+                fun `should not have route available`() {
                     StepVerifier.create(result).verifyComplete()
                 }
             }
         }
     }
 
-})
+}
 
 private fun router(routing: Routing, kafkaPublisherMap: Map<String, Lazy<Sink>>) =
         Router(routing, kafkaPublisherMap, ClientContext(), mock())

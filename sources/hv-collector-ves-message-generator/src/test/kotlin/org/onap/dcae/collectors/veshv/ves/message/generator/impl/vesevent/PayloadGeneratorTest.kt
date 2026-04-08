@@ -20,33 +20,40 @@
 package org.onap.dcae.collectors.veshv.ves.message.generator.impl.vesevent
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.ves.message.generator.impl.PayloadGenerator
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-object PayloadGeneratorTest : Spek({
+internal class PayloadGeneratorTest {
 
-    given("payload factory object") {
+    @Nested
+
+    inner class `payload factory object` {
         val cut = PayloadGenerator()
 
-        on("raw payload generation") {
+        @Nested
+
+        inner class `raw payload generation` {
             val size = 100
             val generatedPayload = cut.generateRawPayload(size)
 
-            it("should generate sequence of zeros") {
+            @Test
+
+            fun `should generate sequence of zeros`() {
                 assertThat(generatedPayload.size()).isEqualTo(size)
                 assertThat(generatedPayload.toByteArray()).isEqualTo(ByteArray(size))
             }
         }
 
-        on("two generated payloads") {
+        @Nested
+
+        inner class `two generated payloads` {
             val generatedPayload0 = cut.generatePayload()
             val generatedPayload1 = cut.generatePayload()
-            it("should be different") {
+            @Test
+            fun `should be different`() {
                 assertThat(generatedPayload0 != generatedPayload1).isTrue()
             }
         }
     }
-})
+}

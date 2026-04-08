@@ -20,35 +20,42 @@
 package org.onap.dcae.collectors.veshv.simulators.dcaeapp.impl
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-object DcaeAppConsumerFactoryTest : Spek({
-    describe("DcaeAppConsumerFactory") {
+internal class DcaeAppConsumerFactoryTest {
+    @Nested
+    inner class `DcaeAppConsumerFactory tests` {
         val kafkaBootstrapServers = "0.0.0.0:40,0.0.0.1:41"
         val dcaeAppConsumerFactory = DcaeAppConsumerFactory(kafkaBootstrapServers)
 
-        on("creation of consumer") {
+        @Nested
+
+        inner class `creation of consumer` {
             val kafkaTopics = setOf("topic1", "topic2")
             val consumer = dcaeAppConsumerFactory.createConsumersFor(kafkaTopics)
 
-            it("should create consumer") {
+            @Test
+
+            fun `should create consumer`() {
                 assertThat(consumer).isNotEmpty.hasSize(2)
                 assertThat(consumer).containsOnlyKeys("topic1", "topic2")
             }
         }
 
-        on("empty kafkaTopics set") {
+        @Nested
+
+        inner class `empty kafkaTopics set` {
             val emptyKafkaTopics = emptySet<String>()
             val consumer = dcaeAppConsumerFactory.createConsumersFor(emptyKafkaTopics)
 
-            it("should not create consumer") {
+            @Test
+
+            fun `should not create consumer`() {
                 assertThat(consumer).isEmpty()
             }
         }
 
 
     }
-})
+}

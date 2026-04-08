@@ -30,96 +30,85 @@ import org.apache.kafka.clients.consumer.ConsumerRecords
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
 import org.assertj.core.api.Assertions
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
 import java.time.Duration
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-object ProcessingKafkaConsumerTest: Spek({
-    given("ProcessingKafkaConsumer") {
+internal class ProcessingKafkaConsumerTest {
+    @Nested
+    inner class `ProcessingKafkaConsumer tests` {
         val testDispatcher = TestCoroutineDispatcher()
         val mockedKafkaConsumer = mock<KafkaConsumer<ByteArray, ByteArray>>()
         val mockedMetrics = mock<Metrics>()
         val processingKafkaConsumer = ProcessingKafkaConsumer(mockedKafkaConsumer, topics, mockedMetrics, testDispatcher)
 
-        afterEachTest {
+        @AfterEach
+
+        fun teardown() {
             testDispatcher.cleanupTestCoroutines()
             reset(mockedMetrics)
         }
 
-        given("empty consumer records"){
-            on("started ProcessingKafkaConsumer") {
-                whenever(mockedKafkaConsumer.poll(pollTimeoutInMs)).thenReturn(ConsumerRecords.empty())
-                runBlockingTest(testDispatcher) {
-                    val job = processingKafkaConsumer.start(updateIntervalInMs, pollTimeoutInMs)
-                    job.cancelAndJoin()
-                }
+        @Nested
 
-                it("should not interact with metrics") {
-                    verifyZeroInteractions(mockedMetrics)
-                }
+        inner class `empty consumer records` {
+            @Test
+            fun `should not interact with metrics`() = runBlockingTest(testDispatcher) {
+                whenever(mockedKafkaConsumer.poll(pollTimeoutInMs)).thenReturn(ConsumerRecords.empty())
+                val job = processingKafkaConsumer.start(updateIntervalInMs, pollTimeoutInMs)
+                job.cancelAndJoin()
+                verifyZeroInteractions(mockedMetrics)
             }
         }
 
-        given("single consumer record") {
-            on("started ProcessingKafkaConsumer") {
-                val record = mock<ConsumerRecord<ByteArray, ByteArray>>()
-                val records = ConsumerRecords(mapOf(
-                        topicPartition to listOf(record)
-                ))
+        @Nested
 
+        inner class `single consumer record` {
+            @Test
+            fun `should notify message travel time changed with correct sent time`() = runBlockingTest(testDispatcher) {
+                val record = mock<ConsumerRecord<ByteArray, ByteArray>>()
+                val records = ConsumerRecords(mapOf(topicPartition to listOf(record)))
                 whenever(mockedKafkaConsumer.poll(pollTimeoutInMs)).thenReturn(records)
                 whenever(record.value())
-                        .thenReturn(vesEvent( commonHeader(lastEpochMicrosec = messageSentTime)).toByteArray())
+                        .thenReturn(vesEvent(commonHeader(lastEpochMicrosec = messageSentTime)).toByteArray())
 
-                runBlockingTest(testDispatcher) {
-                    val job = processingKafkaConsumer.start(updateIntervalInMs,pollTimeoutInMs)
-                    job.cancelAndJoin()
-                }
+                val job = processingKafkaConsumer.start(updateIntervalInMs, pollTimeoutInMs)
+                job.cancelAndJoin()
 
-
-                it("should notify message travel time changed with correct sent time"){
-                    verify(mockedMetrics).notifyMessageTravelTime(messageSentTime)
-                }
+                verify(mockedMetrics).notifyMessageTravelTime(messageSentTime)
             }
         }
 
-        given("multiple consumer records with partition"){
-            val sentTimeArgumentCaptor = argumentCaptor<Long>()
+        @Nested
 
-            on("started ProcessingKafkaConsumer") {
+        inner class `multiple consumer records with partition` {
+            @Test
+            fun `should notify message travel time changed twice with correct arguments`() = runBlockingTest(testDispatcher) {
+                val sentTimeArgumentCaptor = argumentCaptor<Long>()
                 val record1 = mock<ConsumerRecord<ByteArray, ByteArray>>()
                 val record2 = mock<ConsumerRecord<ByteArray, ByteArray>>()
-                val records = ConsumerRecords(mapOf(
-                        topicPartition to listOf(record1, record2)
-                ))
-
+                val records = ConsumerRecords(mapOf(topicPartition to listOf(record1, record2)))
                 whenever(mockedKafkaConsumer.poll(pollTimeoutInMs)).thenReturn(records)
                 whenever(record1.value())
-                        .thenReturn(vesEvent( commonHeader(lastEpochMicrosec = messageSentTime)).toByteArray())
+                        .thenReturn(vesEvent(commonHeader(lastEpochMicrosec = messageSentTime)).toByteArray())
                 whenever(record2.value())
-                        .thenReturn(vesEvent( commonHeader(lastEpochMicrosec = anotherMessageSentTime)).toByteArray())
+                        .thenReturn(vesEvent(commonHeader(lastEpochMicrosec = anotherMessageSentTime)).toByteArray())
 
-                runBlockingTest(testDispatcher) {
-                    val job = processingKafkaConsumer.start(updateIntervalInMs,pollTimeoutInMs)
+                val job = processingKafkaConsumer.start(updateIntervalInMs, pollTimeoutInMs)
+                verify(mockedMetrics, times(records.count())).notifyMessageTravelTime(sentTimeArgumentCaptor.capture())
+                job.cancelAndJoin()
 
-                    verify(mockedMetrics, times(records.count())).notifyMessageTravelTime(sentTimeArgumentCaptor.capture())
-
-                    it("should notify message travel time changed twice with correct arguments"){
-                        Assertions.assertThat(sentTimeArgumentCaptor.firstValue).isEqualTo(messageSentTime)
-                        Assertions.assertThat(sentTimeArgumentCaptor.secondValue).isEqualTo(anotherMessageSentTime)
-                    }
-                    job.cancelAndJoin()
-                }
+                Assertions.assertThat(sentTimeArgumentCaptor.firstValue).isEqualTo(messageSentTime)
+                Assertions.assertThat(sentTimeArgumentCaptor.secondValue).isEqualTo(anotherMessageSentTime)
             }
         }
     }
-})
+}
 
 private const val updateIntervalInMs = 10L
 private const val messageSentTime = 1L

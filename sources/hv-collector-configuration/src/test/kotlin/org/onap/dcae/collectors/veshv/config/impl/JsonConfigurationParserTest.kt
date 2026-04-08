@@ -22,9 +22,8 @@ package org.onap.dcae.collectors.veshv.config.impl
 import arrow.core.Some
 import arrow.core.getOrElse
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.onap.dcae.collectors.veshv.tests.utils.resourceAsStream
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.StringReader
@@ -34,19 +33,23 @@ import kotlin.test.fail
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-internal object JsonConfigurationParserTest : Spek({
-    describe("A configuration parser utility") {
+internal class JsonConfigurationParserTest {
+    @Nested
+    inner class `A configuration parser utility` {
         val cut = JsonConfigurationParser()
 
-        describe("partial configuration parsing") {
-            it("parses enumerations") {
+        @Nested
+        inner class `partial configuration parsing` {
+            @Test
+            fun `parses enumerations`() {
                 val input = """{"logLevel":"ERROR"}"""
 
                 val config = cut.parse(StringReader(input))
                 assertThat(config.logLevel).isEqualTo(Some(LogLevel.ERROR))
             }
 
-            it("parses simple structure and creates correct objects") {
+            @Test
+            fun `parses simple structure and creates correct objects`() {
                 val input = """{
                     "server.listenPort" : 12003,
                     "cbs.firstRequestDelaySec": 10
@@ -57,7 +60,8 @@ internal object JsonConfigurationParserTest : Spek({
                 assertThat(config.firstRequestDelaySec).isEqualTo(Some(10L))
             }
 
-            it("parses disabled security configuration") {
+            @Test
+            fun `parses disabled security configuration`() {
                 val input = """{
                     "security.sslDisable": true
                 }""".trimIndent()
@@ -66,7 +70,8 @@ internal object JsonConfigurationParserTest : Spek({
                 assertThat(config.sslDisable.getOrElse { fail("Should be Some") }).isTrue()
             }
 
-            it("parses invalid log level string to empty option") {
+            @Test
+            fun `parses invalid log level string to empty option`() {
                 val input = """{
                     "logLevel": something
                 }""".trimMargin()
@@ -76,8 +81,10 @@ internal object JsonConfigurationParserTest : Spek({
             }
         }
 
-        describe("complete json parsing") {
-            it("parses actual json") {
+        @Nested
+        inner class `complete json parsing` {
+            @Test
+            fun `parses actual json`() {
                 val config = cut.parse(
                         javaClass.resourceAsStream("/sampleConfig.json"))
 
@@ -98,4 +105,4 @@ internal object JsonConfigurationParserTest : Spek({
             }
         }
     }
-})
+}

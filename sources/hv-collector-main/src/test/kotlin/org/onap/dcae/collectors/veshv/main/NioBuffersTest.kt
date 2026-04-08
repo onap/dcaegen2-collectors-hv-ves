@@ -19,13 +19,12 @@
  */
 package org.onap.dcae.collectors.veshv.main
 
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.xdescribe
 import java.nio.ByteBuffer
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-object NioBuffersTest : Spek({
+class NioBuffersTest {
 
     fun Int.toKibibytes(): Int = this * 1024
     fun Int.toMebibytes(): Int = this * 1024 * 1024
@@ -52,37 +51,44 @@ object NioBuffersTest : Spek({
         System.out.printf("Each putInt+getInt for %s took an average of %.1f ns%n", message, avg)
     }
 
-    for (singleBufferSize in BUFFER_SIZES) {
-
-        xdescribe("$singleBufferSize bytes buffers") {
-            describe("direct buffers") {
-
-                val bb1 = ByteBuffer.allocateDirect(singleBufferSize)
-                val bb2 = ByteBuffer.allocateDirect(singleBufferSize)
-
-                it("should be heated up") {
-                    measureAverageCopyTimeInNanos(bb1, bb2)
-                }
-
-                it("should work fast") {
-                    measureAndPrintAverageCopyTime("direct buffers of $singleBufferSize bytes", bb1, bb2)
-                }
-            }
-
-            describe("on-heap buffers") {
-
-                val bb1 = ByteBuffer.allocate(singleBufferSize)
-                val bb2 = ByteBuffer.allocate(singleBufferSize)
-
-                it("should be heated up") {
-                    measureAverageCopyTimeInNanos(bb1, bb2)
-                }
-
-                it("should work fast") {
-                    measureAndPrintAverageCopyTime("onheap buffers of $singleBufferSize bytes", bb1, bb2)
-                }
-            }
+    @Disabled
+    @Test
+    fun `direct buffers - should be heated up`() {
+        for (singleBufferSize in BUFFER_SIZES) {
+            val bb1 = ByteBuffer.allocateDirect(singleBufferSize)
+            val bb2 = ByteBuffer.allocateDirect(singleBufferSize)
+            measureAverageCopyTimeInNanos(bb1, bb2)
         }
     }
 
-})
+    @Disabled
+    @Test
+    fun `direct buffers - should work fast`() {
+        for (singleBufferSize in BUFFER_SIZES) {
+            val bb1 = ByteBuffer.allocateDirect(singleBufferSize)
+            val bb2 = ByteBuffer.allocateDirect(singleBufferSize)
+            measureAndPrintAverageCopyTime("direct buffers of $singleBufferSize bytes", bb1, bb2)
+        }
+    }
+
+    @Disabled
+    @Test
+    fun `on-heap buffers - should be heated up`() {
+        for (singleBufferSize in BUFFER_SIZES) {
+            val bb1 = ByteBuffer.allocate(singleBufferSize)
+            val bb2 = ByteBuffer.allocate(singleBufferSize)
+            measureAverageCopyTimeInNanos(bb1, bb2)
+        }
+    }
+
+    @Disabled
+    @Test
+    fun `on-heap buffers - should work fast`() {
+        for (singleBufferSize in BUFFER_SIZES) {
+            val bb1 = ByteBuffer.allocate(singleBufferSize)
+            val bb2 = ByteBuffer.allocate(singleBufferSize)
+            measureAndPrintAverageCopyTime("onheap buffers of $singleBufferSize bytes", bb1, bb2)
+        }
+    }
+
+}

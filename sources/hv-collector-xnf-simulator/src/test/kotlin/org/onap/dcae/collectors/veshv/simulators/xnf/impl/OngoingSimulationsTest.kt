@@ -20,74 +20,107 @@
 package org.onap.dcae.collectors.veshv.simulators.xnf.impl
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.tests.utils.waitUntilSucceeds
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.util.*
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since September 2018
  */
-internal class OngoingSimulationsTest : Spek({
+internal class OngoingSimulationsTest {
     val scheduler = Schedulers.single()
     val cut = OngoingSimulations(scheduler)
 
-    describe("simulations repository") {
-        given("not existing task task id") {
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    inner class `simulations repository` {
+        @Nested
+        inner class `not existing task task id` {
             val id = UUID.randomUUID()
 
-            on("asking for status") {
+            @Nested
+
+            inner class `asking for status` {
                 val result = cut.status(id)
 
-                it("should have 'not found' status") {
+                @Test
+
+                fun `should have 'not found' status`() {
                     assertThat(result).isEqualTo(StatusNotFound)
                 }
             }
         }
 
-        given("no tasks") {
-            on("quering about any pending task") {
-                it("should return false") {
+        @Nested
+
+        inner class `no tasks` {
+            @Nested
+            inner class `quering about any pending task` {
+                @Test
+                fun `should return false`() {
                     assertThat(cut.isAnySimulationPending()).isFalse()
                 }
             }
         }
 
-        given("never ending task") {
+        @Nested
+
+        inner class `never ending task` {
             val task = neverendingTask()
 
-            on("startAsynchronousSimulation") {
+            @Nested
+
+            inner class `startAsynchronousSimulation` {
                 val result = cut.startAsynchronousSimulation(task)
 
-                it("should have ongoing status") {
+                @Test
+
+                fun `should have ongoing status`() {
                     assertThat(cut.status(result)).isEqualTo(StatusOngoing)
                 }
 
-                it("should return true when asked about any pending tasks") {
+                @Test
+
+                fun `should return true when asked about any pending tasks`() {
                     assertThat(cut.isAnySimulationPending()).isTrue()
                 }
             }
         }
 
-        given("failing task") {
-            val (cause, task) = failingTask()
+        @Nested
 
-            on("startAsynchronousSimulation") {
+        inner class `failing task` {
+            lateinit var cause: RuntimeException
+            lateinit var task: Mono<Void>
+            init {
+                val pair = failingTask()
+                cause = pair.first
+                task = pair.second
+            }
+
+            @Nested
+
+            inner class `startAsynchronousSimulation` {
                 val taskID = cut.startAsynchronousSimulation(task)
 
-                it("should have failing status") {
+                @Test
+
+                fun `should have failing status`() {
                     waitUntilSucceeds {
                         assertThat(cut.status(taskID)).isEqualTo(StatusFailure(cause))
                     }
                 }
 
-                it("should return false when asked about any pending tasks") {
+                @Test
+
+                fun `should return false when asked about any pending tasks`() {
                     waitUntilSucceeds {
                         assertThat(cut.isAnySimulationPending()).isFalse()
                     }
@@ -95,19 +128,27 @@ internal class OngoingSimulationsTest : Spek({
             }
         }
 
-        given("successful task") {
+        @Nested
+
+        inner class `successful task` {
             val task = succesfulTask()
 
-            on("startAsynchronousSimulation") {
+            @Nested
+
+            inner class `startAsynchronousSimulation` {
                 val taskID = cut.startAsynchronousSimulation(task)
 
-                it("should have successful status") {
+                @Test
+
+                fun `should have successful status`() {
                     waitUntilSucceeds {
                         assertThat(cut.status(taskID)).isEqualTo(StatusSuccess)
                     }
                 }
 
-                it("should return false when asked about any pending tasks") {
+                @Test
+
+                fun `should return false when asked about any pending tasks`() {
                     waitUntilSucceeds {
                         assertThat(cut.isAnySimulationPending()).isFalse()
                     }
@@ -115,13 +156,15 @@ internal class OngoingSimulationsTest : Spek({
             }
         }
 
-        afterGroup {
+        @AfterAll
+        fun teardownRepository() {
             scheduler.dispose()
         }
     }
 
-    afterEachTest { cut.clear() }
-})
+    @AfterEach
+    fun teardown() { cut.clear() }
+}
 
 private fun neverendingTask() = Mono.never<Void>()
 

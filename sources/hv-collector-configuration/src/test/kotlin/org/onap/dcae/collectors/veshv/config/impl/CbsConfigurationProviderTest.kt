@@ -26,11 +26,6 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.config.api.ConfigurationStateListener
 import org.onap.dcaegen2.services.sdk.model.streams.ImmutableAafCredentials
 import org.onap.dcaegen2.services.sdk.rest.services.cbs.client.api.CbsClient
@@ -39,49 +34,65 @@ import reactor.core.publisher.Mono
 import reactor.retry.Retry
 import reactor.test.StepVerifier
 import java.time.Duration
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since May 2018
  */
-internal object CbsConfigurationProviderTest : Spek({
+internal class CbsConfigurationProviderTest {
 
-    describe("Configuration provider") {
+    @Nested
+
+    inner class `Configuration provider` {
 
         val cbsClientAdapter: CbsClientAdapter = mock()
         val configStateListener: ConfigurationStateListener = mock()
 
-        given("configuration is never in cbs") {
+        @Nested
+
+        inner class `configuration is never in cbs` {
             val cbsClientMock: CbsClient = mock()
             val configProvider = constructConfigurationProvider(
                     constructCbsClientAdapter(cbsClientMock, configStateListener),
                     configStateListener
             )
 
-            on("waiting for configuration") {
+            @Nested
+
+            inner class `waiting for configuration` {
                 val waitTime = Duration.ofMillis(100)
 
-                it("should not get it") {
+                @Test
+
+                fun `should not get it`() {
                     StepVerifier.create(configProvider().take(1))
                             .expectNoEvent(waitTime)
                 }
             }
         }
 
-        given("valid configuration from cbs") {
+        @Nested
+
+        inner class `valid configuration from cbs` {
             val configProvider = constructConfigurationProvider(cbsClientAdapter, configStateListener)
 
-            on("new configuration") {
+            @Nested
+
+            inner class `new configuration` {
+                init {
                 whenever(cbsClientAdapter.configurationUpdates())
                         .thenReturn(Flux.just(validConfiguration))
-                it("should use received configuration") {
+                }
+                @Test
+                fun `should use received configuration`() {
 
                     StepVerifier.create(configProvider().take(1))
                             .consumeNextWith {
                                 assertThat(it.requestIntervalSec).isEqualTo(Some(5L))
                                 assertThat(it.listenPort).isEqualTo(Some(6061))
                                 assertThat(it.idleTimeoutSec).isEqualTo(Some(60L))
-
                                 val sinks = it.streamPublishers.orNull()!!
                                 val sink1 = sinks[0]
                                 val sink2 = sinks[1]
@@ -102,30 +113,39 @@ internal object CbsConfigurationProviderTest : Spek({
             }
         }
 
-        given("invalid configuration from cbs") {
+        @Nested
+
+        inner class `invalid configuration from cbs` {
             val iterationCount = 3L
             val configProvider = constructConfigurationProvider(
                     cbsClientAdapter, configStateListener, iterationCount
             )
 
-            on("new configuration") {
+            @Nested
+
+            inner class `new configuration` {
+                init {
                 whenever(cbsClientAdapter.configurationUpdates())
                         .thenReturn(Flux.just(invalidConfiguration))
+                }
+                @Test
 
-                it("should interrupt the flux") {
+                fun `should interrupt the flux`() {
                     StepVerifier
                             .create(configProvider())
                             .verifyError()
                 }
 
-                it("should call state listener when retrying") {
+                @Test
+
+                fun `should call state listener when retrying`() {
                     verify(configStateListener, times(iterationCount.toInt())).retrying()
                 }
             }
         }
     }
 
-})
+}
 
 
 private const val PERF3GPP_REGIONAL = "perf3gpp_regional"

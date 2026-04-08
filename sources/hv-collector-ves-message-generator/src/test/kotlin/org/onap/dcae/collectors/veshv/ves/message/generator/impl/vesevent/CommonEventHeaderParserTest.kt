@@ -23,10 +23,6 @@ import arrow.core.Option
 import arrow.core.identity
 import com.google.protobuf.util.JsonFormat
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.STATE_CHANGE
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
 import org.onap.dcae.collectors.veshv.ves.message.generator.impl.CommonEventHeaderParser
@@ -34,19 +30,27 @@ import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import java.io.ByteArrayInputStream
 import javax.json.Json
 import kotlin.test.fail
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-class CommonEventHeaderParserTest : Spek({
+internal class CommonEventHeaderParserTest {
 
-    describe("Common event header parser") {
+    @Nested
+
+    inner class `Common event header parser` {
         val cut = CommonEventHeaderParser()
 
-        given("valid header in JSON format") {
+        @Nested
+
+        inner class `valid header in JSON format` {
             val commonEventHeader = commonHeader(
                     domain = STATE_CHANGE,
                     id = "sample-event-id")
             val json = JsonFormat.printer().print(commonEventHeader).byteInputStream()
 
-            it("should parse common event header") {
+            @Test
+
+            fun `should parse common event header`() {
                 val result =
                         cut.parse(jsonObject(json))
                                 .fold({ fail() }, ::identity)
@@ -55,27 +59,35 @@ class CommonEventHeaderParserTest : Spek({
             }
         }
 
-        given("invalid header in JSON format") {
+        @Nested
+
+        inner class `invalid header in JSON format` {
             val json = "{}".byteInputStream()
 
-            it("should throw exception") {
+            @Test
+
+            fun `should throw exception`() {
                 val result = cut.parse(jsonObject(json))
 
                 assertFailed(result)
             }
         }
 
-        given("invalid JSON") {
+        @Nested
+
+        inner class `invalid JSON` {
             val json = "{}}}}".byteInputStream()
 
-            it("should throw exception") {
+            @Test
+
+            fun `should throw exception`() {
                 val result = cut.parse(jsonObject(json))
 
                 assertFailed(result)
             }
         }
     }
-})
+}
 
 fun assertFailed(result: Option<CommonEventHeader>) =
         result.fold({}, { fail() })

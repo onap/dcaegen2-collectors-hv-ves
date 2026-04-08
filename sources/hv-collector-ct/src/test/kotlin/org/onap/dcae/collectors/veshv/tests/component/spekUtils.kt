@@ -19,20 +19,15 @@
  */
 package org.onap.dcae.collectors.veshv.tests.component
 
-import org.jetbrains.spek.api.dsl.SpecBody
 import org.onap.dcae.collectors.veshv.utils.logging.Logger
 import reactor.core.publisher.Hooks
 
-fun SpecBody.debugRx(debug: Boolean = true) {
-    if (debug) {
-        beforeGroup {
-            Hooks.onOperatorDebug()
-        }
+fun enableRxDebug() {
+    Hooks.onOperatorDebug()
+}
 
-        afterGroup {
-            Hooks.resetOnOperatorDebug()
-        }
-    }
+fun disableRxDebug() {
+    Hooks.resetOnOperatorDebug()
 }
 
 val logger = Logger("org.onap.dcae.collectors.veshv.tests.component")

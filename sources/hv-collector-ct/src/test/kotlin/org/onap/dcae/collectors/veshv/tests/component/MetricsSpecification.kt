@@ -21,11 +21,6 @@ package org.onap.dcae.collectors.veshv.tests.component
 
 import com.google.protobuf.ByteString
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.HEARTBEAT
 import org.onap.dcae.collectors.veshv.domain.VesEventDomain.PERF3GPP
@@ -46,12 +41,16 @@ import org.onap.dcae.collectors.veshv.tests.utils.vesEvent
 import org.onap.dcae.collectors.veshv.tests.utils.vesWireFrameMessage
 import org.onap.dcae.collectors.veshv.tests.utils.wireFrameMessageWithInvalidPayload
 import java.time.Duration
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-object MetricsSpecification : Spek({
-    debugRx(false)
+class MetricsSpecification {
 
-    describe("Bytes received metrics") {
-        it("should sum up all bytes received") {
+    @Nested
+
+    inner class `Bytes received metrics` {
+        @Test
+        fun `should sum up all bytes received`() {
             val sut = vesHvWithAlwaysSuccessfulSink()
             val vesWireFrameMessage = vesWireFrameMessage()
             val invalidWireFrame = messageWithInvalidWireFrameHeader()
@@ -70,8 +69,11 @@ object MetricsSpecification : Spek({
         }
     }
 
-    describe("Messages received metrics") {
-        it("should sum up all received messages bytes") {
+    @Nested
+
+    inner class `Messages received metrics` {
+        @Test
+        fun `should sum up all received messages bytes`() {
             val sut = vesHvWithAlwaysSuccessfulSink()
             val firstVesEvent = vesEvent(eventFields = ByteString.copyFrom(ByteArray(10)))
             val secondVesEvent = vesEvent(eventFields = ByteString.copyFrom(ByteArray(40)))
@@ -91,8 +93,11 @@ object MetricsSpecification : Spek({
         }
     }
 
-    describe("Messages sent metrics") {
-        it("should gather info for each topic separately") {
+    @Nested
+
+    inner class `Messages sent metrics` {
+        @Test
+        fun `should gather info for each topic separately`() {
             val sut = vesHvWithAlwaysSuccessfulSink(twoDomainsToOneTopicRouting)
 
             sut.handleConnection(
@@ -114,8 +119,11 @@ object MetricsSpecification : Spek({
         }
     }
 
-    describe("Processing time") {
-        it("should gather processing time metric") {
+    @Nested
+
+    inner class `Processing time` {
+        @Test
+        fun `should gather processing time metric`() {
             val delay = Duration.ofMillis(10)
             val sut = vesHvWithDelayingSink(delay)
 
@@ -129,8 +137,11 @@ object MetricsSpecification : Spek({
         }
     }
 
-    describe("Messages dropped metrics") {
-        it("should gather metrics for invalid messages") {
+    @Nested
+
+    inner class `Messages dropped metrics` {
+        @Test
+        fun `should gather metrics for invalid messages`() {
             val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
@@ -146,7 +157,9 @@ object MetricsSpecification : Spek({
                     .isEqualTo(3)
         }
 
-        it("should gather metrics for route not found") {
+        @Test
+
+        fun `should gather metrics for route not found`() {
             val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
@@ -160,7 +173,9 @@ object MetricsSpecification : Spek({
                     .isEqualTo(1)
         }
 
-        it("should gather metrics for sink errors") {
+        @Test
+
+        fun `should gather metrics for sink errors`() {
             val sut = vesHvWithAlwaysFailingSink(basicRouting)
 
             sut.handleConnection(vesWireFrameMessage(domain = PERF3GPP))
@@ -171,7 +186,9 @@ object MetricsSpecification : Spek({
                     .isEqualTo(1)
         }
 
-        it("should gather summed metrics for dropped messages") {
+        @Test
+
+        fun `should gather summed metrics for dropped messages`() {
             val sut = vesHvWithAlwaysSuccessfulSink(basicRouting)
 
             sut.handleConnection(
@@ -187,29 +204,31 @@ object MetricsSpecification : Spek({
         }
     }
 
-    describe("clients rejected metrics") {
-        given("rejection causes") {
-            mapOf(
-                    ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE to
-                            messageWithPayloadOfSize(MAX_PAYLOAD_SIZE_BYTES + 1),
-                    ClientRejectionCause.INVALID_WIRE_FRAME_MARKER to garbageFrame()
-            ).forEach { cause, vesMessage ->
-                on("cause $cause") {
-                    it("should notify correct metrics") {
-                        val sut = vesHvWithAlwaysSuccessfulSink()
+    @Nested
 
-                        sut.handleConnection(vesMessage)
+    inner class `clients rejected metrics` {
+        @Nested
+        inner class `rejection causes` {
+            @Test
+            fun `should notify correct rejection cause metrics`() {
+                mapOf(
+                        ClientRejectionCause.PAYLOAD_SIZE_EXCEEDED_IN_MESSAGE to
+                                messageWithPayloadOfSize(MAX_PAYLOAD_SIZE_BYTES + 1),
+                        ClientRejectionCause.INVALID_WIRE_FRAME_MARKER to garbageFrame()
+                ).forEach { (cause, vesMessage) ->
+                    val sut = vesHvWithAlwaysSuccessfulSink()
 
-                        val metrics = sut.metrics
-                        assertThat(metrics.clientRejectionCause.size)
-                                .describedAs("metrics were notified with only one rejection cause")
-                                .isOne()
-                        assertThat(metrics.clientRejectionCause[cause])
-                                .describedAs("metrics were notified only once with correct client rejection cause")
-                                .isOne()
-                    }
+                    sut.handleConnection(vesMessage)
+
+                    val metrics = sut.metrics
+                    assertThat(metrics.clientRejectionCause.size)
+                            .describedAs("metrics were notified with only one rejection cause for $cause")
+                            .isOne()
+                    assertThat(metrics.clientRejectionCause[cause])
+                            .describedAs("metrics were notified only once with correct client rejection cause")
+                            .isOne()
                 }
             }
         }
     }
-})
+}

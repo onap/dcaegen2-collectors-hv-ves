@@ -27,9 +27,6 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.adapters.HvVesClient
 import org.onap.dcae.collectors.veshv.simulators.xnf.impl.factory.ClientFactory
 import org.onap.dcae.collectors.veshv.tests.utils.Assertions.assertThat
@@ -45,26 +42,34 @@ import org.onap.ves.VesEventOuterClass.CommonEventHeader
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.io.ByteArrayInputStream
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since September 2018
  */
-internal class XnfSimulatorTest : Spek({
+internal class XnfSimulatorTest {
     lateinit var cut: XnfSimulator
     lateinit var clientFactory: ClientFactory
     lateinit var messageParametersParser: MessageParametersParser
     lateinit var generatorFactory: MessageGeneratorFactory
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         clientFactory = mock()
         messageParametersParser = mock()
         generatorFactory = mock()
         cut = XnfSimulator(clientFactory, generatorFactory, messageParametersParser)
     }
 
-    describe("startSimulation") {
-        it("should fail when empty input stream") {
+    @Nested
+
+    inner class `startSimulation` {
+        @Test
+        fun `should fail when empty input stream`() {
             // given
             val emptyInputStream = ByteArrayInputStream(byteArrayOf())
 
@@ -75,7 +80,9 @@ internal class XnfSimulatorTest : Spek({
             assertThat(result).isLeft()
         }
 
-        it("should fail when invalid JSON") {
+        @Test
+
+        fun `should fail when invalid JSON`() {
             // given
             val invalidJson = "invalid json".byteInputStream()
 
@@ -86,7 +93,9 @@ internal class XnfSimulatorTest : Spek({
             assertThat(result).isLeft()
         }
 
-        it("should fail when JSON syntax is valid but content is invalid") {
+        @Test
+
+        fun `should fail when JSON syntax is valid but content is invalid`() {
             // given
             val json = "[1,2,3]".byteInputStream()
             val cause = ParsingError("epic fail", None)
@@ -100,7 +109,9 @@ internal class XnfSimulatorTest : Spek({
             assertThat(result).left().isEqualTo(cause)
         }
 
-        it("should return generated ves messages") {
+        @Test
+
+        fun `should return generated ves messages`() {
             // given
             val vesEventGenerator: VesEventGenerator = mock()
             val vesClient: HvVesClient = mock()
@@ -131,4 +142,4 @@ internal class XnfSimulatorTest : Spek({
             verify(vesClient).sendRawPayload(any(), eq(PayloadType.PROTOBUF))
         }
     }
-})
+}

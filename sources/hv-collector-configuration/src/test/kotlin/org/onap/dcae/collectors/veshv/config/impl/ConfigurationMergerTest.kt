@@ -20,10 +20,9 @@
 package org.onap.dcae.collectors.veshv.config.impl
 
 import arrow.core.Some
-import org.jetbrains.spek.api.Spek
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import java.io.InputStreamReader
 import java.io.Reader
@@ -32,9 +31,11 @@ import java.io.Reader
  * @author Pawel Biniek <pawel.biniek@nokia.com>
  * @since February 2019
  */
-internal object ConfigurationMergerTest : Spek({
-    describe("Merges partial configurations into one") {
-        it("merges single parameter into empty config") {
+internal class ConfigurationMergerTest {
+    @Nested
+    inner class `Merges partial configurations into one` {
+        @Test
+        fun `merges single parameter into empty config`() {
             val actual = PartialConfiguration()
             val diff = PartialConfiguration(logLevel = Some(LogLevel.WARN))
 
@@ -44,7 +45,9 @@ internal object ConfigurationMergerTest : Spek({
         }
 
         val someListenPort = Some(defaultListenPort)
-        it("merges single embedded parameter into empty config") {
+
+        @Test
+        fun `merges single embedded parameter into empty config`() {
             val actual = PartialConfiguration()
             val diff = PartialConfiguration(listenPort = someListenPort)
 
@@ -53,10 +56,11 @@ internal object ConfigurationMergerTest : Spek({
             assertThat(result.listenPort).isEqualTo(someListenPort)
         }
 
-        it("merges single parameter into full config") {
+        @Test
+        fun `merges single parameter into full config`() {
             val actual = JsonConfigurationParser().parse(
                     InputStreamReader(
-                            JsonConfigurationParserTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
+                            javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
             val diff = PartialConfiguration(logLevel = Some(LogLevel.WARN))
 
             val result = ConfigurationMerger().merge(actual, diff)
@@ -64,10 +68,11 @@ internal object ConfigurationMergerTest : Spek({
             assertThat(result.logLevel).isEqualTo(Some(LogLevel.WARN))
         }
 
-        it("merges single embedded parameter into full config") {
+        @Test
+        fun `merges single embedded parameter into full config`() {
             val actual = JsonConfigurationParser().parse(
                     InputStreamReader(
-                            JsonConfigurationParserTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
+                            javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
             val diff = PartialConfiguration(listenPort = someListenPort)
 
             val result = ConfigurationMerger().merge(actual, diff)
@@ -76,11 +81,12 @@ internal object ConfigurationMergerTest : Spek({
             assertThat(result.idleTimeoutSec).isEqualTo(Some(1200L))
         }
 
-        it("merges full config into single parameter") {
+        @Test
+        fun `merges full config into single parameter`() {
             val actual = PartialConfiguration(logLevel = Some(LogLevel.INFO))
             val diff = JsonConfigurationParser().parse(
                     InputStreamReader(
-                            JsonConfigurationParserTest.javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
+                            javaClass.getResourceAsStream("/sampleConfig.json")) as Reader)
 
             val result = ConfigurationMerger().merge(actual, diff)
 
@@ -91,5 +97,4 @@ internal object ConfigurationMergerTest : Spek({
             assertThat(result.firstRequestDelaySec.isEmpty()).isFalse()
         }
     }
-})
-
+}

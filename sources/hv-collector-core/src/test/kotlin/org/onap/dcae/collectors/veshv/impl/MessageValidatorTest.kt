@@ -24,8 +24,6 @@ import arrow.core.Either.Companion.right
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.*
 import org.onap.dcae.collectors.veshv.domain.*
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.dcae.collectors.veshv.tests.utils.commonHeader
@@ -34,16 +32,24 @@ import org.onap.dcae.collectors.veshv.tests.utils.wireProtocolFrame
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-internal object MessageValidatorTest : Spek({
+internal class MessageValidatorTest {
 
-    describe("Message validator") {
+    @Nested
+
+    inner class `Message validator` {
         val cut = MessageValidator
 
-        on("ves hv message including header with fully initialized fields") {
+        @Nested
+
+        inner class `ves hv message including header with fully initialized fields` {
             val commonHeader = commonHeader()
 
-            it("should accept message with fully initialized message header") {
+            @Test
+
+            fun `should accept message with fully initialized message header`() {
                 val vesMessage = VesMessage(commonHeader, wireProtocolFrame(commonHeader))
                 with(cut) {
                     assertThat(validateProtobufMessage(vesMessage).isRight())
@@ -51,21 +57,25 @@ internal object MessageValidatorTest : Spek({
                 }
             }
 
-            VesEventDomain.values().forEach { domain ->
-                it("should accept message with $domain domain") {
+            @Test
+            fun `should accept messages with all domains`() {
+                VesEventDomain.values().forEach { domain ->
                     val header = commonHeader(domain)
                     val vesMessage = VesMessage(header, wireProtocolFrame(header))
                     with(cut) {
                         assertThat(validateProtobufMessage(vesMessage).isRight())
-                            .describedAs("message validation result").isTrue()
+                            .describedAs("message validation result for domain $domain").isTrue()
                     }
                 }
             }
         }
 
-        on("ves hv message bytes") {
+        @Nested
+
+        inner class `ves hv message bytes` {
             val vesMessage = VesMessage(getDefaultInstance(), emptyWireProtocolFrame())
-            it("should not accept message with default header") {
+            @Test
+            fun `should not accept message with default header`() {
 
                 with(cut) {
                     validateProtobufMessage(vesMessage).fold({
@@ -92,30 +102,33 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-        given("priority test cases") {
-            mapOf(
-                Priority.PRIORITY_NOT_PROVIDED to false,
-                Priority.LOW to true,
-                Priority.MEDIUM to true,
-                Priority.HIGH to true
-            ).forEach { value, expectedResult ->
-                on("ves hv message including header with priority $value") {
+        @Nested
+
+        inner class `priority test cases` {
+            @Test
+            fun `should resolve validation result based on priority`() {
+                mapOf(
+                    Priority.PRIORITY_NOT_PROVIDED to false,
+                    Priority.LOW to true,
+                    Priority.MEDIUM to true,
+                    Priority.HIGH to true
+                ).forEach { (value, expectedResult) ->
                     val commonEventHeader = commonHeader(priority = value)
                     val vesMessage = VesMessage(commonEventHeader, wireProtocolFrame(commonEventHeader))
-
-                    it("should resolve validation result") {
-                        with(cut) {
-                            assertThat(validateProtobufMessage(vesMessage).isRight())
-                                .describedAs("message validation results")
-                                .isEqualTo(expectedResult)
-                        }
+                    with(cut) {
+                        assertThat(validateProtobufMessage(vesMessage).isRight())
+                            .describedAs("message validation results for priority $value")
+                            .isEqualTo(expectedResult)
                     }
                 }
             }
         }
 
 
-        on("ves hv message including header with not initialized fields") {
+        @Nested
+
+
+        inner class `ves hv message including header with not initialized fields` {
             val commonHeader = newBuilder()
                 .setVersion("1.9")
                 .setEventName("Sample event name")
@@ -124,7 +137,9 @@ internal object MessageValidatorTest : Spek({
                 .build()
             val rawMessageBytes = wireProtocolFrame(commonHeader)
 
-            it("should not accept not fully initialized message header") {
+            @Test
+
+            fun `should not accept not fully initialized message header`() {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 with(cut) {
                     validateProtobufMessage(vesMessage).fold({
@@ -147,12 +162,17 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-        on("ves hv message including header.vesEventListenerVersion with non-string major part") {
+        @Nested
+
+        inner class `ves hv message including header vesEventListenerVersion with non-string major part` {
             val commonHeader = commonHeader(vesEventListenerVersion = "sample-version")
             val rawMessageBytes = wireProtocolFrame(commonHeader)
 
 
-            it("should not accept message header") {
+            @Test
+
+
+            fun `should not accept message header`() {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
                 with(cut) {
                     validateProtobufMessage(vesMessage).fold({
@@ -168,11 +188,15 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-        on("ves hv message including header.vesEventListenerVersion with major part != 7") {
+        @Nested
+
+        inner class `ves hv message including header vesEventListenerVersion with major part != 7` {
             val commonHeader = commonHeader(vesEventListenerVersion = "1.2.3")
             val rawMessageBytes = wireProtocolFrame(commonHeader)
 
-            it("should not accept message header") {
+            @Test
+
+            fun `should not accept message header`() {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
 
                 with(cut) {
@@ -189,11 +213,15 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-        on("ves hv message including header.vesEventListenerVersion with minor part not starting with a digit") {
+        @Nested
+
+        inner class `ves hv message including header vesEventListenerVersion with minor part not starting with a digit` {
             val commonHeader = commonHeader(vesEventListenerVersion = "7.test")
             val rawMessageBytes = wireProtocolFrame(commonHeader)
 
-            it("should not accept message header") {
+            @Test
+
+            fun `should not accept message header`() {
                 val vesMessage = VesMessage(commonHeader, rawMessageBytes)
 
                 with(cut) {
@@ -210,48 +238,66 @@ internal object MessageValidatorTest : Spek({
             }
         }
 
-        describe("validating messages and converting to Either of string for validation result") {
-            given("WireFrameMessage") {
-                on("valid message as input") {
+        @Nested
+
+        inner class `validating messages and converting to Either of string for validation result` {
+            @Nested
+            inner class `WireFrameMessage tests` {
+                @Nested
+                inner class `valid message as input` {
                     val wireFrameMessage = WireFrameMessage("lets pretend it's valid".toByteArray())
                     val mockedWireFrameMessage = mock<WireFrameMessage> {
                         on { validate() } doReturn right(wireFrameMessage)
                     }
 
-                    it("should be right") {
+                    @Test
+
+                    fun `should be right`() {
                         assertTrue(cut.validateFrameMessage(mockedWireFrameMessage).isRight())
                     }
                 }
 
-                on("invalid message as input") {
+                @Nested
+
+                inner class `invalid message as input` {
                     val mockedWireFrameMessage = mock<WireFrameMessage> {
                         on { validate() } doReturn left(InvalidMajorVersion(99))
                     }
 
-                    it("should be left") {
+                    @Test
+
+                    fun `should be left`() {
                         assertTrue(cut.validateFrameMessage(mockedWireFrameMessage).isLeft())
                     }
                 }
             }
 
-            given("VesEvent") {
-                with(cut) {
-                    on("valid message as input") {
-                        val commonHeader = commonHeader()
-                        val rawMessageBytes = wireProtocolFrame(commonHeader)
-                        val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+            @Nested
 
-                        it("should be right") {
+            inner class `VesEvent` {
+                @Nested
+                inner class `valid message as input` {
+                    val commonHeader = commonHeader()
+                    val rawMessageBytes = wireProtocolFrame(commonHeader)
+                    val vesMessage = VesMessage(commonHeader, rawMessageBytes)
+
+                    @Test
+
+                    fun `should be right`() {
+                        with(cut) {
                             assertTrue(validateProtobufMessage(vesMessage).isRight())
                         }
                     }
                 }
-                on("invalid message as input") {
+                @Nested
+                inner class `invalid message as input` {
                     val commonHeader = newBuilder().build()
                     val rawMessageBytes = wireProtocolFrame(commonHeader)
                     val vesMessage = VesMessage(commonHeader, rawMessageBytes)
 
-                    it("should be left") {
+                    @Test
+
+                    fun `should be left`() {
                         assertTrue(cut.validateProtobufMessage(vesMessage).isLeft())
                     }
                 }
@@ -259,4 +305,4 @@ internal object MessageValidatorTest : Spek({
 
         }
     }
-})
+}

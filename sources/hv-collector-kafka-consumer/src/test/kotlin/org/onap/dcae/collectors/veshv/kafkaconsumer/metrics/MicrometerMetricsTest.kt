@@ -24,33 +24,39 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import org.apache.kafka.common.TopicPartition
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Percentage
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.tests.utils.verifyGauge
 import org.onap.dcae.collectors.veshv.tests.utils.verifyTimer
 import java.time.Instant
 import java.util.concurrent.TimeUnit
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-object MicrometerMetricsTest : Spek({
+internal class MicrometerMetricsTest {
     val PREFIX = "hv-kafka-consumer"
     val doublePrecision = Percentage.withPercentage(0.5)
     lateinit var registry: PrometheusMeterRegistry
     lateinit var cut: MicrometerMetrics
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         registry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
         cut = MicrometerMetrics(registry)
     }
 
-    describe("Timers") {
+    @Nested
+
+    inner class `Timers` {
         val arbitraryMessageTravelTime = 100L
         val messageSentTimeMicros = Instant.now().minusMillis(arbitraryMessageTravelTime).toEpochMilli() * 1000
         val timerName = "$PREFIX.travel.time"
 
-        on("notifyMessageTravelTime") {
-            it("should update timer $timerName") {
+        @Nested
+
+        inner class `notifyMessageTravelTime` {
+            @Test
+            fun `should update timer $timerName`() {
 
                 val timeBeforeNotifyMicros = Instant.now().toEpochMilli() * 1000
                 cut.notifyMessageTravelTime(messageSentTimeMicros)
@@ -68,15 +74,20 @@ object MicrometerMetricsTest : Spek({
         }
     }
 
-    describe("Gauges") {
+    @Nested
+
+    inner class `Gauges` {
         val gaugeName = "$PREFIX.offset.partition"
         val offset1 = 966L
         val offset2 = 967L
         val topicPartition1 = TopicPartition("sample_topic", 0)
         val topicPartition2 = TopicPartition("sample_topic", 1)
 
-        on("notifyOffsetChanged") {
-            it("should update $gaugeName") {
+        @Nested
+
+        inner class `notifyOffsetChanged` {
+            @Test
+            fun `should update $gaugeName`() {
                 cut.notifyOffsetChanged(offset1, topicPartition1)
 
                 registry.verifyGauge(name = gaugeName, tagValue = topicPartition1.toString()) {
@@ -85,8 +96,11 @@ object MicrometerMetricsTest : Spek({
             }
         }
 
-        on("two partition update") {
-            it("should update $gaugeName") {
+        @Nested
+
+        inner class `two partition update` {
+            @Test
+            fun `should update $gaugeName`() {
                 cut.notifyOffsetChanged(offset1, topicPartition1)
                 cut.notifyOffsetChanged(offset2, topicPartition2)
 
@@ -100,4 +114,4 @@ object MicrometerMetricsTest : Spek({
             }
         }
     }
-})
+}

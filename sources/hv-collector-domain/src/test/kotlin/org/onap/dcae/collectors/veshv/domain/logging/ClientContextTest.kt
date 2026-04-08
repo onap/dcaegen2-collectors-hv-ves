@@ -23,50 +23,63 @@ import arrow.core.Some
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import java.net.InetAddress
 import java.security.cert.X509Certificate
 import javax.security.auth.x500.X500Principal
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since December 2018
  */
-internal object ClientContextTest : Spek({
-    describe("ClientContext") {
-        given("default instance") {
+internal class ClientContextTest {
+    @Nested
+    inner class `ClientContext tests` {
+        @Nested
+        inner class `default instance` {
             val cut = ClientContext()
 
-            on("mapped diagnostic context") {
+            @Nested
+
+            inner class `mapped diagnostic context` {
                 val mdc = cut.mdc
 
-                it("should contain ${OnapMdc.REQUEST_ID}") {
+                @Test
+
+                fun `should contain ${OnapMdc REQUEST_ID}`() {
                     assertThat(mdc[OnapMdc.REQUEST_ID]).isEqualTo(cut.requestId)
                 }
 
-                it("should contain ${OnapMdc.INVOCATION_ID}") {
+                @Test
+
+                fun `should contain ${OnapMdc INVOCATION_ID}`() {
                     assertThat(mdc[OnapMdc.INVOCATION_ID]).isEqualTo(cut.invocationId)
                 }
 
-                it("should contain ${OnapMdc.STATUS_CODE}") {
+                @Test
+
+                fun `should contain ${OnapMdc STATUS_CODE}`() {
                     assertThat(mdc[OnapMdc.STATUS_CODE]).isEqualTo("INPROGRESS")
                 }
 
-                it("should contain ${OnapMdc.CLIENT_NAME}") {
+                @Test
+
+                fun `should contain ${OnapMdc CLIENT_NAME}`() {
                     assertThat(mdc[OnapMdc.CLIENT_NAME]).isBlank()
                 }
 
-                it("should contain ${OnapMdc.CLIENT_IP}") {
+                @Test
+
+                fun `should contain ${OnapMdc CLIENT_IP}`() {
                     assertThat(mdc[OnapMdc.CLIENT_IP]).isBlank()
                 }
             }
         }
 
-        given("instance with client data") {
+        @Nested
+
+        inner class `instance with client data` {
             val clientDn = "C=PL, O=Nokia, CN=NokiaBTS"
             val clientIp = "192.168.52.34"
             val cert: X509Certificate = mock()
@@ -75,20 +88,28 @@ internal object ClientContextTest : Spek({
                     clientAddress = Some(InetAddress.getByName(clientIp)),
                     clientCert = Some(cert))
 
+            init {
             whenever(cert.subjectX500Principal).thenReturn(principal)
-            whenever(principal.toString()).thenReturn(clientDn)
 
-            on("mapped diagnostic context") {
+            whenever(principal.toString()).thenReturn(clientDn)
+            }
+            @Nested
+
+            inner class `mapped diagnostic context` {
                 val mdc = cut.mdc
 
-                it("should contain ${OnapMdc.CLIENT_NAME}") {
+                @Test
+
+                fun `should contain ${OnapMdc CLIENT_NAME}`() {
                     assertThat(mdc[OnapMdc.CLIENT_NAME]).isEqualTo(clientDn)
                 }
 
-                it("should contain ${OnapMdc.CLIENT_IP}") {
+                @Test
+
+                fun `should contain ${OnapMdc CLIENT_IP}`() {
                     assertThat(mdc[OnapMdc.CLIENT_IP]).isEqualTo(clientIp)
                 }
             }
         }
     }
-})
+}

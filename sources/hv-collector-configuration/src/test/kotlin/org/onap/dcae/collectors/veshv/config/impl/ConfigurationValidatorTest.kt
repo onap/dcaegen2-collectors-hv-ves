@@ -23,23 +23,26 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import org.assertj.core.api.Assertions.*
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.config.api.model.ValidationException
 import org.onap.dcae.collectors.veshv.utils.logging.LogLevel
 import org.onap.dcaegen2.services.sdk.model.streams.dmaap.KafkaSink
 import kotlin.test.fail
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
-internal object ConfigurationValidatorTest : Spek({
-    describe("ConfigurationValidator") {
+internal class ConfigurationValidatorTest {
+    @Nested
+    inner class `ConfigurationValidator tests` {
         val cut = ConfigurationValidator()
 
-        describe("validating partial configuration with missing fields") {
+        @Nested
+
+        inner class `validating partial configuration with missing fields` {
             val config = PartialConfiguration(listenPort = Some(5))
 
-            it("should return ValidationException with missing required fields description") {
+            @Test
+
+            fun `should return ValidationException with missing required fields description`() {
                 val result = cut.validate(config)
                 result.fold({
                     assertThat(it.message).doesNotContain(PartialConfiguration::listenPort.name)
@@ -59,7 +62,9 @@ internal object ConfigurationValidatorTest : Spek({
             }
         }
 
-        describe("validating complete valid configuration") {
+        @Nested
+
+        inner class `validating complete valid configuration` {
             val config = PartialConfiguration(
                     listenPort = Some(defaultListenPort),
                     idleTimeoutSec = Some(defaultIdleTimeoutSec),
@@ -74,7 +79,9 @@ internal object ConfigurationValidatorTest : Spek({
                     logLevel = Some(LogLevel.TRACE)
             )
 
-            it("should create validated configuration") {
+            @Test
+
+            fun `should create validated configuration`() {
                 val result = cut.validate(config)
                 result.fold(
                         {
@@ -106,7 +113,9 @@ internal object ConfigurationValidatorTest : Spek({
             }
         }
 
-        describe("validating configuration with security disabled") {
+        @Nested
+
+        inner class `validating configuration with security disabled` {
             val config = partialConfiguration(
                     sslDisable = Some(true),
                     keyStoreFile = Some(""),
@@ -115,7 +124,9 @@ internal object ConfigurationValidatorTest : Spek({
                     trustStorePasswordFile = Some("")
             )
 
-            it("should return validated configuration regardless of security keys presence") {
+            @Test
+
+            fun `should return validated configuration regardless of security keys presence`() {
                 val result = cut.validate(config)
                 result.fold(
                         {
@@ -135,12 +146,16 @@ internal object ConfigurationValidatorTest : Spek({
             }
         }
 
-        describe("validating configuration with ssl disable missing") {
+        @Nested
+
+        inner class `validating configuration with ssl disable missing` {
             val config = partialConfiguration(
                     sslDisable = None
             )
 
-            it("should return validated configuration") {
+            @Test
+
+            fun `should return validated configuration`() {
                 val result = cut.validate(config)
                 result.fold(
                         {
@@ -161,7 +176,9 @@ internal object ConfigurationValidatorTest : Spek({
             }
         }
 
-        describe("validating configuration with ssl enabled, but not all required security fields set") {
+        @Nested
+
+        inner class `validating configuration with ssl enabled, but not all required security fields set` {
             val config = partialConfiguration(
                     sslDisable = Some(false),
                     keyStoreFile = Some(KEYSTORE),
@@ -170,7 +187,9 @@ internal object ConfigurationValidatorTest : Spek({
                     trustStorePasswordFile = Some(TRUSTSTORE_PASSWORD)
             )
 
-            it("should return validated configuration") {
+            @Test
+
+            fun `should return validated configuration`() {
                 val result = cut.validate(config)
 
                 assertThat(result.isLeft())
@@ -179,11 +198,16 @@ internal object ConfigurationValidatorTest : Spek({
             }
         }
 
-        describe("validating CBS configuration from partial") {
-            given("valid CBS configuration") {
+        @Nested
+
+        inner class `validating CBS configuration from partial` {
+            @Nested
+            inner class `valid CBS configuration` {
                 val config = partialConfiguration()
 
-                it("should returned validated config") {
+                @Test
+
+                fun `should returned validated config`() {
                     val result = cut.validatedCbsConfiguration(config)
 
                     assertThat(result.firstRequestDelaySec).isEqualTo(defaultFirstReqDelaySec)
@@ -192,23 +216,31 @@ internal object ConfigurationValidatorTest : Spek({
 
             }
 
-            given("missing firstReqDelaySec") {
+            @Nested
+
+            inner class `missing firstReqDelaySec` {
                 val config = partialConfiguration(
                         firstReqDelaySec = None
                 )
 
-                it("should throw validation exception") {
+                @Test
+
+                fun `should throw validation exception`() {
                     assertThatExceptionOfType(ValidationException::class.java).isThrownBy {
                         cut.validatedCbsConfiguration(config)
                     }.withMessageContaining(PartialConfiguration::firstRequestDelaySec.name)
                 }
             }
 
-            given("missing requestIntervalSec") {
+            @Nested
+
+            inner class `missing requestIntervalSec` {
                 val config = partialConfiguration(
                         requestIntervalSec = None)
 
-                it("should throw validation exception") {
+                @Test
+
+                fun `should throw validation exception`() {
                     assertThatExceptionOfType(ValidationException::class.java).isThrownBy {
                         cut.validatedCbsConfiguration(config)
                     }.withMessageContaining(PartialConfiguration::requestIntervalSec.name)
@@ -216,7 +248,7 @@ internal object ConfigurationValidatorTest : Spek({
             }
         }
     }
-})
+}
 
 private fun partialConfiguration(listenPort: Option<Int> = Some(defaultListenPort),
                                  idleTimeoutSec: Option<Long> = Some(defaultIdleTimeoutSec),

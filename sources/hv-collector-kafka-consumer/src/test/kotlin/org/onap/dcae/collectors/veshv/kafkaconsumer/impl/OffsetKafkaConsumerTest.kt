@@ -31,53 +31,57 @@ import kotlinx.coroutines.test.setMain
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.TopicPartition
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.kafkaconsumer.metrics.Metrics
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
-object OffsetKafkaConsumerTest : Spek({
-    given("OffsetKafkaConsumer") {
+internal class OffsetKafkaConsumerTest {
+    @Nested
+    inner class `OffsetKafkaConsumer tests` {
         val testDispatcher = TestCoroutineDispatcher()
         val mockedKafkaConsumer = mock<KafkaConsumer<ByteArray, ByteArray>>()
         val mockedMetrics = mock<Metrics>()
 
-        afterEachTest {
+        @AfterEach
+
+        fun teardown() {
             testDispatcher.cleanupTestCoroutines()
             reset(mockedMetrics)
         }
 
-        given("single topicName and partition") {
+        @Nested
+
+        inner class `single topicName and partition` {
             val topicName = "topicName"
             val topics = setOf(topicName)
             val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, topics, mockedMetrics, testDispatcher)
 
-            on("started OffsetKafkaConsumer") {
+            @Test
+            fun `should notify offset changed with topicName`() = runBlockingTest(testDispatcher) {
                 val topicPartition = createTopicPartition(topicName, 0)
                 val topicPartitions = setOf(topicPartition)
                 whenever(mockedKafkaConsumer.assignment()).thenReturn(topicPartitions)
                 whenever(mockedKafkaConsumer.endOffsets(topicPartitions))
                         .thenReturn(mapOf<TopicPartition, Long>(topicPartition to newOffset1))
 
-                runBlockingTest(testDispatcher) {
-                    val job = offsetKafkaConsumer.start(updateIntervalInMs)
-                    job.cancelAndJoin()
-                }
+                val job = offsetKafkaConsumer.start(updateIntervalInMs)
+                job.cancelAndJoin()
 
-                it("should notify offset changed with $topicName") {
-                    verify(mockedMetrics).notifyOffsetChanged(newOffset1, topicPartition)
-                }
+                verify(mockedMetrics).notifyOffsetChanged(newOffset1, topicPartition)
             }
         }
 
-        given("single topicName and multiple partitions") {
+        @Nested
+
+        inner class `single topicName and multiple partitions` {
             val topicName = "topicName"
             val topics = setOf(topicName)
             val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, topics, mockedMetrics, testDispatcher)
 
-            on("started OffsetKafkaConsumer") {
+            @Test
+            fun `should notify offset changed with topicName`() = runBlockingTest(testDispatcher) {
                 val topicPartition1 = createTopicPartition(topicName, 0)
                 val topicPartition2 = createTopicPartition(topicName, 2)
                 val topicPartition3 = createTopicPartition(topicName, 3)
@@ -87,112 +91,98 @@ object OffsetKafkaConsumerTest : Spek({
                         .thenReturn(mapOf<TopicPartition, Long>(
                                 topicPartition1 to newOffset1, topicPartition2 to newOffset2, topicPartition3 to newOffset3))
 
-                runBlockingTest(testDispatcher) {
-                    val job = offsetKafkaConsumer.start(updateIntervalInMs)
-                    job.cancelAndJoin()
-                }
+                val job = offsetKafkaConsumer.start(updateIntervalInMs)
+                job.cancelAndJoin()
 
-                it("should notify offset changed with $topicName") {
-                    verify(mockedMetrics).notifyOffsetChanged(newOffset1, topicPartition1)
-                    verify(mockedMetrics).notifyOffsetChanged(newOffset2, topicPartition2)
-                    verify(mockedMetrics).notifyOffsetChanged(newOffset3, topicPartition3)
-                }
+                verify(mockedMetrics).notifyOffsetChanged(newOffset1, topicPartition1)
+                verify(mockedMetrics).notifyOffsetChanged(newOffset2, topicPartition2)
+                verify(mockedMetrics).notifyOffsetChanged(newOffset3, topicPartition3)
             }
         }
 
-        given("two topics with one partition each") {
+        @Nested
+
+        inner class `two topics with one partition each` {
             val topics = setOf(topicName1, topicName2)
             val kafkaSource = OffsetKafkaConsumer(mockedKafkaConsumer, topics, mockedMetrics, testDispatcher)
 
-            on("started OffsetKafkaConsumer for two iteration of while loop") {
+            @Test
+            fun `should notify offset changed with proper arguments`() = runBlockingTest(testDispatcher) {
                 val offsetArgumentCaptor = argumentCaptor<Long>()
                 val topicPartitionArgumentCaptor = argumentCaptor<TopicPartition>()
 
                 val topicPartition1 = createTopicPartition(topicName1, 0)
                 val topicPartition2 = createTopicPartition(topicName2, 0)
                 val topicPartitions = setOf(topicPartition1, topicPartition2)
-
+                val partitionToOffset1 = mapOf(topicPartition1 to newOffset1, topicPartition2 to newOffset2)
+                val partitionToOffset2 = mapOf(topicPartition1 to newOffset2, topicPartition2 to newOffset1)
                 whenever(mockedKafkaConsumer.assignment()).thenReturn(topicPartitions)
-
-                val partitionToOffset1 =
-                        mapOf(topicPartition1 to newOffset1,
-                                topicPartition2 to newOffset2)
-                val partitionToOffset2 =
-                        mapOf(topicPartition1 to newOffset2,
-                                topicPartition2 to newOffset1)
                 whenever(mockedKafkaConsumer.endOffsets(topicPartitions))
                         .thenReturn(partitionToOffset1, partitionToOffset2)
 
-                runBlockingTest(testDispatcher) {
-                    val job = kafkaSource.start(updateIntervalInMs)
-                    verify(mockedMetrics, times(topicsAmount)).notifyOffsetChanged(
-                            offsetArgumentCaptor.capture(),
-                            topicPartitionArgumentCaptor.capture()
-                    )
+                val job = kafkaSource.start(updateIntervalInMs)
+                verify(mockedMetrics, times(topicsAmount)).notifyOffsetChanged(
+                        offsetArgumentCaptor.capture(),
+                        topicPartitionArgumentCaptor.capture()
+                )
 
-                    it("should notify offset changed with proper arguments - before interval"){
-                        assertThat(offsetArgumentCaptor.firstValue).isEqualTo(newOffset1)
-                        assertThat(topicPartitionArgumentCaptor.firstValue.topic())
-                                .isEqualToIgnoringCase(topicPartition1.topic())
-                        assertThat(topicPartitionArgumentCaptor.firstValue.partition())
-                                .isEqualTo(topicPartition1.partition())
+                assertThat(offsetArgumentCaptor.firstValue).isEqualTo(newOffset1)
+                assertThat(topicPartitionArgumentCaptor.firstValue.topic())
+                        .isEqualToIgnoringCase(topicPartition1.topic())
+                assertThat(topicPartitionArgumentCaptor.firstValue.partition())
+                        .isEqualTo(topicPartition1.partition())
 
-                        assertThat(offsetArgumentCaptor.secondValue).isEqualTo(newOffset2)
-                        assertThat(topicPartitionArgumentCaptor.secondValue.topic())
-                                .isEqualToIgnoringCase(topicPartition2.topic())
-                        assertThat(topicPartitionArgumentCaptor.secondValue.partition())
-                                .isEqualTo(topicPartition2.partition())
-                    }
-                    reset(mockedMetrics)
-                    advanceTimeBy(updateIntervalInMs)
+                assertThat(offsetArgumentCaptor.secondValue).isEqualTo(newOffset2)
+                assertThat(topicPartitionArgumentCaptor.secondValue.topic())
+                        .isEqualToIgnoringCase(topicPartition2.topic())
+                assertThat(topicPartitionArgumentCaptor.secondValue.partition())
+                        .isEqualTo(topicPartition2.partition())
 
-                    job.cancelAndJoin()
+                reset(mockedMetrics)
+                advanceTimeBy(updateIntervalInMs)
+                job.cancelAndJoin()
 
-                    verify(mockedMetrics, times(topicsAmount)).notifyOffsetChanged(
-                            offsetArgumentCaptor.capture(),
-                            topicPartitionArgumentCaptor.capture()
-                    )
+                verify(mockedMetrics, times(topicsAmount)).notifyOffsetChanged(
+                        offsetArgumentCaptor.capture(),
+                        topicPartitionArgumentCaptor.capture()
+                )
 
-                    it("should notify offset changed with proper arguments - after interval") {
-                        assertThat(offsetArgumentCaptor.thirdValue).isEqualTo(newOffset2)
-                        assertThat(topicPartitionArgumentCaptor.thirdValue.topic())
-                                .isEqualToIgnoringCase(topicPartition1.topic())
-                        assertThat(topicPartitionArgumentCaptor.thirdValue.partition())
-                                .isEqualTo(topicPartition1.partition())
+                assertThat(offsetArgumentCaptor.thirdValue).isEqualTo(newOffset2)
+                assertThat(topicPartitionArgumentCaptor.thirdValue.topic())
+                        .isEqualToIgnoringCase(topicPartition1.topic())
+                assertThat(topicPartitionArgumentCaptor.thirdValue.partition())
+                        .isEqualTo(topicPartition1.partition())
 
-                        assertThat(offsetArgumentCaptor.lastValue).isEqualTo(newOffset1)
-                        assertThat(topicPartitionArgumentCaptor.lastValue.topic())
-                                .isEqualToIgnoringCase(topicPartition2.topic())
-                        assertThat(topicPartitionArgumentCaptor.lastValue.partition())
-                                .isEqualTo(topicPartition2.partition())
-                    }
-                }
+                assertThat(offsetArgumentCaptor.lastValue).isEqualTo(newOffset1)
+                assertThat(topicPartitionArgumentCaptor.lastValue.topic())
+                        .isEqualToIgnoringCase(topicPartition2.topic())
+                assertThat(topicPartitionArgumentCaptor.lastValue.partition())
+                        .isEqualTo(topicPartition2.partition())
             }
         }
 
-        given("empty topicName list") {
+        @Nested
+
+        inner class `empty topicName list` {
             val emptyTopics = emptySet<String>()
             val offsetKafkaConsumer = OffsetKafkaConsumer(mockedKafkaConsumer, emptyTopics, mockedMetrics, testDispatcher)
 
-            on("call of function start") {
+            @Test
+            fun `should not interact with metrics`() = runBlockingTest(testDispatcher) {
                 val emptyTopicPartitions = emptySet<TopicPartition>()
                 whenever(mockedKafkaConsumer.assignment()).thenReturn(emptyTopicPartitions)
                 whenever(mockedKafkaConsumer.endOffsets(emptyTopicPartitions))
                         .thenReturn(emptyMap())
 
-                runBlockingTest(testDispatcher) {
-                    val job = offsetKafkaConsumer.start(updateIntervalInMs)
-                    job.cancelAndJoin()
-                }
+                val job = offsetKafkaConsumer.start(updateIntervalInMs)
+                job.cancelAndJoin()
 
-                it("should not interact with metrics") {
-                    verifyZeroInteractions(mockedMetrics)
-                }
+                verifyZeroInteractions(mockedMetrics)
             }
         }
 
     }
-})
+}
 
 private const val updateIntervalInMs = 10L
 private const val newOffset1 = 2L

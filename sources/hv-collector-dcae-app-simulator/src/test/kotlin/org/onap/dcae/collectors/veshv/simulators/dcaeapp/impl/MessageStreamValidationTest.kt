@@ -24,9 +24,6 @@ import com.google.protobuf.ByteString
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.MessageParametersParser
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
@@ -39,17 +36,22 @@ import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.lang.IllegalArgumentException
 import javax.json.stream.JsonParsingException
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since August 2018
  */
-internal class MessageStreamValidationTest : Spek({
+internal class MessageStreamValidationTest {
     lateinit var messageParametersParser: MessageParametersParser
     lateinit var messageGenerator: VesEventGenerator
     lateinit var cut: MessageStreamValidation
 
-    beforeEachTest {
+    @BeforeEach
+
+    fun setup() {
         messageParametersParser = mock()
         messageGenerator = mock()
         cut = MessageStreamValidation(messageGenerator, messageParametersParser)
@@ -59,15 +61,20 @@ internal class MessageStreamValidationTest : Spek({
         whenever(messageParametersParser.parse(any())).thenReturn(Right(params.toList()))
     }
 
-    describe("validate") {
-        it("should return error when JSON is invalid") {
+    @Nested
+
+    inner class `validate` {
+        @Test
+        fun `should return error when JSON is invalid`() {
             StepVerifier
                     .create(cut.validate("[{invalid json}]".byteInputStream(), listOf()))
                     .expectError(JsonParsingException::class.java)
                     .verify()
         }
 
-        it("should return error when message param list is empty") {
+        @Test
+
+        fun `should return error when message param list is empty`() {
                 // given
                 givenParsedMessageParameters()
 
@@ -78,8 +85,11 @@ internal class MessageStreamValidationTest : Spek({
                         .verify()
         }
 
-        describe("when validating headers only") {
-            it("should return true when messages are the same") {
+        @Nested
+
+        inner class `when validating headers only` {
+            @Test
+            fun `should return true when messages are the same`() {
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val event = vesEvent()
@@ -94,7 +104,9 @@ internal class MessageStreamValidationTest : Spek({
                         .verifyComplete()
             }
 
-            it("should return true when messages differ with payload only") {
+            @Test
+
+            fun `should return true when messages differ with payload only`() {
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent(payload = "payload A")
@@ -111,7 +123,9 @@ internal class MessageStreamValidationTest : Spek({
                         .verifyComplete()
             }
 
-            it("should return false when messages are different") {
+            @Test
+
+            fun `should return false when messages are different`() {
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent()
@@ -128,8 +142,11 @@ internal class MessageStreamValidationTest : Spek({
             }
         }
 
-        describe("when validating whole messages") {
-            it("should return true when messages are the same") {
+        @Nested
+
+        inner class `when validating whole messages` {
+            @Test
+            fun `should return true when messages are the same`() {
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val event = vesEvent()
@@ -144,7 +161,9 @@ internal class MessageStreamValidationTest : Spek({
                         .verifyComplete()
             }
 
-            it("should return false when messages differ with payload only") {
+            @Test
+
+            fun `should return false when messages differ with payload only`() {
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent(payload = "payload A")
@@ -160,7 +179,9 @@ internal class MessageStreamValidationTest : Spek({
                         .verifyComplete()
             }
 
-            it("should return false when messages are different") {
+            @Test
+
+            fun `should return false when messages are different`() {
                 // given
                 val jsonAsStream = sampleJsonAsStream()
                 val generatedEvent = vesEvent()
@@ -177,7 +198,7 @@ internal class MessageStreamValidationTest : Spek({
             }
         }
     }
-})
+}
 
 
 private const val DUMMY_EVENT_ID = "aaa"

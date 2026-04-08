@@ -22,11 +22,6 @@ package org.onap.dcae.collectors.veshv.ves.message.generator.impl
 import arrow.core.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.tests.utils.assertFailedWithError
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.ParsingError
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventParameters
@@ -34,20 +29,27 @@ import org.onap.dcae.collectors.veshv.ves.message.generator.api.VesEventType.VAL
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameParameters
 import org.onap.dcae.collectors.veshv.ves.message.generator.api.WireFrameType.INVALID_GPB_DATA
 import kotlin.test.fail
-
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Jakub Dudycz <jakub.dudycz@nokia.com>
  * @since July 2018
  */
-object MessageParametersParserTest : Spek({
-    describe("Messages parameters parser") {
+internal class MessageParametersParserTest {
+    @Nested
+    inner class `Messages parameters parser` {
         val cut = MessageParametersParserImpl()
 
-        given("parameters json array") {
-            on("valid parameters json") {
+        @Nested
 
-                it("should parse VesEventParameters") {
+        inner class `parameters json array` {
+            @Nested
+            inner class `valid parameters json` {
+
+                @Test
+
+                fun `should parse VesEventParameters`() {
                     val result = cut.parse(validVesEventParameters())
 
                     result.fold({ fail("parsing VesEventParameters should have succeeded") }) { rightResult ->
@@ -63,7 +65,9 @@ object MessageParametersParserTest : Spek({
                     }
                 }
 
-                it("should parse WireFrameParameters") {
+                @Test
+
+                fun `should parse WireFrameParameters`() {
                     val result = cut.parse(validWireFrameParameters())
 
                     result.fold({ fail("parsing WireFrameParameters should have succeeded") }) { rightResult ->
@@ -80,7 +84,10 @@ object MessageParametersParserTest : Spek({
                 }
 
 
-                it("should parse multiple types of MessageParameters") {
+                @Test
+
+
+                fun `should parse multiple types of MessageParameters`() {
                     val result = cut.parse(multipleMessageParameters())
 
                     result.fold({ fail("parsing multiple types of MessageParameters should have succeeded") }) { rightResult ->
@@ -91,14 +98,19 @@ object MessageParametersParserTest : Spek({
                 }
             }
 
-            on("invalid parameters json") {
-                it("should verify messageAmount") {
+            @Nested
+
+            inner class `invalid parameters json` {
+                @Test
+                fun `should verify messageAmount`() {
                     cut
                             .parse(nonNumberMessageAmountParameters())
                             .assertFailedWithError { it.isInstanceOf(ParsingError::class.java) }
                 }
 
-                it("should verify messageType") {
+                @Test
+
+                fun `should verify messageType`() {
                     cut
                             .parse(missingMessageTypeParameters())
                             .assertFailedWithError { it.isInstanceOf(ParsingError::class.java) }
@@ -106,4 +118,4 @@ object MessageParametersParserTest : Spek({
             }
         }
     }
-})
+}

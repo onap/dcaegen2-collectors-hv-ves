@@ -20,47 +20,58 @@
 package org.onap.dcae.collectors.veshv.domain.logging
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.given
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import java.util.*
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 /**
  * @author Piotr Jaszczyk <piotr.jaszczyk@nokia.com>
  * @since December 2018
  */
-internal object ServiceContextTest : Spek({
-    describe("ServiceContext") {
-        given("singleton instance") {
+internal class ServiceContextTest {
+    @Nested
+    inner class `ServiceContext tests` {
+        @Nested
+        inner class `singleton instance` {
             val cut = ServiceContext
 
-            on("instanceId") {
+            @Nested
+
+            inner class `instanceId` {
                 val instanceId = cut.instanceId
-                it("should be valid UUID") {
+                @Test
+                fun `should be valid UUID`() {
                     UUID.fromString(instanceId) // should not throw
                 }
             }
 
-            on("serverFqdn") {
+            @Nested
+
+            inner class `serverFqdn` {
                 val serverFqdn = cut.serverFqdn
-                it("should be non empty") {
+                @Test
+                fun `should be non empty`() {
                     assertThat(serverFqdn).isNotBlank()
                 }
             }
 
-            on("mapped diagnostic context") {
+            @Nested
+
+            inner class `mapped diagnostic context` {
                 val mdc = cut.mdc
 
-                it("should contain ${OnapMdc.INSTANCE_ID}") {
+                @Test
+
+                fun `should contain ${OnapMdc INSTANCE_ID}`() {
                     assertThat(mdc[OnapMdc.INSTANCE_ID]).isEqualTo(cut.instanceId)
                 }
 
-                it("should contain ${OnapMdc.SERVER_FQDN}") {
+                @Test
+
+                fun `should contain ${OnapMdc SERVER_FQDN}`() {
                     assertThat(mdc[OnapMdc.SERVER_FQDN]).isEqualTo(cut.serverFqdn)
                 }
             }
         }
     }
-})
+}

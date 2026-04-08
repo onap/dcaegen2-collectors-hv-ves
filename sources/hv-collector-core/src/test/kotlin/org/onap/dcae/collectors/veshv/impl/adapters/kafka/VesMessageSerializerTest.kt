@@ -20,22 +20,24 @@
 package org.onap.dcae.collectors.veshv.impl.adapters.kafka
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.api.dsl.on
 import org.onap.dcae.collectors.veshv.domain.WireFrameMessage
 import org.onap.dcae.collectors.veshv.domain.VesMessage
 import org.onap.ves.VesEventOuterClass.CommonEventHeader.*
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
+internal class VesMessageSerializerTest {
 
-internal class VesMessageSerializerTest : Spek({
+    @Nested
 
-    describe("VesMessageSerializer") {
+    inner class `VesMessageSerializer tests` {
         val serializer = VesMessageSerializer()
 
-        on("serialize") {
-            it("should return byte array from WTP Frame paylaod") {
+        @Nested
+
+        inner class `serialize` {
+            @Test
+            fun `should return byte array from WTP Frame paylaod`() {
                 val header = getDefaultInstance()
                 val payload = header.toByteArray()
                 val msg = VesMessage(header, WireFrameMessage(payload))
@@ -46,15 +48,21 @@ internal class VesMessageSerializerTest : Spek({
             }
         }
 
-        on("configuring") {
-          it("should do nothing") {
+        @Nested
+
+        inner class `configuring` {
+          @Test
+          fun `should do nothing`() {
                 // increase code coverage
               serializer.configure(hashMapOf<String, String>(), false)
           }
         }
 
-        on("closing") {
-            it("should do nothing") {
+        @Nested
+
+        inner class `closing` {
+            @Test
+            fun `should do nothing`() {
                 // increase code coverage
                 serializer.close()
             }
@@ -63,4 +71,4 @@ internal class VesMessageSerializerTest : Spek({
 
 
 
-})
+}
