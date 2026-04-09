@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+    - [DCAEGEN2-3450] Replace alpha logging libs (logback 1.3.0-alpha4, slf4j 2.0.0-alpha1) with stable releases (logback 1.3.16, slf4j 2.0.17)
     - [DCAEGEN2-3448](https://jira.onap.org/browse/DCAEGEN2-3448) - Migrate test framework from Spek to JUnit 5
 
 ## [1.11.1] - 08/04/2026
